@@ -1,0 +1,16 @@
+# Normalize line endings across macOS and Windows teammates
+* text=auto eol=lf
+
+*.md text eol=lf
+*.py text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
