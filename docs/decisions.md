@@ -1,0 +1,175 @@
+# Decisions and open items: Mother & Baby 360
+
+The decision log (D-01 – D-69), the status of every decision, the module scope and the items still open. Specs cite decisions as D-xx.
+
+## Markers
+
+- `[PENDING CLIENT: D-xx]`: designed per the wireframe, awaiting Client confirmation.
+- `[NEEDS CLARIFICATION]`: information missing; no value is assumed.
+- **DM-xx** (§10 of a spec): open question found while drafting the data model.
+
+## Decision status (for presentations)
+
+| Status | Decisions | How to present |
+|---|---|---|
+| **Decided (team)** | D-04 – D-07, D-09 – D-14, D-17 – D-34, D-36 – D-46, D-48, D-49, D-51 – D-64, D-66 – D-69 (D-06, D-11, D-26, D-29, D-33, D-36, D-43, D-53, D-54, D-56 revised 29/09/2026) | Team requirement |
+| **Decided, depends on Client** | D-50 (S-043) — depends on D-01 | "Under the sub-app model, pending Client" |
+| **Pending Client** | D-01 (sub-app model), D-02 (remove Tips), D-03 (Messages to Baby — Must item in the latest MVP Scope, pending Client approval, D-65) | **Not** as requirements approved by the Client |
+| **Pending SME** | D-15 (blood glucose and urine protein thresholds), D-16 (valid input ranges), D-47 (chatbot risk keywords) | "Provisional values for the demo"; **not** as approved by a doctor |
+| **Open (team)** | D-35 (depends on D-03); hiding "No symptoms" in symptom-report mode (part of D-45) | — |
+| **Proposed (to confirm)** | D-70 (repository layout for Session 7; physical model draft on SQLite) | "Draft, to be confirmed by the team" |
+
+## Open items
+
+- Client: D-01 – D-03; reading upcoming appointments from the TCI app (`spec-APT.md` Q11). SME: D-15, D-16, D-47. Team: D-35, the open part of D-45.
+- Data model: the logical model is reviewed (gates S1 – S6, D-69) and the physical draft exists (`data/schema/schema-MB360.sql`, SQLite, D-70). Seven questions still change the structure — DM-14, DM-17, DM-28, DM-34, DM-35, DM-37, DM-39 — and are prepared for a team decision in `docs/data-model-freeze-worksheet.md`; none blocks the schema, which applies their defaults. The responsible doctor is the hospital assignment (D-68).
+- Still blocking the final spec: LMP → due date rule (`spec-ACC.md` Q10, ACC-04, Pending SME); thresholds and valid ranges (D-15, D-16, ALR-05); chatbot risk keywords and the real hotline number (D-47, BOT-04); web sign-in for clinical staff (`spec-CLI.md` Q11, CLI-06); the remaining part of `spec-CLI.md` Q10 (no active responsible doctor; which cases the nurse sees). Team: trigger of the Doctor's-instruction reminder (`spec-ALR.md` Q20); number of diary photos (`spec-TML.md` Q15, TML-01).
+- Screens not drawn (Should priority, not needed for the demo): S-054, S-059, S-060, S-062, S-063, S-065, web Settings page.
+- Variants not drawn: the "Chatbot case" versions of S-026 (mother's report view) and S-064 (Report block) — both are specified in the element inventory only.
+- Sample data: S-029 shows two new 27/09/2026 reports from Lan ("Not viewed"); the S-061 queue sample does not list them (its rows are other mothers' cases). The rows are illustrative, not one shared dataset.
+- The colour screen set must be updated to match the wireframes.
+
+## Module scope and key corrections
+
+**7-module boundary**, from the module table in section 5 of the Session 4 assignment document, which maps 1:1 onto the MVP v8 Sprint Backlog:
+
+| Module | Name | MVP v8 priority | Sprint Backlog # |
+|---|---|---|---|
+| ACC | Onboarding & Pregnancy Profile | Must | 1 |
+| HLT | Health Visibility (Dashboard) | Must | 2 (health part) |
+| ALR | Risk Feedback & Mom Alert | Must | 2/3 (alert part) |
+| TML | Pregnancy Timeline & Diary | Must | 4 |
+| BOT | AI Chatbot L1 Support | Must | 5 |
+| CLI | Clinical Escalation (Nurse + Doctor) | Should | 7 |
+| APT | Appointment (redirect to the TCI app) | Should | 6 |
+
+**Scope alignment with the MVP Scope (29/09/2026).** The MVP Scope document is the reference and is not changed; every gap found in the review was fixed in the specs, screen specs and diagrams. Main changes: no risk assessment screen for the mother (S-029 = "My reports" only); the mother reports only flagged indicators (metrics in her Doctor's instructions) or symptoms; appointments are a pure redirect to the TCI app; the hospital record link is seed data; chatbot hand-off, report storage and case creation have their own FRs; Quick notes, answer rating, weekly progress indicators, false-alarm label, doctor notification on close and emergency contact are Won't; notifications to the doctor stay inside the clinical web; the doctor handles escalated cases only.
+
+**Knowledge Base (`F-145` – `F-148`, Screen List S-035 – S-036):** Won't in MVP v8, because the Session 4 assignment document's module table omits this range ("removed entirely from this session's scope"). It is not specified as a module.
+
+**Row-by-row inclusion:** a DBIZ2 Function List row is included only if it falls inside the function range of one of the 7 modules (ranges from the module table in section 5 of the Session 4 assignment document; the DBIZ2 column of `docs/function-list.md` keeps each FR's original F-xxx). Excluded (Won't or outside this session's scope): Admin functions (D-49), native CMS / user management / schedule management, doctor-side appointment and schedule self-management, e-prescribing (Medications), general messaging, and the Knowledge Base range above. DBIZ2 does not assign screens to modules, so each screen was assigned by its name and overview and by the function range it supports; `SHARED` marks cross-cutting system-state screens.
+
+**Overlap in the assignment document's ranges:** functions 83 – 86 are assigned to `HLT` and 85 – 89 to `TML` (overlap at 85, 86). `F-085` / `F-086` load and prefetch **pregnancy-week** data (Figure 14 "Request Data for Week 24/25"), so both belong to `TML`. This corrects the assignment document's ranges; DBIZ2 IDs are not renumbered.
+
+## Decision log
+
+Each decision has an ID `D-xx`; specs, screen specs and both lists cite these IDs.
+
+| Status | Meaning |
+|---|---|
+| **Decided** | Decided by the team; applied in the specs |
+| **Pending Client** | Proposed by the team, but changes the MVP scope, so the Client must confirm. Specs follow the proposal and carry `[PENDING CLIENT: D-xx]` |
+| **Pending SME** | Needs a medical expert. Values are provisional for the demo |
+| **Open** | Not decided yet |
+
+### A. Scope and structure
+
+| ID | Decision | Status | Affects |
+|---|---|---|---|
+| D-01 | **Mother & Baby 360 is a sub-app inside the TCI app** (MVP v8 §2: "sub-app… reusing the host app's existing patient identity"). It uses the signed-in TCI account: no registration, OTP, forgotten or changed password. The mother leaves with the ✕ button (S-083) instead of logging out. On first use she accepts the terms and allows the sub-app to use her TCI account information (S-001 state 2) | **Pending Client** (decided by the team) | spec-ACC, S-001, S-083, S-103, S-002 – S-006 |
+| D-02 | **Remove Tips / weekly reference content from S-048**; show content linked to real visits instead | **Pending Client** | spec-TML FR-001, FR-005, FR-007, S-048 |
+| D-03 | **Add "Messages to Baby" on S-048:** mother and father write weekly messages, max 200 characters; the father writes on the mother's device, no separate account | **Pending Client** (no FR in DBIZ2) | spec-TML FR-011, S-048, function-list |
+| D-04 | **S-048 content is linked to real visits:** ultrasound image, measurements from the ultrasound report with the visit date, doctor's note. A week without a visit shows "No visit this week" and no generated measurements. Weeks are navigated with arrows | **Decided** | spec-TML, S-048 |
+| D-05 | **S-030 Risk Recommendations is removed.** Recommendations are shown on S-028 (above-threshold guidance) and S-026 (clinical staff response) | **Decided** | spec-ALR FR-007, S-029, S-030 |
+| D-06 | ~~S-029 "Risk assessment" has 2 tabs~~ **Revised 29/09/2026 (review ALR-01, screen-spec fix #1): S-029 is "My reports" only** — the list of the mother's reports and chatbot cases with their status. The former tab 1 "Risk assessment" (7 / 30-day summary, ALR FR-017) is removed: MVP v8 §4 gives the mother only "View Report Status & Care Team Response" | **Decided (revised)** | spec-ALR FR-002, FR-003, FR-005 – FR-007, S-029 |
+| D-07 | **S-024 belongs to module HLT** (Health metrics) and is used for Group 1 metrics only | **Decided** | spec-HLT §7, spec-ALR §7, screen-list |
+| D-09 | **The chatbot screen before the first question is S-031.** The conversation S-032 – S-034 is drawn as one frame | **Decided** | spec-BOT §7 |
+| D-38 | **Screen IDs for metric history and reporting:** the Metric history screen uses the original DBIZ2 ID **S-025 "Health History"** (HLT). The Report a metric / symptoms screen uses the new ID **S-025A** (ALR). Screens that exist in the DBIZ2 Screen List keep their DBIZ2 ID; a screen not in DBIZ2 gets a suffixed ID | **Decided** | screen-list, spec-HLT, spec-ALR, screen specs referring to S-025 |
+| D-39 | **Navigation targets:** "Notifications" (S-008 header) → **S-009 Notification Center**. "Hospital record link" (S-103) → **bottom sheet on S-103** (a state of S-103, no new ID). "Support" (S-103) → **the TCI app's support page** (hand-off, no sub-app screen). "Edit profile" → **S-011**; "Notification settings" → **S-010** | **Decided** | spec-ACC §7, S-008, S-103, S-009, S-010, S-011, screen-list |
+| D-40 | **Delivery folder structure** per Session 4 Workshop Guide §3: `README.md`, `docs/` (`architecture/`, `function-list.md`, `screen-list.md`), `specs/spec-{MODULE-ID}.md`, `screens/screen-spec-{SCREEN-ID}.md`, `screens/img/{SCREEN-ID}.png`. **One** image per Screen ID (several states in one image). **One** `docs/screen-list.md` (all 103 IDs). The decision log and UI conventions are sections of `README.md` | **Decided** | whole package |
+
+### B. Data and business rules
+
+| ID | Decision | Status | Affects |
+|---|---|---|---|
+| D-10 | **Health data has 3 sources, always labelled:** From visit / Self-entered / Doctor-assigned | **Decided** | spec-HLT §6, spec-ALR §6 |
+| D-11 | **Metrics are split into 2 groups.** Group 1 (self-tracked, optional, no threshold): weight, temperature, heart rate, sleep. Group 2 (with thresholds, assigned by the doctor): blood pressure, blood glucose, urine protein. **Revised 29/09/2026 (review ALR-02):** the mother reports **only** the Group 2 metrics in her Doctor's instructions (MVP v8 "Report a Flagged Indicator") or symptoms; she cannot report a Group 2 metric that is not assigned | **Decided (revised)** | spec-HLT, spec-ALR |
+| D-12 | **Fetal heart rate comes only from visits**; the mother does not enter or report it. The 110 – 160 bpm range is **for display only**: shown as a reference, no threshold label, no alert (confirmed by the latest MVP Scope §5, 29/09/2026) | **Decided** | spec-HLT, spec-ALR BR-004 |
+| D-13 | **Height belongs to the Profile**; BMI is removed | **Decided** | spec-ACC §6, S-023, S-024 |
+| D-14 | **Blood pressure threshold: above threshold when systolic ≥ 140 mmHg OR diastolic ≥ 90 mmHg** (MVP v8 states only "≥140/90 mmHg" and does not say how the systolic and diastolic values combine; reading it as systolic **or** diastolic is a **team interpretation**, following the ACOG definition of gestational hypertension — ACOG Practice Bulletin 222, see "References for D-15") | **Decided** | spec-ALR BR-004, S-025A, S-028, S-029 |
+| D-15 | **Blood glucose and urine protein thresholds.** **Blood glucose** (capillary, by the measurement time the mother selects): fasting **≥ 5.3 mmol/L**; 1 h after a meal **≥ 7.8 mmol/L**; 2 h after a meal **≥ 6.7 mmol/L** → Above threshold (ADA pregnancy targets: < 95 / < 140 / < 120 mg/dL). **Urine protein** (dipstick): Negative / Trace → Normal; **≥ 1+** → Above threshold (Ministry of Health dipstick criterion 1+ or 2+, cited by Thu Cuc Hospital; ACOG uses 2+ — the team chose the more cautious 1+). Values are stored in a configuration table (D-52). Question for the doctor: the ADA values are control targets for pregnant women who self-monitor glucose — should they be used as alert thresholds for every pregnant woman? | **Pending SME** — provisional values for the MVP demo and seed data; a Thu Cuc doctor must confirm before real use | spec-ALR BR-004, S-025A, S-025, S-029, S-061 |
+| D-16 | **Valid input ranges** (to block typing errors; different from clinical thresholds) for each metric: numbers not set yet | **Pending SME** | S-024, S-025A, spec-ALR FR-014 |
+| D-17 | **Only 3 threshold labels:** Normal / Above threshold / Not assessed. No Low / Moderate / High scale, no "Slightly elevated" | **Decided** | spec-ALR, S-026, S-029 |
+| D-18 | **One report status set:** Not viewed → Viewed → Escalated to doctor → Resolved; the mother and clinical staff see the same names | **Decided** | spec-ALR §6, S-026, S-029, S-061, S-064 |
+| D-19 | **Flow after "Submit report"** (for every Group 2 metric: blood pressure, blood glucose, urine protein): **above threshold** (with or without symptoms) → S-028 Metric alert; **not above threshold but with symptoms** → S-026 (Not viewed); **not above threshold and "No symptoms"** = the mother is fine, no check by clinical staff → back to S-027, no case, no status | **Decided** | spec-ALR BR-008, S-025A, S-028 |
+| D-20 | **Symptom reports always go to a nurse** (queue, status Not viewed) | **Decided** | spec-ALR BR-007 |
+| D-21 | **A Normal report with no symptoms has no status**; S-029 "My reports" shows "No action needed" | **Decided** | spec-ALR, S-029 |
+| D-22 | **"Alert" is used only for an above-threshold report** (S-028) | **Decided** | all documents |
+| D-23 | **Symptoms are a fixed multi-select list:** No symptoms (excludes all others), Headache, Dizziness, Palpitations, Abdominal pain, Bleeding, Other (free text ≤ 100 characters) | **Decided** | spec-ALR §6, S-025A |
+| D-24 | **Guidance for the mother has 2 forms:** a ready-made template, or text the doctor writes for this mother. "Above-threshold guidance" is prepared when the doctor creates an instruction (S-064); if there is none, S-028 shows the hospital's default template | **Decided** | spec-ALR §6 (Guidance Template), spec-CLI, S-025A, S-026, S-028, S-064 |
+| D-25 | **The "Safety note" on S-026 is shown only while the report has no response** | **Decided** | S-026 |
+
+### C. UI and roles
+
+| ID | Decision | Status | Affects |
+|---|---|---|---|
+| D-26 | ~~The "Risk assessment" card~~ **Revised 29/09/2026:** the **"My reports" card** on Home (S-008) and on S-023 (number of reports being handled + latest status) opens S-029 "My reports" | **Decided (revised)** | S-008, S-023 |
+| D-27 | **UI conventions** (terms, CTAs, date/time and unit formats, labels, 5 tabs, header, 4 type levels, empty / loading / error templates) per the wireframe page `00-QUY-UOC`; text in the section "UI conventions" | **Decided** | all screen specs |
+| D-28 | **The role label in the web header** follows the signed-in user ("Nurse: Trần Thị B" / "Dr. Nguyễn Văn A") | **Decided** | S-061, S-064, spec-CLI |
+| D-29 | **Permissions by role.** Nurse: view, mark as viewed, escalate to doctor, send guidance, close case (scope: D-37). Doctor: view, send guidance, close case, clear the red flag, add / edit Doctor's instructions — **revised 29/09/2026 (CLI-02): the doctor's default filter is "Escalated to doctor" and he sends guidance / closes only escalated cases; other cases are view-only for him.** "Escalate to doctor" → status "Escalated to doctor" + high-priority notification to the responsible doctor, **inside the clinical web — no push / SMS (ALR-03)** | **Decided (revised)** | spec-ALR FR-004, FR-009, spec-CLI, S-061, S-064 |
+| D-30 | **The pregnancy timeline (S-048, S-051) belongs to the Home tab**; the chatbot (S-031 – S-034) belongs to the Chatbot tab | **Decided** | screen specs |
+
+### D. Workflow clarifications
+
+| ID | Decision | Status | Affects |
+|---|---|---|---|
+| D-31 | **Blood glucose / urine protein reports without symptoms** follow D-19 like blood pressure (thresholds from D-15): not above threshold + no symptoms → no case; above threshold → S-028 | **Decided** | spec-ALR BR-008 |
+| D-32 | **A report that is above threshold and has symptoms** follows the above-threshold branch (S-028) | **Decided** | spec-ALR BR-008, D-19 |
+| D-33 | ~~Source label for a Group 2 value reported without instructions: "Self-entered"~~ **Revised 29/09/2026 (HLT-04):** since the mother reports only assigned Group 2 metrics (D-11 revised), every Group 2 value she reports is "Doctor-assigned". "Self-entered" is used only for Group 1 metrics (S-024) and the weight declared on S-007 | **Decided (revised)** | spec-HLT §1, §6; spec-ALR §5.1 |
+| D-34 | **Personal health questions in the chatbot:** the chatbot tells the mother "This needs a proper consultation. It will be sent to a nurse if you agree". **A case is created only when the mother taps "Connect to nurse"** (source Chatbot, status Not viewed; the mother follows it in S-029 "My reports" → S-026, chatbot case variant). "No, thanks" → no case; the hotline number is shown. FRs: `spec-BOT.md` FR-006 – FR-009, `spec-ALR.md` FR-021 (added 29/09/2026, BOT-03 / X-01) | **Decided** | spec-BOT BR-002, S-034 |
+| D-35 | **"Messages to Baby" week:** the week being viewed or the current week (the diary always uses the current week, TML FR-008). Team proposal: current week | **Open** — depends on D-03 | spec-TML §10 Q8 |
+| D-36 | **Priority of new FRs:** ALR FR-016 (guidance templates) = Must (S-028 needs the default template); ~~ALR FR-017 (risk assessment summary) = Must~~ **revised 29/09/2026: FR-017 = Won't (ALR-01)** | **Decided (revised)** | function-list, spec-ALR §5 |
+| D-37 | **Who closes a case:** a nurse may "Close case" only for a case **not** escalated to a doctor (MVP: nurse "closes it with guidance"). A case in "Escalated to doctor" and clearing the red flag are **doctor only**. "Send guidance" does not change the status; "Close case" → Resolved | **Decided** | spec-ALR BR-015, spec-CLI, S-026, S-061, S-064 |
+
+### E. Data model
+
+| ID | Decision | Status | Affects |
+|---|---|---|---|
+| D-41 | **Merged duplicate entities.** (a) **Health Metric Record** (`HLT`) is the **only** table of health values for every source (From visit / Self-entered / Doctor-assigned). **Metric Report** (`ALR`) keeps only the report part: report code, symptoms, "Other" text, note, submitted time; a metric report points to exactly 1 Health Metric Record, a symptom report has none. (b) **Case** replaces Alert (`ALR`) and Escalation Case (`BOT`): one entity with `case_source` = Metric report / Symptom / Chatbot; `metric_report_id` and `chat_message_id` are both nullable, exactly one has a value | **Decided** | spec-ALR §6, spec-HLT §6, spec-BOT §6, spec-CLI §6 |
+| D-42 | **Shared entities.** (a) **Visit**: visit date, facility, visit type, conclusion, doctor's note, ultrasound image, fetal length, estimated fetal weight, ultrasound report date; target of `visit_id` (`HLT`); metrics measured at a visit are Health Metric Records with source "From visit". (b) The weight entered during pregnancy setup (S-007) is stored as the first Health Metric Record, source "Self-entered"; the Profile has no weight column. (c) Full name, phone number and medical record number are only in User Account (copied from the TCI account). (d) The clinical history shown on S-064 (obstetric history PARA, blood type, allergies) is the Patient Clinical Profile, source "From visit" | **Decided** | spec-HLT §6, spec-TML §6, spec-ACC §6, spec-CLI §6 |
+| D-43 | **Case status transitions.** Status only moves forward: Not viewed → Viewed → (Escalated to doctor, optional) → Resolved. "Escalated to doctor" may be skipped (S-026 shows "No doctor escalation needed"). "Escalate to doctor" or "Close case" on a case that is still Not viewed first records "Viewed" (same person, same time). ~~Doctors may also "Mark as viewed".~~ **Revised 29/09/2026 (screen-spec fix #4, CLI-02): only the nurse uses "Mark as viewed"** — the doctor works on cases already "Escalated to doctor", whose "Viewed" step is already recorded. Every change is recorded in `status_history` (status, time, changed by, role — System / Nurse / Doctor). Closing rights follow D-37 | **Decided (revised)** | spec-ALR BR-012, BR-016; spec-CLI BR-002; S-026, S-061, S-064 |
+| D-44 | **"Red flag" is not a separate field.** Per DBIZ2 Figure 8 ("Nurse cannot clear the Red Flag"; doctor "Resolve Risk"), the red flag is how a case in **"Escalated to doctor"** is displayed; "clearing the red flag" = the doctor closes that case (D-37). No separate button on S-064 | **Decided** | spec-ALR BR-001, BR-015; spec-CLI BR-001; S-064 |
+| D-45 | **Symptoms are required on S-025A:** at least 1 item from the D-23 list; "No symptoms" counts as a valid choice (excludes all others). Applies to metric reports and symptom reports. Branch 3 of D-19 reads "not above threshold and No symptoms selected". In symptom-report mode, "No symptoms" is hidden (a symptom report must have at least 1 real symptom) | **Decided** (required ≥ 1; "No symptoms" counts). **Open:** hiding "No symptoms" in symptom-report mode | spec-ALR FR-014, §5.1, Q14; S-025A |
+| D-46 | **Length and file limits:** chatbot question ≤ 500 characters; ~~clinical staff "Quick notes" ≤ 200 characters per note~~ (Quick notes removed — CLI-03); custom guidance (to the mother, and "Above-threshold guidance") ≤ 1000 characters; diary photos max 5, ≤ 10 MB each, JPG/PNG, no video. Existing limits: "Other" ≤ 100 (D-23), Messages to Baby ≤ 200 (D-03) | **Decided** | spec-BOT FR-001, spec-CLI, spec-ALR FR-016, spec-TML FR-009; S-031, S-034, S-051, S-061, S-064 |
+| D-47 | **Chatbot risk keyword groups** (trigger the offer to connect to a nurse): haemorrhage / bleeding; severe abdominal pain / hard contractions; blurred vision / dizziness / fainting; no fetal movement / baby not kicking; waters breaking / leaking amniotic fluid. This is a clinical rule, so a doctor must approve it. Until then it is used for the demo; personal health questions that match no keyword still follow BR-002 | **Pending SME** | spec-BOT BR-002, Q2; S-031, S-034 |
+| D-48 | **Notifications for the mother.** Entities **Notification** (type: Report / Visit result / Appointment / **Instruction reminder** — added 29/09/2026, ACC-02 / ALR FR-022; title, subtitle, time, read, related object) and **Notification Preference** (the 4 switches on S-010). FRs: `ACC` FR-025 load / filter the notification list and count unread; FR-026 mark as read (one / all); FR-027 save notification settings; `ALR` FR-018 create a notification for the mother when her case changes status or receives a response. `ALR` FR-019 create a "Visit result" notification when a new visit record is available (ALR BR-003). Delivered through the TCI app (per S-010) | **Decided** | spec-ACC §5, §6; spec-ALR §5, §6; S-009, S-010, function-list |
+| D-49 | **Roles (Role ENUM) = Mother / Nurse / Doctor.** No Admin: MVP v8 §3 has no Admin actor; `F-066` (actor Admin) is recorded as a DBIZ2 labelling error in `spec-CLI.md` | **Decided** (per MVP v8 §3) | spec-ACC FR-015, FR-016, spec-CLI |
+| D-50 | **Expired TCI identity / sub-app opened outside the TCI app.** The sub-app has no login screen (D-01). When no valid TCI identity is received (opened standalone, no identity, expired or invalid identity — at start or mid-session), **S-043 "Session expired"** (DBIZ2 SHARED ID) shows an explanation and a "Back to TCI app" button; the mother signs in again in the TCI app and reopens the sub-app. Whether unsaved input is kept: `[NEEDS CLARIFICATION]` | **Decided** `[PENDING CLIENT: D-01]` — S-043 is needed only if the Client keeps the sub-app model | spec-ACC, Q9; S-001, S-043, screen-list |
+| D-51 | **`metric_group` of fetal heart rate = "Visit"** (third value of `metric_group`: Group 1 / Group 2 / Visit). The metric comes only from visits; not reported, no threshold check (D-12) | **Decided** | spec-HLT §6 |
+| D-52 | **Thresholds are stored in a Threshold Rule configuration table**, not hard-coded: metric, `glucose_context` (if any), `component` (systolic / diastolic), `combine` (any / all), operator, value(s), unit, source, confirmation status (Confirmed / Pending SME), effective from. Seed data uses the current D-14, D-15 values | **Decided** | spec-ALR BR-004, §6; S-025A SR-002 |
+
+### F. Navigation and screen files
+
+| ID | Decision | Status | Affects |
+|---|---|---|---|
+| D-53 | **← on S-026 returns to S-029 "My reports"**, whether S-026 was opened from S-025A (not above threshold but with symptoms — D-19 branch 2), from "View status" on S-028, from a notification on S-009 or from S-029 itself. It never returns to the submitted report form or the closed Alert popup. **Revised 29/09/2026:** the rule "back to the tab that opened it" is removed (S-029 has no tabs any more) | **Decided (revised)** | S-026 §5 |
+| D-54 | ~~Default tab of S-029 depends on the entry point~~ **Revised 29/09/2026:** S-029 has no tabs; every entry point opens the "My reports" list. The sentence "Track progress in My reports." (S-028) and the bubble "Sent to a nurse" (S-034) are text on the wireframe, not links; if they become links, they open S-029 | **Decided (revised)** | S-029 §1; S-026 §5; S-028; S-034 |
+| D-55 | **Screen IDs drawn in one shared frame** (S-007 + S-046; S-032 + S-033 + S-034; S-051 + S-052): every Screen ID has its own full screen spec (9 sections + checklist) and an image `img/{ID}.png`, which for a secondary ID is a **copy** of the shared image, so that every Screen ID has one spec and one image (D-40). Each secondary spec (S-032, S-033, S-046, S-052) describes the elements of its own ID; elements shared with the main ID are described in both files, and a difference between them is raised as an open question. S-046 belongs to `TML`, S-007 to `ACC` | **Decided** | D-40; screens/; screen-list |
+| D-56 | **Priority of new FRs:** ACC-FR-025, FR-026, FR-027 (S-009, S-010), ALR-FR-018 (notifications to the mother) = **Must**, matching the Must screens they serve. ~~ALR-FR-017~~ = Won't (revised 29/09/2026, ALR-01). Added 29/09/2026 as Must: ALR FR-020, FR-021; BOT FR-006 – FR-009. ALR FR-022 (Doctor's-instruction reminders) = Should until its trigger and frequency are decided (`spec-ALR.md` Q20); its priority is reviewed then | **Decided (revised)** | function-list; spec-ACC §5; spec-ALR §5 |
+| D-57 | **Keep the reused IDs S-026 ("Report status") and S-027 ("Doctor's instructions").** In DBIZ2 these IDs are "Sync Loading" and "Sync Success Screen" (HLT), part of the manual-sync flow, which is not built (Hardware Device Auto-Sync = Won't) and has no DBIZ2 mockup, so no DBIZ2 content is lost. Renumbering now would change IDs used across the specs, screen specs, images and data model. The DBIZ2 meaning is kept in `docs/screen-list.md` ("DBIZ2 IDs S-025 – S-027") | **Decided** | screen-list; S-026; S-027 |
+| D-58 | **"Provide Consultation" (MVP scope §4, Doctor) = written consultation** with existing functions: "Send guidance to the mother" (`spec-CLI.md` FR-024) and "Doctor's instructions" (FR-025) on S-064. Video call and e-prescribing (DBIZ2 Figure 9) are not built. No new screen or FR | **Decided** | spec-CLI §1 (MVP function mapping), §4.2 |
+| D-59 | **Visit data in the MVP = seed data.** Visit and Patient Clinical Profile records are simulated as seed data for the demo (MVP scope §5: "manually entered/simulated by the clinician role"); there is no visit entry screen and no EMR integration (Won't). A new "Visit result" notification (ALR FR-019) is created when a Visit record is inserted | **Decided** | spec-HLT Q14; spec-ALR FR-019, Q18; spec-TML Q10; S-048; S-064; context.md |
+| D-60 | **Saved diary entries are read-only in the MVP:** after "Save diary entry" the mother cannot edit or delete the entry (text, mood, photos). No FR, screen or state is added. MVP v8 does not describe editing or deleting | **Decided** | spec-TML BR-006, Q9; S-048; S-051 Q2; data model DM-13 |
+
+### G. Review against the MVP Scope (29/09/2026)
+
+| ID | Decision | Status | Affects |
+|---|---|---|---|
+| D-61 | **Hospital record link = seed data in the MVP** (ACC-01). No EMR call; "Linked" / "Pending link" are set by the seed; no link-error / "Retry" state; the "no matching record" cases apply only to a later version | **Decided** | spec-ACC FR-001, FR-002, BR-003; S-001, S-103, S-011, S-007, S-046 |
+| D-62 | **Appointments = pure redirect to the TCI app** (APT-01 – APT-03). Kept: FR-001 (button / tab opens the TCI booking flow), FR-005 (read-only upcoming card), FR-009 (reminder notification). FR-002 – FR-004, FR-006 – FR-008, FR-010 = Won't / N/A (done by the TCI app). S-012 – S-022 not built | **Decided** | spec-APT; S-008; screen-list |
+| D-63 | **Removed from the MVP (not in the MVP Scope):** weekly progress indicators (HLT FR-006, HLT-01); Quick notes (CLI FR-011, CLI-03); chatbot answer rating S-037 (BOT-02, Could); voice input (BOT-01); false-alarm label, doctor notification on close, emergency contact (CLI FR-018, FR-022, FR-023, CLI-05); the mother's self-tracked metrics on S-064 (CLI-01) | **Decided** | spec-HLT, spec-CLI, spec-BOT; S-034, S-061, S-064 |
+| D-64 | **New FRs for behaviour that existed only as business rules** (X-01, BOT-03): ALR FR-020 store a report, FR-021 create a case (also for chatbot cases), FR-022 Doctor's-instruction reminder notification (ACC-02, ALR-04; trigger open — ALR Q20); BOT FR-006 classify the question, FR-007 hand-off offer, FR-008 Connect to nurse → case, FR-009 No thanks → hotline | **Decided** | spec-ALR, spec-BOT, spec-ACC; S-025A, S-028, S-034, S-009, S-010 |
+| D-65 | **"Messages to Baby" belongs to the Must item "Pregnancy Timeline & Baby Memory Journal"** of the latest MVP Scope, **pending Client approval** (D-03). If not approved: remove TML FR-011, BR-004, Family Message and S-048 #14 – #19 | **Pending Client** (D-03) | spec-TML FR-011; S-048 |
+| D-66 | **Data types in §6** (X-07 / DM-25): every attribute of every entity is written `name (TYPE; Required/Optional)`; types that depend on an open question are marked provisional. The data model (`data/data-model-MB360.md`) is generated from §6 | **Decided** | all specs §6 |
+| D-67 | **Chatbot context includes the earlier questions / answers of the same conversation**, besides the question text and the gestational week; the medical record is never sent (`spec-BOT.md` BR-001). MVP v8 §5 names only "the mother's question text plus light profile context", so this is a team extension for dialogue continuity (`spec-BOT.md` FR-003), to be confirmed with the Client together with the MVP Scope | **Decided (team)** | spec-BOT BR-001, FR-003; context.md |
+| D-68 | **Responsible doctor = the doctor the hospital assigns to the mother** (`spec-CLI.md` §10 Q10 = `spec-ALR.md` §10 Q19, option (b)). Patient Assignment is kept: 1 mother has at most 1 active responsible doctor. In the MVP the assignment is seed data — no assignment screen or FR (DM-10). On "Escalate to doctor" the case's `assigned_doctor_id` = the mother's active responsible doctor, and that doctor sees the case on the clinical web (the notification is not stored — DM-32). Still open: behaviour when the mother has no active responsible doctor; which cases the nurse sees (`spec-CLI.md` Q10) | **Decided (team, 30/09/2026)** | spec-CLI FR-019, BR-003, §6, Q10; spec-ALR FR-009, §6, Q19; function-list; usage-flow; data model PATIENT_ASSIGNMENT, CARE_CASE |
+| D-69 | **Data-model review decisions applied to the specs** (data model, gates S1 – S6 reviewed 29/09/2026). Resolved: DM-01, DM-02, DM-03, DM-08, DM-10, DM-11, DM-22, DM-31, DM-32 (DM-05 superseded), DM-36, DM-38, DM-40, DM-41, DM-42. Main text changes: ALR FR-009 (doctor notification not stored); ACC FR-005 (Profile = EDD / LMP / height; weight = Health Metric Record); ACC FR-011 (also creates User Account and Notification Preference); ACC §6 `role` = Mother only; `gestational_week` INTEGER 0–42 (HLT §6, TML §6); `fetal_length` in cm; `tci_account_ref` VARCHAR(64) | **Decided (team, 30/09/2026)** | spec-ACC, spec-ALR, spec-BOT, spec-CLI, spec-HLT, spec-TML §5, §6, §10; function-list |
+| D-70 | **Repository layout for the Session 7 midterm and physical model draft.** Files are placed as the Session 7 rubric §3.1 lists them: `docs/prd.md`; `specs/spec-{MODULE-ID}.md`; `screens/`; one data model `data/data-model-MB360.md` (MODULE-ID MB360 = the 7 modules; the former files 01 – 05 and `03-erd.mmd` are merged into it); `data/schema/schema-MB360.sql`; `data/seed/` (CSV files `NN_{TABLE}.csv` in foreign-key order, generator, README). The former package README is split into `docs/decisions.md` and `docs/ui-label-reference.md`. Physical model: SQLite 3; the mother's key is `user_id` in every table (DM-31); the defaults of DM-14, DM-17, DM-28, DM-34, DM-35, DM-37, DM-39 are applied until the freeze worksheet is decided. Replaces the folder structure of D-40 for the submission | **Proposed — to confirm by the team (30/09/2026)** | whole repository; `data/`; `docs/data-model-freeze-worksheet.md` |
+
+### References for D-15
+
+- ADA, *Glucose Monitoring During Pregnancy* (2024): targets fasting < 95 mg/dL, 1 h after a meal < 140 mg/dL, 2 h after a meal < 120 mg/dL — https://diabetes.org/sites/default/files/2024-10/Glucose-Monitoring-During-Pregnancy-patient-FINAL.pdf
+- ACOG Practice Bulletin 222, Box 2: dipstick 2+ (only when a quantitative method is not available) — https://www.preeclampsia.org/frontend/assets/img/advocacy_resource/Gestational_Hypertension_and_Preeclampsia_ACOG_Practice_Bulletin,_Number_222_1605448006.pdf
+- Thu Cuc Hospital, article on the Ministry of Health diagnostic criteria for pre-eclampsia: urine protein dipstick 1+ or 2+ — https://benhvienthucuc.vn/song-khoe/san-khoa/tieu-chuan-chan-doan-tien-san-giat-bo-y-te
+
+Unit conversion: mmol/L = mg/dL ÷ 18 (95 → 5.3; 140 → 7.8; 120 → 6.7).

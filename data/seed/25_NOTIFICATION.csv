@@ -1,0 +1,10 @@
+notification_id,user_id,type,title,subtitle,created_at,read_at,case_id,visit_id,watch_flag_id,appointment_ref
+1a5cf173-ca33-5793-b02c-431a5c6d939c,5922a028-7ad1-5bb1-8034-1077cbdf6a1d,Report,Report BC-0926-015 resolved,Response from Nurse Trần Thị B,2026-09-26 20:40,2026-09-26 21:00,4a60fcbe-25cf-59ab-abf5-ced62b7e397d,,,
+26fa10c5-c219-56a4-8524-4f8dfa3ae96e,5d431414-f24b-5468-b2b8-7efbf6666eec,Report,Your report has been received,,2026-09-27 07:02,,,,,
+3be15d73-559c-53bc-b8ca-ef1346bfbb89,3ca395ff-4294-5d35-82ea-3eafa76844c7,Report,Report BC-0926-012 resolved sample text sample text sample text sample text sample text sample text ,,2026-09-26 15:00,2026-09-26 15:00,752892d3-b857-58fe-859d-b1894c67c093,,,
+541530f4-fac8-5502-9d20-237f2266386c,5922a028-7ad1-5bb1-8034-1077cbdf6a1d,Instruction reminder,Reminder: measure and report Blood pressure,Doctor's instructions · Dr. Nguyễn Văn A,2026-09-27 07:00,2026-09-27 07:05,,,178deee4-6f0f-5716-b94e-26e722762b0f,
+6105722c-a60b-595a-a7de-4d8a8d4d7209,4333c4cf-b0ff-50ec-9ff1-39da60d2e7b8,Report,Your report has been viewed,Chatbot question,2026-09-27 09:10,,079fd391-f338-55cd-a459-4c7cd787cd0e,,,
+8e6f43fc-ca29-5208-895f-ef711d75bd30,5922a028-7ad1-5bb1-8034-1077cbdf6a1d,Appointment,Appointment reminder,Routine antenatal check-up,2026-09-26 09:00,,,,,TCI-APT-8841
+d35223fa-2846-5bec-a9ed-3eafa8105ca8,a7354260-026f-5459-bc86-fdb7192e9b9c,Report,Report BC-0926-011 escalated to a doctor,,2026-09-26 18:22,,1a5db5e6-7be1-5fa5-9d5f-8dbff0c9684c,,,
+d43e521d-1c3b-5439-9645-20da34fcdd03,83a221ae-966d-5739-8ae0-954d4335eca1,Report,Report BC-0926-004 resolved,,2026-09-26 08:30,2026-09-26 09:00,612acf77-ef8d-59e8-a587-ec45ab2b09c3,,,
+e0a0c2d9-c072-5a92-b4c6-8b440d0f374b,5922a028-7ad1-5bb1-8034-1077cbdf6a1d,Visit result,New visit results available,Routine antenatal check-up 15/09/2026,2026-09-15 11:00,2026-09-15 12:00,,fa150508-8774-5dfb-9e22-2c25dbb6cf48,,

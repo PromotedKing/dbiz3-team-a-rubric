@@ -1,0 +1,9 @@
+log_id,conversation_id,ai_response_data,audit_log_entry
+0077087b-1c1a-592e-8979-9d7473893650,0b334559-df88-5b5c-b9b8-b23f9e06bbcf,[Sample chatbot answer] For reference only; does not replace your doctor's advice.,"{""call"": ""LOG-005""}"
+18a5373e-ad15-5dbc-838f-d63c45623de6,fff4623e-1a32-5b82-98cc-43795eba55ca,[Sample chatbot answer] For reference only; does not replace your doctor's advice.,"{""call"": ""LOG-006""}"
+3b6ff417-9821-5d11-91d3-fbbc25a5df8d,ad70a00c-6392-5c32-9fa4-ebe89f5ba032,[Sample chatbot answer] For reference only; does not replace your doctor's advice.,"{""call"": ""LOG-001""}"
+5d924d92-b4cf-58dc-b955-802ad482ec63,3d89d1fd-8085-505a-a817-1e2f13fe98ff,This needs a proper consultation. It will be sent to a nurse if you agree,
+a17f6468-57fd-5fc3-a54b-cad4c10a35bd,eec4946c-420c-571b-a9c4-153df44b1235,This needs a proper consultation. It will be sent to a nurse if you agree,"{""call"": ""LOG-008""}"
+a7bf5f09-1591-5ba9-b580-d538708100de,0c3bc79f-7de4-5a37-a637-d7d091aefe84,[Sample chatbot answer] For reference only; does not replace your doctor's advice.,"{""call"": ""LOG-004""}"
+cdc74efc-57a0-59a9-9a5c-020de3a99702,a2e0c388-51ca-5c2e-a98a-954b72161306,This needs a proper consultation. It will be sent to a nurse if you agree,"{""call"": ""LOG-002""}"
+fe2ec275-4ca6-52c7-823f-925fcdf1cab4,13d4fd8e-0eff-5797-8504-ecd453cb2f9f,[Sample chatbot answer] For reference only; does not replace your doctor's advice.,"{""call"": ""LOG-003""}"

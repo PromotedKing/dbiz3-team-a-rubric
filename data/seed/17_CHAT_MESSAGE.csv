@@ -1,0 +1,17 @@
+message_id,conversation_id,sender,text,parsed_intent,is_risk,handoff_choice,sent_at
+1f955448-63bd-5bab-8a45-f5d03185eede,fff4623e-1a32-5b82-98cc-43795eba55ca,Mother,I would like to ask: sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text sample text,"{""intent"": ""other""}",0,,2026-09-26 22:00
+2910445f-b903-5c93-9585-6318e3ab1905,0b334559-df88-5b5c-b9b8-b23f9e06bbcf,Mother,How do I use a urine protein dipstick?,"{""intent"": ""measuring""}",0,,2026-09-26 06:00
+2a88fd31-f6cd-5048-9b1f-9b6e7dcc3599,13d4fd8e-0eff-5797-8504-ecd453cb2f9f,Chatbot,[Sample chatbot answer] For reference only; does not replace your doctor's advice.,,0,,2026-09-26 21:00
+34161d83-3f02-548f-80b5-f0b8216f82c4,13d4fd8e-0eff-5797-8504-ecd453cb2f9f,Mother,How often should I have check-ups at week 33?,"{""intent"": ""visits""}",0,,2026-09-26 21:00
+4edde547-fbd1-53d6-93bc-512cc32fba87,0b334559-df88-5b5c-b9b8-b23f9e06bbcf,Chatbot,[Sample chatbot answer] For reference only; does not replace your doctor's advice.,,0,,2026-09-26 06:00
+5bcd458a-2842-5a88-ba03-5f4e427b0a0e,0c3bc79f-7de4-5a37-a637-d7d091aefe84,Mother,When should I measure my blood pressure?,"{""intent"": ""measuring""}",0,,2026-09-26 17:00
+66cf46ca-1353-59d1-b491-836e114a110e,eec4946c-420c-571b-a9c4-153df44b1235,Mother,"I have had a little bleeding since this morning, is that normal?","{""intent"": ""personal_health""}",1,Connect to nurse,2026-09-27 09:12
+6c4ca3ff-1973-53bd-9b1d-d14c854e1197,eec4946c-420c-571b-a9c4-153df44b1235,Chatbot,This needs a proper consultation. It will be sent to a nurse if you agree,,0,,2026-09-27 09:12
+745b32fe-bf6e-5661-b9c9-0df349736d4a,ad70a00c-6392-5c32-9fa4-ebe89f5ba032,Chatbot,[Sample chatbot answer] For reference only; does not replace your doctor's advice.,,0,,2026-09-27 08:10
+80d0e329-cae2-5b91-ad14-04981e71ad29,3d89d1fd-8085-505a-a817-1e2f13fe98ff,Chatbot,This needs a proper consultation. It will be sent to a nurse if you agree,,0,,2026-09-27 09:20
+81908ba6-c0d9-5f4b-9446-d2554d5cf845,3d89d1fd-8085-505a-a817-1e2f13fe98ff,Mother,"I noticed a little bleeding, do I need to see a doctor?","{""intent"": ""personal_health""}",1,No thanks,2026-09-27 09:20
+857f7cfe-d33d-5902-afb9-3c6830ab4b4f,a2e0c388-51ca-5c2e-a98a-954b72161306,Mother,"I have had a headache since this morning, is that okay?","{""intent"": ""personal_health""}",1,Connect to nurse,2026-09-27 08:38
+94446c0b-0141-525b-a0d2-b4e3bf60e903,a2e0c388-51ca-5c2e-a98a-954b72161306,Chatbot,This needs a proper consultation. It will be sent to a nurse if you agree,,0,,2026-09-27 08:38
+aabc32b8-e7ef-5dda-8d0d-e6ab01b4c86a,fff4623e-1a32-5b82-98cc-43795eba55ca,Chatbot,[Sample chatbot answer] For reference only; does not replace your doctor's advice.,,0,,2026-09-26 22:00
+ac6ec2c1-768f-55f8-8f28-1c5ff8b93e53,0c3bc79f-7de4-5a37-a637-d7d091aefe84,Chatbot,[Sample chatbot answer] For reference only; does not replace your doctor's advice.,,0,,2026-09-26 17:00
+f3cce707-c4a5-5903-b8cc-ce98ead7e647,ad70a00c-6392-5c32-9fa4-ebe89f5ba032,Mother,What should I eat at week 28?,"{""intent"": ""nutrition""}",0,,2026-09-27 08:10

@@ -1,0 +1,8 @@
+rule_id,metric,glucose_context,component,combine,operator,threshold_values,unit,purpose,source,confirmation_status,effective_from
+272e2d6e-8a38-5c7e-8a18-87eb1732eb99,Blood glucose,post_1h,,,≥,7.8,mmol/L,Report check,ADA – Ministry of Health,Pending SME,2026-09-01
+2e69b132-66f8-5e94-a25e-c899d796e910,Urine protein,,,,≥,1+,—,Report check,ADA – Ministry of Health,Pending SME,2026-09-01
+8e9e2db7-c1c0-52fc-8655-c81a5f7da7e3,Fetal heart rate,,,,outside range,110–160,bpm,Display only,MVP v8,Confirmed,2026-09-01
+bae2af9c-6992-5e10-bca0-6e3f67d22c7a,Blood glucose,fasting,,,≥,5.3,mmol/L,Report check,ADA – Ministry of Health,Pending SME,2026-09-01
+cc47168b-5f3e-5907-868b-66613992bcbc,Blood glucose,post_2h,,,≥,6.7,mmol/L,Report check,ADA – Ministry of Health,Pending SME,2026-09-01
+d253eff6-2668-573f-9d0a-3bf65d65e256,Blood pressure,,diastolic,any,≥,90,mmHg,Report check,MVP v8,Confirmed,2026-09-01
+dc34e50f-0083-5ce8-a0cd-169754779a11,Blood pressure,,systolic,any,≥,140,mmHg,Report check,MVP v8,Confirmed,2026-09-01

@@ -1,0 +1,11 @@
+user_id,record_code,facility,status,requested_at,linked_at
+059acf66-1a42-5609-a34a-d961725f4067,TC-00124,Thu Cuc Hospital,Linked,2026-05-02 08:20,2026-05-03 09:00
+37b8b922-1ce4-5950-8e0b-5778e8daa3f9,TC-00130,Thu Cuc Hospital,Pending,2026-09-10 11:00,
+37b8b922-1ce4-5950-8e0b-5778e8daa3f9,TC-00130,Thu Cuc Hospital,Linked,2026-09-25 08:05,2026-09-25 09:00
+3ca395ff-4294-5d35-82ea-3eafa76844c7,TC-00132,Thu Cuc Hospital,Linked,2026-03-01 06:40,2026-03-02 08:00
+4333c4cf-b0ff-50ec-9ff1-39da60d2e7b8,TC-00125,Thu Cuc Hospital,Linked,2026-07-01 21:10,2026-07-02 08:00
+5922a028-7ad1-5bb1-8034-1077cbdf6a1d,TC-00123,Thu Cuc Hospital,Linked,2026-09-19 10:00,2026-09-20 09:00
+5d431414-f24b-5468-b2b8-7efbf6666eec,TC-00131,Thu Cuc Hospital,Pending,2026-09-24 20:00,
+83a221ae-966d-5739-8ae0-954d4335eca1,TC-00127,Thu Cuc Hospital,Linked,2026-06-01 07:50,2026-06-02 10:30
+a7354260-026f-5459-bc86-fdb7192e9b9c,TC-00126,Thu Cuc Hospital,Linked,2026-05-20 10:05,2026-05-21 14:00
+d732d88d-8724-52dc-bcda-2cdaef98a917,TC-00128,Thu Cuc Hospital,Linked,2026-02-01 09:05,2026-02-01 09:05

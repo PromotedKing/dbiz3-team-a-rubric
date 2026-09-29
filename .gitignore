@@ -20,3 +20,11 @@ Thumbs.db
 # Build output
 dist/
 build/
+.env.*
+*.pem
+*.key
+
+# Local databases (the seed generator writes none inside the repository)
+*.db
+*.sqlite
+*.sqlite3
