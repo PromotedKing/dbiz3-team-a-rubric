@@ -93,7 +93,7 @@ Out of the model on purpose: data owned by the TCI app (appointments, slots — 
 
 ## 3. CRUD matrix
 
-One row per (function, entity) pair, decided from the FR text, its §5.1 fields and the screens it serves. Not in the matrix — the Won't FRs: ACC FR-006 – FR-010, FR-012 – FR-014 (D-01); HLT FR-006 (HLT-01); ALR FR-017 (ALR-01); TML FR-001, FR-007 (D-02); APT FR-002 – FR-004, FR-006 – FR-008, FR-010 (APT-01); CLI FR-011 (CLI-03), FR-012 (D-49), FR-018, FR-022, FR-023 (CLI-05).
+One row per (function, entity) pair, decided from the FR text, its §5.1 fields and the screens it serves. Not in the matrix — the Won't FRs: ACC FR-006 – FR-010, FR-012 – FR-014 (D-01); HLT FR-006 (HLT-01); ALR FR-017 (ALR-01); TML FR-001, FR-007 (D-02); APT FR-002 – FR-004, FR-006 – FR-008, FR-010 (APT-01); CLI FR-011 (CLI-03), FR-012 (D-49), FR-018, FR-022, FR-023 (CLI-05). Also not in the matrix — the Must / Should FRs that touch no entity (navigation, form display, validation, device storage): ACC FR-003, FR-004, FR-020, FR-021; ALR FR-001, FR-006, FR-010, FR-012 – FR-014; TML FR-002; BOT FR-005, FR-007; APT FR-001; CLI FR-006 — accepted in §3.2, kind 4.
 
 | Function | Entity | Ops | Citation |
 |---|---|---|---|
