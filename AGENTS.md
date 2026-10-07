@@ -21,6 +21,7 @@ Mother & Baby 360° is a maternity remote-monitoring sub-app for Thu Cuc Hospita
 5. Work on a branch named `member-name/short-topic` (for example `tam/alr-report-form`), show the diff to a human before committing, and never push to `main`, move a tag, or rewrite Git history.
 6. Never edit generated files (`.specify/`, `.agents/skills/`, `.claude/skills/`) and never upgrade Spec Kit: the team stays on v1.0.1. Do not create a `CLAUDE.md`.
 7. Clinical safety: the word "Alert" is used only for an above-threshold report (ALR BR-010); the chatbot never diagnoses and never sends the medical record (BOT §5.2); thresholds come only from THRESHOLD_RULE, never hard-coded.
+8. Build with Spec Kit from a snapshot of the spec: for example `uv run tools/start_feature.py ALR --name core` makes `specs/001-alr-core/spec.md` (module ID and slice name chosen by the team); never edit that copy by hand, and run `uv run tools/start_feature.py --check` before `/speckit-plan`, `/speckit-tasks` and `/speckit-implement`. After every agent run that creates or changes a file in `specs/`, the code or `tests/`, add an entry to `docs/build/build-log.md`.
 
 ## 4. How to run
 
@@ -31,6 +32,9 @@ uv run tools/check_env.py --repo              # T1: toolchain and repository (Pa
 uv run data/seed/generate_seed.py             # T2: seed command (see below), then: git status
 uv run data/seed/generate_seed.py --check     # same checks, writes nothing
 uv run tools/check_data_model.py              # data model §5 diagram check + seed load in filename order (gate G3)
+uv run tools/start_feature.py ALR --name core   # Session 8: snapshot specs/spec-ALR.md into specs/001-alr-core/ and make it the active feature
+uv run tools/start_feature.py --check     # the snapshot still matches its source spec
+uv run tools/start_feature.py --use specs/001-alr-core   # choose the active feature after a fresh clone
 ```
 
 There is no application to run yet (see §2).
@@ -74,6 +78,8 @@ Shared files have one owner. Others propose changes through a pull request that 
 | `data/data-model-MB360.md`, `data/schema/` | Tâm | Trung |
 | `data/seed/` | Hải Anh | Tâm |
 | `docs/env/readiness-report.md` | every member edits only their own row | Trung |
+| `docs/build/build-log.md` | the member who ran the agent writes the entry | the pull request reviewer |
+| `docs/build/` (other files), `tools/start_feature.py`, `.github/` | Trung + Sang | Tâm |
 | `docs/ai-use-log.md` | the member who checked the artefact | Trung |
 
 ## Seed command
