@@ -1,43 +1,33 @@
 # Mother & Baby 360° Constitution
 
-The principles below govern every Spec Kit step (specify, clarify, plan, tasks, implement) in this repository. `AGENTS.md` holds the day-to-day rules for agents; this constitution is what a plan or a pull request is checked against.
+Project: Mother & Baby 360°, team Group A, DBIZ3 VJCBI College - FTU.
+
+The five principles below are the DBIZ3 course convention (`docs/build/constitution-starter.md`), kept word for word except one adaptation to this repository's layout, marked *(layout)*: the Spec Documents live in `specs/spec-<MODULE-ID>.md`, not in `docs/spec/`. Technology choices are not part of the constitution; they belong in `plan.md`.
 
 ## Core Principles
 
-### I. Spec-first, chain-consistent
+### I. The spec is the source of truth
 
-Nothing is built that is not traced to the chain PRD (`docs/prd.md`) → FR in `specs/spec-{MODULE-ID}.md` → §5.1 fields → entity in `data/data-model-MB360.md` → schema → seed row → screen in `screens/`. Every task names the FR IDs it delivers. A change to an upstream document updates the downstream documents in the same pull request, in dependency order.
+Requirements come only from `specs/spec-<MODULE-ID>.md` *(layout)*. Data structures come only from `data/` (Session 5 data model, schema and seed). If code and spec disagree, the code is wrong until the spec is changed by a human in `specs/spec-<MODULE-ID>.md` *(layout)*. Never invent a requirement; mark it [NEEDS CLARIFICATION] and stop.
 
-### II. No guessing
+### II. Business rules are test-first (non-negotiable)
 
-An open point stays marked `[NEEDS CLARIFICATION: …]` with its owner, or `[PENDING CLIENT: D-xx]`, until a human decides it and the decision is written in `docs/decisions.md`. Neither a member nor an agent fills a gap with an invented value, threshold, text or rule.
+Every business rule (BR-xxx) and every acceptance scenario of the slice being built gets an automated test that is written and seen failing before the code that makes it pass.
 
-### III. Clinical safety over convenience
+### III. Thin vertical slices
 
-Thresholds come only from THRESHOLD_RULE; "Alert" is used only for an above-threshold report; a report with a symptom always reaches a nurse; the chatbot never diagnoses and never sends the medical record; case status only moves forward. Every business rule in §5.2 of the specs has a named place where it is enforced (`data/data-model-MB360.md` §8) and a test.
+Build one user story at a time, end to end (screen, logic, data), in priority order P1, P2, P3. A slice is done only when its tests pass and it runs from a clean clone with the commands in quickstart.md.
 
-### IV. Test-first from the acceptance scenarios (NON-NEGOTIABLE)
+### IV. Synthetic data and no secrets
 
-Each acceptance scenario in §3 of a spec becomes an automated test before the code that satisfies it. The seed data (`data/seed/`) is the shared test fixture: it is generated, never hand-edited, and `uv run data/seed/generate_seed.py` must leave `git status` clean.
+Only the seed data generated in `data/` is used. No real personal data, no API keys or passwords in any committed file; secrets live in `.env`.
 
-### V. Privacy and secrets
+### V. Humans approve every change
 
-Only invented data is committed (data model §11). No `.env` file, key, password or token enters the repository or its history. Patient data shown to staff is limited to what the spec's §5.1 contract lists.
-
-## Constraints
-
-- The MVP is a sub-app of the TCI app: identity comes from the host app (no sign-up, OTP or password in the sub-app, D-01); appointments are a redirect to the host app (APT-01); visit data is seed data, with no HIS/EMR integration (D-59).
-- The application stack is chosen at the Plan step and recorded in the plan with its reason; it must run on the members' Windows and macOS laptops.
-- Spec Kit stays on v1.0.1 for the whole team; generated files are not edited.
-
-## Development Workflow
-
-- One topic per branch, named `member-name/short-topic`, finished within one or two days; pull request reviewed by the file owner listed in `AGENTS.md` §7.
-- Before a commit, the member reads `git diff`. Before a merge: `uv run tools/check_env.py --repo`, `uv run tools/check_data_model.py` and the test suite pass.
-- Every artefact an AI tool drafted or changed gets a row in `docs/ai-use-log.md` naming the member who checked it and how.
+The agent works on a branch, shows the changed files with a reason for each, and never pushes or merges. A teammate reviews every pull request before merge.
 
 ## Governance
 
-This constitution overrides other practices in the repository. An amendment is a pull request that states the reason, is approved by at least two members including the owner of `AGENTS.md`, and bumps the version below (MAJOR: a principle removed or redefined; MINOR: a principle or section added; PATCH: wording). Plans and pull requests are checked against Principles I – V.
+Amend only by pull request reviewed by two members; bump the version (MAJOR when a principle is removed or redefined, MINOR when one is added, PATCH for wording). Technology choices are NOT part of the constitution; they belong in plan.md.
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-30 | **Last Amended**: 2026-09-30
+**Version**: 2.0.0 | **Ratified**: 2026-09-30 | **Last Amended**: 2026-10-07 (replaced by the five DBIZ3 Session 8 principles)
