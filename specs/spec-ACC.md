@@ -326,6 +326,17 @@ None.
 
 *Missing numbers are closed questions; numbers are not reused so that references stay valid.*
 
+## Clarifications
+
+### Q9: How the TCI app passes identity to the sub-app
+- For the Alpha build, the TCI identity is simulated with a query parameter / mock header: `?patient_id=<UUID>&tci_token=mock_123`.
+- The sub-app uses this identity to create its session (FR-015).
+
+### Q10: Due date and gestational week calculation
+- Naegele's rule: EDD = LMP + 280 days.
+- Gestational week = floor((today − LMP) / 7).
+- Valid range: 0 to 42 weeks.
+
 ## 11. Traceability to DBIZ2
 
 | Spec section | DBIZ2 source | Location |
