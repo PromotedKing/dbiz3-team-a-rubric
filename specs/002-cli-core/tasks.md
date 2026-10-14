@@ -49,11 +49,11 @@
 
 ### Implementation (make the tests above pass)
 
-- [ ] T014 [US1] `app/mb360/cli/actions.py` — Mark as viewed, Escalate, Send guidance, Close (R2), permission checks (BR-004), one transaction each — makes T006, T007 pass
-- [ ] T015 [P] [US1] `app/mb360/cli/queue.py` — case list, filters, Newest, labels, content, doctor badge (R4, R5) — makes T008 pass
-- [ ] T016 [P] [US1] `app/mb360/cli/case_detail.py` — S-064 data: profile, medical history, instructions, Report block or chatbot transcript (R6), metric history without Self-entered, visits
-- [ ] T017 [US1] `app/mb360/cli/routes.py` + include in `app/mb360/main.py` — routes of contracts/http-routes.md; 303 / 403 / 409 / 422 — makes T009 – T011, T013 pass
-- [ ] T018 [P] [US1] Templates `staff_select.html`, `cases.html` (S-061), `case.html` (S-064) — makes T012 pass
+- [X] T014 [US1] `app/mb360/cli/actions.py` — Mark as viewed, Escalate, Send guidance, Close (R2), permission checks (BR-004), one transaction each — makes T006, T007 pass
+- [X] T015 [P] [US1] `app/mb360/cli/queue.py` — case list, filters, Newest, labels, content, doctor badge (R4, R5) — makes T008 pass
+- [X] T016 [P] [US1] `app/mb360/cli/case_detail.py` — S-064 data: profile, medical history, instructions, Report block or chatbot transcript (R6), metric history without Self-entered, visits
+- [X] T017 [US1] `app/mb360/cli/routes.py` + include in `app/mb360/main.py` — routes of contracts/http-routes.md; 303 / 403 / 409 / 422 — makes T009 – T011, T013 pass
+- [X] T018 [P] [US1] Templates `staff_select.html`, `cases.html` (S-061), `case.html` (S-064) — makes T012 pass
 
 **Checkpoint**: `uv run pytest` — all pass (ALR tests included), 1 xfail (ALR Q9).
 

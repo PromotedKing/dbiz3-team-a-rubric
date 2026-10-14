@@ -128,6 +128,8 @@ def create_app(conn: sqlite3.Connection) -> FastAPI:
         return page(request, "report_status.html", user=mother(user_id), rep=rep, hmr=hmr, symptoms=syms, case=case,
                     submitted=submitted)
 
+    from .cli import routes as cli_routes
+    cli_routes.register(app, conn)
     return app
 
 
