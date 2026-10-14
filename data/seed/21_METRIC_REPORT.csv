@@ -8,5 +8,5 @@ report_id,report_code,user_id,metric,health_metric_record_id,other_symptom_text,
 981252d3-2e8b-5c0b-9fa0-09cc9a9c6570,BC-0927-003,d732d88d-8724-52dc-bcda-2cdaef98a917,Symptom,,,,2026-09-27 06:30,
 a6fe1a4c-b73d-5bde-b11c-19f61c38e093,BC-0927-021,059acf66-1a42-5609-a34a-d961725f4067,Symptom,,,,2026-09-27 09:05,
 c87d79a2-a0c7-5f44-8a1d-a0987f8181a8,BC-0926-009,4333c4cf-b0ff-50ec-9ff1-39da60d2e7b8,Blood glucose,988d9cf8-5a02-5d6f-9e0f-ff7aefa188c8,,,2026-09-26 06:47,e1f664b5-45b5-5239-b0c9-3c60fda56d68
-fa34072e-47de-566d-8ad5-9c214ea01c79,BC-0927-020,5d431414-f24b-5468-b2b8-7efbf6666eec,Blood pressure,d52b2e36-5b81-5046-9a9b-57f2e6999d44,Other: sample text sample text sample text sample text sample text sample text sample text sample te,,2026-09-27 07:02,
+fa34072e-47de-566d-8ad5-9c214ea01c79,BC-0927-020,5d431414-f24b-5468-b2b8-7efbf6666eec,Blood pressure,d52b2e36-5b81-5046-9a9b-57f2e6999d44,Other: sample text sample text sample text sample text sample text sample text sample text sample te,,2026-09-27 07:02,b2a6dd72-4fea-5c1d-9613-944e568c848c
 fdd5a56b-6f8e-5eab-b8c0-cc1abb4dae7f,BC-0926-012,3ca395ff-4294-5d35-82ea-3eafa76844c7,Blood glucose,1b41ed20-084f-57d7-96bb-be79608aa3ab,,Abdominal pain since noon,2026-09-26 13:05,1989db3a-52dd-5abb-8fdc-05103c70dc39

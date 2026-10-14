@@ -10,7 +10,7 @@ The rows follow the wireframes: Lan (U01) has 2 reports being handled — C9 (sy
 
 ## Load test (gate G3)
 
-The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-memory database (the version is not written, so the report is the same on every machine) and the 26 files were loaded in filename order with `PRAGMA foreign_keys = ON`: no constraint error, `PRAGMA foreign_key_check` empty, 271 rows.
+The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-memory database (the version is not written, so the report is the same on every machine) and the 26 files were loaded in filename order with `PRAGMA foreign_keys = ON`: no constraint error, `PRAGMA foreign_key_check` empty, 272 rows.
 
 | File | Table | Rows |
 |---|---|---|
@@ -33,7 +33,7 @@ The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-me
 | `17_CHAT_MESSAGE.csv` | CHAT_MESSAGE | 16 |
 | `18_DIARY_IMAGE.csv` | DIARY_IMAGE | 12 |
 | `19_HEALTH_METRIC_RECORD.csv` | HEALTH_METRIC_RECORD | 19 |
-| `20_WATCH_FLAG.csv` | WATCH_FLAG | 8 |
+| `20_WATCH_FLAG.csv` | WATCH_FLAG | 9 |
 | `21_METRIC_REPORT.csv` | METRIC_REPORT | 11 |
 | `22_CARE_CASE.csv` | CARE_CASE | 10 |
 | `23_REPORT_SYMPTOM.csv` | REPORT_SYMPTOM | 15 |
@@ -64,14 +64,14 @@ The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-me
 | CHAT_MESSAGE | 16 | 13 | 1 | 1 | 1 | — |
 | DIARY_IMAGE | 12 | 10 | 1 | 0 | 1 | empty: every column is required |
 | HEALTH_METRIC_RECORD | 19 | 15 | 2 | 1 | 1 | — |
-| WATCH_FLAG | 8 | 5 | 1 | 1 | 1 | — |
+| WATCH_FLAG | 9 | 6 | 1 | 1 | 1 | — |
 | METRIC_REPORT | 11 | 8 | 1 | 1 | 1 | — |
 | CARE_CASE | 10 | 7 | 1 | 1 | 1 | — |
 | REPORT_SYMPTOM | 15 | 13 | 1 | 0 | 1 | empty: both columns are part of the primary key; BR-017 needs at least 1 item per report |
 | CASE_STATUS_HISTORY | 22 | 19 | 1 | 1 | 1 | — |
 | NOTIFICATION | 9 | 6 | 1 | 1 | 1 | — |
 | STAFF_RESPONSE | 8 | 5 | 1 | 1 | 1 | — |
-| **Total** | 271 | | | | | |
+| **Total** | 272 | | | | | |
 
 ## Non-ordinary rows
 
@@ -129,7 +129,7 @@ The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-me
 | DIARY_IMAGE | exceptional | img-012 | PNG photo (JPG / PNG allowed) |
 | HEALTH_METRIC_RECORD | exceptional | hmr-H05 | fetal heart rate 172 outside 110–160: display only, no case (D-12) |
 | HEALTH_METRIC_RECORD | empty | hmr-H09 | glucose_context and visit_id empty |
-| HEALTH_METRIC_RECORD | boundary | hmr-H14 | exactly 140/90 → Above threshold (≥, D-14); no instruction → source Self-entered |
+| HEALTH_METRIC_RECORD | boundary | hmr-H14 | exactly 140/90 → Above threshold (≥, D-14); reported under instruction W09 → source Doctor-assigned |
 | HEALTH_METRIC_RECORD | boundary | hmr-H16 | exactly 6.7 two hours after a meal → Above threshold (D-15, Pending SME) |
 | WATCH_FLAG | boundary | flag-W06 | custom_text exactly 1000 characters (D-46) |
 | WATCH_FLAG | empty | flag-W07 | no visit, no note, no template, no custom text → S-028 uses the default template (BR-013) |
