@@ -12,7 +12,7 @@ did and what the humans decided.
 
 | Feature folder | Module | User stories in this slice | Owner | Branch | Status |
 |---|---|---|---|---|---|
-| `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Planning — plan written, awaiting review (seed fix in PR #5) |
+| `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Tasks — analyzed, ready for Step 5 (tests first) |
 
 ## 2. Run entries
 
@@ -57,6 +57,32 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | none new: the interpretations in research.md map to existing open questions (ALR Q9, Q14, Q16; ACC Q9, Q10) |
 | Commit | (not committed yet) |
 
+### Entry 3: 14/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-tasks` with the argument of `docs/build/agent-prompts.md` §3 (test task before each code task; seed test: 272 rows, RPT-006 opens C6; out-of-scope stories excluded) |
+| Feature and tasks | `specs/001-alr-core`, T001 – T028 |
+| What the agent produced | `tasks.md`: Setup T001 – T003; Foundational T004 – T008 (seed and clock tests first); US-1 tests T009 – T018, code T019 – T026; Polish T027 – T028 |
+| Human review | Accepted by Sang (14/10). Changed: T010 no longer checks "measured time not in the future" — the agent added a rule the spec does not state |
+| Tests | none yet |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
+### Entry 4: 14/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-analyze` (no argument, read-only) |
+| Feature and tasks | `specs/001-alr-core`, T001 – T028 |
+| What the agent produced | Analysis report (not a file): 0 CRITICAL, 0 HIGH, 4 MEDIUM, 2 LOW; coverage of the slice's FRs (FR-007, FR-010 – FR-015, FR-020, FR-021) and BRs (BR-002, BR-004 – BR-010, BR-013, BR-014, BR-017) = 100 % |
+| Human review | MEDIUM items accepted as recorded in plan.md Complexity Tracking (ALR Q9, Q16) or left for the US-2 slice (seed N09, FR-018) |
+| Tests | none yet |
+| Spec issues found | none new |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It
@@ -75,4 +101,4 @@ does not happen again.
 
 | Entry | What went wrong | How it was caught | Prevention |
 |---|---|---|---|
-| | | | |
+| 3 | The agent added a validation rule (measured time not in the future) that the spec does not state | Read of T010 against spec §5.1 | Every validation in a test task must cite the FR / BR / screen rule it comes from |
