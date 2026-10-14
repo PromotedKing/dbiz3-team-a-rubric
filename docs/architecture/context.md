@@ -12,7 +12,7 @@ flowchart LR
     SYS["Mother & Baby 360 (sub-app + clinician web)"]
     NUR["Nurse (web)"]
     DOC["Doctor (web)"]
-    LLM["LLM provider (OpenAI or Gemini — not chosen)"]
+    LLM["LLM provider: Google AI Studio (Gemini) — D-76"]
     AUTH["Authentication service (clinician web sign-in)"]
 
     MOM <-->|"<b>in:</b> consent, pregnancy information, profile, self-tracked metrics,<br/>flagged-metric and symptom reports, diary entries and photos,<br/>Messages to Baby (pending Client — D-03), chatbot questions, notification settings<br/><b>out:</b> visit results, Doctor's instructions, threshold labels, report status,<br/>staff guidance, chatbot answers, upcoming appointments (read only), notifications"| SYS

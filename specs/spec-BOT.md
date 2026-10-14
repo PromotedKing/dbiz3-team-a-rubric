@@ -4,9 +4,9 @@
 |---|---|
 | Module ID | `BOT` |
 | Module name | AI Chatbot L1 Support |
-| Spec version | v1.7.2 (30/09/2026: data-model review decisions applied — DM-11, DM-36, DM-40; review 29/09/2026: BOT-01 – BOT-05, X-01, X-03, X-07 / DM-25 data types) |
+| Spec version | v1.8.0 (14/10/2026: PRD alignment — D-76 Google AI Studio, pregnancy-only scope with polite decline FR-010, danger-phrase notice FR-011, BR-005) — v1.7.2 (30/09/2026: data-model review decisions applied — DM-11, DM-36, DM-40; review 29/09/2026: BOT-01 – BOT-05, X-01, X-03, X-07 / DM-25 data types) |
 | Author (team member) | Sang (drafted 16/09/2026) — diagrams checked node by node by Chi, 17/09/2026 (verifier ≠ converter) |
-| Date | 30/09/2026 |
+| Date | 14/10/2026 |
 | Status | Draft |
 | Approved by (Client role) | *pending* |
 | DBIZ2 source | Function List rows `F-140`–`F-144` (5 rows); Screens `S-031`–`S-034`, `S-037` |
@@ -26,6 +26,8 @@ This module lets a mother ask common maternity questions and get an immediate, f
 - Showing a "typing" indicator while a response is generated.
 - Recognizing when a question is tied to a personal health condition or a risk keyword (FR-006) and, in that case, not answering directly but offering to hand the question to a nurse (FR-007); a case is opened in the Nurse/Doctor queue only if the mother agrees ("Connect to nurse", FR-008 — shared mechanism with `ALR`/`CLI`; D-34); if she declines, the hotline number is shown (FR-009).
 - Showing the disclaimer "The chatbot provides general reference information only and does not replace your doctor's advice" (BR-004).
+- Keeping the chatbot to pregnancy, prenatal care, nutrition and postpartum wellness; any other question gets a polite decline and no case (FR-010, BR-005, D-76).
+- For a question matching a danger phrase (D-47), stopping general advice and showing the notice "Signs that need medical attention" above the nurse hand-off offer and the hotline (FR-011, D-76).
 
 **Out of scope**
 
@@ -60,6 +62,7 @@ This module lets a mother ask common maternity questions and get an immediate, f
 1. **Given** the chatbot screen is open, **When** the mother sends a general maternity question, **Then** the system displays a typing indicator and then an AI-generated answer.
 2. *(Removed — BOT-02: rating an answer is Could, not in the MVP. The "Was this answer helpful? Yes / No" buttons are not built.)*
 3. **Given** the chatbot screen is open or an answer is shown, **When** the mother looks at it, **Then** the disclaimer "reference information, does not replace your doctor's advice" is always visible (BR-004).
+4. **Given** the chatbot screen is open, **When** the mother asks a question outside pregnancy, prenatal care, nutrition and postpartum wellness (for example about a car or a tax form), **Then** the chatbot politely declines and invites a pregnancy question; no case and no hand-off offer (FR-010, BR-005). `[NEEDS CLARIFICATION: decline wording — §10 Q13]`
 
 ### US-2 (P1): Get routed to a human when it matters
 
@@ -70,6 +73,7 @@ This module lets a mother ask common maternity questions and get an immediate, f
 1. **Given** the mother asks a question about her own health or one containing a risk keyword, **When** the chatbot evaluates the message (FR-006), **Then** the chatbot does not answer directly but says "This needs a proper consultation. It will be sent to a nurse if you agree", with the buttons "Connect to nurse" / "No, thanks" and the line "If you have any emergency signs, call 1900 xxxx."; **no case is created** at this step (FR-007, BR-002, D-34).
 2. **Given** the nurse hand-off bubble is shown, **When** the mother taps "Connect to nurse", **Then** the system records the choice and creates a case in the S-061 queue (source "Chatbot", status "Not viewed" — FR-008, `spec-ALR.md` FR-021) and shows "Sent to a nurse"; the mother follows the case on S-029 "My reports" → S-026 (D-34).
 3. **Given** the nurse hand-off bubble is shown, **When** the mother taps "No, thanks", **Then** the system records the choice, no case is created and the hotline number 1900 xxxx is shown (FR-009, D-34).
+4. **Given** the mother's question matches a danger phrase (D-47, e.g. bleeding, severe abdominal pain, no fetal movement, waters breaking, blurred vision / dizziness), **When** the chatbot evaluates it, **Then** no general advice is given and the hand-off bubble starts with the notice "Signs that need medical attention", followed by "Connect to nurse" / "No, thanks" and the hotline line (FR-011, D-76). The notice never uses the word "Alert" (D-22).
 
 ### Edge cases
 
@@ -184,6 +188,8 @@ Materially more detailed than Figure 18's version of the same idea: this one sho
 | FR-007 | — (new) | For a "needs a nurse" question, the system MUST show the nurse hand-off offer: "This needs a proper consultation. It will be sent to a nurse if you agree", the buttons "Connect to nurse" / "No, thanks" and the line "If you have any emergency signs, call 1900 xxxx." No case is created at this step. | System | Must (BOT-03) |
 | FR-008 | — (new) | When the mother taps "Connect to nurse", the system MUST record `handoff_choice` = Connect to nurse, create a Case with `case_source` = Chatbot and status "Not viewed" through `spec-ALR.md` FR-021, and show "Sent to a nurse". | System | Must (BOT-03, X-01) |
 | FR-009 | — (new) | When the mother taps "No, thanks", the system MUST record `handoff_choice` = No thanks, create **no** case, and show the hotline number. | System | Must (BOT-03) |
+| FR-010 | — (new) | The system MUST reply to a question outside pregnancy, prenatal care, nutrition and postpartum wellness with a polite decline, without a hand-off offer and without a case. The decline is stored as an ordinary Chatbot message; `is_risk` stays false. | System | Must (D-76) |
+| FR-011 | — (new) | When a "needs a nurse" question matches a danger phrase (D-47), the system MUST stop general advice and show the notice "Signs that need medical attention" at the top of the FR-007 hand-off bubble. | System | Must (D-76) |
 
 ### 5.1 Input / Output contract
 
@@ -198,6 +204,8 @@ Materially more detailed than Figure 18's version of the same idea: this one sho
 | FR-007 | Chat Message ID (is_risk = true) | UUID | Yes | *(UI: hand-off bubble on S-034)* | — | Hotline number is a placeholder (§10 Q8) |
 | FR-008 | Chat Message ID; handoff_choice = Connect to nurse | UUID; ENUM | Yes | Case ID; "Sent to a nurse" | UUID; *(UI)* | Case created by `spec-ALR.md` FR-021 (`case_source` = Chatbot, `chat_message_id` set) |
 | FR-009 | Chat Message ID; handoff_choice = No thanks | UUID; ENUM | Yes | Hotline number shown | *(UI)* | No case (D-34) |
+| FR-010 | Chat Message (the mother's question) | UUID | Yes | Decline answer | TEXT (Chatbot message) | Scope of BR-005; wording §10 Q13; no new column |
+| FR-011 | Chat Message ID (is_risk = true, danger phrase matched) | UUID | Yes | *(UI: notice "Signs that need medical attention" + hand-off bubble on S-034)* | — | Danger phrases = D-47 list, Pending SME; the notice is not stored separately |
 
 ### 5.2 Business rules
 
@@ -205,8 +213,9 @@ Materially more detailed than Figure 18's version of the same idea: this one sho
 |---|---|---|
 | BR-001 | The chatbot's input context is limited to the mother's question text, the earlier questions / answers of the same conversation, and light profile context (gestational week); the mother's medical record — visits, metrics, reports, clinical profile — must never be sent to the chatbot service. | MVP v8 §5, "AI Chatbot L1 Support" row, verbatim: "Input: the mother's question text plus light profile context... the full medical record is not sent." The earlier questions / answers of the same conversation are a team extension for dialogue continuity (D-67). |
 | BR-002 | Questions about the mother's own health or containing a risk keyword are **not** answered directly by the chatbot. The chatbot says: "This needs a proper consultation. It will be sent to a nurse if you agree", with the buttons "Connect to nurse" / "No, thanks". **A case is created only when the mother taps "Connect to nurse"**: the case goes into the same Nurse/Doctor queue as reports (S-061), case source "Chatbot", initial status "Not viewed" (D-18); the mother follows the case on S-029 "My reports" → S-026. Tapping "No, thanks" → no case is created and the hotline number is shown. Implemented by FR-006 – FR-009. | MVP v8 §5 (the chatbot must not replace clinical screening); D-34 (mother's consent step). Wireframe S-034, S-061. |
-| BR-003 | The chatbot backend is a Python service calling the OpenAI or Gemini API; n8n is explicitly excluded as an implementation option. | MVP v8 §5 verbatim technical direction — a stated constraint, even though it borders on an implementation detail rather than a pure business rule. |
+| BR-003 | The chatbot backend is a Python service calling the **Google AI Studio API (Gemini models)**; n8n is explicitly excluded as an implementation option. The API key is a secret kept outside the repository. | PRD M5 (14/10/2026), narrowing MVP v8 §5 "OpenAI or Gemini" (D-76) — a stated constraint, even though it borders on an implementation detail rather than a pure business rule. |
 | BR-004 | The chatbot screen always shows a disclaimer: the chatbot provides general reference information only and **does not replace the doctor's advice** — on the welcome screen (S-031: "The chatbot provides general reference information only and does not replace your doctor's advice.") and below every general answer (S-034: "For reference only; does not replace your doctor's advice."). | Wireframe S-031, S-034; spec-BOT §1 out of scope (no personal diagnosis). |
+| BR-005 | The chatbot answers only questions about pregnancy, prenatal care, nutrition and postpartum wellness; other questions are politely declined (FR-010). A question matching a danger phrase halts general advice and gets the medical-attention notice with the hand-off offer (FR-011). Few-shot clinical answers are not part of the prompt until reviewed by the SME. | PRD M5 (14/10/2026); D-76. |
 
 ## 6. Key entities
 
@@ -250,12 +259,13 @@ Materially more detailed than Figure 18's version of the same idea: this one sho
 | # | Question | Blocking? | Owner | Status |
 |---|---|---|---|---|
 | 1 | [NEEDS CLARIFICATION: DBIZ2 has two different sequence diagrams for what MVP v8 describes as one escalation mechanism — Figure 18 (direct "Alert Nurse" push) and Figure 6 (a richer flow with a support-ticket, nurse-claim step, and a further Red-Flag/Non-Urgent split, plus a doctor video-call step). Are these the same underlying mechanism drawn at two levels of detail, or two different features? Not resolved by either source — see §4.2's Figure 18 and Figure 6 above.] The wireframe places the case in the S-061 queue (closer to Figure 6 "Create Support Ticket"), but this is not formally decided. | Yes | BA / Systems Analyst | Open |
-| 2 | [NEEDS CLARIFICATION: what constitutes a "risk keyword" is not enumerated anywhere in DBIZ2 or MVP v8.] The team has drafted a list (D-47: bleeding / haemorrhage; severe abdominal pain / hard contractions; blurred vision / dizziness / fainting; no fetal movement / baby not kicking; waters breaking / leaking amniotic fluid), Pending SME; used provisionally for the demo. | Yes | Nurse-Clinical SME | Open |
+| 2 | [NEEDS CLARIFICATION: what constitutes a "risk keyword" is not enumerated anywhere in DBIZ2 or MVP v8.] The team has drafted a list (D-47: bleeding / haemorrhage; severe abdominal pain / hard contractions; blurred vision / dizziness / fainting; no fetal movement / baby not kicking; waters breaking / leaking amniotic fluid), Pending SME; used provisionally for the demo. The PRD M5 danger-phrase examples ("chảy máu", "đau bụng quằn quại", "không thấy thai máy", "vỡ ối", "hoa mắt chóng mặt") fall in these groups (D-76). | Yes | Nurse-Clinical SME | Open |
 | 3 | S-037 (Response Rating) has no DBIZ2 mockup and no separate mockup. **Resolved (BOT-02):** Could, not built in the MVP. | No | UX/UI | Resolved |
 | 5 | [NEEDS CLARIFICATION: the DBIZ2 Usage Flow for Chat box (`docs/architecture/usage-flow.md` §MOM "Chat box") has only one decision ("Is question in Knowledge Base?") with no escalation branch to Nurse at all — a different, additional inconsistency from Q1 above (which is about the two Sequence Diagrams disagreeing with each other). Here the Usage Flow disagrees with *both* Sequence Diagrams (Figure 6 and Figure 18), which do draw an escalation branch, and with MVP v8's own requirement that risk-keyword questions route to Nurse. This spec was written following the Sequence Diagrams (the MVP-aligned version) rather than the Usage Flow. Does the Usage Flow reflect an outdated/incorrect design, or is there a legitimate case where no escalation applies?] | Yes | BA / Product-PM | Open |
 | 8 | [NEEDS CLARIFICATION: the emergency hotline number in "If you have any emergency signs, call 1900 xxxx." (S-034) is a placeholder — the real number is needed from the hospital.] | No | Client | Open |
 | 9 | Where is the "Yes / No" rating result stored? **Resolved (BOT-02):** not applicable — rating is not built in the MVP. | No | BA / Backend | Resolved |
 | 10 | [NEEDS CLARIFICATION: Error message text and timeout when the AI service does not respond] | No | UX/UI / Backend | Open |
+| 13 | [NEEDS CLARIFICATION: wording of the polite decline for an out-of-scope question (FR-010); is "postpartum wellness" also open to baby-care questions like the S-031 suggestions on breast milk and formula?] | No | Product-PM / UX/UI | Open |
 | 11 | [NEEDS CLARIFICATION: Same risk-keyword question asked repeatedly: one case or several?] | No | Team | Open |
 | 12 | [NEEDS CLARIFICATION: How is a question that is borderline between "general" and "personal health" classified? MVP v8 describes only "risk keywords" (see Q2 for the keyword list).] | No | BA / Nurse-Clinical SME | Open |
 | DM-06 | [NEEDS CLARIFICATION: is the audit log a shared entity for BOT, APT and CLI?] | No | BOT / CLI (data model) | Open — default: AI_RESPONSE_LOG only; CASE_STATUS_HISTORY records case actions |
@@ -286,7 +296,7 @@ Materially more detailed than Figure 18's version of the same idea: this one sho
 
 ## Completion checklist
 
-- [x] Every subfunction of this module in the DBIZ2 Function List appears as an FR row. (5/5; plus 4 new FRs FR-006 – FR-009, not in DBIZ2)
+- [x] Every subfunction of this module in the DBIZ2 Function List appears as an FR row. (5/5; plus 6 new FRs FR-006 – FR-011, not in DBIZ2)
 - [x] Every Input and Output field has a type and a required flag, or is marked `[NEEDS CLARIFICATION]`.
 - [x] Every Mermaid block renders without an error.
 - [ ] Every node and arrow in the Mermaid flow exists in the original DBIZ2 diagram. — checked by Chi The "Nurse" / "Doctor" lifelines in §4.2 were replaced by software components after the check of 17/09/2026 (message labels unchanged; added hops listed under Figure 6) — Chi to re-check.

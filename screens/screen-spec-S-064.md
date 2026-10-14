@@ -39,7 +39,7 @@ Quick profile of one mother together with the handling block for the open case: 
 | 11 | "Cancel" / "Save instruction" + the sentence "You can choose only a template, only custom text, or both. If there is nothing → S-028 uses the hospital's default template." | Button pair + Text | FR-025; D-24 | — | — |
 | 12 | "Report BC-0926-015" block + status label "Not viewed" | Card header + Label | Metric Report — report_code; Case — status. Chatbot case: code per `spec-ALR.md` Q16 | No | — |
 | 13 | "Blood pressure — 150/95 mmHg — Above threshold"; "Measured at 26/09/2026 · 20:15"; "Source — Doctor-assigned" | Text + Label | Health Metric Record — value, unit, measured_at, source; threshold_label (D-17). **Chatbot case:** replaced by "Question: [the mother's question]" + "Sent `dd/mm/yyyy · HH:mm`" + source "Chatbot" (Chat Message — text, sent_at; not drawn) | No | — |
-| 14 | "Symptoms: Headache, Dizziness, Other (Back ache worse in the afternoon) · Mother's note: [content]" | Text | Metric Report — symptoms[], other_symptom_text, note. Hidden for a chatbot case | No | — |
+| 14 | "Symptoms: Severe headache / dizziness / blurred vision, Other (Back ache worse in the afternoon) · Mother's note: [content]" (the image shows the D-23 example) | Text | Metric Report — symptoms[], other_symptom_text, note. Hidden for a chatbot case | No | — |
 | 15 | "Mark as viewed" button | Button | Case → "Viewed" (`spec-ALR.md` FR-004; `spec-CLI.md` FR-004) | No | **nurse only** — not shown to doctors (D-43 as revised); hidden once the case is past "Viewed" `[NEEDS CLARIFICATION]` |
 | 16 | "Escalate to doctor" button | Button | Case → "Escalated to doctor" + high-priority notification (`spec-CLI.md` FR-019; `spec-ALR.md` FR-009) | No | nurse only; not shown to doctors |
 | 17 | "Close case" button | Button | Case → "Resolved" (FR-016) | No | nurse: only cases **not** escalated — hidden / disabled when the case is "Escalated to doctor" (D-37); doctor: **only cases "Escalated to doctor"** — hidden / disabled on other cases (CLI-02) |
@@ -59,7 +59,7 @@ Note: the "Escalate to doctor: … Close case: …" box below the 3 buttons and 
 | Doctor role | header "Dr. [name]"; "Edit" + "Add / edit instruction" form present; no "Escalate to doctor", **no "Mark as viewed"**; on a case "Escalated to doctor": "Send guidance" and "Close case" available; on any other case: view only (handling buttons hidden / disabled) (CLI-02, D-43 as revised) | a doctor opens a case |
 | Case "Escalated to doctor", Nurse role | "Close case" hidden / disabled (D-37); the case shows a red flag (D-44) `[NEEDS CLARIFICATION: how the red flag is displayed is not drawn]` | the case has been escalated |
 | Case "Resolved" | handling buttons hidden / disabled `[NEEDS CLARIFICATION: not drawn]` | the case is closed |
-| Chatbot case (not drawn) | the Report block shows the mother's question + sent time + source "Chatbot" in place of the value / threshold / symptoms (#13, #14); status label, handling buttons and "Send guidance" are the same as for a report; the metric history (#19) shows the default metric | `case_source` = Chatbot (screen-spec fix #3) |
+| Chatbot case (not drawn) | the Report block shows the mother's question + sent time + source "Chatbot" in place of the value / threshold / symptoms (#13, #14), followed by the **conversation transcript** — every question and answer of the same conversation in time order, the escalated question highlighted, read-only (`spec-CLI.md` FR-003, BR-009, D-78); status label, handling buttons and "Send guidance" are the same as for a report; the metric history (#19) shows the default metric | `case_source` = Chatbot (screen-spec fix #3) |
 | Empty (no data) | each empty block uses the shared empty template (D-27) | the mother has no visits / metrics yet |
 | Loading | shared skeleton (D-27) | screen opens |
 | Error | shared error component + "Retry" (D-27) | loading / saving fails |
@@ -86,6 +86,7 @@ Note: the "Escalate to doctor: … Close case: …" box below the 3 buttons and 
 | SR-003 | Every value is shown with a source label. | D-10 |
 | SR-004 | If there is no above-threshold guidance, S-028 uses the hospital's default template. | D-24 |
 | SR-005 | No Call / Message / SpO2 / "via Bluetooth" / document links / "Risk Level" on this screen. | `spec-CLI.md` §1 Out of scope |
+| SR-006 | For a chatbot case the whole conversation of the escalated question is shown, so the mother does not have to repeat herself; other conversations of the mother are not shown. | `spec-CLI.md` BR-009; D-78 |
 
 ## 7. Linked requirements
 

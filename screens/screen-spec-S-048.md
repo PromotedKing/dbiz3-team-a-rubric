@@ -8,17 +8,19 @@
 | Priority | Must — the "Messages to Baby" area (#14 – #19) is part of the Must item in the latest MVP Scope, **pending Client approval (D-03)** |
 | Belongs to module | `spec-TML.md` |
 | Mockup image | `img/S-048.png` |
-| Status | Draft (revised 29/09/2026 — Messages to Baby per the latest MVP Scope) |
+| Status | Draft (revised 14/10/2026 — integrated journey layout, D-75; image to redraw) |
 
 ## 1. Purpose
 
-View each gestational week: the actual visit in that week (ultrasound image, measurements from the report, doctor's note — seed data in the MVP, D-59) and the week's diary entries. The mother's and father's "Messages to Baby" are part of the Must item "Pregnancy Timeline & Baby Memory Journal" in the latest MVP Scope, pending Client approval (D-03); if the Client does not approve, #14 – #19 are removed. There is no system-generated weekly reference content (Tips, "Size of") `[PENDING CLIENT: D-02]`.
+View each gestational week, top to bottom (D-75): the week's health indicators listed by day, then the actual visit in that week (ultrasound image, measurements from the report, doctor's note — seed data in the MVP, D-59) and the week's diary entries. The mother's and father's "Messages to Baby" are part of the Must item "Pregnancy Timeline & Baby Memory Journal" in the latest MVP Scope, pending Client approval (D-03); if the Client does not approve, #14 – #19 are removed. There is no system-generated weekly reference content (Tips, "Size of") `[PENDING CLIENT: D-02]`.
 
 **Shown when:** the mother taps the gestational week card / "Pregnancy timeline ›" on Home `S-008` (belongs to the Home tab — D-30). Opens on the current week by default `[NEEDS CLARIFICATION: the drawing shows Week 26 while the current week is Week 28 — see §9 Q3]`.
 
-**The user leaves this screen when:** she taps ←, ✕ (`S-083`), "+ Add diary entry" (popup `S-051`), or a tab.
+**The user leaves this screen when:** she taps ←, ✕ (`S-083`), "+ Add diary entry" (popup `S-051`), "My journey" (`S-105`), or a tab.
 
 ## 2. Mockup
+
+**Image to redraw (D-75, 14/10/2026):** the image below predates this change; where they differ, this spec is the reference. New order: #1 – #6, #6a – #6d (daily indicators), #7 – #13 (visit card), #20 – #22 (diary), #14 – #19 (Messages to Baby), #6e ("My journey"), #23.
 
 ![S-048](img/S-048.png)
 
@@ -32,6 +34,11 @@ View each gestational week: the actual visit in that week (ultrasound image, mea
 | 4 | "‹ Week 25" button | Button | previous week (`spec-TML.md` FR-002, D-04) | Yes | hidden / disabled on the first week `[NEEDS CLARIFICATION]` |
 | 5 | "Week 26" + date range "13/09/2026 – 19/09/2026" | Text | Pregnancy Week Content — Week Info, date range (calculated from the EDD — `spec-ACC.md` Profile) | No | — |
 | 6 | "Week 27 ›" button | Button | next week (FR-002) | Yes | maximum week limit `[NEEDS CLARIFICATION]` |
+| 6a | Section title "Indicators this week" (not drawn — D-75) | Header (section) | static | No | — |
+| 6b | Day heading, e.g. "15/09/2026 (Tue)" (not drawn) | Header (list group) | the day of `measured_at` (`spec-TML.md` FR-012) | No | days without a record are not listed |
+| 6c | Indicator row, e.g. "Blood pressure — 132/84 mmHg · From visit", "Weight — 56.5 kg · Self-entered" (not drawn) | List item | Health Metric Record — metric, value, unit, source (`spec-HLT.md` §6) | No | no threshold check added on this screen (`spec-TML.md` BR-008) |
+| 6d | Empty state "No indicators this week." (not drawn) | Empty state | when the week has no Health Metric Record (`spec-TML.md` Q17) | — | — |
+| 6e | "My journey ›" button (not drawn) | Button | opens `S-105` (`spec-TML.md` FR-013) | No | — |
 | 7 | Card "Visit 15/09/2026" + label "From visit" | Card header + Label | Visit — visit_date (`spec-HLT.md` §6, D-42); source label D-10 | No | — |
 | 8 | "Ultrasound image" | Image | Visit — ultrasound_image | No | hidden when the visit has no image `[NEEDS CLARIFICATION: spec-TML.md Q10]` |
 | 9 | "Fetal length — xx cm" | Text | Visit — fetal_length | No | — |
@@ -56,6 +63,7 @@ View each gestational week: the actual visit in that week (ultrasound image, mea
 |---|---|---|
 | Default (drawn) | a week with a visit, messages and diary entries (messages: pending Client approval, D-03) | screen opened / week changed |
 | Week with no visit | the visit card is replaced by "No visit this week."; no system-generated measurements (BR-003) | the week has no Visit |
+| Week with no indicators | "No indicators this week." (#6d) in place of the daily listing (D-75) | the week has no Health Metric Record |
 | Week with no messages / diary entries | `[NEEDS CLARIFICATION: not drawn — hide the card, or show it empty with the button]` | no Family Message / Diary Entry |
 | Empty (no data) | as the two rows above | — |
 | Loading | shared skeleton (D-27); adjacent weeks already prefetched (FR-004) | week changed |
@@ -70,6 +78,7 @@ View each gestational week: the actual visit in that week (ultrasound image, mea
 | 2 | "+ Message from Mom" / "+ Message from Dad" | tap | opens the message input `[NEEDS CLARIFICATION: input form not drawn]`; saves a Family Message | stays |
 | 3 | Diary entry | tap | no edit or delete (D-60); `[NEEDS CLARIFICATION: whether a detail view opens — not drawn]` | — |
 | 4 | "+ Add diary entry" | tap | opens the diary popup (linked to the current week — BR-005) | `S-051` |
+| 4a | "My journey ›" (#6e) | tap | opens the journey review by stage (`spec-TML.md` FR-013) | `S-105` |
 | 5 | ← | tap | — | `S-008` |
 | 6 | ✕ | tap | asks for confirmation to close the sub-app | `S-083` |
 | 7 | Tab | tap | — | `S-008` / `S-023` / TCI app / `S-031` / `S-103` |
@@ -83,15 +92,19 @@ View each gestational week: the actual visit in that week (ultrasound image, mea
 | SR-003 | Each message ≤ 200 characters; the author is Mother or Father; the father writes on the mother's device and has no account of his own. | D-03 `[PENDING CLIENT: D-03]`; `spec-TML.md` BR-004 |
 | SR-004 | A new diary entry is always linked to the current week, even while another week is being viewed. | `spec-TML.md` BR-005 |
 | SR-005 | The visit card always carries the source label "From visit". | D-10 |
+| SR-006 | Order on the screen: indicators by day and the visit card with the ultrasound image first; diary entries and Messages to Baby below. The view stays weekly (‹ / ›). | D-75 |
+| SR-007 | The daily indicator listing shows each value with its source label and never raises an alert. | `spec-TML.md` BR-008; D-11 |
 
 ## 7. Linked requirements
 
 | FR ID (from the module spec) | What this screen does for it |
 |---|---|
 | FR-002 (`spec-TML.md`) | Week navigation with arrows |
-| FR-003 | Loads the week's data (Visit + diary entries + messages) |
+| FR-003 | Loads the week's data (daily indicators + Visit + diary entries + messages) |
 | FR-004 | Prefetches adjacent weeks |
 | FR-005 | The week's visit card |
+| FR-012 (new, D-75) | Indicators of the week listed by day (#6a – #6d) |
+| FR-013 (new, D-75) | "My journey ›" opens `S-105` |
 | FR-006 | Personalization by the mother's gestational week |
 | FR-008 | "+ Add diary entry" opens `S-051` |
 | FR-011 (new, Must — pending Client approval) | "Messages to Baby" `[PENDING CLIENT: D-03]`; if the Client does not approve D-03: remove #14 – #19, FR-011 and the Family Message entity |

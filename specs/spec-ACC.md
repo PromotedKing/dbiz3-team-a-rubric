@@ -1,12 +1,12 @@
-# Spec Document: Onboarding & Pregnancy Profile
+# Spec Document: Onboarding & Session
 
 | Field | Value |
 |---|---|
 | Module ID | `ACC` |
-| Module name | Onboarding & Pregnancy Profile (sub-app within the TCI app) `[PENDING CLIENT: D-01]` |
-| Spec version | v1.7.1 (30/09/2026: data-model review decisions applied — DM-01, DM-02, DM-08, DM-11, DM-31, DM-32, DM-41, DM-42; review 29/09/2026: ACC-01 – ACC-04, X-05, X-07 / DM-25 data types) |
+| Module name | Onboarding & Session (sub-app within the TCI app; formerly "Onboarding & Pregnancy Profile", renamed by D-74) `[PENDING CLIENT: D-01]` |
+| Spec version | v1.8.0 (14/10/2026: PRD alignment — D-71 date of birth, sex and female-only entry; D-72 first visit date; D-74 onboarding guide S-104, FR-028) — v1.7.1 (30/09/2026: data-model review decisions applied — DM-01, DM-02, DM-08, DM-11, DM-31, DM-32, DM-41, DM-42; review 29/09/2026: ACC-01 – ACC-04, X-05, X-07 / DM-25 data types) |
 | Author (team member) | Chi (drafted 16/09/2026) — diagrams checked node by node by Trung, 17/09/2026 (verifier ≠ converter) |
-| Date | 30/09/2026 |
+| Date | 14/10/2026 |
 | Status | Draft |
 | Approved by (Client role) | *pending* |
 | DBIZ2 source | Function List rows `F-016`–`F-018`, `F-022`–`F-023`, `F-026`–`F-044` (24 rows); Screens `S-001`–`S-011`, `S-046`, `S-083`, `S-103` |
@@ -15,14 +15,16 @@
 
 ## 1. Purpose and scope (mandatory)
 
-`[PENDING CLIENT: D-01]` Mother & Baby 360 is a **sub-app that runs inside the TCI app** (the app of the Thu Cuc Healthcare System). This module does not manage its own accounts. It takes the mother's identity from the TCI account that is signed in, asks for permission to use the TCI account information the first time the sub-app is opened, collects the minimum pregnancy information, and provides the profile that the other modules (health dashboard, alerts, timeline, chatbot) attach their data to. Without a minimum pregnancy profile (due date), the other modules cannot personalise content by gestational week.
+`[PENDING CLIENT: D-01]` Mother & Baby 360 is a **sub-app that runs inside the TCI app** (the app of the Thu Cuc Healthcare System). This module does not manage its own accounts. It takes the mother's identity from the TCI account that is signed in, asks for permission to use the TCI account information the first time the sub-app is opened, introduces the app with a short onboarding guide, collects the minimum pregnancy information, and provides the profile that the other modules (health dashboard, alerts, timeline, chatbot) attach their data to. Without a minimum pregnancy profile (due date), the other modules cannot personalise content by gestational week.
 
 **In scope**
 
 - Entry to the sub-app from the "Mother & Baby 360" tile on the TCI app home screen (S-001 state 1), using the signed-in TCI account, with no password (D-01).
-- First opening: the mother agrees to the Terms & Privacy Policy and allows the sub-app to use her TCI account information — full name, phone number; medical record number at Thu Cuc; results of her prenatal visits (S-001 state 2; FR-011).
+- First opening: the mother agrees to the Terms & Privacy Policy and allows the sub-app to use her TCI account information — full name, date of birth, phone number; medical record number at Thu Cuc; results of her prenatal visits (S-001 state 2; FR-011). The date of birth and the sex are copied with the rest of the identity (D-71).
+- Entry is for expectant mothers: only a female TCI account opens the sub-app; any other account sees a notice and returns to the TCI app (BR-007, D-71).
+- A short onboarding guide (S-104) shown once after the first agreement, before pregnancy setup; it can be skipped (FR-028, D-74).
 - Creating the sub-app session from the TCI identity (FR-015, reinterpreted).
-- First-time pregnancy setup when the system has no due date: the mother enters the due date (EDD) or the first day of her last menstrual period (LMP) → the system calculates the gestational week; height and weight are optional (S-007 + S-046; FR-004/FR-005).
+- First-time pregnancy setup when the system has no due date: the mother enters the due date (EDD) or the first day of her last menstrual period (LMP) → the system calculates the gestational week; height, weight and the date of her first antenatal check-up are optional (S-007 + S-046; FR-004/FR-005; D-72).
 - Viewing and editing the mother's profile (S-103 "Profile" and its child screens: S-011 Edit profile, S-010 Notification settings, and the "Hospital record link" bottom sheet on S-103 — D-39).
 - Opening the personalised home screen (S-008) after agreeing / completing setup (FR-003, FR-016).
 - Hospital record link (`F-016`/`F-017`): **in the MVP the link is simulated with seed data; no real EMR call is made** (MVP v8 §5: Deep Two-Way HIS/EMR Integration = Won't; "The MVP demo uses simulated hospital visit data"). The seed decides whether a mother is "Linked" or "Pending link"; the status is shown on S-103.
@@ -58,10 +60,12 @@
 
 **Acceptance scenarios**
 
-1. **Given** the mother is on the TCI app home screen (S-001 state 1), **When** she taps the "Mother & Baby 360" tile for the first time, **Then** the sub-app opens the "Connect to your TCI account" screen (S-001 state 2), which lists the information that will be used: full name, phone number; medical record number at Thu Cuc; results of prenatal visits — without asking for a password.
+1. **Given** the mother is on the TCI app home screen (S-001 state 1), **When** she taps the "Mother & Baby 360" tile for the first time, **Then** the sub-app opens the "Connect to your TCI account" screen (S-001 state 2), which lists the information that will be used: full name, date of birth, phone number; medical record number at Thu Cuc; results of prenatal visits — without asking for a password.
 2. **Given** S-001 state 2, **When** the mother has not ticked "I agree to the Terms and the Privacy Policy", **Then** the system does not record consent and does not let her continue. `[NEEDS CLARIFICATION: the wireframe does not show the state of the "Agree & continue" button when the box is unticked (disabled or error message)]`
-3. **Given** the mother has ticked the consent box, **When** she taps "Agree & continue", **Then** the system records the consent (FR-011), creates the sub-app session from the TCI identity (FR-015), and goes to S-007/S-046 if there is no due date yet, or to S-008 if there is one.
+3. **Given** the mother has ticked the consent box, **When** she taps "Agree & continue", **Then** the system records the consent (FR-011), creates the sub-app session from the TCI identity (FR-015), shows the onboarding guide S-104 (FR-028), and then goes to S-007/S-046 if there is no due date yet, or to S-008 if there is one.
 4. **Given** S-001 state 2, **When** the mother taps "Later", **Then** the sub-app closes and she returns to the TCI app; no consent is recorded.
+5. **Given** the signed-in TCI account's sex is not female, **When** the tile is tapped, **Then** the sub-app shows the notice that Mother & Baby 360 is for expectant mothers, with "Back to TCI app"; no consent, User Account or session is created (BR-007, D-71). `[NEEDS CLARIFICATION: notice wording, and whether the TCI app hides the tile instead — §10 Q21]`
+6. **Given** the onboarding guide S-104 is shown, **When** the mother finishes it or taps "Skip", **Then** the system continues to S-007/S-046 (or S-008 when a due date exists) and does not show the guide again (FR-028, D-74).
 
 ### US-2 (P1): Set up the pregnancy and reach the personalised home screen
 
@@ -72,8 +76,9 @@
 1. **Given** the system has no due date, **When** the mother selects "I know my due date" and enters a valid date, **Then** the system shows the "Calculated by the system" card (Week · day; Today dd/mm/yyyy · Due dd/mm/yyyy).
 2. **Given** the mother selects "I know the first day of my last period", **When** she enters the date, **Then** the system calculates the due date and shows the "Calculated by the system" card. `[NEEDS CLARIFICATION: the rule for calculating the EDD / gestational week from the LMP is not in any source — see §10 Q10]`
 3. **Given** the due date is in the past or the calculated gestational week is outside 0–42 weeks (per the S-007 wireframe annotation), **When** the mother taps "Confirm", **Then** the system shows a field error (shared error component) and does not save.
-4. **Given** the information is valid (height and weight may be left empty), **When** the mother taps "Confirm", **Then** the system saves the profile (FR-004/FR-005) and opens S-008.
+4. **Given** the information is valid (height, weight and the first visit date may be left empty), **When** the mother taps "Confirm", **Then** the system saves the profile (FR-004/FR-005) and opens S-008.
 5. **Given** the mother has already agreed and a due date exists, **When** she opens the sub-app again from the TCI app, **Then** the system opens S-008 directly.
+6. **Given** the mother enters the date of her first antenatal check-up, **When** that date is in the future or before the start of the pregnancy (EDD − 280 days), **Then** the system shows a field error and does not save (FR-004, D-72).
 
 ### US-3 (P2): View and edit my profile
 
@@ -111,12 +116,15 @@ Not applicable: the password belongs to the TCI account, and password changes ar
 ```mermaid
 flowchart TD
     S(["Start: TCI app home screen"]) --> T["Tap the 'Mother & Baby 360' tile (S-001 state 1)"]
-    T --> FO{"First opening / not yet agreed?"}
+    T --> F{"Female TCI account? (BR-007)"}
+    F -- No --> N(["Notice + Back to TCI app"])
+    F -- Yes --> FO{"First opening / not yet agreed?"}
     FO -- Yes --> C["Connect to TCI account + agree to terms (S-001 state 2)"]
     C -- "Later" --> X(["Close sub-app, return to TCI app"])
-    C -- "Agree & continue" --> EDD{"Due date already known?"}
+    C -- "Agree & continue" --> G["Onboarding guide (S-104), can be skipped"]
+    G --> EDD{"Due date already known?"}
     FO -- No --> H["Home (S-008)"]
-    EDD -- No --> P["Pregnancy setup (S-007 + S-046): due date or first day of last period; height, weight optional"] --> H
+    EDD -- No --> P["Pregnancy setup (S-007 + S-046): due date or first day of last period; height, weight, first visit date optional"] --> H
     EDD -- Yes --> H
     H --> E(["End"])
 ```
@@ -138,12 +146,13 @@ sequenceDiagram
         App-->>Mom: Connect to TCI account + terms (S-001 state 2)
         Mom->>App: Tick consent, tap "Agree & continue"
         App->>SYS: Record consent (FR-011)
+        App-->>Mom: Onboarding guide (S-104, FR-028)
     end
     App->>SYS: Create sub-app session from TCI identity (FR-015)
     SYS-->>App: Profile (FR-017) - with / without due date
     alt No due date yet
         App-->>Mom: Pregnancy setup (S-007 + S-046)
-        Mom->>App: Enter EDD or LMP (+ optional height, weight)
+        Mom->>App: Enter EDD or LMP (+ optional height, weight, first visit date)
         App->>SYS: Validate data (FR-004)
         SYS->>SYS: Save profile (FR-005)
     end
@@ -161,18 +170,18 @@ sequenceDiagram
 | FR-001 | F-016 | The system MUST validate patient or clinical staff identifiers against the external EMR system to ensure data consistency. **MVP: simulated with seed data — no real EMR call** (Won't: Deep Two-Way HIS/EMR Integration). The link status set by the seed is shown on S-103 ("Linked" / "Pending link"). | System | Must |
 | FR-002 | F-017 | The system MUST create a request to link a user account with verified clinical or patient records. **MVP: the link request and its status (Pending → "Pending link"; Linked → "Linked") come from seed data; no link-error state.** | System | Must |
 | FR-003 | F-018 | The system MUST redirect the user to the system home screen after completing the current process. (After agreeing on S-001 or confirming on S-007/S-046 → S-008.) | System | Must |
-| FR-004 | F-022 | The system MUST validate clinical or profile information entered by the user before submission. Applies to pregnancy setup (S-007 + S-046): due date **or** first day of last menstrual period (one of the two is required) → the system calculates the gestational week; height and weight are optional. | System | Must |
-| FR-005 | F-023 | The system MUST update validated clinical information in the system database. (Saves EDD / LMP / height from S-007 + S-046 to the Profile; the weight is saved as the first Health Metric Record, source "Self-entered"; the gestational week is calculated from the EDD and not stored — D-42, DM-42.) | System | Must |
+| FR-004 | F-022 | The system MUST validate clinical or profile information entered by the user before submission. Applies to pregnancy setup (S-007 + S-046): due date **or** first day of last menstrual period (one of the two is required) → the system calculates the gestational week; height, weight and the first visit date are optional; the first visit date is not in the future and not before EDD − 280 days (D-72). | System | Must |
+| FR-005 | F-023 | The system MUST update validated clinical information in the system database. (Saves EDD / LMP / height / first visit date from S-007 + S-046 to the Profile; the weight is saved as the first Health Metric Record, source "Self-entered"; the gestational week is calculated from the EDD and not stored — D-42, DM-42.) | System | Must |
 | FR-006 | F-026 | The system MUST initiate the password change process for a user account. | User | **Won't (D-01)** — the password is managed by the TCI app |
 | FR-007 | F-027 | The system MUST require the user to re-enter their current password to verify identity before changes. | System | **Won't (D-01)** |
 | FR-008 | F-028 | The system MUST validate a verification code used during registration or password recovery. | System | **Won't (D-01)** — no OTP |
 | FR-009 | F-029 | The system MUST display the user registration interface for entering required account information. | Guest | **Won't (D-01)** — no registration |
 | FR-010 | F-030 | The system MUST validate user-provided registration data before account creation. | System | **Won't (D-01)** |
-| FR-011 | F-031 | The system MUST record the user's acceptance of privacy policy and terms of service for legal compliance and auditing purposes. Recorded on S-001 state 2, together with the mother's permission to use her TCI account information. The same step creates the User Account (copy of the TCI identity) and the Notification Preference row with default values (DM-08, DM-41). | System | Must |
+| FR-011 | F-031 | The system MUST record the user's acceptance of privacy policy and terms of service for legal compliance and auditing purposes. Recorded on S-001 state 2, together with the mother's permission to use her TCI account information. The same step creates the User Account (copy of the TCI identity, including date of birth and sex — D-71) and the Notification Preference row with default values (DM-08, DM-41). Not reached for a non-female TCI account (BR-007). | System | Must |
 | FR-012 | F-032 | The system MUST create a new user account using validated registration information and initialize default settings. | System | **Won't (D-01)** — the account is the TCI account |
 | FR-013 | F-033 | The system MUST activate the newly created user account after successful verification. | System | **Won't (D-01)** |
 | FR-014 | F-034 | The system MUST validate user-provided login credentials against stored authentication data. | System | **Won't (D-01)** — sign-in is handled by the TCI app |
-| FR-015 | F-035 | The system MUST create a secure user session after successful authentication. **Reinterpreted (D-01):** the sub-app session is created from the identity (identity token) of the signed-in TCI account, without a password. **Applies to the Mother only** — the sub-app is for mothers; the Nurse / Doctor web session belongs to `spec-CLI.md` (§10 Q11). | System | Must `[PENDING CLIENT: D-01]` |
+| FR-015 | F-035 | The system MUST create a secure user session after successful authentication. **Reinterpreted (D-01):** the sub-app session is created from the identity (identity token) of the signed-in TCI account, without a password. **Applies to the Mother only** — the sub-app is for mothers; no session is created for a non-female TCI account (BR-007, D-71); the Nurse / Doctor web session belongs to `spec-CLI.md` (§10 Q11). | System | Must `[PENDING CLIENT: D-01]` |
 | FR-016 | F-036 | The system MUST load a personalized dashboard based on the user's role and permissions. **In the sub-app the role is always Mother** (S-008); the clinical web dashboard (S-061) belongs to `spec-CLI.md` FR-001. | System | Must |
 | FR-017 | F-037 | The system MUST retrieve user profile information from the system database. | System | Must |
 | FR-018 | F-038 | The system MUST retrieve additional or updated profile data required for display or processing. | System | Must |
@@ -184,7 +193,10 @@ sequenceDiagram
 | FR-024 | F-044 | The system MUST display editable profile information based on user role or access level. | User | Must |
 | FR-025 | — (new) | The system MUST load the mother's notification list (S-009), filter it by type (All / Report / Visit result / Appointment / Instruction reminder) and show the unread count. | Mom / System | Must (D-48, D-56) |
 | FR-026 | — (new) | The system MUST mark a notification as read when opened, and mark all as read on "Mark all as read". | Mom / System | Must (D-48, D-56) |
-| FR-027 | — (new) | The system MUST save the mother's notification settings (S-010) immediately when a toggle changes, and revert the toggle on error. | Mom / System | Must (D-48, D-56) |
+| FR-027 | — (new) | The system MUST save the mother's notification settings (S-010) immediately when a toggle changes, and revert the toggle on error. | Mom / System | Must (D-48, D-56); the "Appointment reminders" switch is Could (D-77) |
+| FR-028 | — (new) | The system MUST show the onboarding guide (S-104) once, after the mother's first agreement on S-001 and before pregnancy setup, let her move through it or skip it, and not show it again afterwards. | Mom / App | Must (D-74) |
+
+*FR-028: no DBIZ2 FR describes an onboarding guide; it comes from the PRD (§2, M1 — D-74). Whether the guide was seen is kept on the device only (no column) `[NEEDS CLARIFICATION: §10 Q20]`.*
 
 *FR-025 – FR-027: no DBIZ2 FR describes the notification list. Notifications are created by `spec-ALR.md` FR-018 (reports), `spec-ALR.md` FR-019 (new visit results, BR-003), `spec-ALR.md` FR-022 (Doctor's-instruction reminders) and `spec-APT.md` FR-009 (appointment reminders). All notifications to the mother are delivered via the TCI app (S-010 "Notifications are sent via the TCI app."; X-05).*
 
@@ -195,18 +207,18 @@ sequenceDiagram
 | FR-001 | Patient ID | UUID | Yes | Valid/Invalid | BOOLEAN | **MVP: simulated with seed data** — no EMR call, so the shape of real "EMR Data" is not needed in the MVP. The medical record number (e.g. `TC-00123` on S-103) comes from the TCI account. |
 | FR-002 | User ID; EMR Record ID (medical record number) | UUID; VARCHAR(20) | Yes | Linkage Request |OBJECT (EMR Linkage Request, status = Pending / Linked)| **MVP: the request and its status are seed data.** Shown on S-103 (menu row and "Hospital record link" bottom sheet, D-39): Pending → "Pending link"; Linked → "Linked". No link-error state in the MVP. |
 | FR-003 | Process Completion Signal | EVENT (no payload) | Yes | *(UI navigation target: S-008)* | — | Redirect to home screen |
-| FR-004 | Date type (EDD / LMP); Due date **or** First day of last menstrual period; Height; Weight | ENUM; DATE (`dd/mm/yyyy`); DECIMAL(4,1) (cm); DECIMAL(4,1) (kg) | Date type + one date: Yes / Height, Weight: No | Validation Result; Calculated gestational week (week · day); EDD (if LMP entered) | BOOLEAN (+ optional error message); OBJECT; DATE | Error when the due date is in the past or the gestational week is outside 0–42 weeks (per the S-007 wireframe annotation). Calculation rule from LMP `[NEEDS CLARIFICATION: LMP → EDD rule — §10 Q10, owner Medical SME]` (§10 Q10 — team proposal: Naegele's rule, EDD = LMP + 280 days; pending SME). Valid range for height / weight `[NEEDS CLARIFICATION]` (D-16, §10 Q11). |
-| FR-005 | Validated Data |OBJECT (EDD, LMP, gestational week, height, weight — validated)| Yes | DB Updated | CONFIRMATION (no payload) | Profile: EDD / LMP / height; weight → Health Metric Record (Self-entered); gestational week not stored (D-42, DM-42) |
+| FR-004 | Date type (EDD / LMP); Due date **or** First day of last menstrual period; Height; Weight; First visit date | ENUM; DATE (`dd/mm/yyyy`); DECIMAL(4,1) (cm); DECIMAL(4,1) (kg); DATE (`dd/mm/yyyy`) | Date type + one date: Yes / Height, Weight, First visit date: No | Validation Result; Calculated gestational week (week · day); EDD (if LMP entered) | BOOLEAN (+ optional error message); OBJECT; DATE | Error when the due date is in the past or the gestational week is outside 0–42 weeks (per the S-007 wireframe annotation). Calculation rule from LMP `[NEEDS CLARIFICATION: LMP → EDD rule — §10 Q10, owner Medical SME]` (§10 Q10 — team proposal: Naegele's rule, EDD = LMP + 280 days; pending SME). Valid range for height / weight `[NEEDS CLARIFICATION]` (D-16, §10 Q11). First visit date: not after today, not before EDD − 280 days (D-72). |
+| FR-005 | Validated Data |OBJECT (EDD, LMP, gestational week, height, weight, first visit date — validated)| Yes | DB Updated | CONFIRMATION (no payload) | Profile: EDD / LMP / height / first visit date; weight → Health Metric Record (Self-entered); gestational week not stored (D-42, DM-42) |
 | FR-006 | Click "Change Password" | EVENT (no payload) | Yes | *(UI navigation target)* | — | **Won't (D-01)** |
 | FR-007 | Current Password | VARCHAR(255, hashed) | Yes | Verified/Failed |BOOLEAN| **Won't (D-01)** |
 | FR-008 | Input Code | VARCHAR(10) | Yes | Valid/Invalid | BOOLEAN + optional error message | **Won't (D-01)** |
 | FR-009 | Click "Sign Up" | EVENT (no payload) | Yes | *(UI navigation target)* | — | **Won't (D-01)** |
 | FR-010 | Name; Phone; Password |VARCHAR(255); VARCHAR(20); VARCHAR(255, hashed)| Yes | Error Msg / Valid Data |BOOLEAN (+ optional error message or validated data)| **Won't (D-01)** |
-| FR-011 | Checkbox=True; Timestamp; TCI data permission (full name + phone number, medical record number, prenatal visit results) | BOOLEAN; DATETIME; BOOLEAN | Yes | Consent Record in DB; User Account created; Notification Preference created (defaults) |CONFIRMATION (write acknowledgement, no payload)| Log consent on S-001 state 2; create the User Account and the Notification Preference row (DM-08, DM-41). The permission to use TCI information is recorded in the same consent record `[PENDING CLIENT: D-01]`; whether each type of information is recorded separately `[NEEDS CLARIFICATION: §10 Q18, owner Team / Client]` — the wireframe shows 3 lines with ✓ marks but a single agree button. |
+| FR-011 | Checkbox=True; Timestamp; TCI data permission (full name + date of birth + phone number, medical record number, prenatal visit results); TCI date of birth; TCI sex | BOOLEAN; DATETIME; BOOLEAN; DATE; ENUM (Female) | Yes | Consent Record in DB; User Account created (with date of birth and sex — D-71); Notification Preference created (defaults) |CONFIRMATION (write acknowledgement, no payload)| Log consent on S-001 state 2; create the User Account and the Notification Preference row (DM-08, DM-41). The permission to use TCI information is recorded in the same consent record `[PENDING CLIENT: D-01]`; whether each type of information is recorded separately `[NEEDS CLARIFICATION: §10 Q18, owner Team / Client]` — the wireframe shows 3 lines with ✓ marks but a single agree button. |
 | FR-012 | Registration Data |OBJECT (name/phone/password fields)| Yes | New User ID | UUID | **Won't (D-01)** |
 | FR-013 | Verify Success Signal | EVENT (no payload) | Yes | Account Status='Active' | ENUM | **Won't (D-01)** |
 | FR-014 | Username; Password |VARCHAR(255); VARCHAR(255, hashed)| Yes | Auth Token / Error |VARCHAR (session token) or error message (STRING)| **Won't (D-01)** |
-| FR-015 | TCI identity token; User ID; Role | `[NEEDS CLARIFICATION: TCI token format]`; UUID; ENUM (Mother — the sub-app has no Nurse / Doctor session) | Yes | Session Cookie/Token (sub-app session) |VARCHAR(255) (session token string)| Create the sub-app session from the TCI identity (D-01). Nurse / Doctor sign in on the clinical web (`spec-CLI.md` §10 Q11) |
+| FR-015 | TCI identity token; User ID; Role; TCI sex | `[NEEDS CLARIFICATION: TCI token format]`; UUID; ENUM (Mother — the sub-app has no Nurse / Doctor session); ENUM | Yes | Session Cookie/Token (sub-app session) |VARCHAR(255) (session token string)| Create the sub-app session from the TCI identity (D-01); refused for a non-female account (BR-007). Nurse / Doctor sign in on the clinical web (`spec-CLI.md` §10 Q11) |
 | FR-016 | User Role |ENUM (Mother)| Yes | Specific Dashboard Data |OBJECT (Mother dashboard payload)| Load personalized dashboard (S-008). Clinical web dashboard: `spec-CLI.md` FR-001 |
 | FR-017 | User ID | UUID | Yes | User Profile Object |OBJECT (profile fields: name, phone, role, EDD, etc.)| Retrieve basic profile data; used to decide between S-007/S-046 and S-008 (whether an EDD exists) |
 | FR-018 | User ID; Extra Params |UUID; OBJECT (additional query parameters)| User ID Yes / Extra Params No | Extended Profile Data |OBJECT (extended profile fields)| Retrieve extended profile data |
@@ -218,6 +230,7 @@ sequenceDiagram
 | FR-024 | Role Check |BOOLEAN| Yes | *(UI navigation target)* | — | Display profile view (editable) — opened from "Edit profile" / "Pregnancy information" on S-103; the edit screen is S-011 (D-39) |
 | FR-025 | User ID; Type Filter | UUID; ENUM (All / Report / Visit result / Appointment / Instruction reminder) | Yes; No | Notification List; Unread Count | LIST of Notification; INTEGER | Whether the count follows the filter or covers all notifications `[NEEDS CLARIFICATION: S-009]` |
 | FR-026 | Notification ID or "all" | UUID / EVENT | Yes | Read status updated | CONFIRMATION | — |
+| FR-028 | First agreement done (FR-011); "Next" / "Skip" | EVENT; EVENT | Yes | *(UI navigation target: S-007/S-046 or S-008)* | — | Shown once (D-74); pages and text `[NEEDS CLARIFICATION: §10 Q20]` |
 | FR-027 | Preference key; Enabled | ENUM (Report responses / New visit results / Appointment reminders / Doctor's-instruction reminders); BOOLEAN | Yes | Preference saved | CONFIRMATION | "Report responses" locked always on — team proposal `[NEEDS CLARIFICATION]` |
 
 ### 5.2 Business rules
@@ -229,14 +242,15 @@ sequenceDiagram
 | BR-004 | The mother cannot use the sub-app until she has agreed to the terms and allowed the use of her TCI account information; choosing "Later" closes the sub-app and no consent is saved. `[PENDING CLIENT: D-01]` | Wireframe annotation on S-001 state 2; FR-011. |
 | BR-005 | Closing the sub-app (S-083) does not sign out of the TCI account and does not affect reports already submitted. `[PENDING CLIENT: D-01]` | Wireframe annotation on S-083; D-01. |
 | BR-006 | The pregnancy setup screen (S-007 + S-046) is shown only when the system has no due date; later openings go straight to S-008. | Wireframe annotations on S-001, S-007. |
+| BR-007 | Only a TCI account whose sex is female opens the sub-app; for any other account the sub-app shows a notice and returns to the TCI app, and no consent, User Account or session is created. Every stored User Account has `sex` = Female. The pregnancy itself is established by the pregnancy setup (a due date inside weeks 0 – 42, BR-006). | PRD §2 / §3: the product serves expectant mothers; D-71. |
 
 ## 6. Key entities
 
 | Entity | Attributes (from Input/Output fields) | Relationships |
 |---|---|---|
-| User Account | user_id (UUID; Required), tci_account_ref — TCI account reference, identity taken from the TCI app, D-01 (VARCHAR(64); Required — type decided in the data-model review, S4; how the TCI app passes the identity stays open, §10 Q9), full_name (VARCHAR(100); Required), phone (VARCHAR(20); Required), record_code — medical record number, e.g. `TC-00123`, a string, not a UUID (VARCHAR(20); Optional) — full name, phone number and medical record number are **copies taken from the TCI account**, which the mother edits in the TCI app (S-011); `role` (ENUM: Mother; Required — the sub-app holds mothers only; Nurse / Doctor are Staff, `spec-CLI.md` §6 — D-49, DM-02). *DBIZ2's Username/Password and Account Status (Active/Inactive) are not managed in the sub-app (D-01).* | has one Profile (Mother); has many Session; has many Consent Record; clinical staff: see Staff (`spec-CLI.md` §6) |
+| User Account | user_id (UUID; Required), tci_account_ref — TCI account reference, identity taken from the TCI app, D-01 (VARCHAR(64); Required — type decided in the data-model review, S4; how the TCI app passes the identity stays open, §10 Q9), full_name (VARCHAR(100); Required), phone (VARCHAR(20); Required), date_of_birth — the age is calculated from it, not stored, D-71 (DATE; Required), sex (ENUM: Female; Required — BR-007, D-71), record_code — medical record number, e.g. `TC-00123`, a string, not a UUID (VARCHAR(20); Optional) — full name, date of birth, sex, phone number and medical record number are **copies taken from the TCI account**, which the mother edits in the TCI app (S-011); `role` (ENUM: Mother; Required — the sub-app holds mothers only; Nurse / Doctor are Staff, `spec-CLI.md` §6 — D-49, DM-02). *DBIZ2's Username/Password and Account Status (Active/Inactive) are not managed in the sub-app (D-01).* | has one Profile (Mother); has many Session; has many Consent Record; clinical staff: see Staff (`spec-CLI.md` §6) |
 | Session | session_token — Session Cookie/Token, sub-app session created from the TCI identity, FR-015 (VARCHAR(255); Required), user_id (UUID; Required), role (ENUM: Mother; Required), created_at (DATETIME; Required), expires_at (DATETIME; Required) `[NEEDS CLARIFICATION: lifetime — §10 Q9]` | belongs to User Account |
-| Profile (pregnancy profile) | user_id (UUID; Required), edd — **Due date** (DATE; Required), lmp — **First day of last menstrual period** (DATE; Optional), edd_source — Due-date source (ENUM: Self-entered / Hospital record — BR-003; Required), height_cm — **Height** (DECIMAL(4,1); Optional — D-13). Week Info is calculated from the EDD and **not stored**. *Full name: in User Account (D-42). Weight entered on S-007 is saved as a Health Metric Record with source "Self-entered" (`spec-HLT.md` §6, D-42). No BMI (D-13).* | belongs to User Account |
+| Profile (pregnancy profile) | user_id (UUID; Required), edd — **Due date** (DATE; Required), lmp — **First day of last menstrual period** (DATE; Optional), edd_source — Due-date source (ENUM: Self-entered / Hospital record — BR-003; Required), height_cm — **Height** (DECIMAL(4,1); Optional — D-13), first_visit_date — **date of the first antenatal check-up**, not after the setup date and not before EDD − 280 days (DATE; Optional — D-72). Week Info is calculated from the EDD and **not stored**. *Full name: in User Account (D-42). Weight entered on S-007 is saved as a Health Metric Record with source "Self-entered" (`spec-HLT.md` §6, D-42). No BMI (D-13).* | belongs to User Account |
 | Consent Record | user_id (UUID; Required), accepted (BOOLEAN; Required), accepted_at (DATETIME; Required), terms_version (VARCHAR(20); Optional) `[NEEDS CLARIFICATION: provisional type — are terms versions managed? §10 Q17]`, tci_data_permission — permission to use TCI information: full name + phone number, medical record number, prenatal visit results (BOOLEAN; Required) | belongs to User Account |
 | EMR Linkage Request | user_id (UUID; Required), record_code — EMR record ID = medical record number (VARCHAR(20); Required), facility, e.g. "Thu Cuc Hospital" (VARCHAR(100); Required), status (ENUM: Pending / Linked; Required — Pending → "Pending link", Linked → "Linked"), requested_at — date the request was sent (DATETIME; Required), linked_at — date linked (DATETIME; Optional, empty while Pending) — per the S-103 bottom sheet. **MVP: every row is seed data** (DM-23); no error state | belongs to User Account; references the hospital record, simulated in the MVP (Won't: two-way EMR integration) |
 | Notification (D-48) | notification_id (UUID; Required), user_id (UUID; Required), `type` (ENUM: Report / Visit result / Appointment / Instruction reminder; Required), title (VARCHAR(100); Required), subtitle (VARCHAR(200); Optional), created_at (DATETIME; Required), read_at (DATETIME; Optional — empty = unread), target: case_id (UUID; Optional), visit_id (UUID; Optional), watch_flag_id (UUID; Optional — Instruction reminder), appointment_ref — appointment reference in the TCI app, DM-04 (VARCHAR(64); Optional). Delivered via the TCI app (X-05). The word "Alert" is not used (D-22). *Note: the latest MVP Scope lists 3 types in the notification list (report responses, new visit results, appointment reminders); "Instruction reminder" is derived from the "doctor's-instruction reminders" switch the MVP Scope lists in the notification settings.* | belongs to User Account; created by `spec-ALR.md` FR-018 (Report), `spec-ALR.md` FR-019 (Visit result, BR-003), `spec-ALR.md` FR-022 (Instruction reminder), `spec-APT.md` FR-009 (Appointment) |
@@ -250,7 +264,8 @@ sequenceDiagram
 
 | Screen ID | Screen name | Priority | Screen Spec file |
 |---|---|---|---|
-| S-001 | Mother & Baby 360 entry point from the TCI app — 2 states: (1) the "Mother & Baby 360" tile on the TCI app home screen; (2) first opening: connect to the TCI account + agree to the terms (instead of a Login screen) `[PENDING CLIENT: D-01]` | Must | `screens/screen-spec-S-001.md` |
+| S-001 | Mother & Baby 360 entry point from the TCI app — 2 states: (1) the "Mother & Baby 360" tile on the TCI app home screen; (2) first opening: connect to the TCI account + agree to the terms (instead of a Login screen) `[PENDING CLIENT: D-01]`; plus the notice for a non-female account (BR-007, not drawn) | Must | `screens/screen-spec-S-001.md` |
+| S-104 | Onboarding guide (new Screen ID, D-74) — shown once after the first agreement; "Next" / "Skip" | Must | `screens/screen-spec-S-104.md` (no image yet) |
 | S-007 + S-046 | Pregnancy setup — 2 Screen IDs drawn in one image: S-007 Onboarding Profile (height, weight) + S-046 Due Date Input (due date / LMP) | Must | `screens/screen-spec-S-007.md` (states that it covers S-046); S-046: `screens/screen-spec-S-046.md` (full spec, D-55) |
 | S-008 | Home (Mother) | Must | `screens/screen-spec-S-008.md` |
 | S-083 | Close Mother & Baby 360 confirmation (instead of "Log out"; opened by tapping ✕ on any screen) `[PENDING CLIENT: D-01]` | Must | `screens/screen-spec-S-083.md` |
@@ -274,7 +289,7 @@ sequenceDiagram
 
 ### 7.3 Screens this module needs that still have no mockup
 
-None.
+S-104 Onboarding guide (D-74) and the non-female notice state of S-001 (BR-007) are specified but not drawn; S-007 / S-046 must be redrawn with the optional first visit date (D-72).
 
 ## 8. Success criteria (mandatory)
 
@@ -310,6 +325,8 @@ None.
 | 17 | [NEEDS CLARIFICATION: Are terms versions managed (Consent Record `terms_version`)?] | No | Team / Client | Open |
 | 18 | [NEEDS CLARIFICATION: Is the permission to use each type of TCI information (full name + phone number, medical record number, prenatal visit results) recorded separately in the Consent Record, or as one consent? (FR-011; the wireframe shows 3 lines with ✓ but a single agree button)] | No | Team / Client | Open |
 | 19 | [NEEDS CLARIFICATION: When the TCI identity expires mid-session (S-043), is the data being entered kept?] | No | Team / Client | Open |
+| 20 | [NEEDS CLARIFICATION: the onboarding guide S-104 (D-74): number of pages, their text and images; is "guide seen" kept only on the device or stored?] | No | UX/UI / Product-PM | Open |
+| 21 | [NEEDS CLARIFICATION: for a non-female TCI account (BR-007): the notice wording, and whether the TCI app hides the tile so that the notice is never reached? How the TCI app passes the sex is part of Q9.] | No | UX/UI / Client | Open |
 | DM-01 | [NEEDS CLARIFICATION: is "Patient" in HLT, ALR, TML, BOT, APT and CLI the mother's USER_ACCOUNT?] | No | ACC (data model) | Resolved 29/09/2026 (data-model review, S1 — Tâm): every "Patient" reference is the mother's USER_ACCOUNT |
 | DM-02 | [NEEDS CLARIFICATION: is clinical staff a USER_ACCOUNT with a role, or a separate STAFF table? USER_ACCOUNT.`role` still lists Nurse / Doctor although §6 says "always Mother in the sub-app"] | Yes (resolved) | ACC / CLI (data model) | Resolved 29/09/2026 (data-model review, S1 / S4 — Tâm, Trung): separate STAFF table for Nurse / Doctor; USER_ACCOUNT holds mothers only and `role` = Mother (ACC §6 updated) |
 | DM-08 | [NEEDS CLARIFICATION: which FR creates / updates USER_ACCOUNT from the TCI identity when the mother first agrees (S-001 state 2)? ACC FR-011 records consent and FR-015 only reads the User ID] | Yes (resolved) | ACC (data model) | Resolved 29/09/2026 (data-model review, S2 — Tâm): ACC FR-011 also creates USER_ACCOUNT, together with the consent record (ACC §5 FR-011 updated) |
@@ -330,7 +347,7 @@ None.
 
 | Spec section | DBIZ2 source | Location |
 |---|---|---|
-| 1. Purpose | MVP v8 §5 MoSCoW, "Patient Onboarding & Pregnancy Profile" row; D-01 | `docs/prd.md` (MVP Scope v8); `docs/decisions.md` (Decision log) |
+| 1. Purpose | PRD §2 and §5 MoSCoW, M1 "Patient Onboarding & Pregnancy Setup"; D-01, D-71, D-72, D-74 | `docs/prd.md` (MVP Scope v8); `docs/decisions.md` (Decision log) |
 | 4.1 Usage flow | Sub-app flow: *not in DBIZ2* — reconstructed from wireframe S-001, S-007, S-008 | Wireframe (`wireframes-v5.1.zip`) |
 | 4.2 Sequence | *none exists in DBIZ2 — reconstructed from the wireframe + FR list* | Wireframe S-001, S-007, S-083; sheet `FL&Cost1` |
 | 5. Functional requirements | Function List | sheet `FL&Cost1`, rows 16–18, 22–23, 26–44 |
@@ -345,7 +362,7 @@ None.
 - [x] Every Input and Output field has a type and a required flag — where the source gives no type, marked `[NEEDS CLARIFICATION]` rather than guessed.
 - [x] Every Mermaid block renders without an error.
 - [ ] Every node and arrow in the Mermaid flow exists in the original DBIZ2 diagram. — **N/A:** no DBIZ2 diagram exists for this module; §4.1 and §4.2 are reconstructed from the wireframe and were checked against the wireframe by Trung (§10 Q4).
-- [x] At least one business rule is written that is not visible in any diagram. (BR-002 – BR-006)
+- [x] At least one business rule is written that is not visible in any diagram. (BR-002 – BR-007)
 - [x] Every screen this module touches (that has a mockup) is listed (§7.1); removed screens are marked Removed (§7.2); §7.3 has no screens without a mockup.
 - [x] Success criteria contain no technology words.
 - [x] Open questions carry forward the unresolved items (TCI identity mechanism; gestational-week calculation rule (Naegele proposal, pending SME); valid ranges; consent per information type; unsaved data on identity expiry; sequence sign-off recorded in Q4).

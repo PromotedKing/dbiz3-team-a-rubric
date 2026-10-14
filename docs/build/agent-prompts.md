@@ -52,7 +52,7 @@ Review the plan with the 8 questions of Workshop Guide 2.2, then update `AGENTS.
 Tests are required by the constitution (Principle II). For every business rule in this slice
 and every acceptance scenario of the user stories in scope, create a test task that comes
 before the code task it checks. Include one test that loads the seed data and checks one value
-that the Session 5 data package already states: data/seed/seed-report.md gives 272 rows in total, and
+that the Session 5 data package already states: data/seed/seed-report.md gives 271 rows in total, and
 its scenario "ALR BR-008 branch 1" says report RPT-006 (exactly 140/90 mmHg) opens case C6.
 Keep the user stories that plan.md marks out of scope out of tasks.md.
 ```

@@ -4,7 +4,7 @@ This repository uses the Session 4 layout: there is no single `docs/spec/spec-do
 
 | Module | File |
 |---|---|
-| ACC — Onboarding & Pregnancy Profile | `specs/spec-ACC.md` |
+| ACC — Onboarding & Session | `specs/spec-ACC.md` |
 | HLT — Health Visibility (Dashboard) | `specs/spec-HLT.md` |
 | ALR — Risk Feedback & Mom Alert | `specs/spec-ALR.md` |
 | CLI — Clinical Escalation (Nurse + Doctor) | `specs/spec-CLI.md` |

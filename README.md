@@ -8,9 +8,9 @@ Agents: read [`AGENTS.md`](AGENTS.md) first.
 
 | # | Artefact | Where | Notes |
 |---|---|---|---|
-| 1 | PRD | `docs/prd.md` | MVP Scope v8 in Markdown, with item IDs (M1 – M5, S1 – S3, W1 – W4), the Must → module map (§7) and the scope changes with reasons (§8) |
+| 1 | PRD | `docs/prd.md` | MVP Scope v8 refined on 14/10/2026, with item IDs (M1 – M5, S1 – S2, C1, W1 – W4), the Must → module map (§7) and the scope changes with reasons (§8) |
 | 2 | Spec Documents | `specs/spec-ACC.md`, `spec-HLT.md`, `spec-ALR.md`, `spec-CLI.md`, `spec-TML.md`, `spec-BOT.md`, `spec-APT.md` | Session 4 layout; Won't rows kept for traceability. `docs/spec/README.md` points here |
-| 3 | Screen Specs and mockups | `screens/screen-spec-S-xxx.md`, `screens/img/S-xxx.png` | 28 specs, 27 images (S-030 has no image) |
+| 3 | Screen Specs and mockups | `screens/screen-spec-S-xxx.md`, `screens/img/S-xxx.png` | 30 specs, 27 images. S-104 and S-105 (new, D-74, D-75) have no image yet; 7 images are older than their spec and must be redrawn: S-001, S-007 / S-046, S-008, S-025A, S-034, S-048, S-064 (see `docs/decisions.md`, Open items) |
 | 4 | Data model with Mermaid ERD | `data/data-model-MB360.md` | One model for the 7 modules (MODULE-ID MB360); §5 diagram check, §11 privacy declaration |
 | 5 | Schema | `data/schema/schema-MB360.sql` | SQLite 3 |
 | 6 | Seed files, generator, README | `data/seed/` | 26 CSV files named `NN_TABLE.csv`, loaded in filename order; `seed-report.md` holds the edge-case register |
@@ -19,7 +19,7 @@ Agents: read [`AGENTS.md`](AGENTS.md) first.
 | 9 | Environment Readiness Report | `docs/env/readiness-report.md` | One row per member; T3 prompt and answer key |
 | 10 | AI use log | `docs/ai-use-log.md` | One row per AI-drafted artefact |
 
-Supporting documents: `docs/decisions.md` (decision log D-01 – D-70, open items, module scope), `docs/ui-label-reference.md` (UI conventions, English ↔ on-screen text), `docs/function-list.md`, `docs/screen-list.md`, `docs/architecture/`, `docs/data-model-freeze-worksheet.md` (7 structural questions for the team). Tools: `tools/check_env.py` (T1), `tools/check_data_model.py` (data model §5 and gate G3).
+Supporting documents: `docs/decisions.md` (decision log D-01 – D-78, open items, module scope), `docs/ui-label-reference.md` (UI conventions, English ↔ on-screen text), `docs/function-list.md`, `docs/screen-list.md`, `docs/architecture/`, `docs/data-model-freeze-worksheet.md` (7 structural questions for the team). Tools: `tools/check_env.py` (T1), `tools/check_data_model.py` (data model §5 and gate G3).
 
 ## Commands (from the repository root)
 
