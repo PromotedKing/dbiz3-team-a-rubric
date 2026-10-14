@@ -8,7 +8,7 @@
 | Priority | Must `[PENDING CLIENT: D-01]` |
 | Belongs to module | `spec-ACC.md` |
 | Mockup image | `img/S-001.png` |
-| Status | Draft (revised 29/09/2026 — screen-spec fix #8) |
+| Status | Draft (revised 14/10/2026 — date of birth in the permission list, non-female notice (D-71), next step S-104 (D-74); image to redraw) |
 
 ## 1. Purpose
 
@@ -60,7 +60,7 @@ The mother signs in again in the TCI app and then reopens the sub-app from the "
 | 10 | "⇄" icon | Image | static | No | — |
 | 11 | Title "Connect to your TCI account" | Header | static | No | — |
 | 12 | "Mother & Baby 360 will use the following information from the TCI app:" | Text | static | No | — |
-| 13 | Permission list: "Full name, phone number ✓", "Medical record number at Thu Cuc ✓", "Results of your prenatal visits ✓" | Text (list) | static; corresponds to the data taken from the TCI account: Profile (`FR-017`), hospital record link (`FR-001`/`FR-002` — **simulated with seed data in the MVP**, no EMR call, ACC-01), visit results (Health Metric Record, `source` = From visit — D-10) | No | — (display only; individual items cannot be deselected) |
+| 13 | Permission list: "Full name, date of birth, phone number ✓" (the image shows "Full name, phone number ✓" — D-71), "Medical record number at Thu Cuc ✓", "Results of your prenatal visits ✓" | Text (list) | static; corresponds to the data taken from the TCI account: Profile (`FR-017`), hospital record link (`FR-001`/`FR-002` — **simulated with seed data in the MVP**, no EMR call, ACC-01), visit results (Health Metric Record, `source` = From visit — D-10) | No | — (display only; individual items cannot be deselected) |
 | 14 | Checkbox "I agree to the Terms and the Privacy Policy" | Checkbox | Consent Record — `FR-011` (Checkbox=True; Timestamp) | Yes | must be ticked before "Agree & continue" takes effect — inferred from `spec-ACC.md` US-1 AC3; the wireframe only shows the ticked state and does not show a disabled button `[NEEDS CLARIFICATION]` |
 | 15 | "Terms" link | Text (link) | terms content — `[NEEDS CLARIFICATION: content source / display screen]` | No | — |
 | 16 | "Privacy Policy" link | Text (link) | as #15 | No | — |
@@ -78,7 +78,8 @@ Note: the annotation boxes "[New] …", "[After agreeing] …", "[Later] …" on
 | Empty (no data) | not applicable — the screen has no data list | — |
 | Loading | shared skeleton (grey blocks that keep the layout, D-27) while the sub-app opens / receives the TCI account information | tap on the "Mother & Baby 360" tile or "Agree & continue" |
 | Error | shared banner "⚠ Could not load data. Retry" (D-27) when the TCI account information cannot be retrieved; no valid TCI identity (not signed in, expired or invalid) → `S-043` (conditions C2 – C4, D-50). (The former branch "medical record not found" is removed: the hospital record link is seed data in the MVP, so this case does not occur — screen-spec fix #8, ACC-01) | network error / identity hand-over error |
-| Success / confirmation | no separate confirmation screen: goes straight to `S-007`/`S-046` (no due date yet) or `S-008` | "Agree & continue" succeeds |
+| Success / confirmation | no separate confirmation screen: goes to the onboarding guide `S-104` (D-74), then `S-007`/`S-046` (no due date yet) or `S-008` | "Agree & continue" succeeds |
+| Not a female account (not drawn) | notice that Mother & Baby 360 is for expectant mothers + "Back to TCI app"; no Consent Record, User Account or session (`spec-ACC.md` BR-007, D-71). Wording `[NEEDS CLARIFICATION: spec-ACC.md §10 Q21]` | tile tapped by a TCI account whose sex is not female |
 
 ## 5. Interactions and navigation
 
@@ -100,6 +101,8 @@ Note: the annotation boxes "[New] …", "[After agreeing] …", "[Later] …" on
 | SR-003 | No Consent Record is written when the mother taps "Later" or ✕; the next opening shows state 2 again. | `FR-011`; inferred from SR-002 |
 | SR-004 | After agreeing, navigation depends on the due date: none → `S-007`/`S-046`; present → `S-008`. | wireframe annotation; D-01 |
 | SR-005 | The ✕ button in the sub-app header always leads to `S-083` (instead of Log out). | D-01 |
+| SR-006 | Only a female TCI account goes past state 1; any other account sees the notice state and returns to the TCI app. | `spec-ACC.md` BR-007; D-71 |
+| SR-007 | After the first agreement the onboarding guide `S-104` is shown once, before pregnancy setup. | `spec-ACC.md` FR-028; D-74 |
 
 ## 7. Linked requirements
 

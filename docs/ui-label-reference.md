@@ -129,11 +129,12 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | Urine protein level | Negative / Trace / 1+ / 2+ / 3+ | Âm tính / Vết / 1+ / 2+ / 3+ |
 | Glucose context (code) | fasting / post_1h / post_2h (UI: Fasting / 1 h after meal / 2 h after meal) | Lúc đói / Sau ăn 1 giờ / Sau ăn 2 giờ |
 | Symptom | No symptoms | Không có triệu chứng |
-| Symptom | Headache | Đau đầu |
-| Symptom | Dizziness | Chóng mặt |
+| Symptom (D-73) | Vaginal bleeding | Ra máu âm đạo |
+| Symptom (D-73) | Severe abdominal pain | Đau bụng dữ dội |
+| Symptom (D-73) | Waters breaking or fluid leakage (UI: Waters breaking / fluid leakage) | Vỡ ối / rỉ ối |
+| Symptom (D-73) | Severe headache, dizziness or blurred vision (UI: Severe headache / dizziness / blurred vision) | Đau đầu dữ dội / chóng mặt / hoa mắt |
+| Symptom (D-73) | Absence of fetal movement | Không thấy thai máy |
 | Symptom | Palpitations | Hồi hộp |
-| Symptom | Abdominal pain | Đau bụng |
-| Symptom | Bleeding | Ra máu |
 | Symptom | Other | Khác |
 | Diary mood | Happy / Calm / Nervous / Tired / Worried | Vui / Bình yên / Hồi hộp / Mệt / Lo lắng |
 | Message author | Mother / Father | Mẹ / Bố |
@@ -146,6 +147,9 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | Hospital record link | Pending link / Linked | Chờ liên kết / Đã liên kết |
 | Due-date source | Self-entered / Hospital record | Mẹ tự nhập / Hồ sơ bệnh viện |
 | Chatbot hand-off | Connect to nurse / No, thanks | Kết nối y tá / Không, cảm ơn |
+| Chatbot notice (D-76; never "Alert") | Signs that need medical attention | Dấu hiệu cần chú ý y tế |
+| Sex (D-71) | Female | Nữ |
+| Journey stage (D-75) | First trimester / Second trimester / Third trimester / Full journey | Tam cá nguyệt 1 / Tam cá nguyệt 2 / Tam cá nguyệt 3 / Cả hành trình |
 | Answer rating (not built — BOT-02) | Was this answer helpful? Yes / No | Câu trả lời có hữu ích? Có / Không |
 | Term | Doctor's instructions (entity: Watch-Flag) | Chỉ dẫn của bác sĩ |
 | Term | Self-tracked metrics | Chỉ số tự theo dõi |
@@ -193,6 +197,12 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | Screen title | Close Mother & Baby 360? | Đóng Mother & Baby 360? |
 | Screen title | Profile | Cá nhân |
 | Screen title | Session expired | Phiên làm việc hết hạn |
+| Screen title (S-104, D-74) | Onboarding guide | Hướng dẫn sử dụng |
+| Screen title (S-105, D-75) | My journey | Hành trình của mẹ |
+| Screen text (S-007 / S-046, D-72) | Date of first antenatal check-up (optional) | Ngày khám thai đầu tiên (không bắt buộc) |
+| Screen text (S-048, D-75) | Indicators this week / No indicators this week. | Chỉ số trong tuần / Tuần này chưa có chỉ số. |
+| CTA (S-105, D-75) | Export PDF album | Xuất album PDF |
+| CTA (S-104, D-74) | Skip / Next / Get started | Bỏ qua / Tiếp / Bắt đầu |
 | Tab | Home / Health / Appointments / Chatbot / Profile | Trang chủ / Sức khỏe / Lịch hẹn / Chatbot / Cá nhân |
 | CTA | Save metrics | Lưu chỉ số |
 | CTA | Submit report | Gửi báo cáo |

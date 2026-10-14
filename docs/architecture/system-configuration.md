@@ -45,7 +45,7 @@ flowchart TB
     subgraph E["E. External"]
         TCIID["TCI app identity & notification delivery"]
         TCIBOOK["TCI app booking flow"]
-        LLM["LLM API (OpenAI or Gemini)"]
+        LLM["LLM API: Google AI Studio (Gemini) — D-76"]
         AUTHS["Authentication service (clinician web)"]
     end
 

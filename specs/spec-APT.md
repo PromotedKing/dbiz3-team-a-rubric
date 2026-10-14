@@ -3,10 +3,10 @@
 | Field | Value |
 |---|---|
 | Module ID | `APT` |
-| Module name | Appointment Booking & Visit Management (redirect to host app) |
-| Spec version | v1.5.1 (review 29/09/2026: APT-01 – APT-04, X-05, X-07 / DM-25 data types) |
+| Module name | Appointment Booking & Visit Management (TCI booking portal in a WebView — Could, D-77) |
+| Spec version | v1.6.0 (14/10/2026: PRD C1 — priority Could, WebView, Q1 and Q11 answered, D-77) — v1.5.1 (review 29/09/2026: APT-01 – APT-04, X-05, X-07 / DM-25 data types) |
 | Author (team member) | Hải Anh (drafted 15/09/2026) — diagrams checked node by node by Chi, 16/09/2026 (verifier ≠ converter) |
-| Date | 29/09/2026 |
+| Date | 14/10/2026 |
 | Status | Draft |
 | Approved by (Client role) | *pending* |
 | DBIZ2 source | Function List rows `F-101`–`F-107`, `F-116`–`F-118` (10 rows); Screens `S-012`–`S-022` (reference only, see §1) |
@@ -16,6 +16,8 @@
 ## 1. Purpose and scope (mandatory)
 
 This module connects the mother's digital journey to in-person hospital care when a consultation is appropriate. Per MVP v8's Product Context, equivalent booking functionality already exists in the host Thu Cuc app, so this module's job is to surface/redirect to that existing flow rather than rebuild a native booking experience.
+
+**Priority and mechanism (PRD C1, D-77).** The module is **Could**. The booking flow is Thu Cuc's existing antenatal booking portal opened in a **WebView inside the TCI app**; the upcoming-appointment card reads the mother's appointments from the TCI app, and appointment reminders are kept. The card on S-008 and the "Appointment reminders" switch on S-010 are Could elements inside Must screens: if APT is not built, both are hidden and the Must screens still work.
 
 **Entry point in the MVP (D-01 `[PENDING CLIENT: D-01]`).** Because Mother & Baby 360 is a sub-app running inside the TCI app (D-01), the booking entry point is the **"Book a visit ↗"** button on Home (S-008); tapping it opens the TCI app's (host's) existing booking flow. S-008 also shows the **"Upcoming appointments"** card (visit name, `dd/mm/yyyy · HH:mm`, facility · doctor) and the empty state "No upcoming appointments." with a "Book a visit ↗" button. **No intermediate screen (MVP scope, backlog item 6):** the "Book a visit ↗" button on Home and the "Appointments" tab open the TCI app's booking flow directly; the sub-app draws no appointment screen of its own (S-012 – S-022 are "Handled by Host App (Redirect only)").
 
@@ -141,15 +143,15 @@ sequenceDiagram
 
 | FR ID | DBIZ2 Subfunction ID | Requirement (system MUST ...) | Actor | Priority |
 |---|---|---|---|---|
-| FR-001 | F-101 | The system MUST display booking filters and available doctors for appointment selection. **MVP — only meaning kept (APT-01):** the "Book a visit ↗" button on S-008 (and the "Appointments" tab, BR-003) opens the TCI app's booking flow directly; the filters and doctor list themselves are shown by the TCI app. | Mom | Should |
+| FR-001 | F-101 | The system MUST display booking filters and available doctors for appointment selection. **MVP — only meaning kept (APT-01):** the "Book a visit ↗" button on S-008 (and the "Appointments" tab, BR-003) opens the TCI app's booking flow directly; the filters and doctor list themselves are shown by the TCI app. The flow opens as a WebView of the TCI booking portal inside the TCI app (D-77). | Mom | Could (D-77) |
 | FR-002 | F-102 | The system MUST filter available appointment slots based on selected criteria (date, doctor, clinic). | Mom | **Won't / N/A — done by the TCI app (APT-01)** |
 | FR-003 | F-103 | The system MUST validate real-time availability of the selected appointment slot before booking. | System | **Won't / N/A — done by the TCI app (APT-01)** |
 | FR-004 | F-104 | The system MUST create and store a new appointment record in the system. | System | **Won't / N/A — done by the TCI app (APT-01)** |
-| FR-005 | F-105 | The system MUST display reminder details associated with upcoming appointments or tasks. **MVP:** the **read-only** "Upcoming appointments" card on S-008 (visit name, `dd/mm/yyyy · HH:mm`, facility · doctor; empty state "No upcoming appointments." + "Book a visit ↗"), with data read from the TCI app (BR-002) — not a separate appointment list (APT-04). `[NEEDS CLARIFICATION: the TCI app must share this data — §10 Q11]` | App | Should |
+| FR-005 | F-105 | The system MUST display reminder details associated with upcoming appointments or tasks. **MVP:** the **read-only** "Upcoming appointments" card on S-008 (visit name, `dd/mm/yyyy · HH:mm`, facility · doctor; empty state "No upcoming appointments." + "Book a visit ↗"), with data read from the TCI app (BR-002) — not a separate appointment list (APT-04). Reading this data from the TCI app is part of the PRD C1 scope (D-77, §10 Q11 resolved). | App | Could (D-77) |
 | FR-006 | F-106 | The system MUST update appointment or task status based on user interaction with reminders. | Mom | **Won't / N/A — done by the TCI app (APT-01)** |
 | FR-007 | F-107 | The system MUST log appointment or schedule updates for audit and tracking purposes. | System | **Won't / N/A — done by the TCI app (APT-01)** |
 | FR-008 | F-116 | The system MUST send booking confirmation notifications to the patient and relevant staff. | System | **Won't / N/A — done by the TCI app (APT-01)** |
-| FR-009 | F-117 | The system MUST send reminder notifications for upcoming appointments or tasks. **MVP:** creates the mother's "Appointment" notification (`spec-ACC.md` entity Notification) when the "Appointment reminders" switch on S-010 is on; delivered via the TCI app (X-05); tapping it on S-009 opens the TCI app's appointment flow. | System | Should |
+| FR-009 | F-117 | The system MUST send reminder notifications for upcoming appointments or tasks. **MVP:** creates the mother's "Appointment" notification (`spec-ACC.md` entity Notification) when the "Appointment reminders" switch on S-010 is on; delivered via the TCI app (X-05); tapping it on S-009 opens the TCI app's appointment flow. | System | Could (D-77) |
 | FR-010 | F-118 | The system MUST send confirmation notifications when an appointment is canceled. | System | **Won't / N/A — done by the TCI app (APT-01)** |
 
 *FR-001 and FR-005 are the S-008 button and card; FR-009 is the appointment reminder (§10 Q6 resolved).*
@@ -158,7 +160,7 @@ sequenceDiagram
 
 | FR ID | Input field | Type | Required | Output field | Type | Notes / validation |
 |---|---|---|---|---|---|---|
-| FR-001 | Navigation Request (tap "Book a visit ↗" on S-008, or the "Appointments" tab) | EVENT (no payload) | Yes | *(UI navigation target: the TCI app's booking flow)* | — | Opens the TCI flow directly, no intermediate screen `[PENDING CLIENT: D-01]`; opening mechanism §10 Q1 |
+| FR-001 | Navigation Request (tap "Book a visit ↗" on S-008, or the "Appointments" tab) | EVENT (no payload) | Yes | *(UI navigation target: the TCI app's booking flow)* | — | Opens the TCI booking portal in a WebView inside the TCI app, no intermediate screen `[PENDING CLIENT: D-01]`; return path §10 Q9 |
 | FR-002 | — | — | — | — | — | **Won't / N/A (TCI app)** |
 | FR-003 | — | — | — | — | — | **Won't / N/A (TCI app)** |
 | FR-004 | — | — | — | — | — | **Won't / N/A (TCI app)** |
@@ -194,9 +196,10 @@ DBIZ2 has native-booking screens S-012 – S-022 (5 with a mockup). MVP v8 does 
 
 | Screen ID | Element | Priority | Note |
 |---|---|---|---|
-| S-008 (belongs to `spec-ACC`) | "Upcoming appointments" card + empty state "No upcoming appointments." | Should | Data from the TCI app (BR-002). Screen Spec: `screens/screen-spec-S-008.md`. |
-| S-008 (belongs to `spec-ACC`) | "Book a visit ↗" button — "Opens the TCI app's booking flow" | Should | `[PENDING CLIENT: D-01]`. For the opening mechanism see §10 Q1. |
-| 5-tab bar (every mother screen) | "Appointments" tab — opens the TCI app's booking flow directly | Should | BR-003 |
+| S-008 (belongs to `spec-ACC`) | "Upcoming appointments" card + empty state "No upcoming appointments." | Could (D-77) | Data from the TCI app (BR-002). Screen Spec: `screens/screen-spec-S-008.md`. |
+| S-008 (belongs to `spec-ACC`) | "Book a visit ↗" button — "Opens the TCI app's booking flow" | Could (D-77) | `[PENDING CLIENT: D-01]`. WebView of the TCI booking portal (§10 Q1 resolved). |
+| 5-tab bar (every mother screen) | "Appointments" tab — opens the TCI app's booking flow directly | Could (D-77) | BR-003 |
+| S-010 (belongs to `spec-ACC`) | "Appointment reminders" switch | Could (D-77) | FR-009; hidden if APT is not built |
 
 *The "Appointments" tab of the 5-tab bar (D-27) opens the TCI app's booking flow directly — no screen in the sub-app (BR-003; §10 Q7 resolved).*
 
@@ -222,7 +225,7 @@ DBIZ2 has native-booking screens S-012 – S-022 (5 with a mockup). MVP v8 does 
 
 | # | Question | Blocking? | Owner | Status |
 |---|---|---|---|---|
-| 1 | The "Book a visit ↗" button on S-008 opens the booking flow inside the TCI app (D-01). [NEEDS CLARIFICATION: the specific technical mechanism (host internal navigation, deep link or webview) and how the mother returns to the sub-app are not described in any source.] | Yes | Backend / Systems Analyst | Open [PENDING CLIENT: D-01] |
+| 1 | The "Book a visit ↗" button on S-008 opens the booking flow inside the TCI app (D-01). [NEEDS CLARIFICATION: the specific technical mechanism (host internal navigation, deep link or webview) and how the mother returns to the sub-app are not described in any source.] **Mechanism answered by the PRD C1 (D-77):** a WebView embedded in the TCI app opens the existing antenatal booking portal. The return to the sub-app stays in Q9. | No | Backend / Systems Analyst | Resolved (mechanism, D-77) |
 | 2 | If the redirect hands off entirely to the host app, do FR-003 / FR-004 still need to be built in this module? **Resolved (APT-01, APT-02):** no — they are done by the TCI app (Won't / N/A). | No | Backend | Resolved |
 | 3 | Does the sub-app need any dedicated screen of its own for appointments? **Resolved (APT-02, MVP backlog item 6):** no — the button on Home and the "Appointments" tab open the TCI booking flow directly, no intermediate screen. | No | UX/UI | Resolved |
 | 5 | Figure 13's sequence (§4.2) and both usage-flow sub-flows (§4.1) draw only the happy path in DBIZ2. Two failure branches ("Slot not available", "Network connection lost") were added to §4.2 by the team and marked as not in DBIZ2; the usage flows (§4.1) are unchanged. Still open: does the TCI app (which actually handles booking — §1) behave the same way in these cases, and what happens on a redirect failure? | No | UX/UI / Backend | Open |
@@ -231,7 +234,7 @@ DBIZ2 has native-booking screens S-012 – S-022 (5 with a mockup). MVP v8 does 
 | 8 | [NEEDS CLARIFICATION: What happens when the TCI booking flow cannot be opened?] | No | Team / Client | Open |
 | 9 | [NEEDS CLARIFICATION: How does the mother return to the sub-app after booking, and when is the read-only "Upcoming appointments" card updated from the TCI app?] (APT-04: open question with TCI) | No | Team / Client | Open |
 | 10 | [NEEDS CLARIFICATION: What happens when an appointment is cancelled inside the TCI app rather than from this module — how and when does the "Upcoming appointments" card on S-008 reflect it? (BR-002: the TCI app record is authoritative)] | No | Team / Client | Open |
-| 11 | [NEEDS CLARIFICATION: The read-only "Upcoming appointments" card (FR-005) needs the sub-app to read the mother's appointments from the TCI app. MVP v8 §2 lists only the reuse of the TCI identity, and backlog item 6 says the sub-app does not rebuild "an appointments list". Does the Client allow this read (same decision as D-01), or is the card dropped so that the sub-app only redirects?] | No | Client | Open |
+| 11 | [NEEDS CLARIFICATION: The read-only "Upcoming appointments" card (FR-005) needs the sub-app to read the mother's appointments from the TCI app. MVP v8 §2 lists only the reuse of the TCI identity, and backlog item 6 says the sub-app does not rebuild "an appointments list". Does the Client allow this read (same decision as D-01), or is the card dropped so that the sub-app only redirects?] **Answered by the PRD C1 (14/10/2026):** the card is kept and reads from the TCI app (D-77). | No | Client | Resolved (D-77) |
 | DM-04 | Are appointments, slots and reminders stored in the sub-app database? | No | APT (data model) | Resolved (APT-01) — not stored (EXTERNAL); an Appointment notification keeps only `appointment_ref`; Slot is not used |
 | DM-25 | Columns without a declared type. | No | ACC / HLT / ALR / TML / BOT / APT / CLI (data model) | Resolved (X-07) — §6 declares `(TYPE; Required/Optional)` for every attribute; since 30/09/2026 this includes FAMILY_MESSAGE.`patient_id` (DM-33) |
 

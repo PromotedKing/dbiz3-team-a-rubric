@@ -10,7 +10,7 @@
 | Mockup image | `img/S-034.png` |
 | Specs for secondary IDs | `screen-spec-S-032.md` + `img/S-032.png`, `screen-spec-S-033.md` + `img/S-033.png` — own full specs (D-55). S-032 = question input (#15, #16); S-033 = "•••" (#14). |
 | Spec version | v1.7 |
-| Status | Draft (revised 29/09/2026 — screen-spec fix #1, #11; FR links) |
+| Status | Draft (revised 14/10/2026 — medical-attention notice and out-of-scope decline, D-76; image to redraw) |
 
 ## 1. Purpose
 
@@ -37,6 +37,8 @@ The conversation screen between the mother and the chatbot: it answers general p
 | 7 | Disclaimer below the answer "For reference only; does not replace your doctor's advice." | Text | static (`spec-BOT.md` BR-004) | Yes | always shown below every general answer |
 | 8 | *(Removed — screen-spec fix #11, BOT-02)* "Was this answer helpful?" + "Yes" / "No" — not drawn and not built (rating is Could, not in the MVP; no FR or entity stores it) | — | — | — | — |
 | 9 | Mother's risk question bubble (e.g. "I've had a little bleeding since this morning, is that okay?") | Chat bubble (right) | Chat Message — text; `is_risk` = true, set by the classification (`spec-BOT.md` FR-006, §6) | No | — |
+| 10a | Notice "Signs that need medical attention" at the top of bubble #10 (not drawn — D-76) | Text (warning style, no word "Alert") | shown when the question matches a danger phrase (`spec-BOT.md` FR-011, D-47) | No | — |
+| 10b | Polite decline bubble for an out-of-scope question, e.g. "I can only help with pregnancy, prenatal care, nutrition and postpartum wellness. Could you ask me a pregnancy question?" (not drawn; wording `spec-BOT.md` Q13) | Chat bubble (left) | Chatbot message (`spec-BOT.md` FR-010, BR-005) | No | no hand-off buttons |
 | 10 | Nurse hand-off bubble: heading "This needs a proper consultation." + "Your question relates to your own health, so the chatbot does not answer it directly. If you agree, your question will be sent to a nurse." | Chat bubble (bold frame) | static per BR-002, D-34; shown by `spec-BOT.md` FR-007 | No | — |
 | 11 | "Connect to nurse" button | Button (primary) | records `handoff_choice` and creates a Case with `case_source` = Chatbot (`spec-BOT.md` FR-008 → `spec-ALR.md` FR-021; D-34, D-41) | No | can be tapped only once per question `[NEEDS CLARIFICATION]` |
 | 12 | "No, thanks" button | Button (secondary) | records `handoff_choice`; no case is created (`spec-BOT.md` FR-009; D-34) | No | — |
@@ -56,6 +58,8 @@ Note: the "[S-033] … [Connect to nurse] … [No, thanks] … [Error] …" boxe
 | Processing — S-033 | "•••" bubble on the left | waiting for the chatbot's answer (FR-005) |
 | General answer — S-034 | answer bubble + disclaimer (no rating buttons — BOT-02) | a general question |
 | Nurse hand-off offered | bubble #10 + "Connect to nurse" / "No, thanks" + hotline number | a personal health question or one matching a risk keyword (BR-002, D-47) |
+| Danger phrase (not drawn) | notice #10a above bubble #10; no general advice | the question matches a danger phrase (`spec-BOT.md` FR-011, D-76) |
+| Out of scope (not drawn) | decline bubble #10b; no buttons, no case | the question is outside pregnancy, prenatal care, nutrition and postpartum wellness (`spec-BOT.md` FR-010) |
 | Connected to nurse | "Sent to a nurse" bubble (per the annotation); the mother follows the case on `S-029` "My reports" → `S-026` (chatbot case variant) | the mother taps "Connect to nurse" |
 | Hand-off declined | no case is created; the hotline number 1900 xxxx is shown | the mother taps "No, thanks" |
 | Empty (no data) | not applicable — the screen only opens after the first question | — |
@@ -85,6 +89,7 @@ Note: the "[S-033] … [Connect to nurse] … [No, thanks] … [Error] …" boxe
 | SR-004 | Only the question, the earlier questions / answers of the conversation and the gestational week are sent to the chatbot service — never medical-record data. | `spec-BOT.md` BR-001 (BOT-05) |
 | SR-006 | No rating of answers in the MVP ("Was this answer helpful?" is not built). | `spec-BOT.md` BOT-02; screen-spec fix #11 |
 | SR-005 | Question ≤ 500 characters. | D-46 |
+| SR-007 | Only pregnancy, prenatal care, nutrition and postpartum wellness questions are answered; others get the decline bubble. A danger phrase shows the notice "Signs that need medical attention" above the hand-off offer. | `spec-BOT.md` BR-005; D-76 |
 
 ## 7. Linked requirements
 
@@ -99,6 +104,8 @@ Note: the "[S-033] … [Connect to nurse] … [No, thanks] … [Error] …" boxe
 | FR-007 (new — BOT-03) | Shows the nurse hand-off bubble (#10 – #13) |
 | FR-008 (new — BOT-03), `spec-ALR.md` FR-021 | "Connect to nurse" → records the choice and creates a Case with source Chatbot, shown on `S-061` and on `S-029` "My reports" |
 | FR-009 (new — BOT-03) | "No, thanks" → records the choice, no case, shows the hotline number |
+| FR-010 (new — D-76) | Decline bubble for an out-of-scope question (#10b) |
+| FR-011 (new — D-76) | Medical-attention notice for a danger phrase (#10a) |
 | BR-002 (`spec-BOT.md`) | The hand-off rule |
 
 ## 8. Responsive and accessibility notes

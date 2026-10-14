@@ -31,7 +31,7 @@ The mother chooses which notification types she wants to receive. These types ma
 | 3 | ✕ button | Button | close the sub-app (D-01) `[PENDING CLIENT: D-01]` | Yes | — |
 | 4 | "Report responses" — "When clinical staff view or respond to your report" + switch (on, grey = locked) | Toggle | notification setting for the Report type (related to `spec-ALR.md` FR-004, FR-005; statuses D-18). **Team proposal: always on, cannot be turned off** — see SR-001 | Yes | locked in the on position (proposed) `[NEEDS CLARIFICATION]` |
 | 5 | "New visit results" — "When results from a new visit are available" + switch (on in the drawing) | Toggle | notification setting for new visit results (`spec-ALR.md` BR-003) | Yes | on / off |
-| 6 | "Appointment reminders" — "Before the visit date" + switch (on in the drawing) | Toggle | appointment reminder setting (`spec-APT.md` FR-009, Should). How far in advance `[NEEDS CLARIFICATION]` | Yes | on / off |
+| 6 | "Appointment reminders" — "Before the visit date" + switch (on in the drawing) | Toggle | appointment reminder setting (`spec-APT.md` FR-009) — **Could (D-77)**: hidden if APT is not built. How far in advance `[NEEDS CLARIFICATION]` | Yes | on / off |
 | 7 | "Doctor's-instruction reminders" — "Reminders to report the metrics your doctor assigned" + switch (off in the drawing) | Toggle | reminder setting for the "Instruction reminder" notification type — created by `spec-ALR.md` FR-022 (new, ACC-02 / ALR-04) from the mother's Doctor's instructions (Watch-Flag, `spec-HLT.md` §6); stored in Notification Preference `watch_flag_reminder`. When / how often a reminder is created is still open (`spec-ALR.md` §10 Q20) — the switch is no longer orphaned: it has an FR, only its trigger is pending | Yes | on / off |
 | 8 | "Notifications are sent via the TCI app." | Text | static `[PENDING CLIENT: D-01]` | No | — |
 | 9 | 5-tab bar, "Profile" tab selected | Toggle (tab) | navigation (D-27) | Yes | — |
@@ -75,7 +75,7 @@ The on / off position of each switch in the drawing is sample data. Default valu
 |---|---|
 | FR-027 (`spec-ACC.md`, new, Must — D-48, D-56) | Saves the setting as soon as a switch is toggled; on error the switch returns to its previous state |
 | BR-003 (`spec-ALR.md`) | "New visit results" notification type |
-| FR-009 (`spec-APT.md`, Should) | "Appointment reminders" notification type |
+| FR-009 (`spec-APT.md`, Could — D-77) | "Appointment reminders" notification type |
 | FR-018 (`spec-ALR.md`, new, Must — D-48, D-56) | "Report responses" notification type |
 | FR-022 (`spec-ALR.md`, new, Should until `spec-ALR.md` §10 Q20 is answered — D-56; ACC-02, ALR-04) | "Doctor's-instruction reminders" notification type (trigger / frequency: `spec-ALR.md` §10 Q20) |
 

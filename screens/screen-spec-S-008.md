@@ -8,7 +8,7 @@
 | Priority | Must |
 | Belongs to module | `spec-ACC.md` |
 | Mockup image | `img/S-008.png` |
-| Status | Draft (revised 29/09/2026 — screen-spec fix #1) |
+| Status | Draft (revised 14/10/2026 — week widget opens S-048 (D-75), appointment section Could (D-77); image to redraw) |
 
 ## 1. Purpose
 
@@ -28,7 +28,7 @@
 | 2 | "Notifications" button (header) | Button | opens `S-009` Notification Center (D-39) | No | — |
 | 3 | ✕ button | Button | closes the sub-app (D-01) | Yes | — |
 | 4 | "Hello, Lan!" | Text | Profile — Name (`spec-ACC.md` `FR-017`) | No | — |
-| 5 | Gestational-week card: "Week 28" + "Due date: 20/12/2026" | Text | Profile — EDD (`FR-017`); gestational week calculated from the due date entered on `S-007`/`S-046`; format `dd/mm/yyyy` (D-27) | No | — |
+| 5 | Gestational-week card (timeline widget, D-75): "Week 28" + "Due date: 20/12/2026"; tapping the card opens `S-048` | Text | Profile — EDD (`FR-017`); gestational week calculated from the due date entered on `S-007`/`S-046`; format `dd/mm/yyyy` (D-27) | No | — |
 | 6 | "Pregnancy timeline ›" link | Text (link) | navigation (D-30) | No | — |
 | 7 | Notification card: label "Notification" + "New visit results from 15/09/2026" + › | Text / Button | update notification when new visit results are available — `spec-ALR.md` BR-003; Health Metric Record `source` = From visit (D-10). **No threshold assessment** (wireframe annotation) | No | — |
 | 8 | "My reports" card (highlighted): number of reports being handled (e.g. "2 reports being handled" — the 2 "Not viewed" reports on `S-029`) + status label of the latest report / case (e.g. "Not viewed") + › | Button (card) | aggregated from Case (status ≠ Resolved) and the latest Case status (`spec-ALR.md` `FR-002`); report statuses D-18. Replaces the former "Risk assessment" card (ALR-01, HLT-02) | No | — |
@@ -39,9 +39,9 @@
 | 13 | "Temperature" card — "36.8 °C" — "27/09/2026 · 07:30" | Text (card) | as #12 | No | — |
 | 14 | "Heart rate" card — "82 bpm" — "27/09/2026 · 07:30" | Text (card) | as #12 | No | — |
 | 15 | "Sleep" card — "7 h 30 min" — "27/09/2026 · 06:00" | Text (card) | as #12; duration calculated from the Bedtime / Wake-up time entered on `S-024` | No | — |
-| 16 | "Upcoming appointments" section heading | Header (section) | static | No | — |
-| 17 | Appointment card: "Routine antenatal check-up" — "02/10/2026 · 09:00" — "Thu Cuc Hospital · Dr. Nguyễn Văn A" | Text (card) | Appointment Record (`spec-APT.md` §6; the master record is in the TCI app — APT BR-002); `FR-005` (APT) | No | — |
-| 18 | "Book a visit ↗" button (secondary, outlined) | Button | opens the TCI app booking flow — `spec-APT.md` BR-001 | No | — |
+| 16 | "Upcoming appointments" section heading — **Could (D-77)**, hidden if APT is not built | Header (section) | static | No | — |
+| 17 | Appointment card: "Routine antenatal check-up" — "02/10/2026 · 09:00" — "Thu Cuc Hospital · Dr. Nguyễn Văn A" | Text (card) | Appointment Record (`spec-APT.md` §6; the master record is in the TCI app — APT BR-002); `FR-005` (APT) — **Could (D-77)**, read from the TCI app | No | — |
+| 18 | "Book a visit ↗" button (secondary, outlined) | Button | opens the TCI booking portal in a WebView inside the TCI app — `spec-APT.md` BR-001, FR-001 — **Could (D-77)** | No | — |
 | 19 | 5-tab bar: Home (selected) · Health · Appointments · Chatbot · Profile | Toggle (tab) | navigation (D-27) | Yes | — |
 
 Note: the lines "No threshold assessment on visit-result notices.", "Opens the TCI app booking flow" and the box "[Empty state] No upcoming appointments." are annotations / states on the wireframe — described in §4, §5, §6.
@@ -63,13 +63,13 @@ Note: the lines "No threshold assessment on visit-result notices.", "Opens the T
 |---|---|---|---|---|
 | 1 | "Notifications" (header) | tap | opens the notification list | `S-009` (D-39) |
 | 2 | ✕ | tap | asks for confirmation to close the sub-app (D-01) | `S-083` |
-| 3 | "Pregnancy timeline ›" | tap | — | `S-048` (Home tab, D-30) |
+| 3 | "Pregnancy timeline ›" or the gestational-week card (#5) | tap | — | `S-048` (Home tab, D-30; widget D-75) |
 | 4 | "New visit results…" card | tap | — | `S-023` ("Latest visit results" section) — inferred; the wireframe does not state the target `[NEEDS CLARIFICATION]` |
 | 5 | "My reports" card | tap | — | `S-029` "My reports" (D-26 as revised) |
 | 6 | "Doctor's instructions" card | tap | — | `S-027` |
 | 7 | "Health metrics ›" | tap | — | `S-023` |
 | 8 | Self-tracked metric cards (#12–#15) | tap | `[NEEDS CLARIFICATION: the wireframe does not state whether the cards are tappable]` | — |
-| 9 | "Book a visit ↗" (also in the empty state) | tap | opens the TCI app booking flow (`spec-APT.md` BR-001); how it opens (deep link / webview / app switch) per `spec-APT.md` §10 Q1 — Open | TCI app (booking flow) |
+| 9 | "Book a visit ↗" (also in the empty state) | tap | opens the TCI app booking flow (`spec-APT.md` BR-001); opens as a WebView of the TCI booking portal (`spec-APT.md` §10 Q1 resolved, D-77) | TCI app (booking flow) |
 | 10 | "Health" tab | tap | — | `S-023` |
 | 11 | "Appointments" tab | tap | opens the TCI app appointment flow directly, no screen in the sub-app (`spec-APT.md` §1, BR-001; MVP scope backlog item 6) | TCI app |
 | 12 | "Chatbot" tab | tap | — | `S-031` |
@@ -85,6 +85,7 @@ Note: the lines "No threshold assessment on visit-result notices.", "Opens the T
 | SR-004 | "Book a visit ↗" does not open a booking screen of the sub-app; `S-012`–`S-018` are reference only. | `spec-APT.md` BR-001, §7 |
 | SR-005 | Header: no ←; ✕ → `S-083`. The tab bar always has 5 tabs, with "Home" highlighted. | D-01, D-27 |
 | SR-006 | No overall "Normal" banner. | No basis in the module specs |
+| SR-007 | The appointment section (#16 – #18) is a Could element (APT); if APT is not built it is hidden and the rest of the screen is unchanged. | D-77 |
 
 ## 7. Linked requirements
 

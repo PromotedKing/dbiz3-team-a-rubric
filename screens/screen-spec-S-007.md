@@ -9,7 +9,7 @@
 | Belongs to module | `spec-ACC.md` (`S-007`, Profile) · `spec-TML.md` (`S-046`, EDD / gestational week) |
 | Mockup image | `img/S-007.png` |
 | Spec for S-046 | `screen-spec-S-046.md` + `img/S-046.png` — own full spec (D-55). S-046 belongs to `TML`: due date / LMP and the gestational-week card (#4 – #9); S-007 belongs to `ACC`: height, weight, saving the Profile (#10 – #12). |
-| Status | Draft (revised 29/09/2026 — screen-spec fix #8) |
+| Status | Draft (revised 14/10/2026 — optional first visit date, D-72; image to redraw) |
 
 ## 1. Purpose
 
@@ -36,7 +36,8 @@
 | 9 | "Calculated by the system" card — "Week 28 · day 0", "Today 27/09/2026 · Due 20/12/2026" | Card (read-only) | calculated from the current date + EDD (tab 1) or the EDD derived from the LMP (tab 2) — corresponds to the input `Current Date; EDD` of `spec-TML.md` FR-003. Formula for EDD → week/day `[NEEDS CLARIFICATION: not given in the source; the mockup example (84 days before the EDD = Week 28 · day 0) matches taking EDD − 280 days, but this rule is not written in any document]` | No | — (display only) |
 | 10 | "Height (optional) – belongs to S-007" field + unit "cm" | Input (numeric) | Profile — Height (D-13: height belongs to the Profile) | No | number; unit cm; valid range `[NEEDS CLARIFICATION]` |
 | 11 | "Current weight (optional) – belongs to S-007" field + unit "kg" | Input (numeric) | Health Metric Record — weight, source "Self-entered" (`spec-HLT.md` §6, D-42) | No | number; unit kg; valid range `[NEEDS CLARIFICATION]` (related to D-16, pending SME) |
-| 12 | "Confirm" button | Button (primary) | saves the Profile (EDD, height, weight) | Yes | the date on the selected tab must be present and valid (#6 or #8); #10/#11, if entered, must be valid |
+| 11a | "Date of first antenatal check-up (optional)" field (not drawn — D-72) | Input (date picker) | Profile — first_visit_date (`spec-ACC.md` §6) | No | format `dd/mm/yyyy`; not after today; not before EDD − 280 days (`spec-ACC.md` FR-004) |
+| 12 | "Confirm" button | Button (primary) | saves the Profile (EDD, height, first visit date) and the weight | Yes | the date on the selected tab must be present and valid (#6 or #8); #10/#11, if entered, must be valid |
 | 13 | Annotation block (dashed border) "[First-day-of-last-period tab] … [Error] … [After confirming] …" | Annotation | design annotation on the wireframe, **not UI** | — | — |
 
 **No 5-tab navigation bar** on this mockup (first-time setup screen, full-screen).
@@ -73,6 +74,7 @@ Empty / loading / error states use the shared components on the UI conventions p
 | SR-003 | Once the hospital record is linked, **the hospital's due date takes priority** over the date the mother entered. **In the MVP the hospital record, its link status and the hospital's due date are seed data** (ACC-01, screen-spec fix #8). `[NEEDS CLARIFICATION: when the seeded link and the mother's date differ, is the date overwritten immediately, and is the mother informed?]` | "[After confirming]" annotation on the mockup; related to `spec-ACC.md` FR-001/FR-002 and `spec-TML.md` §10 Q3 |
 | SR-004 | Height and weight are **optional**; the mother can confirm with them empty. Height is stored in the Profile, not as a health metric; no BMI is calculated. | "(optional)" label on the mockup; D-13 |
 | SR-005 | On the first-day-of-last-period tab, the due date is calculated by the system; the mother does not enter it directly. | "[First-day-of-last-period tab]" annotation on the mockup |
+| SR-006 | The date of the first antenatal check-up is optional; if entered it is not in the future and not before the start of the pregnancy (EDD − 280 days). | `spec-ACC.md` FR-004; D-72 |
 
 ## 7. Linked requirements
 

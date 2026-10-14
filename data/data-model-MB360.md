@@ -16,7 +16,7 @@ Method: the spec-to-data-model steps S0 – S6 (Session 5): input map (S0), enti
 Input map used for S1 – S6 (slots not listed are absent):
 
 ```
-FUNCTIONS = §5 FR tables of the 7 specs in specs/ + docs/function-list.md (116 FRs, Won't rows included)
+FUNCTIONS = §5 FR tables of the 7 specs in specs/ + docs/function-list.md (122 FRs, Won't rows included)
 FIELDS    = §5.1 Input / Output contract of the same specs
 ENTITIES  = §6 Key entities — every attribute written name (TYPE; Required/Optional) (D-66)
 RULES     = §5.2 Business rules + docs/decisions.md (D-01 – D-69)
@@ -429,11 +429,11 @@ Checked by `tools/check_data_model.py` (run from the repository root). The numbe
 | Check | Catalogue (§2 / §6) | ERD (§4) | Schema (`schema-MB360.sql`) | Agree? |
 |---|---|---|---|---|
 | Stored entities / tables | 26 | 26 | 26 | Yes |
-| Attributes / columns | 172 | — (conceptual) | 172 | Yes |
+| Attributes / columns | 175 | — (conceptual) | 175 | Yes |
 | Relationships / foreign keys | 40 (foreign-key columns) | 40 | 40 | Yes |
 | Relationships read both ways (§4.1) | — | 40 of 40 | — | Yes |
 | Marker agrees with its forward and reverse sentence | — | 40 of 40 | — | Yes |
-| Seed files / tables | — | — | 26 tables, 26 files, 272 rows | Yes |
+| Seed files / tables | — | — | 26 tables, 26 files, 271 rows | Yes |
 
 ## 6. Logical data model
 
@@ -449,6 +449,8 @@ Owner: ACC.
 | `tci_account_ref` | `tci_account_ref` | VARCHAR(64) | VARCHAR(64) | Yes | UK | ACC §6 User Account; D-01; type decided in S4 (identity mechanism still open — ACC §10 Q9) |
 | `full_name` | `full_name` | VARCHAR(100) | VARCHAR(100) | Yes |  | ACC §6 User Account (copy of the TCI account) |
 | `phone` | `phone` | VARCHAR(20) | VARCHAR(20) | Yes |  | ACC §6 User Account (copy of the TCI account) |
+| `date_of_birth` | `date_of_birth` | DATE | TEXT | Yes |  | ACC §6 User Account (copy of the TCI account; age is calculated, not stored); D-71 |
+| `sex` | `sex` | ENUM (Female) | TEXT | Yes |  | ACC §6 User Account (copy of the TCI account); ACC BR-007, D-71 — only a female TCI account opens the sub-app |
 | `record_code` | `record_code` | VARCHAR(20) | VARCHAR(20) | No | UK | ACC §6 User Account (medical record number, e.g. TC-00123) |
 | `role` | `role` | ENUM (Mother) | TEXT | Yes |  | ACC §6 User Account; D-49; DM-02 (staff roles are in STAFF) |
 
@@ -479,6 +481,7 @@ Owner: ACC. Gestational week is calculated from the EDD and not stored (ACC §6)
 | `lmp` | `lmp` | DATE | TEXT | No |  | ACC §6 Profile (First day of last menstrual period) |
 | `edd_source` | `edd_source` | ENUM (Self-entered / Hospital record) | TEXT | Yes |  | ACC §6 Profile; ACC §5.2 BR-003 |
 | `height_cm` | `height_cm` | DECIMAL(4,1) | NUMERIC | No |  | ACC §6 Profile; D-13 |
+| `first_visit_date` | `first_visit_date` | DATE | TEXT | No |  | ACC §6 Profile (first antenatal check-up date entered at setup); D-72 — later visits stay hospital seed data (D-59) |
 
 Natural key: `user_id` (one pregnancy profile per mother).
 
@@ -646,7 +649,7 @@ Owner: ALR. ≥ 1 row per report; "No symptoms" excludes the others (ALR §5.2 B
 | Column | Physical | Type (as declared) | Physical type | Required | Key | Citation |
 |---|---|---|---|---|---|---|
 | `report_id` | `report_id` | UUID | TEXT | Yes | PK, FK → METRIC_REPORT | ALR §6 Report Symptom |
-| `symptom` | `symptom` | ENUM (No symptoms / Headache / Dizziness / Palpitations / Abdominal pain / Bleeding / Other) | TEXT | Yes | PK | ALR §6 Report Symptom; D-23 |
+| `symptom` | `symptom` | ENUM (No symptoms / Vaginal bleeding / Severe abdominal pain / Waters breaking or fluid leakage / Severe headache, dizziness or blurred vision / Absence of fetal movement / Palpitations / Other) | TEXT | Yes | PK | ALR §6 Report Symptom; D-73 (replaces the D-23 list) |
 
 Natural key: (`report_id`, `symptom`) — §6 declares no identifier (DM-34).
 
@@ -933,6 +936,8 @@ erDiagram
         string tci_account_ref UK
         string full_name
         string phone
+        date date_of_birth
+        enum sex
         string record_code UK
         enum role
     }
@@ -949,6 +954,7 @@ erDiagram
         date lmp
         enum edd_source
         decimal height_cm
+        date first_visit_date
     }
     CONSENT_RECORD {
         uuid user_id PK, FK
@@ -1176,6 +1182,7 @@ First normal form elsewhere: the multi-valued `symptoms[]` is the child table RE
 |---|---|---|---|
 | ACC BR-004 / DM-08 — no use before consent; "Later" saves nothing | `ck_consent_accepted`; relationship R03 (one or many) | ACC FR-011, FR-015 | every account has an accepted consent before its first session |
 | DM-41 — one preference row per account | PK = `user_id` | ACC FR-011 | exactly one row per account |
+| ACC BR-007 / D-71 — only a female TCI account opens the sub-app; the pregnancy is established by PREGNANCY_PROFILE (due date) | `sex` CHECK (Female) | ACC FR-015 (identity check before S-001 state 2) | every account has `sex` = Female |
 | ACC §6 EMR Linkage Request — `linked_at` empty while Pending | `ck_emr_linked_at` | seed data only (DM-23) | — |
 | ALR BR-004 / D-14, D-15 — thresholds | THRESHOLD_RULE rows (configuration, D-52) | ALR FR-021 (threshold check) | label recomputed from THRESHOLD_RULE for every report |
 | ALR BR-008 / BR-007 / BR-009 — which report opens a case | `ck_case_one_origin`, `ck_case_chatbot_origin` | ALR FR-021 | case exists ⇔ above threshold or a real symptom |
@@ -1259,7 +1266,7 @@ Access control (who may read which rows) is not in the schema: the mother reads 
 
 ## 10. Mockup data
 
-`data/seed/` holds 26 CSV files, one per table, named `NN_{TABLE}.csv` in foreign-key order, so they load in filename order. 272 rows in total. Details, the edge-case register and the scenario coverage are in `data/seed/seed-report.md`; how to run is in `data/seed/README.md`.
+`data/seed/` holds 26 CSV files, one per table, named `NN_{TABLE}.csv` in foreign-key order, so they load in filename order. 271 rows in total. Details, the edge-case register and the scenario coverage are in `data/seed/seed-report.md`; how to run is in `data/seed/README.md`.
 
 | Item | Value |
 |---|---|
@@ -1276,6 +1283,7 @@ Access control (who may read which rows) is not in the schema: the mother reads 
 - [x] No seed value belongs to a real person: mothers, relatives and staff are invented. S01 "Trần Thị B" and S02 "Nguyễn Văn A" are the placeholder names drawn in the wireframes, not real staff.
 - [x] Phone numbers follow the fictitious pattern 0900 000 1xx; TCI references (`tci-000123` …), medical record numbers (`TC-00123` …) and report codes are invented.
 - [x] Health values, visits, diary texts, messages and chatbot questions are synthetic; none is copied from a real patient record.
+- [x] Dates of birth (`date_of_birth`, D-71) and first visit dates (`first_visit_date`, D-72) are invented; every seed account is `sex` = Female (ACC BR-007). The PDF keepsake album (TML FR-014, D-75) is generated on the device and never stored, so it adds no column and no seed data.
 - [x] Image columns hold file paths only (`us/VIS-002.jpg`, `diary/DIA-001-1.jpg`); no image of a real person is committed.
 - [x] Session tokens (`sess-…`) and login accounts are invented strings; no password, key or token is in the seed or the schema.
 - [x] The only real names are Thu Cuc Hospital (the client organisation) and the guideline sources named in ALR BR-004 (MVP v8; ADA – Ministry of Health).
@@ -1294,6 +1302,7 @@ Access control (who may read which rows) is not in the schema: the mother reads 
 | S5 | `data/seed/` | Hải Anh | **Reviewed** 29/09/2026 — the 26 seed CSV files and the generator script run and checked. **Re-check needed:** seed regenerated on 30/09/2026 (physical names, 1 / 0 booleans, numbered files, load test, fixes for DM-41 and ACC BR-004, every ENUM value) |
 | S6 | §12 | Trung, Tâm | **Reviewed** 29/09/2026 — the 7 criteria self-assessed; open items carried to the specs |
 | Physical | §9, `schema-MB360.sql` | — | Draft 30/09/2026 — to be reviewed with the freeze worksheet |
+| PRD alignment | USER_ACCOUNT (`date_of_birth`, `sex`), PREGNANCY_PROFILE (`first_visit_date`), REPORT_SYMPTOM ENUM (D-71 – D-73) | Sang (owner); re-check S4: Trung, S5: Hải Anh | Draft 14/10/2026 — generator and check scripts OK; owners to re-check |
 
 ### 12.2 Rubric (seven criteria)
 

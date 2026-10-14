@@ -9,7 +9,7 @@
 | Belongs to module | `spec-TML.md` (the due date is the basis of the pregnancy timeline); the date is validated and saved by `spec-ACC.md` FR-004, FR-005 |
 | Mockup image | `img/S-046.png` — copy of `img/S-007.png`: S-007 (height, weight — `ACC`) and S-046 (due date — `TML`) are drawn in one frame because the mother enters both in one step. The S-046 part is the "Pregnancy information" section: the 2-tab selector, the date field and the "Calculated by the system" card. |
 | Related screens | `S-007` (height, weight, "Confirm" — same frame), `S-001` (comes from), `S-008` (goes to), `S-048` (uses the gestational week) |
-| Status | Draft (revised 29/09/2026 — screen-spec fix #8) |
+| Status | Draft (revised 14/10/2026 — optional first visit date, D-72; image to redraw) |
 
 *The same elements are also described in `screen-spec-S-007.md` (#4 – #9); if the two files differ, raise it as an open question rather than choosing one.*
 
@@ -38,6 +38,7 @@ Lets the mother give the system her due date (EDD) **or** the first day of her l
 | 7 | Hint "The due date your doctor set after an ultrasound (if any)." | Text (caption) | static | No | — |
 | 8 | "First day of last period" field (tab 2) — **not drawn**; described only in the annotation "[First-day-of-last-period tab] The system calculates the due date and shows the 'Calculated by the system' card." | Input (date picker) | Profile — LMP (`spec-ACC.md` FR-004, FR-005) | Yes (on tab 2) | format `dd/mm/yyyy`; the calculated gestational week must be within 0–42 weeks; formula LMP → EDD `[NEEDS CLARIFICATION: §9 Q1]` |
 | 9 | "Calculated by the system" card: "Week 28 · day 0", "Today 27/09/2026 · Due 20/12/2026" | Card (read-only) | calculated from today's date + EDD (tab 1) or the EDD derived from the LMP (tab 2) — `spec-TML.md` FR-003 input `Current Date; EDD`; formula EDD → week/day `[NEEDS CLARIFICATION: §9 Q1]` | No | display only |
+| 9a | "Date of first antenatal check-up (optional)" field (not drawn — D-72) | Input (date picker) | Profile — first_visit_date (`spec-ACC.md` §6) | No | format `dd/mm/yyyy`; not after today; not before EDD − 280 days (`spec-ACC.md` FR-004) |
 | 10 | "Confirm" button (shared with `S-007`) | Button (primary) | validates and saves the Profile (`spec-ACC.md` FR-004, FR-005) | Yes | the date of the selected tab must be present and valid |
 
 Not part of S-046 (described in `screen-spec-S-007.md`): the description line under the title, "Height (optional)" and "Current weight (optional)" fields, the annotation block.
@@ -71,6 +72,7 @@ Not part of S-046 (described in `screen-spec-S-007.md`): the description line un
 | SR-003 | On tab 2 the due date is calculated by the system; the mother does not type it. | Mockup annotation "[First-day-of-last-period tab]" |
 | SR-004 | Once the hospital record is linked, the hospital's due date takes priority over the date entered here. **In the MVP the hospital's due date is seed data** (ACC-01, screen-spec fix #8). When the SME confirms the LMP → due date rule (`spec-ACC.md` Q10), update this file and `screen-spec-S-007.md` together. | Mockup annotation "[After confirming]"; `spec-ACC.md` BR-003 |
 | SR-005 | The screen is shown only when the system has no due date for the mother. | `spec-ACC.md` BR-006 |
+| SR-006 | The date of the first antenatal check-up is optional; if entered it is not in the future and not before EDD − 280 days. | `spec-ACC.md` FR-004; D-72 |
 
 ## 7. Linked requirements
 
@@ -78,7 +80,7 @@ Not part of S-046 (described in `screen-spec-S-007.md`): the description line un
 |---|---|
 | FR-003 (`spec-TML.md`) | Provides the EDD used to calculate the current gestational week |
 | FR-004 (`spec-ACC.md`) | Validates the due date / LMP |
-| FR-005 (`spec-ACC.md`) | Saves EDD / LMP / gestational week to the Profile |
+| FR-005 (`spec-ACC.md`) | Saves EDD / LMP / first visit date to the Profile (the gestational week is calculated, not stored) |
 | FR-003 (`spec-ACC.md`) | Goes to `S-008` after confirming |
 
 ## 8. Responsive and accessibility notes

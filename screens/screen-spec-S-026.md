@@ -37,7 +37,7 @@
 | 6a | (Chatbot case only — not drawn) "Your question: [question text]" + "Sent `dd/mm/yyyy · HH:mm`" | Text | Chat Message → text, sent_at (`spec-BOT.md` §6) via Case → chat_message_id | No | — |
 | 7 | Value "150/95 mmHg" | Text | Metric Report — Value, `unit` (format D-27). Hidden for a chatbot case | No | — |
 | 8 | "Measured 26/09/2026 · 20:15 · Submitted 26/09/2026 · 20:17" | Text | Metric Report — `measured_at`, `submitted_at` (`dd/mm/yyyy · HH:mm`). Hidden for a chatbot case (the sent time is in #6a) | No | — |
-| 9 | "Symptoms: Headache, Dizziness, Other (Back ache worse in the afternoon)" | Text | Metric Report — `symptoms[]`, `other_symptom_text` (D-23). Hidden for a chatbot case | No | — |
+| 9 | "Symptoms: Severe headache / dizziness / blurred vision, Other (Back ache worse in the afternoon)" (the image still shows the D-23 example) | Text | Metric Report — `symptoms[]`, `other_symptom_text` (D-73). Hidden for a chatbot case | No | — |
 | 10 | "Mother's note: [note content]" | Text | Metric Report — `note`. Hidden for a chatbot case | No | — |
 | 11 | Title "Handling progress" | Header (section) | static | No | — |
 | 12 | Step "Not viewed" — "Report submitted · 26/09/2026 · 20:17" | Stepper step | Case — status history (creation time) | No | — |

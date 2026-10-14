@@ -1,6 +1,6 @@
 # Decisions and open items: Mother & Baby 360
 
-The decision log (D-01 – D-69), the status of every decision, the module scope and the items still open. Specs cite decisions as D-xx.
+The decision log (D-01 – D-78), the status of every decision, the module scope and the items still open. Specs cite decisions as D-xx.
 
 ## Markers
 
@@ -12,16 +12,17 @@ The decision log (D-01 – D-69), the status of every decision, the module scope
 
 | Status | Decisions | How to present |
 |---|---|---|
-| **Decided (team)** | D-04 – D-07, D-09 – D-14, D-17 – D-34, D-36 – D-46, D-48, D-49, D-51 – D-64, D-66 – D-69 (D-06, D-11, D-26, D-29, D-33, D-36, D-43, D-53, D-54, D-56 revised 29/09/2026) | Team requirement |
+| **Decided (team)** | D-04 – D-07, D-09 – D-14, D-17 – D-34, D-36 – D-46, D-48, D-49, D-51 – D-64, D-66 – D-69, D-71, D-72, D-74 – D-78 (D-06, D-11, D-26, D-29, D-33, D-36, D-43, D-53, D-54, D-56 revised 29/09/2026) | Team requirement |
 | **Decided, depends on Client** | D-50 (S-043) — depends on D-01 | "Under the sub-app model, pending Client" |
 | **Pending Client** | D-01 (sub-app model), D-02 (remove Tips), D-03 (Messages to Baby — Must item in the latest MVP Scope, pending Client approval, D-65) | **Not** as requirements approved by the Client |
-| **Pending SME** | D-15 (blood glucose and urine protein thresholds), D-16 (valid input ranges), D-47 (chatbot risk keywords) | "Provisional values for the demo"; **not** as approved by a doctor |
-| **Open (team)** | D-35 (depends on D-03); hiding "No symptoms" in symptom-report mode (part of D-45) | — |
+| **Pending SME** | D-15 (blood glucose and urine protein thresholds), D-16 (valid input ranges), D-47 (chatbot risk keywords and danger phrases), D-73 (alarm symptom list), the trimester boundaries of D-75 | "Provisional values for the demo"; **not** as approved by a doctor |
+| **Open (team)** | D-35 (depends on D-03); hiding "No symptoms" in symptom-report mode (part of D-45); "high-priority" case in the PRD M3 row (`spec-ALR.md` Q22) | — |
 | **Proposed (to confirm)** | D-70 (repository layout for Session 7; physical model draft on SQLite) | "Draft, to be confirmed by the team" |
 
 ## Open items
 
-- Client: D-01 – D-03; reading upcoming appointments from the TCI app (`spec-APT.md` Q11). SME: D-15, D-16, D-47. Team: D-35, the open part of D-45.
+- Client: D-01 – D-03 (Messages to Baby is still pending, D-65). Reading upcoming appointments from the TCI app is answered by the PRD (D-77, `spec-APT.md` Q11 resolved). SME: D-15, D-16, D-47, D-73, the trimester boundaries of D-75. Team: D-35, the open part of D-45, the "high-priority" case wording (`spec-ALR.md` Q22).
+- PRD alignment (14/10/2026, D-71 – D-78): images to redraw — S-001 (notice for a non-female account), S-104 and S-105 (new, not drawn), S-007 / S-046 (first visit date), S-008 (week widget; appointment card marked Could), S-048 (new layout), S-025A (new symptom list), S-034 (medical-attention notice, out-of-scope decline), S-064 (chatbot variant with the conversation). Until they are redrawn, the screen specs are the reference.
 - Data model: the logical model is reviewed (gates S1 – S6, D-69) and the physical draft exists (`data/schema/schema-MB360.sql`, SQLite, D-70). Seven questions still change the structure — DM-14, DM-17, DM-28, DM-34, DM-35, DM-37, DM-39 — and are prepared for a team decision in `docs/data-model-freeze-worksheet.md`; none blocks the schema, which applies their defaults. The responsible doctor is the hospital assignment (D-68).
 - Still blocking the final spec: LMP → due date rule (`spec-ACC.md` Q10, ACC-04, Pending SME); thresholds and valid ranges (D-15, D-16, ALR-05); chatbot risk keywords and the real hotline number (D-47, BOT-04); web sign-in for clinical staff (`spec-CLI.md` Q11, CLI-06); the remaining part of `spec-CLI.md` Q10 (no active responsible doctor; which cases the nurse sees). Team: trigger of the Doctor's-instruction reminder (`spec-ALR.md` Q20); number of diary photos (`spec-TML.md` Q15, TML-01).
 - Screens not drawn (Should priority, not needed for the demo): S-054, S-059, S-060, S-062, S-063, S-065, web Settings page.
@@ -35,13 +36,13 @@ The decision log (D-01 – D-69), the status of every decision, the module scope
 
 | Module | Name | MVP v8 priority | Sprint Backlog # |
 |---|---|---|---|
-| ACC | Onboarding & Pregnancy Profile | Must | 1 |
+| ACC | Onboarding & Session (D-74; code stays ACC) | Must | 1 |
 | HLT | Health Visibility (Dashboard) | Must | 2 (health part) |
 | ALR | Risk Feedback & Mom Alert | Must | 2/3 (alert part) |
 | TML | Pregnancy Timeline & Diary | Must | 4 |
 | BOT | AI Chatbot L1 Support | Must | 5 |
 | CLI | Clinical Escalation (Nurse + Doctor) | Should | 7 |
-| APT | Appointment (redirect to the TCI app) | Should | 6 |
+| APT | Appointment (TCI booking portal in a WebView) | Could (D-77) | 6 |
 
 **Scope alignment with the MVP Scope (29/09/2026).** The MVP Scope document is the reference and is not changed; every gap found in the review was fixed in the specs, screen specs and diagrams. Main changes: no risk assessment screen for the mother (S-029 = "My reports" only); the mother reports only flagged indicators (metrics in her Doctor's instructions) or symptoms; appointments are a pure redirect to the TCI app; the hospital record link is seed data; chatbot hand-off, report storage and case creation have their own FRs; Quick notes, answer rating, weekly progress indicators, false-alarm label, doctor notification on close and emergency contact are Won't; notifications to the doctor stay inside the clinical web; the doctor handles escalated cases only.
 
@@ -95,7 +96,7 @@ Each decision has an ID `D-xx`; specs, screen specs and both lists cite these ID
 | D-20 | **Symptom reports always go to a nurse** (queue, status Not viewed) | **Decided** | spec-ALR BR-007 |
 | D-21 | **A Normal report with no symptoms has no status**; S-029 "My reports" shows "No action needed" | **Decided** | spec-ALR, S-029 |
 | D-22 | **"Alert" is used only for an above-threshold report** (S-028) | **Decided** | all documents |
-| D-23 | **Symptoms are a fixed multi-select list:** No symptoms (excludes all others), Headache, Dizziness, Palpitations, Abdominal pain, Bleeding, Other (free text ≤ 100 characters) | **Decided** | spec-ALR §6, S-025A |
+| D-23 | ~~**Symptoms are a fixed multi-select list:** No symptoms (excludes all others), Headache, Dizziness, Palpitations, Abdominal pain, Bleeding, Other (free text ≤ 100 characters)~~ **Superseded by D-73 (14/10/2026)**; the "Other" limit of 100 characters is kept | **Superseded (D-73)** | spec-ALR §6, S-025A |
 | D-24 | **Guidance for the mother has 2 forms:** a ready-made template, or text the doctor writes for this mother. "Above-threshold guidance" is prepared when the doctor creates an instruction (S-064); if there is none, S-028 shows the hospital's default template | **Decided** | spec-ALR §6 (Guidance Template), spec-CLI, S-025A, S-026, S-028, S-064 |
 | D-25 | **The "Safety note" on S-026 is shown only while the report has no response** | **Decided** | S-026 |
 
@@ -165,6 +166,23 @@ Each decision has an ID `D-xx`; specs, screen specs and both lists cite these ID
 | D-68 | **Responsible doctor = the doctor the hospital assigns to the mother** (`spec-CLI.md` §10 Q10 = `spec-ALR.md` §10 Q19, option (b)). Patient Assignment is kept: 1 mother has at most 1 active responsible doctor. In the MVP the assignment is seed data — no assignment screen or FR (DM-10). On "Escalate to doctor" the case's `assigned_doctor_id` = the mother's active responsible doctor, and that doctor sees the case on the clinical web (the notification is not stored — DM-32). Still open: behaviour when the mother has no active responsible doctor; which cases the nurse sees (`spec-CLI.md` Q10) | **Decided (team, 30/09/2026)** | spec-CLI FR-019, BR-003, §6, Q10; spec-ALR FR-009, §6, Q19; function-list; usage-flow; data model PATIENT_ASSIGNMENT, CARE_CASE |
 | D-69 | **Data-model review decisions applied to the specs** (data model, gates S1 – S6 reviewed 29/09/2026). Resolved: DM-01, DM-02, DM-03, DM-08, DM-10, DM-11, DM-22, DM-31, DM-32 (DM-05 superseded), DM-36, DM-38, DM-40, DM-41, DM-42. Main text changes: ALR FR-009 (doctor notification not stored); ACC FR-005 (Profile = EDD / LMP / height; weight = Health Metric Record); ACC FR-011 (also creates User Account and Notification Preference); ACC §6 `role` = Mother only; `gestational_week` INTEGER 0–42 (HLT §6, TML §6); `fetal_length` in cm; `tci_account_ref` VARCHAR(64) | **Decided (team, 30/09/2026)** | spec-ACC, spec-ALR, spec-BOT, spec-CLI, spec-HLT, spec-TML §5, §6, §10; function-list |
 | D-70 | **Repository layout for the Session 7 midterm and physical model draft.** Files are placed as the Session 7 rubric §3.1 lists them: `docs/prd.md`; `specs/spec-{MODULE-ID}.md`; `screens/`; one data model `data/data-model-MB360.md` (MODULE-ID MB360 = the 7 modules; the former files 01 – 05 and `03-erd.mmd` are merged into it); `data/schema/schema-MB360.sql`; `data/seed/` (CSV files `NN_{TABLE}.csv` in foreign-key order, generator, README). The former package README is split into `docs/decisions.md` and `docs/ui-label-reference.md`. Physical model: SQLite 3; the mother's key is `user_id` in every table (DM-31); the defaults of DM-14, DM-17, DM-28, DM-34, DM-35, DM-37, DM-39 are applied until the freeze worksheet is decided. Replaces the folder structure of D-40 for the submission | **Proposed — to confirm by the team (30/09/2026)** | whole repository; `data/`; `docs/data-model-freeze-worksheet.md` |
+
+### H. Alignment with the PRD (14/10/2026)
+
+The PRD in `docs/prd.md` was refined on 14/10/2026 (product context, M1 – M5, the Could item C1). The decisions below apply it to the specs, data model and screens. Items of the refinement the team did not adopt are listed after the table.
+
+| ID | Decision | Status | Affects |
+|---|---|---|---|
+| D-71 | **The User Account copy of the TCI identity also holds the date of birth and the sex** (PRD §2: "Full Name, Date of Birth / Age, Phone Number, Patient ID"). The age is calculated from the date of birth and not stored. **Only a female TCI account opens the sub-app** (`spec-ACC.md` BR-007): for any other account the sub-app shows a notice and returns to the TCI app; no consent, account or session is created. That the mother is pregnant is established by the pregnancy setup (a due date inside weeks 0 – 42, BR-006). Registration, password and OTP stay out of scope (D-01) | **Decided (team, 14/10/2026)** | spec-ACC FR-011, FR-015, BR-007, §6; S-001; data model USER_ACCOUNT (`date_of_birth`, `sex`); seed |
+| D-72 | **First visit date at pregnancy setup** (PRD §2 "past antenatal check-up history", M1 "visit info"). Only the date of the first antenatal check-up is captured (optional) on S-007 / S-046; it cannot be in the future or before the start of the pregnancy (EDD − 280 days). Later visits stay hospital seed data (D-59) | **Decided (team, 14/10/2026)** | spec-ACC FR-004, FR-005, §6; S-007, S-046; data model PREGNANCY_PROFILE (`first_visit_date`); seed |
+| D-73 | **Symptom list of the report form = the PRD alarm symptoms** (PRD M3), replacing D-23: No symptoms (excludes all others), Vaginal bleeding, Severe abdominal pain, Waters breaking or fluid leakage, Severe headache, dizziness or blurred vision, Absence of fetal movement, Palpitations, Other (free text ≤ 100 characters). Stored values use "or" instead of "/" so that they do not clash with the list separator; the screen shows the PRD wording (UI label reference, as DM-40). ALR BR-007 is kept: **every** symptom, including Palpitations and Other, routes the report to the nurse queue as a case; thresholds are unchanged (D-14, D-15) | **Pending SME** (list); BR-007 kept (team) | spec-ALR FR-014, §5.1, §6, BR-004; S-025A, S-026, S-029, S-061, S-064; data model REPORT_SYMPTOM; seed; UI label reference |
+| D-74 | **ACC is shown as "Onboarding & Session"** (PRD M1; the module code stays `ACC`) and gets an **onboarding guide** (new screen S-104, not drawn): shown once after the mother agrees on S-001, before pregnancy setup; she can skip it. Number of pages and their text: `spec-ACC.md` Q20 | **Decided (team, 14/10/2026)**; content open | spec-ACC FR-028, §4, §7; S-104; screen-list |
+| D-75 | **Integrated journey on the timeline** (PRD M4): the week widget on S-008 opens S-048; S-048 shows the week's indicators **listed by day** and the ultrasound images first, then the diary entries and Messages to Baby (still pending Client, D-03). The view stays **weekly** (‹ / ›, D-04) with a daily listing inside the week. New screen S-105 (not drawn): **journey review by stage** — first trimester weeks 0 – 13, second 14 – 27, third 28 – 42 (boundaries pending SME) — and a **PDF keepsake album** exported to the device. The album is generated on request and not stored by the system (no new entity) | **Decided (team, 14/10/2026)**; trimester boundaries Pending SME | spec-TML FR-003, FR-012 – FR-014, §6, §7; S-008, S-048, S-105 |
+| D-76 | **Chatbot on Google AI Studio (Gemini models)** (PRD M5), narrowing BOT BR-003 ("OpenAI or Gemini"); the backend is still a Python service. The system prompt keeps the chatbot to pregnancy, prenatal care, nutrition and postpartum wellness; any other question gets a polite decline and no case (FR-010). A question matching a **danger phrase** (D-47; PRD examples: bleeding, severe abdominal pain, no fetal movement, waters breaking, blurred vision / dizziness) shows the notice "Signs that need medical attention" above the existing hand-off offer ("Connect to nurse" / hotline; FR-011). The notice does not use the word "Alert" (D-22, ALR BR-010). Few-shot clinical answers from the PRD draft are not added | **Decided (team, 14/10/2026)**; danger phrases Pending SME (D-47) | spec-BOT BR-003, BR-005, FR-006, FR-007, FR-010, FR-011; S-031, S-034; UI label reference |
+| D-77 | **Appointments become Could** (PRD C1): a WebView inside the TCI app opens Thu Cuc's existing antenatal booking portal; the read-only "Upcoming appointments" card on S-008 reads from the TCI app (answers `spec-APT.md` Q11) and the appointment reminder stays. The card on S-008 and the "Appointment reminders" switch on S-010 are Could elements inside Must screens. Replaces the Should priority of D-62; the rest of D-62 stands | **Decided (team, 14/10/2026)** | spec-APT §1, §5, Q1, Q11; S-008, S-010; function-list; screen-list |
+| D-78 | **Chat transcript in the hand-over** (PRD §4 "Seamless Handover": chat transcripts move to the nurse / doctor queue): for a chatbot case, the case detail on S-064 shows the whole conversation of the case's question (every Chat Message with the same `conversation_id`), not only the escalated question. No new column: Case → `chat_message_id` → Chat Message → `conversation_id` | **Decided (team, 14/10/2026)** | spec-CLI FR-003, §5.1; S-064 (chatbot variant) |
+
+**Not adopted from the refinement (team review 14/10/2026):** few-shot question / answer clinical content for the chatbot (needs SME); new questions on S-031; password, OTP or `tci_token_ref` columns (they contradict D-01); moving S-012 – S-022 to Could (they stay "handled by the TCI app"); renumbering D-01 – D-05; seed changes without a spec reason. **Still open:** the PRD M3 row says an above-threshold report creates a "high-priority" case, but CARE_CASE has no priority column and D-17 allows only three threshold labels (`spec-ALR.md` Q22); Messages to Baby stays pending Client (D-03, D-65).
 
 ### References for D-15
 

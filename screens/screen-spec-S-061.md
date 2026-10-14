@@ -36,7 +36,7 @@ Web home page for nurses and doctors: one table, at full width, combining every 
 | 8 | Table — "Mother" column (e.g. Nguyễn Thị Lan) | Table column | User Account — full name (`spec-ACC.md` §6) | — | — |
 | 9 | "Gestational age" column (e.g. Week 28) | Table column | current gestational week (calculated from the EDD) | — | — |
 | 10 | "Case source" column (Metric report / Symptom / Chatbot) | Table column | Case — `case_source` (D-41) | — | one of the 3 values |
-| 11 | "Content" column (e.g. Blood pressure; Dizziness, Headache; Question with a risk keyword; Urine protein) | Table column | Metric Report — metric / symptoms[]; Chatbot case: the mother's question (Chat Message — text, `spec-BOT.md` §6) | — | — |
+| 11 | "Content" column (e.g. Blood pressure; Severe headache / dizziness / blurred vision; Question with a risk keyword; Urine protein — the image shows the D-23 example "Dizziness, Headache") | Table column | Metric Report — metric / symptoms[]; Chatbot case: the mother's question (Chat Message — text, `spec-BOT.md` §6) | — | — |
 | 12 | "Value" column + threshold label (e.g. "150/95 mmHg — Above threshold"; "— Not assessed"; "2+ — Above threshold") | Table column + Label | Health Metric Record — value, unit; threshold_label from Threshold Rule (D-17, D-52) | — | "Not assessed" only when there is no measured value |
 | 13 | "Submitted at" column (`dd/mm/yyyy · HH:mm`) | Table column | Metric Report — submitted_at / Case — created_at (Chatbot case) | — | — |
 | 14 | "Status" column | Label | Case — status (D-18) | — | — |

@@ -1,11 +1,11 @@
-user_id,tci_account_ref,full_name,phone,record_code,role
-059acf66-1a42-5609-a34a-d961725f4067,tci-000124,Trần Thu Hà,0900000102,TC-00124,Mother
-37b8b922-1ce4-5950-8e0b-5778e8daa3f9,tci-000130,Bùi Thị Ngọc,0900000108,TC-00130,Mother
-3ca395ff-4294-5d35-82ea-3eafa76844c7,tci-000132,Đặng Thu Phương,0900000110,TC-00132,Mother
-4333c4cf-b0ff-50ec-9ff1-39da60d2e7b8,tci-000125,Lê Minh Anh,0900000103,TC-00125,Mother
-5922a028-7ad1-5bb1-8034-1077cbdf6a1d,tci-000123,Nguyễn Thị Lan,0900000101,TC-00123,Mother
-5d431414-f24b-5468-b2b8-7efbf6666eec,tci-000131,Ngô Thị Thảo,0900000109,TC-00131,Mother
-83a221ae-966d-5739-8ae0-954d4335eca1,tci-000127,Vũ Thị Hoa,0900000105,TC-00127,Mother
-a7354260-026f-5459-bc86-fdb7192e9b9c,tci-000126,Phạm Ngọc Mai,0900000104,TC-00126,Mother
-d732d88d-8724-52dc-bcda-2cdaef98a917,tci-000128,Đỗ Thị Hương,+84 (0)900 000 1060,TC-00128,Mother
-fdaf1f41-6269-5fe8-aa40-1ddd6ecd7e60,tci-000129,Hoàng Thu Trang,0900000107,,Mother
+user_id,tci_account_ref,full_name,phone,date_of_birth,sex,record_code,role
+059acf66-1a42-5609-a34a-d961725f4067,tci-000124,Trần Thu Hà,0900000102,1993-08-03,Female,TC-00124,Mother
+37b8b922-1ce4-5950-8e0b-5778e8daa3f9,tci-000130,Bùi Thị Ngọc,0900000108,1999-03-22,Female,TC-00130,Mother
+3ca395ff-4294-5d35-82ea-3eafa76844c7,tci-000132,Đặng Thu Phương,0900000110,1997-07-18,Female,TC-00132,Mother
+4333c4cf-b0ff-50ec-9ff1-39da60d2e7b8,tci-000125,Lê Minh Anh,0900000103,1998-11-20,Female,TC-00125,Mother
+5922a028-7ad1-5bb1-8034-1077cbdf6a1d,tci-000123,Nguyễn Thị Lan,0900000101,1996-04-12,Female,TC-00123,Mother
+5d431414-f24b-5468-b2b8-7efbf6666eec,tci-000131,Ngô Thị Thảo,0900000109,1992-12-01,Female,TC-00131,Mother
+83a221ae-966d-5739-8ae0-954d4335eca1,tci-000127,Vũ Thị Hoa,0900000105,1995-06-30,Female,TC-00127,Mother
+a7354260-026f-5459-bc86-fdb7192e9b9c,tci-000126,Phạm Ngọc Mai,0900000104,1990-02-14,Female,TC-00126,Mother
+d732d88d-8724-52dc-bcda-2cdaef98a917,tci-000128,Đỗ Thị Hương,+84 (0)900 000 1060,1986-01-09,Female,TC-00128,Mother
+fdaf1f41-6269-5fe8-aa40-1ddd6ecd7e60,tci-000129,Hoàng Thu Trang,0900000107,2001-10-05,Female,,Mother

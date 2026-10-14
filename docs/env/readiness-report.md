@@ -29,9 +29,9 @@ T1 — `uv run tools/check_env.py --repo --path A`: no FAIL.
 | Node.js 24 LTS | PASS v24.19.0 |
 | Spec Kit 1.0.1 | **WARN** 1.0.1 found with `uv tool list`; `specify.exe` itself is blocked by Windows (W1) |
 | Claude Code (Path A) | PASS 2.1.281 |
-| Repository checks (AGENTS.md, .specify/, .agents/rules/, constitution, PRD, 7 Spec Documents, data model + ERD, 28 Screen Specs, schema, seed, this report, AI use log, no secrets, .gitattributes, seed `--check`) | PASS |
+| Repository checks (AGENTS.md, .specify/, .agents/rules/, constitution, PRD, 7 Spec Documents, data model + ERD, 30 Screen Specs, schema, seed, this report, AI use log, no secrets, .gitattributes, seed `--check`) | PASS |
 
-T2 — `uv run data/seed/generate_seed.py`, then `git status`: prints `OK — 26 tables, 272 rows; all checks passed; wrote 26 CSV files + seed-report.md`; `git status` shows no changed file. `uv run tools/check_data_model.py`: `OK — 26 tables, 172 columns, 40 relationships = 40 foreign keys; … 26 seed files, 272 rows load in filename order`.
+T2 — `uv run data/seed/generate_seed.py`, then `git status`: prints `OK — 26 tables, 271 rows; all checks passed; wrote 26 CSV files + seed-report.md`; `git status` shows no changed file. `uv run tools/check_data_model.py`: `OK — 26 tables, 175 columns, 40 relationships = 40 foreign keys; … 26 seed files, 271 rows load in filename order`.
 
 ## 3. T3 agent read-back
 
@@ -54,7 +54,7 @@ Answer as one table.
 ### 3.2 Answer key (computed from the files, not by an agent)
 
 1. **26 entities:** USER_ACCOUNT, SESSION, PREGNANCY_PROFILE, CONSENT_RECORD, EMR_LINKAGE_REQUEST, NOTIFICATION, NOTIFICATION_PREFERENCE, HEALTH_METRIC_RECORD, VISIT, PATIENT_CLINICAL_PROFILE, WATCH_FLAG, METRIC_REPORT, REPORT_SYMPTOM, CARE_CASE, CASE_STATUS_HISTORY, STAFF_RESPONSE, GUIDANCE_TEMPLATE, THRESHOLD_RULE, STAFF, PATIENT_ASSIGNMENT, DIARY_ENTRY, DIARY_IMAGE, FAMILY_MESSAGE, CONVERSATION, CHAT_MESSAGE, AI_RESPONSE_LOG.
-2. **Records per seed file (272 in total):**
+2. **Records per seed file (271 in total; REPORT_SYMPTOM 16 → 15 after the D-73 symptom list, 14/10/2026):**
 
 | File | Rows | File | Rows | File | Rows |
 |---|---|---|---|---|---|
@@ -62,7 +62,7 @@ Answer as one table.
 | 02_THRESHOLD_RULE | 7 | 11_PATIENT_ASSIGNMENT | 9 | 20_WATCH_FLAG | 8 |
 | 03_USER_ACCOUNT | 10 | 12_PATIENT_CLINICAL_PROFILE | 10 | 21_METRIC_REPORT | 11 |
 | 04_CONSENT_RECORD | 11 | 13_PREGNANCY_PROFILE | 9 | 22_CARE_CASE | 10 |
-| 05_CONVERSATION | 9 | 14_SESSION | 10 | 23_REPORT_SYMPTOM | 16 |
+| 05_CONVERSATION | 9 | 14_SESSION | 10 | 23_REPORT_SYMPTOM | 15 |
 | 06_DIARY_ENTRY | 8 | 15_VISIT | 8 | 24_CASE_STATUS_HISTORY | 22 |
 | 07_EMR_LINKAGE_REQUEST | 10 | 16_AI_RESPONSE_LOG | 8 | 25_NOTIFICATION | 9 |
 | 08_FAMILY_MESSAGE | 7 | 17_CHAT_MESSAGE | 16 | 26_STAFF_RESPONSE | 8 |

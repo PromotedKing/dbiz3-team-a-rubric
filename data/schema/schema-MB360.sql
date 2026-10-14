@@ -36,6 +36,8 @@ CREATE TABLE USER_ACCOUNT (
     tci_account_ref VARCHAR(64) NOT NULL CHECK (length(tci_account_ref) <= 64),  -- VARCHAR(64)
     full_name VARCHAR(100) NOT NULL CHECK (length(full_name) <= 100),  -- VARCHAR(100)
     phone VARCHAR(20) NOT NULL CHECK (length(phone) <= 20),  -- VARCHAR(20)
+    date_of_birth TEXT NOT NULL CHECK (date_of_birth GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),  -- DATE
+    sex TEXT NOT NULL CHECK (sex IN ('Female')),  -- ENUM (Female) — ACC BR-007
     record_code VARCHAR(20) CHECK (length(record_code) <= 20),  -- VARCHAR(20)
     role TEXT NOT NULL CHECK (role IN ('Mother')),  -- ENUM (Mother)
     PRIMARY KEY (user_id),
@@ -144,6 +146,7 @@ CREATE TABLE PREGNANCY_PROFILE (
     lmp TEXT CHECK (lmp GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),  -- DATE
     edd_source TEXT NOT NULL CHECK (edd_source IN ('Self-entered', 'Hospital record')),  -- ENUM (Self-entered / Hospital record)
     height_cm NUMERIC,  -- DECIMAL(4,1)
+    first_visit_date TEXT CHECK (first_visit_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),  -- DATE (D-72)
     PRIMARY KEY (user_id),
     FOREIGN KEY (user_id) REFERENCES USER_ACCOUNT (user_id)
 );
@@ -300,7 +303,7 @@ CREATE TABLE CARE_CASE (
 
 CREATE TABLE REPORT_SYMPTOM (
     report_id TEXT NOT NULL CHECK (length(report_id) = 36),  -- UUID
-    symptom TEXT NOT NULL CHECK (symptom IN ('No symptoms', 'Headache', 'Dizziness', 'Palpitations', 'Abdominal pain', 'Bleeding', 'Other')),  -- ENUM (No symptoms / Headache / Dizziness / Palpitations / Abdominal pain / Bleeding / Other)
+    symptom TEXT NOT NULL CHECK (symptom IN ('No symptoms', 'Vaginal bleeding', 'Severe abdominal pain', 'Waters breaking or fluid leakage', 'Severe headache, dizziness or blurred vision', 'Absence of fetal movement', 'Palpitations', 'Other')),  -- ENUM (No symptoms / Vaginal bleeding / Severe abdominal pain / Waters breaking or fluid leakage / Severe headache, dizziness or blurred vision / Absence of fetal movement / Palpitations / Other)
     PRIMARY KEY (report_id, symptom),
     FOREIGN KEY (report_id) REFERENCES METRIC_REPORT (report_id)
 );

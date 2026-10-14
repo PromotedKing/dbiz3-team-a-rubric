@@ -17,7 +17,7 @@ Reads data/schema/schema-MB360.sql (column order, keys, CHECK constraints). Befo
 Clinical thresholds come only from ALR §5.2 BR-004 (D-14; D-15 = Pending SME). Standard library only.
 """
 import csv, io, os, re, sys, uuid, sqlite3
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from collections import defaultdict, Counter
 
 HERE = os.path.dirname(os.path.abspath(__file__))               # data/seed/
@@ -96,6 +96,8 @@ STAFF_ROLE = {r['staff_id']: r['role'] for r in T['STAFF']}
 
 # ---- USER_ACCOUNT (mothers only — DM-02 default)
 U = {k: uid('user-' + k) for k in ['U01', 'U02', 'U03', 'U04', 'U05', 'U06', 'U07', 'U08', 'U09', 'U10']}
+# date of birth and sex are copies of the TCI account (D-71); only female accounts open the sub-app (ACC BR-007)
+DOB = {'U01': date(1996, 4, 12), 'U02': date(1993, 8, 3), 'U03': date(1998, 11, 20), 'U04': date(1990, 2, 14), 'U05': date(1995, 6, 30), 'U06': date(1986, 1, 9), 'U07': date(2001, 10, 5), 'U08': date(1999, 3, 22), 'U09': date(1992, 12, 1), 'U10': date(1997, 7, 18)}
 for k, kind, note, ref, name, phone, code in [
     ('U01', 'ordinary', 'Ms. Lan — wireframe data on S-103 / S-064 / S-029', 'tci-000123', 'Nguyễn Thị Lan', '0900000101', 'TC-00123'),
     ('U02', 'ordinary', '', 'tci-000124', 'Trần Thu Hà', '0900000102', 'TC-00124'),
@@ -108,7 +110,8 @@ for k, kind, note, ref, name, phone, code in [
     ('U09', 'ordinary', 'blood pressure report of exactly 140/90', 'tci-000131', 'Ngô Thị Thảo', '0900000109', 'TC-00131'),
     ('U10', 'ordinary', '', 'tci-000132', 'Đặng Thu Phương', '0900000110', 'TC-00132'),
 ]:
-    add('USER_ACCOUNT', kind, note, user_id=U[k], tci_account_ref=ref, full_name=name, phone=phone, record_code=code, role='Mother')
+    add('USER_ACCOUNT', kind, note, user_id=U[k], tci_account_ref=ref, full_name=name, phone=phone,
+        date_of_birth=DOB[k], sex='Female', record_code=code, role='Mother')
 NAME = {r['user_id']: r['full_name'] for r in T['USER_ACCOUNT']}
 
 # ---- SESSION (role is always Mother — ACC §6)
@@ -149,6 +152,8 @@ for k, kind, note, created, exp in [
 EDD = {'U01': date(2026, 12, 20), 'U02': date(2026, 11, 15), 'U03': date(2027, 1, 10), 'U04': date(2026, 11, 29),
        'U05': date(2026, 12, 5), 'U06': date(2026, 9, 13), 'U08': date(2027, 3, 1), 'U09': date(2027, 2, 14),
        'U10': date(2026, 10, 25)}
+# first antenatal check-up entered at setup (D-72); later visits stay hospital seed data (D-59)
+FIRST_VISIT = {'U01': date(2026, 5, 10), 'U02': date(2026, 3, 28), 'U03': date(2026, 5, 30), 'U04': None, 'U05': date(2026, 4, 5), 'U06': date(2026, 1, 20), 'U08': None, 'U09': date(2026, 7, 15), 'U10': date(2026, 3, 10)}
 for k, kind, note, lmp, src, h in [
     ('U01', 'exceptional', 'edd_source = Hospital record, set only in seed (ACC BR-003, DM-23)', date(2026, 3, 15), 'Hospital record', 158.0),
     ('U02', 'ordinary', '', None, 'Self-entered', 162.0),
@@ -156,11 +161,12 @@ for k, kind, note, lmp, src, h in [
     ('U04', 'ordinary', '', None, 'Self-entered', 160.0),
     ('U05', 'ordinary', '', None, 'Self-entered', 165.5),
     ('U06', 'boundary', 'gestational week 42 at NOW — upper bound of 0–42', date(2025, 12, 7), 'Self-entered', 150.0),
-    ('U08', 'empty', 'no LMP, no height', None, 'Self-entered', None),
+    ('U08', 'empty', 'no LMP, no height, no first visit date', None, 'Self-entered', None),
     ('U09', 'ordinary', '', None, 'Self-entered', 157.0),
     ('U10', 'ordinary', '', None, 'Self-entered', 163.0),
 ]:
-    add('PREGNANCY_PROFILE', kind, note, user_id=U[k], edd=EDD[k], lmp=lmp, edd_source=src, height_cm=None if h is None else f'{h:.1f}')
+    add('PREGNANCY_PROFILE', kind, note, user_id=U[k], edd=EDD[k], lmp=lmp, edd_source=src,
+        height_cm=None if h is None else f'{h:.1f}', first_visit_date=FIRST_VISIT[k])
 
 # ---- EMR_LINKAGE_REQUEST (every row is seed data — DM-23)
 for k, kind, note, req, status, linked in [
@@ -344,16 +350,16 @@ def report(k, code, u, kind, note, rec, symptoms, submitted, other=None, mnote=N
 
 
 report('RPT-001', 'BC-0925-008', 'U01', 'ordinary', 'Normal, no symptoms → "No action needed", no case (BR-008 branch 3, BR-009)', 'H10', ['No symptoms'], dt('2026-09-25 07:12'))
-report('RPT-002', 'BC-0926-015', 'U01', 'ordinary', 'S-026 / S-064 / S-061 row 1', 'H11', ['Headache', 'Dizziness', 'Other'], dt('2026-09-26 20:17'), other='Back ache worse in the afternoon', mnote='Measured a second time, still high')
-report('RPT-003', 'BC-0927-021', 'U02', 'ordinary', 'symptom report, no health metric record (D-41) — S-061 row 2', None, ['Dizziness', 'Headache'], dt('2026-09-27 09:05'))
+report('RPT-002', 'BC-0926-015', 'U01', 'ordinary', 'S-026 / S-064 / S-061 row 1', 'H11', ['Severe headache, dizziness or blurred vision', 'Other'], dt('2026-09-26 20:17'), other='Back ache worse in the afternoon', mnote='Measured a second time, still high')
+report('RPT-003', 'BC-0927-021', 'U02', 'ordinary', 'symptom report, no health metric record (D-41) — S-061 row 2', None, ['Severe headache, dizziness or blurred vision', 'Palpitations'], dt('2026-09-27 09:05'))
 report('RPT-004', 'BC-0926-011', 'U04', 'ordinary', 'S-061 row 4', 'H12', ['No symptoms'], dt('2026-09-26 18:05'))
 report('RPT-005', 'BC-0926-004', 'U05', 'ordinary', 'S-061 row 5', 'H13', ['No symptoms'], dt('2026-09-26 07:32'))
 report('RPT-006', 'BC-0927-020', 'U09', 'boundary', 'exactly 140/90; other_symptom_text exactly 100 characters', 'H14', ['Other'], dt('2026-09-27 07:02'), other=LONG100)
 report('RPT-007', 'BC-0926-009', 'U03', 'empty', 'optional columns empty; Normal → no case', 'H15', ['No symptoms'], dt('2026-09-26 06:47'))
-report('RPT-008', 'BC-0926-012', 'U10', 'exceptional', 'above threshold + 2 symptoms; the case skips a manual "Viewed" (recorded automatically — BR-016)', 'H16', ['Abdominal pain', 'Bleeding'], dt('2026-09-26 13:05'), mnote='Abdominal pain since noon')
-report('RPT-009', 'BC-0927-003', 'U06', 'ordinary', 'symptom report at week 42', None, ['Bleeding', 'Palpitations'], dt('2026-09-27 06:30'))
+report('RPT-008', 'BC-0926-012', 'U10', 'exceptional', 'above threshold + 2 symptoms; the case skips a manual "Viewed" (recorded automatically — BR-016)', 'H16', ['Severe abdominal pain', 'Waters breaking or fluid leakage'], dt('2026-09-26 13:05'), mnote='Abdominal pain since noon')
+report('RPT-009', 'BC-0927-003', 'U06', 'ordinary', 'symptom report at week 42', None, ['Vaginal bleeding', 'Absence of fetal movement'], dt('2026-09-27 06:30'))
 report('RPT-011', 'BC-0927-023', 'U03', 'ordinary', 'Normal glucose 1 h after a meal, no symptoms → no case', 'H19', ['No symptoms'], dt('2026-09-27 08:12'))
-report('RPT-010', 'BC-0927-022', 'U01', 'ordinary', 'S-029: Lan\'s symptom report 27/09/2026 09:05, "Not viewed"', None, ['Dizziness'], dt('2026-09-27 09:05'))
+report('RPT-010', 'BC-0927-022', 'U01', 'ordinary', 'S-029: Lan\'s symptom report 27/09/2026 09:05, "Not viewed"', None, ['Severe headache, dizziness or blurred vision'], dt('2026-09-27 09:05'))
 
 # ---- CONVERSATION / CHAT_MESSAGE / AI_RESPONSE_LOG
 CV = {}
@@ -444,7 +450,7 @@ def mark(table, kind, note, **match):
     KIND[table][hits[0]] = (r, kind, note)
 
 
-mark('REPORT_SYMPTOM', 'boundary', 'largest symptom set in the seed: 3 items including "Other" (RPT-002)', report_id=R['RPT-002'], symptom='Other')
+mark('REPORT_SYMPTOM', 'boundary', 'largest symptom set in the seed: 2 items including "Other" (RPT-002; the D-73 list merges headache and dizziness)', report_id=R['RPT-002'], symptom='Other')
 mark('REPORT_SYMPTOM', 'exceptional', '"No symptoms" on an above-threshold report — the case is still opened (BR-008 branch 1, RPT-004)', report_id=R['RPT-004'], symptom='No symptoms')
 mark('CASE_STATUS_HISTORY', 'empty', 'first row: written by the System, changed_by empty (ALR FR-021)', case_id=C['C2'], status='Not viewed')
 mark('CASE_STATUS_HISTORY', 'boundary', '"Viewed" and "Escalated to doctor" in the same minute — Viewed recorded automatically (BR-016, C7)', case_id=C['C7'], status='Escalated to doctor')
@@ -719,6 +725,11 @@ for r in T['HEALTH_METRIC_RECORD']:
     assert (r['metric'] == 'Blood glucose') == (r['glucose_context'] is not None)
 for r in T['PREGNANCY_PROFILE']:
     assert 0 <= week_at(r['edd'], NOW) <= 42
+    if r['first_visit_date']:
+        assert r['edd'] - timedelta(days=280) <= r['first_visit_date'] <= NOW.date(), 'D-72: first visit inside the pregnancy, not in the future'
+for r in T['USER_ACCOUNT']:
+    assert r['sex'] == 'Female', 'ACC BR-007: only a female TCI account opens the sub-app'
+    assert r['date_of_birth'] < NOW.date()
 for r in T['DIARY_ENTRY']:
     assert r['entry_date'] <= NOW.date()
 for r in T['FAMILY_MESSAGE']:

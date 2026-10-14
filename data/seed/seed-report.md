@@ -10,7 +10,7 @@ The rows follow the wireframes: Lan (U01) has 2 reports being handled — C9 (sy
 
 ## Load test (gate G3)
 
-The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-memory database (the version is not written, so the report is the same on every machine) and the 26 files were loaded in filename order with `PRAGMA foreign_keys = ON`: no constraint error, `PRAGMA foreign_key_check` empty, 272 rows.
+The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-memory database (the version is not written, so the report is the same on every machine) and the 26 files were loaded in filename order with `PRAGMA foreign_keys = ON`: no constraint error, `PRAGMA foreign_key_check` empty, 271 rows.
 
 | File | Table | Rows |
 |---|---|---|
@@ -36,7 +36,7 @@ The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-me
 | `20_WATCH_FLAG.csv` | WATCH_FLAG | 8 |
 | `21_METRIC_REPORT.csv` | METRIC_REPORT | 11 |
 | `22_CARE_CASE.csv` | CARE_CASE | 10 |
-| `23_REPORT_SYMPTOM.csv` | REPORT_SYMPTOM | 16 |
+| `23_REPORT_SYMPTOM.csv` | REPORT_SYMPTOM | 15 |
 | `24_CASE_STATUS_HISTORY.csv` | CASE_STATUS_HISTORY | 22 |
 | `25_NOTIFICATION.csv` | NOTIFICATION | 9 |
 | `26_STAFF_RESPONSE.csv` | STAFF_RESPONSE | 8 |
@@ -67,11 +67,11 @@ The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-me
 | WATCH_FLAG | 8 | 5 | 1 | 1 | 1 | — |
 | METRIC_REPORT | 11 | 8 | 1 | 1 | 1 | — |
 | CARE_CASE | 10 | 7 | 1 | 1 | 1 | — |
-| REPORT_SYMPTOM | 16 | 14 | 1 | 0 | 1 | empty: both columns are part of the primary key; BR-017 needs at least 1 item per report |
+| REPORT_SYMPTOM | 15 | 13 | 1 | 0 | 1 | empty: both columns are part of the primary key; BR-017 needs at least 1 item per report |
 | CASE_STATUS_HISTORY | 22 | 19 | 1 | 1 | 1 | — |
 | NOTIFICATION | 9 | 6 | 1 | 1 | 1 | — |
 | STAFF_RESPONSE | 8 | 5 | 1 | 1 | 1 | — |
-| **Total** | 272 | | | | | |
+| **Total** | 271 | | | | | |
 
 ## Non-ordinary rows
 
@@ -112,7 +112,7 @@ The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-me
 | PATIENT_CLINICAL_PROFILE | empty | user-U10 | blood type and allergies empty |
 | PREGNANCY_PROFILE | exceptional | user-U01 | edd_source = Hospital record, set only in seed (ACC BR-003, DM-23) |
 | PREGNANCY_PROFILE | boundary | user-U06 | gestational week 42 at NOW — upper bound of 0–42 |
-| PREGNANCY_PROFILE | empty | user-U08 | no LMP, no height |
+| PREGNANCY_PROFILE | empty | user-U08 | no LMP, no height, no first visit date |
 | SESSION | boundary | sess-u06-02010900 | expires_at = NOW |
 | SESSION | empty | sess-u07-09270931 | no optional column in SESSION; shortest possible lifetime not decided (ACC §10 Q9) — 1 minute used |
 | SESSION | exceptional | sess-u08-09250801 | session expired → S-043; closing the sub-app sets expires_at (DM-19) |
@@ -140,7 +140,7 @@ The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-me
 | CARE_CASE | empty | case-C2 | Not viewed; optional columns empty (S-061 row 2) |
 | CARE_CASE | boundary | case-C6 | opened by exactly 140/90 |
 | CARE_CASE | exceptional | case-C7 | nurse taps "Escalate to doctor" while Not viewed → Viewed recorded automatically, same person and time (BR-016); doctor closes (D-37) |
-| REPORT_SYMPTOM | boundary | report-RPT-002 / Other | largest symptom set in the seed: 3 items including "Other" (RPT-002) |
+| REPORT_SYMPTOM | boundary | report-RPT-002 / Other | largest symptom set in the seed: 2 items including "Other" (RPT-002; the D-73 list merges headache and dizziness) |
 | REPORT_SYMPTOM | exceptional | report-RPT-004 / No symptoms | "No symptoms" on an above-threshold report — the case is still opened (BR-008 branch 1, RPT-004) |
 | CASE_STATUS_HISTORY | exceptional | case-C1 / Resolved | Resolved straight after Viewed: the optional "Escalated to doctor" step is skipped (BR-012; C1) |
 | CASE_STATUS_HISTORY | empty | case-C2 / Not viewed | first row: written by the System, changed_by empty (ALR FR-021) |
@@ -179,6 +179,7 @@ One row per value of every ENUM column (parsed from the CHECK constraints of the
 | THRESHOLD_RULE | `purpose` | Display only | rule-TR-07 |
 | THRESHOLD_RULE | `confirmation_status` | Confirmed | rule-TR-01 |
 | THRESHOLD_RULE | `confirmation_status` | Pending SME | rule-TR-03 |
+| USER_ACCOUNT | `sex` | Female | user-U01 |
 | USER_ACCOUNT | `role` | Mother | user-U01 |
 | DIARY_ENTRY | `mood` | Happy | diary-DIA-001 |
 | DIARY_ENTRY | `mood` | Calm | diary-DIA-003 |
@@ -239,11 +240,12 @@ One row per value of every ENUM column (parsed from the CHECK constraints of the
 | CARE_CASE | `status` | Escalated to doctor | case-C4 |
 | CARE_CASE | `status` | Resolved | case-C1 |
 | REPORT_SYMPTOM | `symptom` | No symptoms | report-RPT-001 / No symptoms |
-| REPORT_SYMPTOM | `symptom` | Headache | report-RPT-002 / Headache |
-| REPORT_SYMPTOM | `symptom` | Dizziness | report-RPT-002 / Dizziness |
-| REPORT_SYMPTOM | `symptom` | Palpitations | report-RPT-009 / Palpitations |
-| REPORT_SYMPTOM | `symptom` | Abdominal pain | report-RPT-008 / Abdominal pain |
-| REPORT_SYMPTOM | `symptom` | Bleeding | report-RPT-008 / Bleeding |
+| REPORT_SYMPTOM | `symptom` | Vaginal bleeding | report-RPT-009 / Vaginal bleeding |
+| REPORT_SYMPTOM | `symptom` | Severe abdominal pain | report-RPT-008 / Severe abdominal pain |
+| REPORT_SYMPTOM | `symptom` | Waters breaking or fluid leakage | report-RPT-008 / Waters breaking or fluid leakage |
+| REPORT_SYMPTOM | `symptom` | Severe headache, dizziness or blurred vision | report-RPT-002 / Severe headache, dizziness or blurred vi |
+| REPORT_SYMPTOM | `symptom` | Absence of fetal movement | report-RPT-009 / Absence of fetal movement |
+| REPORT_SYMPTOM | `symptom` | Palpitations | report-RPT-003 / Palpitations |
 | REPORT_SYMPTOM | `symptom` | Other | report-RPT-002 / Other |
 | CASE_STATUS_HISTORY | `status` | Not viewed | case-C1 / Not viewed |
 | CASE_STATUS_HISTORY | `status` | Viewed | case-C1 / Viewed |
@@ -273,7 +275,7 @@ One row per value of every ENUM column (parsed from the CHECK constraints of the
 | NOTIFICATION_PREFERENCE | user-U09 | no optional column; S-010 never opened — defaults written with the account (DM-41) |
 | PATIENT_ASSIGNMENT | user-U10 / 2026-03-02 | valid_to empty = still active |
 | PATIENT_CLINICAL_PROFILE | user-U10 | blood type and allergies empty |
-| PREGNANCY_PROFILE | user-U08 | no LMP, no height |
+| PREGNANCY_PROFILE | user-U08 | no LMP, no height, no first visit date |
 | SESSION | sess-u07-09270931 | no optional column in SESSION; shortest possible lifetime not decided (ACC §10 Q9) — 1 minute used |
 | VISIT | visit-VIS-008 | all optional columns empty |
 | AI_RESPONSE_LOG | log-LOG-007 | audit_log_entry empty (no schema — DM-06) |

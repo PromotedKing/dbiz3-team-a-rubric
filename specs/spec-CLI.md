@@ -4,9 +4,9 @@
 |---|---|
 | Module ID | `CLI` |
 | Module name | Clinical Escalation — UI: "Cases to handle" / "Mother quick profile" (web, for Nurse and Doctor) |
-| Spec version | v1.6.3 (30/09/2026: data-model review decisions applied — DM-02, DM-05, DM-10; responsible doctor D-68; 29/09/2026: fetal heart rate reference range aligned with the latest MVP Scope; review 29/09/2026: CLI-01 – CLI-06, X-02, X-04, X-07 / DM-25 data types; Doctor permissions per screen-spec fix #4) |
+| Spec version | v1.7.0 (14/10/2026: chat transcript in the hand-over — FR-003, BR-009, D-78) — v1.6.3 (30/09/2026: data-model review decisions applied — DM-02, DM-05, DM-10; responsible doctor D-68; 29/09/2026: fetal heart rate reference range aligned with the latest MVP Scope; review 29/09/2026: CLI-01 – CLI-06, X-02, X-04, X-07 / DM-25 data types; Doctor permissions per screen-spec fix #4) |
 | Author (team member) | Trung (drafted 16/09/2026) — diagrams checked node by node by Tâm, 17/09/2026 (verifier ≠ converter) |
-| Date | 30/09/2026 |
+| Date | 14/10/2026 |
 | Status | Draft |
 | Approved by (Client role) | *pending* |
 | DBIZ2 source | Function List rows `F-055`–`F-071`, `F-098`–`F-099`, `F-128`–`F-130`, `F-138` (23 rows); Screens `S-054`–`S-069` |
@@ -34,7 +34,7 @@ This module closes the safety loop that `ALR` opens: the nurse reviews cases cre
 
 - Web dashboard for **two roles: Nurse and Doctor** (D-28). The header shows the role + the name of the signed-in user ("Nurse: Trần Thị B" / "Dr. Nguyễn Văn A").
 - A single **"Cases to handle"** table (S-061) combining cases from 3 sources: Metric report, Symptom, Chatbot (D-18, D-34, D-41); filtered by the 4 statuses + "All"; sorted "Newest".
-- **Mother quick profile + case handling** (S-064): profile, medical history, Doctor's instructions, the case's Report block (for a chatbot case: the mother's question), metric history ("From visit" and "Doctor-assigned" data), latest visit, visit history. The mother's **self-tracked metrics are not shown** to clinical staff — they are for her own reference (CLI-01).
+- **Mother quick profile + case handling** (S-064): profile, medical history, Doctor's instructions, the case's Report block (for a chatbot case: the mother's question and the whole conversation it belongs to — D-78), metric history ("From visit" and "Doctor-assigned" data), latest visit, visit history. The mother's **self-tracked metrics are not shown** to clinical staff — they are for her own reference (CLI-01).
 - **Case-handling actions:** Mark as viewed (nurse only), Escalate to doctor (nurse), Send guidance to the mother, Close case (D-18, D-24, D-29, D-37, D-43 as revised). The doctor acts on cases "Escalated to doctor" (CLI-02).
 - **Add / edit Doctor's instructions** (doctor only), including "Above-threshold guidance" chosen from a template and/or custom-written (D-24, D-29).
 
@@ -247,7 +247,7 @@ DBIZ2 Figure 9 shows video consultation + e-prescribing (Twilio/Zoom, SOAP note,
 |---|---|---|---|---|---|
 | FR-001 | F-055 | The system MUST load the alert dashboard specifically designed for clinicians. — MVP: opens S-061 "Cases to handle"; the header shows role + name (D-28). | Nurse / Doctor | Should | S-061 |
 | FR-002 | F-056 | The system MUST display a list of alerts assigned to the logged-in clinician. — MVP: "Cases to handle" table with columns Mother, Gestational age, Case source (Metric report / Symptom / Chatbot), Content (for a chatbot case: the mother's question), Value + threshold label, Submitted at (`dd/mm/yyyy · HH:mm`), Status, "View report"; filter by the 4 statuses + "All"; sort "Newest". **Default filter for the Doctor: "Escalated to doctor"** (CLI-02); default for the Nurse: §10 Q5. `[NEEDS CLARIFICATION: "assigned to the logged-in clinician" — does the nurse see all cases or only assigned cases? §10 Q10]` | Nurse / Doctor | Should | S-061 |
-| FR-003 | F-057 | The system MUST display detailed information for a clinician-selected alert. — MVP: the "Report BC-…" block on S-064 (metric, value, threshold label, measurement time, source, symptoms, mother's note, status). For a chatbot case: the mother's question + source "Chatbot", no value / threshold / symptoms. | Nurse / Doctor | Should | S-064 |
+| FR-003 | F-057 | The system MUST display detailed information for a clinician-selected alert. — MVP: the "Report BC-…" block on S-064 (metric, value, threshold label, measurement time, source, symptoms, mother's note, status). For a chatbot case: the mother's question + source "Chatbot", no value / threshold / symptoms, **and the whole conversation of that question** (every Chat Message with the same `conversation_id`, in time order, the escalated question highlighted) so that the mother does not have to repeat herself (PRD §4 "Seamless Handover", D-78). | Nurse / Doctor | Should | S-064 |
 | FR-004 | F-058 | The system MUST allow the clinician to acknowledge an alert and record a handling/intervention note. — MVP: "Mark as viewed" (= `spec-ALR.md` FR-004; X-02: ALR defines the status, this FR is the action). Per-case handling note: the wireframe draws no separate field; content sent to the mother goes through FR-024 `[NEEDS CLARIFICATION: is an internal per-case note needed — §10 Q12]`. | Nurse (D-43 as revised) | Should | S-064 |
 | FR-005 | F-059 | The system MUST update the status of a health alert and notify relevant stakeholders (clinicians, nurses, or patients). — MVP: status changes per D-43 (recorded in `status_history`); notify the doctor on escalation inside the clinical web (`spec-ALR.md` FR-009), notify the mother on a status change / new response (`spec-ALR.md` FR-018, D-48). | System | Should | S-064 → S-026, S-009 |
 | FR-006 | F-060 | The system MUST load the patient monitoring module for continuous health tracking and alert supervision. — MVP: opens S-064 from "View report ›". | Nurse / Doctor | Should | S-064 |
@@ -279,7 +279,7 @@ FR-025 is placed in `CLI` because Doctor's instructions are created / edited on 
 |---|---|---|---|---|---|---|
 | FR-001 | Navigation Request; Staff ID | EVENT; UUID | Yes | *(UI navigation target: S-061)* | — | Header label from `Staff.role` (D-28) |
 | FR-002 | Staff ID; Status Filter; Sort | UUID; ENUM (All / Not viewed / Viewed / Escalated to doctor / Resolved); ENUM (Newest) | Yes; No; No | Case List | LIST of OBJECT (patient_name, gestational_week, case_source, content, value + unit, threshold_label, submitted_at, status) | Threshold label "Not assessed" for cases without a measured value (Symptom / Chatbot — `spec-ALR.md` BR-005) |
-| FR-003 | Case ID | UUID | Yes | Case Detail | OBJECT | — |
+| FR-003 | Case ID | UUID | Yes | Case Detail; Conversation transcript (chatbot case only) | OBJECT; LIST of Chat Message (sender, text, sent_at) | Transcript = Case → `chat_message_id` → Chat Message → `conversation_id` → all its messages; no new column (D-78) |
 | FR-004 | Case ID; Staff ID | UUID; UUID | Yes | Status = "Viewed" + status_history entry | ENUM; OBJECT | Status never moves backwards (D-43) |
 | FR-005 | Case ID; New Status; Staff ID | UUID; ENUM (4 statuses, D-18); UUID | Yes | Status Updated; Notifications | CONFIRMATION; CONFIRMATION | "Viewed" recorded automatically when skipped (D-43); notifications: ALR FR-009 (doctor), ALR FR-018 (mother) |
 | FR-006 | Case ID | UUID | Yes | *(UI navigation target: S-064)* | — | — |
@@ -315,6 +315,7 @@ FR-025 is placed in `CLI` because Doctor's instructions are created / edited on 
 | BR-006 | "Above-threshold guidance" is prepared when the doctor creates an instruction (template, custom text, or both); if there is none, S-028 uses the hospital's default template. | D-24. |
 | BR-007 | Only 3 threshold labels: Normal / Above threshold / Not assessed. "Not assessed" only when there is no measured value (Symptom / Chatbot cases). Thresholds come from `spec-ALR.md` BR-004 (configuration table, D-52). | D-15, D-17, D-52. |
 | BR-008 | "Send guidance" does not change the case status; only "Close case" moves it to "Resolved". | D-37. |
+| BR-009 | For a chatbot case, the clinical web shows the whole conversation of the escalated question (read-only); other conversations of the mother are not shown. | PRD §4 "Seamless Handover"; D-78. |
 
 **Permission table (D-29, D-37, D-43, D-44)**
 
