@@ -12,7 +12,8 @@ did and what the humans decided.
 
 | Feature folder | Module | User stories in this slice | Owner | Branch | Status |
 |---|---|---|---|---|---|
-| `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | In review — US-1 tests pass (63 passed, 1 xfailed) |
+| `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Merged (PR #6) |
+| `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Tasks — analyzed, waiting for review before Step 5 |
 
 ## 2. Run entries
 
@@ -107,6 +108,45 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Human review | Pending (pull request) |
 | Tests | `63 passed, 1 xfailed` (xfail = ALR Q9). No test changed; `data/` unchanged (`generate_seed.py --check` OK) |
 | Spec issues found | #3 below |
+| Commit | see the commit of this entry |
+
+### Entry 7: 14/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --spec specs/spec-CLI.md CLI --name core`; Step 1 consistency check (read-only) |
+| Feature and tasks | `specs/002-cli-core` |
+| What the agent produced | snapshot `specs/002-cli-core/spec.md`; consistency table: every stored field of CLI §5.1 maps to the data model (CARE_CASE, CASE_STATUS_HISTORY, STAFF_RESPONSE, WATCH_FLAG, STAFF, PATIENT_ASSIGNMENT) — 0 NOT FOUND |
+| Human review | Accepted (Sang) |
+| Tests | none |
+| Spec issues found | none at this step |
+| Commit | see the commit of this entry |
+
+### Entry 8: 14/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-plan` — argument of agent-prompts §2 with "use the stack and project structure in specs/001-alr-core/plan.md"; scope US-1 + US-2 (both P1, same screens); sign-in out of scope (§10 Q11 → Complexity Tracking) |
+| Feature and tasks | `specs/002-cli-core` |
+| What the agent produced | `plan.md`, `research.md` (R1 – R7), `data-model.md`, `contracts/http-routes.md`, `quickstart.md`; `specs/spec-CLI.md` §10 Q15 added (interpretation of R3: assignment active on its `valid_to` day), snapshot refreshed |
+| Human review | Pending — 8 questions of Workshop Guide 2.2 |
+| Tests | none |
+| Spec issues found | §10 Q15 (new) |
+| Commit | see the commit of this entry |
+
+### Entry 9: 14/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-tasks` (agent-prompts §3, seed test: 10 cases by status, C7 history) then `/speckit-analyze` |
+| Feature and tasks | `specs/002-cli-core`, T001 – T020 |
+| What the agent produced | `tasks.md` (tests T002, T003, T006 – T013 before code T004, T014 – T018); analysis: 0 CRITICAL, 0 HIGH, 3 MEDIUM (mother notifications deferred to ALR US-2; FR-008 chart as a table; any doctor may act on an escalated case — the spec does not limit it to the assigned doctor), 1 LOW (nurse default filter All, Q5) |
+| Human review | Pending |
+| Tests | none |
+| Spec issues found | none new |
 | Commit | see the commit of this entry |
 
 ## 3. Spec issues found while building
