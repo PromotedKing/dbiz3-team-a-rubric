@@ -10,7 +10,7 @@ Mother & Baby 360° is a maternity remote-monitoring sub-app for Thu Cuc Hospita
 
 - Specification and data (Sessions 1 – 7): Markdown, Mermaid, SQLite 3 schema (`data/schema/schema-MB360.sql`), CSV seed files written by a Python 3 generator (standard library only).
 - Tooling: Git + GitHub CLI, uv (Python 3.11 or later), Node.js 24 LTS, Spec Kit v1.0.1 (`.specify/`, integrations `agy` and `claude`, helper scripts in Python).
-- Application stack: **not chosen yet**. It is decided at the Spec Kit Plan step (Session 8). Do not add a framework, package manifest or build tool before the Plan is approved by the team.
+- Application stack (decided 14/10/2026, `specs/001-alr-core/plan.md`): **Python 3.11+, FastAPI + Jinja2 (server-rendered pages), SQLite 3 (`sqlite3`, built from `data/schema/schema-MB360.sql` + `data/seed/*.csv` at start-up), pytest + httpx**, managed with uv (`pyproject.toml`). Code in `app/mb360/`, tests in `tests/`. Do not add another framework, service or package that a `plan.md` does not list.
 
 ## 3. Hard rules
 
@@ -37,7 +37,13 @@ uv run tools/start_feature.py --check     # the snapshot still matches its sourc
 uv run tools/start_feature.py --use specs/001-alr-core   # choose the active feature after a fresh clone
 ```
 
-There is no application to run yet (see §2).
+Application (from Session 8, `specs/001-alr-core/quickstart.md`):
+
+```bash
+uv sync                                               # install the packages of pyproject.toml into .venv
+uv run pytest                                         # run all tests (the database is built from schema + seed in memory)
+uv run uvicorn mb360.main:app --app-dir app --reload  # start the app at http://127.0.0.1:8000
+```
 
 ## 5. Data model
 

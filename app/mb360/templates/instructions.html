@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Doctor's instructions</h1>
+{% if submitted %}<div class="card notice">Report submitted</div>{% endif %}
+{% for f in flags %}
+<div class="card">
+  <h2>{{ f.metric }} <span class="label">Doctor-assigned</span></h2>
+  {% if f.note %}<p>{{ f.note }}</p>{% endif %}
+  <a class="button" href="/m/{{ user.user_id }}/report?metric={{ f.metric | urlencode }}">+ Report metric</a>
+</div>
+{% else %}
+<p class="caption">You have no Doctor's instructions.</p>
+{% endfor %}
+<div class="card">
+  <a class="button secondary" href="/m/{{ user.user_id }}/report?metric=Symptom">+ Report symptoms</a>
+</div>
+<p><a href="/">Choose another mother</a></p>
+{% endblock %}

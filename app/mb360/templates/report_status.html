@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+{% if submitted %}<div class="card notice">Report submitted</div>{% endif %}
+<h1>Report status</h1>
+<div class="card">
+  <h2>Report {{ rep.report_code }}</h2>
+  {% if hmr %}<p>{{ hmr.metric }}: {{ hmr.value }}{% if hmr.unit %} {{ hmr.unit }}{% endif %} · measured {{ hmr.measured_at | show_time }}</p>
+  {% else %}<p>Symptom report <span class="label">Not assessed</span></p>{% endif %}
+  <p>Symptoms: {{ symptoms | map("symptom_label") | join(", ") }}{% if rep.other_symptom_text %} ({{ rep.other_symptom_text }}){% endif %}</p>
+  <p class="caption">Sent {{ rep.submitted_at | show_time }}</p>
+  <p>Status: <span class="label">{{ case.status if case else "No action needed" }}</span></p>
+</div>
+<p><a href="/m/{{ user.user_id }}/instructions">Back to Doctor's instructions</a></p>
+{% endblock %}

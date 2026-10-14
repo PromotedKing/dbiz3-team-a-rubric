@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Mother &amp; Baby 360{% endblock %}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; font-size: 13px; max-width: 420px; margin: 0 auto; padding: 16px; color: #222; }
+    h1 { font-size: 18px; } h2 { font-size: 15px; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 12px; margin: 10px 0; }
+    .label { display: inline-block; border-radius: 8px; padding: 2px 8px; background: #eee; font-size: 11px; }
+    .warn { border-color: #c0392b; } .notice { background: #eef7ee; }
+    .error { color: #c0392b; font-size: 11px; display: block; }
+    .caption { color: #777; font-size: 11px; }
+    a.button, button { display: inline-block; padding: 8px 14px; border-radius: 8px; border: 1px solid #7a3b69; background: #7a3b69; color: #fff; text-decoration: none; }
+    a.secondary { background: #fff; color: #7a3b69; }
+    label { display: block; margin: 8px 0 2px; }
+  </style>
+</head>
+<body>
+  <header><strong>Mother &amp; Baby 360</strong>{% if user %} · {{ user.full_name }}{% endif %}</header>
+  {% block content %}{% endblock %}
+</body>
+</html>
