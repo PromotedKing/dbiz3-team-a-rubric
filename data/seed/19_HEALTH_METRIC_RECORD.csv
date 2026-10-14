@@ -13,7 +13,7 @@ record_id,user_id,metric,metric_group,value,unit,glucose_context,measured_at,sou
 aa5dbcae-3d99-5512-91f3-4e9affb30cab,83a221ae-966d-5739-8ae0-954d4335eca1,Urine protein,Group 2,2+,,,2026-09-26 07:30,Doctor-assigned,,30,2026-09-26 07:32
 bb1f6a04-3630-58ee-a6e7-486205e2f658,5922a028-7ad1-5bb1-8034-1077cbdf6a1d,Blood pressure,Group 2,150/95,mmHg,,2026-09-26 20:15,Doctor-assigned,,27,2026-09-26 20:17
 cb4dd368-d2aa-5236-aad3-c38486af81e9,5922a028-7ad1-5bb1-8034-1077cbdf6a1d,Urine protein,Group 2,Negative,,,2026-09-15 09:00,From visit,fa150508-8774-5dfb-9e22-2c25dbb6cf48,26,2026-09-15 09:00
-d52b2e36-5b81-5046-9a9b-57f2e6999d44,5d431414-f24b-5468-b2b8-7efbf6666eec,Blood pressure,Group 2,140/90,mmHg,,2026-09-27 07:00,Self-entered,,20,2026-09-27 07:02
+d52b2e36-5b81-5046-9a9b-57f2e6999d44,5d431414-f24b-5468-b2b8-7efbf6666eec,Blood pressure,Group 2,140/90,mmHg,,2026-09-27 07:00,Doctor-assigned,,20,2026-09-27 07:02
 de99d83a-fd38-5fc0-940f-e93a2c9043e8,a7354260-026f-5459-bc86-fdb7192e9b9c,Fetal heart rate,Visit,172,bpm,,2026-09-12 15:00,From visit,95256782-c0a3-5b1d-9b8e-66ffb218b9ea,28,2026-09-12 15:00
 e19c7eda-b950-5c03-a58c-c08923dc9a6b,4333c4cf-b0ff-50ec-9ff1-39da60d2e7b8,Blood glucose,Group 2,7.2,mmol/L,post_1h,2026-09-27 08:10,Doctor-assigned,,25,2026-09-27 08:12
 fd0a3c6f-7749-5677-af75-a954d92114bb,d732d88d-8724-52dc-bcda-2cdaef98a917,Heart rate,Group 1,88,bpm,,2026-09-26 20:00,Self-entered,,41,2026-09-26 20:00

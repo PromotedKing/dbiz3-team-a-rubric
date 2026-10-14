@@ -433,7 +433,7 @@ Checked by `tools/check_data_model.py` (run from the repository root). The numbe
 | Relationships / foreign keys | 40 (foreign-key columns) | 40 | 40 | Yes |
 | Relationships read both ways (§4.1) | — | 40 of 40 | — | Yes |
 | Marker agrees with its forward and reverse sentence | — | 40 of 40 | — | Yes |
-| Seed files / tables | — | — | 26 tables, 26 files, 271 rows | Yes |
+| Seed files / tables | — | — | 26 tables, 26 files, 272 rows | Yes |
 
 ## 6. Logical data model
 
@@ -1266,7 +1266,7 @@ Access control (who may read which rows) is not in the schema: the mother reads 
 
 ## 10. Mockup data
 
-`data/seed/` holds 26 CSV files, one per table, named `NN_{TABLE}.csv` in foreign-key order, so they load in filename order. 271 rows in total. Details, the edge-case register and the scenario coverage are in `data/seed/seed-report.md`; how to run is in `data/seed/README.md`.
+`data/seed/` holds 26 CSV files, one per table, named `NN_{TABLE}.csv` in foreign-key order, so they load in filename order. 272 rows in total. Details, the edge-case register and the scenario coverage are in `data/seed/seed-report.md`; how to run is in `data/seed/README.md`.
 
 | Item | Value |
 |---|---|

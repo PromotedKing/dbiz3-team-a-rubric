@@ -8,7 +8,7 @@ The arguments of the [Workshop Guide](workshop-guide.md), rewritten for this rep
 |---|---|---|
 | Core modules (0.2) | Not chosen | Proposal: **ALR** (report → threshold → case) and **CLI** (nurse / doctor handling) — README "Remaining differences" #1: the Must item "Risk Feedback & Health Alerts" completes its loop only with CLI. Write the choice and an owner each in `docs/team-work-report.md` |
 | Blocking open questions (0.3) | ALR §10 Q9 (valid input ranges, D-16, Pending SME); CLI §10 Q11 (web sign-in) | Q9: ask the instructor (Client role), write the answer in a `## Clarifications` section of `specs/spec-ALR.md`. Q11: sign-in is out of scope until Session 11 — record it in Complexity Tracking of `plan.md` |
-| Spec ↔ data agreement (0.1) | Readiness report §4: seed row RPT-006 (`BC-0927-020`) reports blood pressure with no `watch_flag_id` and source Self-entered, which breaks ALR BR-006 (the same defect as D4 in the main repository) | Fix before any test is written for BR-006 (owner of `data/seed/`: Hải Anh; data model: Sang) |
+| Spec ↔ data agreement (0.1) | **Fixed 14/10/2026:** U09 has blood-pressure instruction W09, RPT-006 (`BC-0927-020`) points to it and H14 is Doctor-assigned; the generator now checks ALR BR-006 for every report | Hải Anh to review the seed change |
 | Stack (0.4) | Not chosen | Must run on macOS + Windows with free tools, load the seed CSV files, have a terminal test runner, need no paid account. The chatbot backend is fixed to Python (BOT BR-003), so a Python stack with pytest keeps one language |
 
 ## 1. Prepare — consistency check (Step 1)
@@ -52,7 +52,7 @@ Review the plan with the 8 questions of Workshop Guide 2.2, then update `AGENTS.
 Tests are required by the constitution (Principle II). For every business rule in this slice
 and every acceptance scenario of the user stories in scope, create a test task that comes
 before the code task it checks. Include one test that loads the seed data and checks one value
-that the Session 5 data package already states: data/seed/seed-report.md gives 271 rows in total, and
+that the Session 5 data package already states: data/seed/seed-report.md gives 272 rows in total, and
 its scenario "ALR BR-008 branch 1" says report RPT-006 (exactly 140/90 mmHg) opens case C6.
 Keep the user stories that plan.md marks out of scope out of tasks.md.
 ```

@@ -282,7 +282,7 @@ for u, kind, note, para, blood, allergy in [
     add('PATIENT_CLINICAL_PROFILE', kind, note, user_id=U[u], obstetric_history=para, blood_type=blood, allergies=allergy, updated_at=upd)
 
 # ---- WATCH_FLAG ("Doctor's instructions")
-W = {k: uid('flag-' + k) for k in ['W01', 'W02', 'W03', 'W04', 'W05', 'W06', 'W07', 'W08']}
+W = {k: uid('flag-' + k) for k in ['W01', 'W02', 'W03', 'W04', 'W05', 'W06', 'W07', 'W08', 'W09']}
 LONG1000 = text_of_len('Guidance for this mother:', 1000)
 for k, u, kind, note, visit, metric, by, at, n, tpl, custom, active in [
     ('W01', 'U01', 'ordinary', 'S-064 / S-027: Blood pressure, placed after the 15/09/2026 visit by Dr. Nguyễn Văn A', 'VIS-001', 'Blood pressure', 'S02', date(2026, 9, 15), 'Measure twice a day, morning and evening', 'G02', None, True),
@@ -293,6 +293,7 @@ for k, u, kind, note, visit, metric, by, at, n, tpl, custom, active in [
     ('W06', 'U02', 'boundary', 'custom_text exactly 1000 characters (D-46)', 'VIS-003', 'Blood pressure', 'S02', date(2026, 9, 10), 'Measure every evening', None, LONG1000, True),
     ('W07', 'U04', 'empty', 'no visit, no note, no template, no custom text → S-028 uses the default template (BR-013)', None, 'Blood pressure', 'S02', date(2026, 9, 12), None, None, None, True),
     ('W08', 'U05', 'exceptional', 'active = false: an earlier instruction the doctor switched off (DM-21)', None, 'Blood pressure', 'S04', date(2026, 9, 1), 'Measure every morning', 'G02', None, False),
+    ('W09', 'U09', 'ordinary', 'blood-pressure instruction behind RPT-006 (ALR BR-006: only a flagged metric can be reported); no visit yet, placed by the responsible doctor', None, 'Blood pressure', 'S04', date(2026, 9, 20), 'Measure every evening', None, None, True),
 ]:
     add('WATCH_FLAG', kind, note, flag_id=W[k], user_id=U[u], visit_id=V[visit] if visit else None, metric=metric,
         flagged_by=S[by], flagged_at=at, note=n, template_id=G[tpl] if tpl else None, custom_text=custom, active=active)
@@ -326,7 +327,7 @@ hmr('H10', 'U01', 'ordinary', 'report value, Normal', 'Blood pressure', '128/82'
 hmr('H11', 'U01', 'ordinary', 'S-026 / S-064: 150/95 Above threshold', 'Blood pressure', '150/95', dt('2026-09-26 20:15'), 'Doctor-assigned', created=dt('2026-09-26 20:17'))
 hmr('H12', 'U04', 'ordinary', '', 'Blood pressure', '145/92', dt('2026-09-26 18:02'), 'Doctor-assigned', created=dt('2026-09-26 18:05'))
 hmr('H13', 'U05', 'ordinary', '', 'Urine protein', '2+', dt('2026-09-26 07:30'), 'Doctor-assigned', created=dt('2026-09-26 07:32'))
-hmr('H14', 'U09', 'boundary', 'exactly 140/90 → Above threshold (≥, D-14); no instruction → source Self-entered', 'Blood pressure', '140/90', dt('2026-09-27 07:00'), 'Self-entered', created=dt('2026-09-27 07:02'))
+hmr('H14', 'U09', 'boundary', 'exactly 140/90 → Above threshold (≥, D-14); reported under instruction W09 → source Doctor-assigned', 'Blood pressure', '140/90', dt('2026-09-27 07:00'), 'Doctor-assigned', created=dt('2026-09-27 07:02'))
 hmr('H15', 'U03', 'ordinary', '', 'Blood glucose', '4.9', dt('2026-09-26 06:45'), 'Doctor-assigned', ctx='fasting', created=dt('2026-09-26 06:47'))
 hmr('H16', 'U10', 'boundary', 'exactly 6.7 two hours after a meal → Above threshold (D-15, Pending SME)', 'Blood glucose', '6.7', dt('2026-09-26 13:00'), 'Doctor-assigned', ctx='post_2h', created=dt('2026-09-26 13:05'))
 hmr('H17', 'U01', 'ordinary', 'S-008 #12', 'Weight', '57.0', dt('2026-09-27 07:30'), 'Self-entered')
@@ -609,6 +610,7 @@ for r in T['METRIC_REPORT']:
         assert h['created_at'] == r['submitted_at'], 'ALR FR-020 stores record and report together'
         over = over_threshold(r['metric'], h['value'], h['glucose_context'])
         assert h['source'] == ('Doctor-assigned' if r['watch_flag_id'] else 'Self-entered'), 'D-33 as revised'
+        assert r['watch_flag_id'] == FLAG_OF.get((r['user_id'], r['metric'])) is not None, f'ALR BR-006 {r["report_code"]}: only a metric with an active instruction is reported'
     else:
         assert r['watch_flag_id'] is None, 'ALR §6: no instruction for a symptom report'
     c = case_by_report.get(r['report_id'])
