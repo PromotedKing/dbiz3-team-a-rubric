@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% macro err(field) %}{% if errors.get(field) %}<span class="error" data-error-for="{{ field }}">{{ errors[field] }}</span>{% endif %}{% endmacro %}
+{% block content %}
+<h1>{% if metric == "Symptom" %}Report symptoms{% else %}Report a metric{% endif %}</h1>
+<form method="get" action="/m/{{ user.user_id }}/report">
+  <label for="change">Change metric ▾</label>
+  <select id="change" name="metric" onchange="this.form.submit()">
+    {% for m in metrics %}<option value="{{ m }}" {% if m == metric %}selected{% endif %}>{{ m }}</option>{% endfor %}
+    <option value="Symptom" {% if metric == "Symptom" %}selected{% endif %}>Symptoms only</option>
+  </select>
+</form>
+
+{% if flag %}
+<div class="card"><h2>Doctor's instructions</h2><p>{{ flag.note or "" }}</p></div>
+{% endif %}
+
+<form method="post" action="/m/{{ user.user_id }}/report">
+  <input type="hidden" name="metric" value="{{ metric }}">
+  {{ err("metric") }}
+  {% if metric == "Blood pressure" %}
+    <label>Systolic (mmHg)</label><input name="systolic" inputmode="numeric" value="{{ form.get('systolic', '') }}">{{ err("systolic") }}
+    <label>Diastolic (mmHg)</label><input name="diastolic" inputmode="numeric" value="{{ form.get('diastolic', '') }}">{{ err("diastolic") }}
+  {% elif metric == "Blood glucose" %}
+    <label>Measurement time</label>
+    <select name="glucose_context">
+      <option value="">Choose…</option>
+      {% for code, text in glucose_labels.items() %}<option value="{{ code }}" {% if form.get('glucose_context') == code %}selected{% endif %}>{{ text }}</option>{% endfor %}
+    </select>{{ err("glucose_context") }}
+    <label>Blood glucose (mmol/L)</label><input name="value" inputmode="decimal" value="{{ form.get('value', '') }}">{{ err("value") }}
+  {% elif metric == "Urine protein" %}
+    <label>Urine protein</label>
+    <select name="level">{% for lv in urine_scale %}<option value="{{ lv }}" {% if form.get('level') == lv %}selected{% endif %}>{{ lv }}</option>{% endfor %}</select>{{ err("level") }}
+  {% endif %}
+
+  {% if metric != "Symptom" %}
+  <div class="card warn" data-threshold-card>{{ card or "Choose the measurement time to see the threshold." }}</div>
+  {% endif %}
+
+  <label>Measured at</label><input type="datetime-local" name="measured_at" value="{{ form.get('measured_at', '') }}">{{ err("measured_at") }}
+
+  <label>Accompanying symptoms (select multiple)</label>
+  {% for s in symptoms %}
+    {% if not (metric == "Symptom" and s == "No symptoms") %}
+    <label><input type="checkbox" name="symptoms" value="{{ s }}" {% if s in form.get('symptoms', []) %}checked{% endif %}> {{ s | symptom_label }}</label>
+    {% endif %}
+  {% endfor %}
+  {{ err("symptoms") }}
+  <label>Describe other symptom (max 100 characters)</label>
+  <input name="other_symptom_text" maxlength="100" value="{{ form.get('other_symptom_text', '') }}">{{ err("other_symptom_text") }}
+  <label>Note</label><textarea name="note">{{ form.get('note', '') }}</textarea>
+  <p><button type="submit">Submit report</button></p>
+</form>
+<p><a href="/m/{{ user.user_id }}/instructions">Back</a></p>
+{% endblock %}

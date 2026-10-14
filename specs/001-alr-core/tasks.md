@@ -59,14 +59,14 @@
 
 ### Implementation for US-1 (make the tests above pass, in this order)
 
-- [ ] T019 [US1] `app/mb360/alr/thresholds.py` — `evaluate(db, metric, value, glucose_context)` per research R3 — makes T009 pass
-- [ ] T020 [P] [US1] `app/mb360/alr/validation.py` — form rules of T010 (no numeric range: ALR Q9) — makes T010 pass
-- [ ] T021 [P] [US1] `app/mb360/alr/routing.py` — BR-008 decision (target screen + case source or none) — makes T011 pass
-- [ ] T022 [US1] `app/mb360/alr/reports.py` — `gestational_week()` (R4), `next_report_code()` (R5, provisional — ALR Q16), `store_report()` writing HEALTH_METRIC_RECORD + METRIC_REPORT + REPORT_SYMPTOM in one transaction (R6) — makes T012 pass
-- [ ] T023 [US1] `app/mb360/alr/cases.py` — `open_case()` writing CARE_CASE + first CASE_STATUS_HISTORY row in the same transaction as T022 (FR-021)
-- [ ] T024 [US1] `app/mb360/main.py` — routes of `contracts/http-routes.md` (`/`, S-027, S-025A GET / POST, S-028, S-026), 422 on invalid input, 303 redirects per BR-008 — makes T013 – T016 pass
-- [ ] T025 [P] [US1] Templates `app/mb360/templates/base.html`, `select_mother.html`, `instructions.html` (S-027), `report_form.html` (S-025A) — labels from `docs/ui-label-reference.md` (English), dates `dd/mm/yyyy · HH:mm` — makes T017 pass
-- [ ] T026 [P] [US1] Templates `metric_alert.html` (S-028) and `report_status.html` (S-026, minimal) — "Alert" only in `metric_alert.html` — makes T018 pass
+- [X] T019 [US1] `app/mb360/alr/thresholds.py` — `evaluate(db, metric, value, glucose_context)` per research R3 — makes T009 pass
+- [X] T020 [P] [US1] `app/mb360/alr/validation.py` — form rules of T010 (no numeric range: ALR Q9) — makes T010 pass
+- [X] T021 [P] [US1] `app/mb360/alr/routing.py` — BR-008 decision (target screen + case source or none) — makes T011 pass
+- [X] T022 [US1] `app/mb360/alr/reports.py` — `gestational_week()` (R4), `next_report_code()` (R5, provisional — ALR Q16), `store_report()` writing HEALTH_METRIC_RECORD + METRIC_REPORT + REPORT_SYMPTOM in one transaction (R6) — makes T012 pass
+- [X] T023 [US1] `app/mb360/alr/cases.py` — `open_case()` writing CARE_CASE + first CASE_STATUS_HISTORY row in the same transaction as T022 (FR-021)
+- [X] T024 [US1] `app/mb360/main.py` — routes of `contracts/http-routes.md` (`/`, S-027, S-025A GET / POST, S-028, S-026), 422 on invalid input, 303 redirects per BR-008 — makes T013 – T016 pass
+- [X] T025 [P] [US1] Templates `app/mb360/templates/base.html`, `select_mother.html`, `instructions.html` (S-027), `report_form.html` (S-025A) — labels from `docs/ui-label-reference.md` (English), dates `dd/mm/yyyy · HH:mm` — makes T017 pass
+- [X] T026 [P] [US1] Templates `metric_alert.html` (S-028) and `report_status.html` (S-026, minimal) — "Alert" only in `metric_alert.html` — makes T018 pass
 
 **Checkpoint**: `uv run pytest` — all pass, 1 xfail (ALR Q9).
 

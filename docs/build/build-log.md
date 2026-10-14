@@ -12,7 +12,7 @@ did and what the humans decided.
 
 | Feature folder | Module | User stories in this slice | Owner | Branch | Status |
 |---|---|---|---|---|---|
-| `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Building — tests written (T001 – T018), code tasks T019 – T026 next |
+| `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | In review — US-1 tests pass (63 passed, 1 xfailed) |
 
 ## 2. Run entries
 
@@ -96,6 +96,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | none |
 | Commit | see the commit of this entry |
 
+### Entry 6: 14/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the code tasks of the US-1 phase (T019 to T026). Do not change any test. If a test seems wrong, stop and tell me which and why. Do not change specs/, data/, data/seed/generate_seed.py or the constitution. Run all tests at the end and show me the output. Mark finished tasks [X] in tasks.md.` |
+| Feature and tasks | `specs/001-alr-core`, T019 – T026 |
+| What the agent produced | `app/mb360/alr/thresholds.py` (BR-004 from THRESHOLD_RULE, threshold card text), `validation.py` (FR-013, FR-014, BR-017; no range — ALR Q9), `routing.py` (BR-008), `reports.py` (FR-020, FR-015, provisional report code — ALR Q16), `cases.py` (FR-021); `app/mb360/main.py` (routes of contracts/http-routes.md); templates `base`, `select_mother`, `instructions` (S-027), `report_form` (S-025A), `metric_alert` (S-028), `report_status` (S-026 minimal) |
+| Human review | Pending (pull request) |
+| Tests | `63 passed, 1 xfailed` (xfail = ALR Q9). No test changed; `data/` unchanged (`generate_seed.py --check` OK) |
+| Spec issues found | #3 below |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It
@@ -105,6 +118,7 @@ is never fixed silently in code.
 |---|---|---|---|---|
 | 1 | Step 1, entry 1 | Seed RPT-006 contradicts ALR BR-006 and §5.1 (`source` = Doctor-assigned). Same defect as D4 of the main repository. Blocks the test "RPT-006 (140/90) opens C6" | No spec change needed (the spec is clear); fix in `data/seed/generate_seed.py`: give U09 an active blood-pressure Watch-Flag, set RPT-006 `watch_flag_id`, H14 `source` = Doctor-assigned, add a generator check for BR-006 — owner Hải Anh | Open |
 | 2 | Part 0.3 | ALR §10 Q9 (valid input ranges, D-16) is blocking FR-014 | Ask the Client role; answer in a `## Clarifications` section of `specs/spec-ALR.md`, then `start_feature.py --refresh` | Open |
+| 3 | Step 6, entry 6 | The schema rejects a Health Metric Record measured after it is recorded (`ck_hmr_measured_before_created`, HLT §6), so a future "Measured at" on S-025A would make the save fail. The code shows a field error instead; ALR §5.1 does not state this rule and no test covers it (the rule was removed from T010 in entry 3 because it was not in ALR) | Proposal for the ALR owner (Tâm): add to ALR §5.1 FR-014 "measured time not later than the submission time (HLT §6)", then add a test | Open |
 
 ## 4. Agent mistakes worth remembering
 

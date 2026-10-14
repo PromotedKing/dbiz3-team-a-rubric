@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Choose a mother (demo)</h1>
+<p class="caption">No sign-in until Session 11: the mother is chosen from the seed data (plan.md, Complexity Tracking).</p>
+{% for m in mothers %}
+<div class="card"><a href="/m/{{ m.user_id }}/instructions">{{ m.full_name }}</a> <span class="caption">{{ m.record_code or "" }}</span></div>
+{% endfor %}
+{% endblock %}

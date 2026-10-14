@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card warn">
+  <h1>Metric alert</h1>
+  <p><strong>{{ hmr.metric }}: {{ hmr.value }}{% if hmr.unit %} {{ hmr.unit }}{% endif %}</strong> <span class="label">Above threshold</span></p>
+  <p class="caption">Measured at {{ hmr.measured_at | show_time }} · {{ card }}</p>
+  <p>Your report has been sent to clinical staff. Track progress in My reports.</p>
+  <h2>Doctor's guidance</h2>
+  {% for g in guidance %}<p>{{ g }}</p>{% endfor %}
+  <p>
+    <a class="button" href="/m/{{ user.user_id }}/reports/{{ rep.report_id }}">View status</a>
+    <span class="button secondary" title="Hotline number pending (spec-BOT.md §10 Q8)">Call hotline / nurse</span>
+    <a class="button secondary" href="/m/{{ user.user_id }}/instructions">Close</a>
+  </p>
+</div>
+{% endblock %}
