@@ -12,7 +12,7 @@ did and what the humans decided.
 
 | Feature folder | Module | User stories in this slice | Owner | Branch | Status |
 |---|---|---|---|---|---|
-| `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Tasks — analyzed, ready for Step 5 (tests first) |
+| `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Building — tests written (T001 – T018), code tasks T019 – T026 next |
 
 ## 2. Run entries
 
@@ -81,6 +81,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Human review | MEDIUM items accepted as recorded in plan.md Complexity Tracking (ALR Q9, Q16) or left for the US-2 slice (seed N09, FR-018) |
 | Tests | none yet |
 | Spec issues found | none new |
+| Commit | see the commit of this entry |
+
+### Entry 5: 14/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the Setup and Foundational phases and the test tasks of the US-1 phase (T001 to T018). Do not write any code that makes those tests pass. Run the tests at the end and show me the output.` |
+| Feature and tasks | `specs/001-alr-core`, T001 – T018 |
+| What the agent produced | `pyproject.toml` (uv; fastapi, jinja2, python-multipart, uvicorn; dev: pytest, httpx) and `uv.lock`; `.gitignore` + `.pytest_cache/`; `app/mb360/db.py` (schema + seed loader), `app/mb360/clock.py`; `tests/conftest.py`; tests: `tests/seed/test_seed_load.py`, `tests/unit/test_clock.py`, `test_thresholds.py`, `test_validation.py`, `test_routing.py`, `test_gestational_week.py`, `tests/integration/test_report_*.py`, `test_metric_alert.py`, `helpers.py` |
+| Human review | Pending — test reviewer checks that the US-1 tests fail because the code is missing |
+| Tests | Foundational: `5 passed` (seed 272 rows, foreign keys, RPT-006 → C6, clock). US-1: `5 passed, 26 errors` — every US-1 test errors with `ModuleNotFoundError` / `ImportError` (`mb360.main`, `mb360.alr.thresholds`, `validation`, `routing`, `reports` do not exist yet) |
+| Spec issues found | none |
 | Commit | see the commit of this entry |
 
 ## 3. Spec issues found while building
