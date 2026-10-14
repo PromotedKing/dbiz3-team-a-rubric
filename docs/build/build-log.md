@@ -13,7 +13,7 @@ did and what the humans decided.
 | Feature folder | Module | User stories in this slice | Owner | Branch | Status |
 |---|---|---|---|---|---|
 | `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Merged (PR #6) |
-| `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Tasks — analyzed, waiting for review before Step 5 |
+| `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Building — tests written (T001 – T013) |
 
 ## 2. Run entries
 
@@ -149,6 +149,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | none new |
 | Commit | see the commit of this entry |
 
+### Entry 10: 14/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the Setup and Foundational phases and the test tasks of the US-1/US-2 phase (T001 to T013). Do not write any code that makes those tests pass. Run the tests at the end and show me the output.` |
+| Feature and tasks | `specs/002-cli-core`, T001 – T013 |
+| What the agent produced | `app/mb360/cli/__init__.py`, `cli/actions.py` (`responsible_doctor` only, T004), fixture `staff_id` (T005); tests `tests/seed/test_seed_cli.py`, `tests/unit/test_cli_assignment.py`, `test_cli_actions.py`, `test_cli_permissions.py`, `test_cli_queue.py`, `tests/integration/test_cli_*.py` (5 files), `tests/cli_helpers.py`, `tests/__init__.py` |
+| Human review | Changed: the seed test first assumed the order of two history rows of the same minute (C7); the rows keep CSV order, so the test now compares the set of statuses and the shared time / staff. The seed itself was right |
+| Tests | Foundational `9 passed`. Whole suite `70 passed, 1 xfailed, 31 failed, 1 error` — every CLI failure is a missing function (`actions.mark_viewed`, `allowed`, `send_guidance`, `ActionError`, `cli.queue`) or a missing route (404) |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It
@@ -168,4 +181,5 @@ does not happen again.
 
 | Entry | What went wrong | How it was caught | Prevention |
 |---|---|---|---|
+| 10 | A test assumed the order of rows that share the same timestamp | The test failed on correct seed data | Compare sets, or order by a column that is defined to be unique |
 | 3 | The agent added a validation rule (measured time not in the future) that the spec does not state | Read of T010 against spec §5.1 | Every validation in a test task must cite the FR / BR / screen rule it comes from |
