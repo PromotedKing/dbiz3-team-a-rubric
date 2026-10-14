@@ -303,6 +303,14 @@ The "Metric history" screen uses the original DBIZ2 ID `S-025` "Health History" 
 
 *Missing numbers are closed questions; numbers are not reused so that references stay valid.*
 
+## Clarifications
+
+### Q11: Valid value ranges for group 1 metrics on S-024
+- Temperature: 35.0–41.0 °C
+- Heart rate: 40–180 bpm
+- Weight: 35–150 kg
+- Sleep: no range provided yet.
+
 ## 11. Traceability to DBIZ2
 
 | Spec section | DBIZ2 source | Location |
