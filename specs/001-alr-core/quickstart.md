@@ -27,7 +27,7 @@ The app builds its SQLite database from `data/schema/schema-MB360.sql` and `data
 ## 4. Run the tests
 
 ```bash
-uv run pytest
+uv run python -m pytest
 ```
 
 Expected once the slice is built: all tests pass; one test is `xfail` (valid ranges, ALR §10 Q9).
@@ -35,8 +35,10 @@ Expected once the slice is built: all tests pass; one test is `xfail` (valid ran
 ## 5. Start the app
 
 ```bash
-uv run uvicorn mb360.main:app --app-dir app --reload
+uv run python -m uvicorn mb360.main:app --app-dir app --reload
 ```
+
+Use `python -m uvicorn` instead of the `uvicorn.exe` shim: Windows Smart App Control blocks the unsigned shim that uv creates (readiness report W1).
 
 Open http://127.0.0.1:8000, choose a mother, then follow the validation scenarios.
 

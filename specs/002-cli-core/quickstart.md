@@ -4,9 +4,11 @@ Same install as `specs/001-alr-core/quickstart.md` (§1 – §3): `git clone …
 
 ```bash
 uv run tools/start_feature.py --use specs/002-cli-core
-uv run pytest
-uv run uvicorn mb360.main:app --app-dir app --reload
+uv run python -m pytest
+uv run python -m uvicorn mb360.main:app --app-dir app --reload
 ```
+
+Use `python -m uvicorn` instead of the `uvicorn.exe` shim: Windows Smart App Control blocks the unsigned shim that uv creates (readiness report W1).
 
 Open http://127.0.0.1:8000/staff (clinical web) — the mother side stays at http://127.0.0.1:8000/.
 

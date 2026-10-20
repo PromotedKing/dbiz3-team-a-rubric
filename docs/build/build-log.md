@@ -175,6 +175,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | #4 below |
 | Commit | see the commit of this entry |
 
+### Entry 12: 20/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | Fix the start command after the app failed to start on Sang's laptop |
+| Feature and tasks | `specs/001-alr-core`, `specs/002-cli-core` (quickstart.md); `AGENTS.md` §4 |
+| What the agent produced | start and test commands changed to `uv run python -m uvicorn mb360.main:app --app-dir app --reload` and `uv run python -m pytest` in both quickstart.md files and AGENTS.md §4, with the reason |
+| Human review | Requested by Sang (20/10) |
+| Tests | `110 passed, 1 xfailed` (unchanged) |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It
@@ -197,3 +210,4 @@ does not happen again.
 |---|---|---|---|
 | 3 | The agent added a validation rule (measured time not in the future) that the spec does not state | Read of T010 against spec §5.1 | Every validation in a test task must cite the FR / BR / screen rule it comes from |
 | 10 | A test assumed the order of rows that share the same timestamp | The test failed on correct seed data | Compare sets, or order by a column that is defined to be unique |
+| 12 | quickstart.md used `uv run uvicorn`; on Windows with Smart App Control the `uvicorn.exe` shim is blocked ("An Application Control policy has blocked this file") | The app did not start on Sang's laptop (T019 / G1 check) | Start Python tools with `uv run python -m <tool>`; run quickstart on a real laptop before the pull request |
