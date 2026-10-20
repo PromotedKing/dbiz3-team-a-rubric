@@ -1,0 +1,11 @@
+{% extends "staff_base.html" %}
+{% block content %}
+<h1>Choose a staff member (demo)</h1>
+<p class="caption">No sign-in until Session 11 (spec-CLI §10 Q11): staff come from the seed data.</p>
+<table>
+  {% for s in staff_rows %}
+  <tr><td><a href="/staff/{{ s.staff_id }}/cases">{{ s.full_name }}</a></td><td>{{ s.role }}</td></tr>
+  {% endfor %}
+</table>
+<p><a href="/">Mother side</a></p>
+{% endblock %}

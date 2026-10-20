@@ -29,3 +29,11 @@ def user_id(db):
     def find(tci_ref: str) -> str:
         return db.execute("SELECT user_id FROM USER_ACCOUNT WHERE tci_account_ref = ?", (tci_ref,)).fetchone()[0]
     return find
+
+
+@pytest.fixture
+def staff_id(db):
+    """Seed staff by full name, e.g. staff_id('Trần Thị B')."""
+    def find(name: str) -> str:
+        return db.execute("SELECT staff_id FROM STAFF WHERE full_name = ?", (name,)).fetchone()[0]
+    return find

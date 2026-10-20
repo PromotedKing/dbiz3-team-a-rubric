@@ -1,0 +1,29 @@
+{% extends "staff_base.html" %}
+{% block content %}
+<h1>Cases to handle</h1>
+<p>
+  {% for f in filters %}
+  <a class="chip {% if f == active %}on{% endif %}" href="/staff/{{ me.staff_id }}/cases?status={{ f | urlencode }}">{{ f }}{% if f == "Not viewed" %} ({{ not_viewed }}){% endif %}</a>
+  {% endfor %}
+  <span class="caption">Sort: Newest</span>
+</p>
+{% if rows %}
+<table data-active-filter="{{ active }}">
+  <tr><th>Mother</th><th>Gestational age</th><th>Case source</th><th>Content</th><th>Value</th><th>Submitted at</th><th>Status</th><th></th></tr>
+  {% for r in rows %}
+  <tr>
+    <td>{{ r.mother }}</td>
+    <td>{% if r.week is not none %}Week {{ r.week }}{% endif %}</td>
+    <td>{{ r.case_source }}</td>
+    <td>{{ r.content }}</td>
+    <td>{{ r.value or "—" }} <span class="label {% if r.label == 'Above threshold' %}above{% endif %}">{{ r.label }}</span></td>
+    <td>{{ r.submitted_at | show_time }}</td>
+    <td><span class="label">{{ r.status }}</span></td>
+    <td><a href="/staff/{{ me.staff_id }}/cases/{{ r.case_id }}">View report ›</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<div data-active-filter="{{ active }}"><p>No cases to handle.</p></div>
+{% endif %}
+{% endblock %}

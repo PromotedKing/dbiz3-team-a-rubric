@@ -1,0 +1,88 @@
+{% extends "staff_base.html" %}
+{% block content %}
+<p><a href="/staff/{{ me.staff_id }}/cases">← Cases to handle</a></p>
+<h1>Mother quick profile</h1>
+<div class="grid">
+  <div class="card">
+    <h2>{{ mother.full_name }}</h2>
+    <p>Medical record number {{ mother.record_code or "—" }}</p>
+    <p>{% if week is not none %}Week {{ week }} · Due date {{ profile.edd | show_date }}{% endif %}</p>
+    <p>Last visit {{ latest_visit.visit_date | show_date if latest_visit else "—" }}</p>
+  </div>
+  <div class="card">
+    <h2>Medical history</h2>
+    <p>Obstetric history (PARA) {{ clinical.obstetric_history or "—" if clinical else "—" }}</p>
+    <p>Blood type {{ clinical.blood_type or "—" if clinical else "—" }}</p>
+    <p>Allergies {{ clinical.allergies or "None" if clinical else "—" }}</p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Doctor's instructions</h2>
+  {% for f in flags %}<p>{{ f.metric }}{% if f.note %} — {{ f.note }}{% endif %} <span class="caption">Assigned {{ f.flagged_at | show_date }}</span></p>
+  {% else %}<p class="caption">No instructions.</p>{% endfor %}
+</div>
+
+<div class="card">
+  {% if report %}
+  <h2>Report {{ report.report_code }} <span class="label">{{ case.status }}</span></h2>
+  {% if record %}
+  <p>{{ record.metric }} — {{ record.value }}{% if record.unit %} {{ record.unit }}{% endif %} — <span class="label {% if label == 'Above threshold' %}above{% endif %}">{{ label }}</span></p>
+  <p>Measured at {{ record.measured_at | show_time }} · Source — {{ record.source }}</p>
+  {% else %}
+  <p>Symptom report <span class="label">{{ label }}</span></p>
+  {% endif %}
+  <p>Symptoms: {{ symptoms }}{% if report.other_symptom_text %} ({{ report.other_symptom_text }}){% endif %}{% if report.note %} · Mother's note: {{ report.note }}{% endif %}</p>
+  {% else %}
+  <h2>Chatbot question <span class="label">{{ case.status }}</span></h2>
+  <p class="caption">Source: Chatbot · whole conversation (D-78)</p>
+  {% for m in transcript %}
+  <p class="msg {% if m.message_id == question_id %}marked{% endif %}" {% if m.message_id == question_id %}data-escalated-question{% endif %}>
+    <strong>{{ m.sender }}</strong> <span class="caption">{{ m.sent_at | show_time }}</span><br>{{ m.text }}</p>
+  {% endfor %}
+  {% endif %}
+
+  <p>
+    {% if "view" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/view"><button>Mark as viewed</button></form>{% endif %}
+    {% if "escalate" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/escalate"><button>Escalate to doctor</button></form>{% endif %}
+    {% if "close" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/close"><button>Close case</button></form>{% endif %}
+  </p>
+
+  {% if responses %}
+  <h2>Responses sent</h2>
+  {% for r in responses %}<p><span class="caption">{{ r.sent_at | show_time }} · {{ r.responder_role }} {{ r.full_name }}</span><br>{{ r.template_text or "" }} {{ r.custom_text or "" }}</p>{% endfor %}
+  {% endif %}
+
+  {% if "guidance" in can %}
+  <form method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/guidance">
+    <h2>Send guidance to the mother</h2>
+    <select name="template_id"><option value="">Choose a guidance template ▾</option>
+      {% for t in templates %}<option value="{{ t.template_id }}">{{ t.title }}</option>{% endfor %}</select>
+    <p><textarea name="custom_text" maxlength="1000" rows="3" cols="60" placeholder="Or write / edit the text…"></textarea></p>
+    <button>Send guidance</button>
+    <span class="caption">The mother sees the guidance on S-026. Sending guidance does not change the status.</span>
+  </form>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>Metric history — {{ history_metric }}</h2>
+  {% if threshold %}<p class="caption">{{ threshold }}</p>{% endif %}
+  <table>
+    <tr><th>Measured at</th><th>Value</th><th>Source</th></tr>
+    {% for h in history %}<tr><td>{{ h.measured_at | show_time }}</td><td>{{ h.value }}{% if h.unit %} {{ h.unit }}{% endif %}</td><td><span class="label">{{ h.source }}</span></td></tr>{% endfor %}
+  </table>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h2>Latest visit{% if latest_visit %} {{ latest_visit.visit_date | show_date }} <span class="label">From visit</span>{% endif %}</h2>
+    {% for v in latest_values %}<p>{{ v.metric }} {{ v.value }}{% if v.unit %} {{ v.unit }}{% endif %}</p>{% endfor %}
+  </div>
+  <div class="card">
+    <h2>Visit history</h2>
+    {% for v in visits %}<p>{{ v.visit_date | show_date }} · {{ v.visit_type }}{% if v.conclusion %} — Conclusion: {{ v.conclusion }}{% endif %}</p>
+    {% else %}<p class="caption">No visit yet.</p>{% endfor %}
+  </div>
+</div>
+{% endblock %}

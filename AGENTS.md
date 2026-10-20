@@ -41,9 +41,11 @@ Application (from Session 8, `specs/001-alr-core/quickstart.md`):
 
 ```bash
 uv sync                                               # install the packages of pyproject.toml into .venv
-uv run pytest                                         # run all tests (the database is built from schema + seed in memory)
-uv run uvicorn mb360.main:app --app-dir app --reload  # start the app at http://127.0.0.1:8000
+uv run python -m pytest                                       # run all tests (the database is built from schema + seed in memory)
+uv run python -m uvicorn mb360.main:app --app-dir app --reload  # start the app at http://127.0.0.1:8000 (clinical web: /staff)
 ```
+
+The app is started with `python -m uvicorn` instead of the `uvicorn.exe` shim: Windows Smart App Control blocks the unsigned shim that uv creates (readiness report W1).
 
 ## 5. Data model
 

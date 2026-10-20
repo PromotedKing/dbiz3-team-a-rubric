@@ -400,6 +400,7 @@ S-061 and S-064 cover the work of "Nurse Alert review" (S-056 – S-058): the nu
 | 12 | Is an internal per-case note (FR-004 "handling note") needed in addition to "Send guidance"? (Quick notes are Won't — CLI-03.) | No | Team | Open |
 | 13 | Does S-064 need a list of all the mother's cases (FR-009, FR-013)? | No | UX/UI | Open |
 | 14 | Is FR-022 (notify the doctor when a case is closed) still needed? **Resolved (CLI-05):** no — FR-022 is Won't. | No | Team | Resolved |
+| 15 | [NEEDS CLARIFICATION: is a Patient Assignment still active on its `valid_to` day (inclusive end), and the same for `valid_from`? The build (`specs/002-cli-core/research.md` R3) uses valid_from ≤ today ≤ valid_to (inclusive) until answered. Seed: U06's assignment ends on 27/09/2026 = seed NOW.] | No | Team | Open |
 | 15 | Content of the "Guidance template" list (who writes it, which templates). | No | Team / Client | Open |
 | 16 | The DBIZ2 Doctor Usage Flow has the doctor browse the patient list directly, without the nurse. In the MVP the doctor sees the same "Cases to handle" table; does the doctor open "Not viewed" cases on their own? **Resolved (CLI-02):** the doctor's default filter is "Escalated to doctor" and he handles escalated cases only; other cases are view-only. Which escalated cases a given doctor sees still depends on Q10. | No | BA / Nurse-Clinical SME | Resolved |
 | 17 | [NEEDS CLARIFICATION: A nurse and a doctor act on the same case at the same time] | No | Team / Backend | Open |
