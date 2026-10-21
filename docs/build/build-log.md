@@ -14,7 +14,7 @@ did and what the humans decided.
 |---|---|---|---|---|---|
 | `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Merged (PR #6) |
 | `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Merged (PR #7) |
-| `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | Tasks — analyzed, waiting for review before Step 5 |
+| `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | Building — tests written (T001 – T008) |
 
 ## 2. Run entries
 
@@ -200,6 +200,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Human review | Pending — 8 questions of Workshop Guide 2.2 |
 | Tests | none yet |
 | Spec issues found | §10 Q23 (new) |
+| Commit | see the commit of this entry |
+
+### Entry 14: 21/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the Setup and Foundational phases and the test tasks of the US-2 phase (T001 to T008). Do not write any code that makes those tests pass. Run the tests at the end and show me the output.` |
+| Feature and tasks | `specs/003-alr-status`, T001 – T008 |
+| What the agent produced | `tests/seed/test_seed_alr_status.py`, `tests/unit/test_alr_my_reports.py`, `test_alr_status.py`, `test_alr_notifications.py`, `tests/integration/test_alr_my_reports_page.py`, `test_alr_status_page.py`, `test_alr_notifications_flow.py`, `tests/alr_status_helpers.py` |
+| Human review | Pending — test reviewer |
+| Tests | `112 passed, 1 xfailed, 10 failed, 3 errors` — the 2 new seed tests pass; every US-2 failure is a missing module (`alr.my_reports`, `alr.status`, `alr.notifications`), a missing route (404) or missing page content |
+| Spec issues found | none |
 | Commit | see the commit of this entry |
 
 ## 3. Spec issues found while building
