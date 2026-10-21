@@ -9,7 +9,8 @@ from fastapi.templating import Jinja2Templates
 
 from . import clock
 from . import db as dbmod
-from .alr import cases, reports, routing, thresholds, validation
+from .alr import cases, my_reports, reports, routing, status, thresholds, validation
+from .alr import status as status_mod
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))
 # On-screen symptom wording (docs/ui-label-reference.md, D-73); stored values stay as in the schema.
@@ -125,8 +126,31 @@ def create_app(conn: sqlite3.Connection) -> FastAPI:
     @app.get("/m/{user_id}/reports/{report_id}", response_class=HTMLResponse)
     def report_status(request: Request, user_id: str, report_id: str, submitted: int = 0):
         rep, hmr, syms, case = load_report(user_id, report_id)
-        return page(request, "report_status.html", user=mother(user_id), rep=rep, hmr=hmr, symptoms=syms, case=case,
-                    submitted=submitted)
+        label = (thresholds.evaluate(conn, hmr["metric"], hmr["value"], hmr["glucose_context"]) if hmr else thresholds.NOT_ASSESSED)
+        return status_page(request, user_id, case, submitted, rep=rep, hmr=hmr, symptoms=syms, label=label)
+
+    def status_page(request: Request, user_id: str, case, submitted: int, **ctx):
+        """S-026 (ALR US-2): progress, responses or Safety note (BR-011, BR-012)."""
+        cid = case["case_id"] if case else None
+        return page(request, "report_status.html", user=mother(user_id), case=case, submitted=submitted,
+                    steps=status.progress(conn, cid) if cid else [], responses=status.responses(conn, cid) if cid else [],
+                    safety_note=status.show_safety_note(conn, cid) if cid else False, **ctx)
+
+    @app.get("/m/{user_id}/cases/{case_id}", response_class=HTMLResponse)
+    def chatbot_case(request: Request, user_id: str, case_id: str):
+        case = conn.execute("SELECT * FROM CARE_CASE WHERE case_id = ? AND user_id = ? AND case_source = 'Chatbot'",
+                            (case_id, user_id)).fetchone()
+        if case is None:
+            raise HTTPException(404, "Unknown case")
+        question = conn.execute("SELECT * FROM CHAT_MESSAGE WHERE message_id = ?", (case["chat_message_id"],)).fetchone()
+        return status_page(request, user_id, case, 0, question=question)
+
+    @app.get("/m/{user_id}/my-reports", response_class=HTMLResponse)
+    def my_reports_page(request: Request, user_id: str, status: str = "", type: str = ""):
+        st = status if status in status_mod.STEPS else None
+        ty = type if type in my_reports.TYPES else None
+        return page(request, "my_reports.html", user=mother(user_id), rows=my_reports.list_rows(conn, user_id, st, ty),
+                    active_status=st or "All", active_type=ty or "All", statuses=status_mod.STEPS, types=my_reports.TYPES)
 
     from .cli import routes as cli_routes
     cli_routes.register(app, conn)

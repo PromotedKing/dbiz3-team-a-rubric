@@ -14,7 +14,7 @@ did and what the humans decided.
 |---|---|---|---|---|---|
 | `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Merged (PR #6) |
 | `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Merged (PR #7) |
-| `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | Building — tests written (T001 – T008) |
+| `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | In review — 143 passed, 1 xfailed |
 
 ## 2. Run entries
 
@@ -213,6 +213,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Human review | Pending — test reviewer |
 | Tests | `112 passed, 1 xfailed, 10 failed, 3 errors` — the 2 new seed tests pass; every US-2 failure is a missing module (`alr.my_reports`, `alr.status`, `alr.notifications`), a missing route (404) or missing page content |
 | Spec issues found | none |
+| Commit | see the commit of this entry |
+
+### Entry 15: 21/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the code tasks of the US-2 phase (T009 to T014). Do not change any test. If a test seems wrong, stop and tell me which and why. Do not change specs/, data/, data/seed/generate_seed.py or the constitution. Run all tests at the end and show me the output. Mark finished tasks [X] in tasks.md.` |
+| Feature and tasks | `specs/003-alr-status`, T009 – T014 |
+| What the agent produced | `app/mb360/alr/notifications.py` (FR-018), `alr/my_reports.py` (S-029 rows), `alr/status.py` (progress, responses, Safety note); `alr/cases.py` and `cli/actions.py` call `notifications.notify` in their transactions; `main.py` routes `/m/{user}/my-reports`, S-026 full, `/m/{user}/cases/{case}`; templates `my_reports.html` (S-029), `report_status.html` (S-026 full, report and chatbot variants); "My reports" links on S-027 and S-028 |
+| Human review | Pending (pull request) |
+| Tests | `143 passed, 1 xfailed` (all features; xfail = ALR Q9). No test changed; `data/` unchanged |
+| Spec issues found | none new |
 | Commit | see the commit of this entry |
 
 ## 3. Spec issues found while building

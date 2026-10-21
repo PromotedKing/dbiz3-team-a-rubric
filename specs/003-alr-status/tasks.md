@@ -31,12 +31,12 @@
 
 ### Implementation
 
-- [ ] T009 [US2] `app/mb360/alr/notifications.py` — `notify()` per research R5 — makes T005 pass
-- [ ] T010 [US2] Call `notifications.notify` from `app/mb360/alr/cases.py` (creation) and `app/mb360/cli/actions.py` (status change, response) inside their transactions — makes T008 notification counts pass
-- [ ] T011 [P] [US2] `app/mb360/alr/my_reports.py` — rows, filters, order (R2, R6) — makes T003 pass
-- [ ] T012 [P] [US2] `app/mb360/alr/status.py` — progress steps, responses, Safety note (R3, R4) — makes T004 pass
-- [ ] T013 [US2] Routes in `app/mb360/main.py`: `/m/{user_id}/my-reports`, S-026 for a report (replaces the minimal page) and `/m/{user_id}/cases/{case_id}` for a chatbot case; "My reports" links on S-027, S-028, S-026 — makes T006, T007 pass
-- [ ] T014 [P] [US2] Templates `my_reports.html` (S-029) and `report_status.html` (S-026 full, report and chatbot variants)
+- [X] T009 [US2] `app/mb360/alr/notifications.py` — `notify()` per research R5 — makes T005 pass
+- [X] T010 [US2] Call `notifications.notify` from `app/mb360/alr/cases.py` (creation) and `app/mb360/cli/actions.py` (status change, response) inside their transactions — makes T008 notification counts pass
+- [X] T011 [P] [US2] `app/mb360/alr/my_reports.py` — rows, filters, order (R2, R6) — makes T003 pass
+- [X] T012 [P] [US2] `app/mb360/alr/status.py` — progress steps, responses, Safety note (R3, R4) — makes T004 pass
+- [X] T013 [US2] Routes in `app/mb360/main.py`: `/m/{user_id}/my-reports`, S-026 for a report (replaces the minimal page) and `/m/{user_id}/cases/{case_id}` for a chatbot case; "My reports" links on S-027, S-028, S-026 — makes T006, T007 pass
+- [X] T014 [P] [US2] Templates `my_reports.html` (S-029) and `report_status.html` (S-026 full, report and chatbot variants)
 
 ## Phase 4: Polish
 
