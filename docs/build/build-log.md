@@ -13,7 +13,8 @@ did and what the humans decided.
 | Feature folder | Module | User stories in this slice | Owner | Branch | Status |
 |---|---|---|---|---|---|
 | `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Merged (PR #6) |
-| `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | In review — 110 passed, 1 xfailed |
+| `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Merged (PR #7) |
+| `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | Tasks — analyzed, waiting for review before Step 5 |
 
 ## 2. Run entries
 
@@ -186,6 +187,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Human review | Requested by Sang (20/10) |
 | Tests | `110 passed, 1 xfailed` (unchanged) |
 | Spec issues found | none |
+| Commit | see the commit of this entry |
+
+### Entry 13: 21/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --spec specs/spec-ALR.md ALR --name status`; Step 1 check; `/speckit-plan` (stack of specs/001-alr-core; scope US-2 + FR-018; S-009 out); `/speckit-tasks`; `/speckit-analyze` |
+| Feature and tasks | `specs/003-alr-status`, T001 – T016 |
+| What the agent produced | snapshot; consistency: 0 NOT FOUND (NOTIFICATION, NOTIFICATION_PREFERENCE, CASE_STATUS_HISTORY, STAFF_RESPONSE); `plan.md`, `research.md` (R1 – R6), `data-model.md`, `contracts/http-routes.md`, `quickstart.md`, `tasks.md`; `specs/spec-ALR.md` §10 Q23 (wording of status-change notifications) and snapshot refreshed. Analyze: 0 CRITICAL, 0 HIGH, 2 MEDIUM (Safety note and hotline placeholders; Q23 wording interpretation), 1 LOW (entry links on S-027 / S-028 instead of S-008 / S-023) |
+| Human review | Pending — 8 questions of Workshop Guide 2.2 |
+| Tests | none yet |
+| Spec issues found | §10 Q23 (new) |
 | Commit | see the commit of this entry |
 
 ## 3. Spec issues found while building
