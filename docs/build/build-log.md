@@ -15,6 +15,7 @@ did and what the humans decided.
 | `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Merged (PR #6) |
 | `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Merged (PR #7) |
 | `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | In review — 143 passed, 1 xfailed |
+| `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | Tasks — waiting for review before Step 5 |
 
 ## 2. Run entries
 
@@ -226,6 +227,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Human review | Pending (pull request) |
 | Tests | `143 passed, 1 xfailed` (all features; xfail = ALR Q9). No test changed; `data/` unchanged |
 | Spec issues found | none new |
+| Commit | see the commit of this entry |
+
+### Entry 16: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --spec specs/spec-CLI.md CLI --name instructions`; Step 1 check; `/speckit-plan` (scope CLI US-3 + ALR FR-019, BR-001, BR-003 to close MVP Alpha G3; stack unchanged); `/speckit-tasks`; `/speckit-analyze` |
+| Feature and tasks | `specs/004-cli-instructions`, T001 – T011 |
+| What the agent produced | snapshot; consistency: 0 NOT FOUND (WATCH_FLAG, NOTIFICATION, NOTIFICATION_PREFERENCE); `plan.md`, `research.md` (R1 – R3), `data-model.md`, `contracts/http-routes.md`, `quickstart.md`, `tasks.md`. Analyze: 0 CRITICAL, 0 HIGH, 2 MEDIUM (FR-019 has no visit-insert path in the MVP, so it is tested as a function — D-59; new instruction has no visit — HLT §10 Q19), 1 LOW (no "Remove instruction") |
+| Human review | Pending — 8 questions of Workshop Guide 2.2 |
+| Tests | none yet |
+| Spec issues found | none new (HLT Q19 already open) |
 | Commit | see the commit of this entry |
 
 ## 3. Spec issues found while building
