@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% macro err(field) %}{% if errors.get(field) %}<span class="error" data-error-for="{{ field }}">⚠ {{ errors[field] }}</span>{% endif %}{% endmacro %}
+{% block content %}
+<h1>Pregnancy setup</h1>
+<form method="post" action="/m/{{ user.user_id }}/setup" id="setup">
+  <h2>Pregnancy information</h2>
+  <p class="caption">So the app knows which gestational week you are in.</p>
+  <label><input type="radio" name="date_type" value="EDD" {% if form.get('date_type', 'EDD') == 'EDD' %}checked{% endif %}
+         onchange="this.form.method='get';this.form.submit()"> I know my due date</label>
+  <label><input type="radio" name="date_type" value="LMP" {% if form.get('date_type') == 'LMP' %}checked{% endif %}
+         onchange="this.form.method='get';this.form.submit()"> I know the first day of my last period</label>
+  {{ err("date_type") }}
+  <label>{% if form.get('date_type') == 'LMP' %}First day of last period *{% else %}Due date *{% endif %}
+    <input type="date" name="date" value="{{ form.get('date', '') }}" onchange="this.form.method='get';this.form.submit()"></label>
+  {% if form.get('date_type', 'EDD') == 'EDD' %}<p class="caption">The due date your doctor set after an ultrasound (if any).</p>{% endif %}
+  {{ err("date") }}
+  {% if card %}
+  <div class="card notice">
+    <strong>Calculated by the system</strong>
+    <p>Week {{ card.week }} · day {{ card.day }}</p>
+    <p class="caption">Today {{ today | dmy }} · Due {{ card.edd | dmy }}</p>
+  </div>
+  {% endif %}
+  <label>Height (optional) <input name="height_cm" inputmode="decimal" value="{{ form.get('height_cm', '') }}"> cm</label>{{ err("height_cm") }}
+  <label>Current weight (optional) <input name="weight_kg" inputmode="decimal" value="{{ form.get('weight_kg', '') }}"> kg</label>{{ err("weight_kg") }}
+  <label>Date of first antenatal check-up (optional) <input type="date" name="first_visit_date" value="{{ form.get('first_visit_date', '') }}"></label>{{ err("first_visit_date") }}
+  <p><button onclick="this.form.method='post'">Confirm</button></p>
+</form>
+{% endblock %}

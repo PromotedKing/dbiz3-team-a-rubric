@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>TCI app (simulated host)</h1>
+<p class="caption">Stand-in for the Thu Cuc patient app: how the TCI app passes the identity is still open (spec-ACC §10 Q9). Every identity here is invented.</p>
+<h2>Open Mother &amp; Baby 360 as</h2>
+{% for a in accounts %}
+<form class="card" method="post" action="/tci/open">
+  {% for f in fields %}<input type="hidden" name="{{ f }}" value="{{ a[f] or '' }}">{% endfor %}
+  <button>M&amp;B · Mother &amp; Baby 360</button> {{ a.full_name }} <span class="caption">{{ a.tci_account_ref }}</span>
+</form>
+{% endfor %}
+<h2>Simulate another TCI account</h2>
+<form class="card" method="post" action="/tci/open">
+  <label>Full name <input name="full_name" required></label>
+  <label>Date of birth <input type="date" name="date_of_birth" required></label>
+  <label>Sex <select name="sex"><option value="Female">Female</option><option value="Male">Male</option></select></label>
+  <label>Phone number <input name="phone" required></label>
+  <label>Medical record number (optional) <input name="record_code"></label>
+  <p><button>M&amp;B · Mother &amp; Baby 360</button></p>
+</form>
+{% endblock %}
