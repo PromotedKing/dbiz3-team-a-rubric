@@ -8,7 +8,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from .. import clock
-from . import actions, case_detail, queue
+from . import actions, case_detail, instructions, queue
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
 TEMPLATES.env.filters["show_time"] = lambda t: datetime.strptime(t, "%Y-%m-%d %H:%M").strftime("%d/%m/%Y · %H:%M") if t else ""
@@ -42,14 +42,15 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         return page(request, "cases.html", me=me, rows=rows, active=active, filters=FILTERS, not_viewed=not_viewed, badge=badge)
 
     @app.get("/staff/{staff_id}/cases/{case_id}", response_class=HTMLResponse)
-    def case_page(request: Request, staff_id: str, case_id: str, error: str = ""):
+    def case_page(request: Request, staff_id: str, case_id: str, error: str = "", edit: str = ""):
         me = staff(staff_id)
         data = case_detail.load(conn, case_id)
         if data is None:
             raise HTTPException(404, "Unknown case")
         templates = conn.execute("SELECT template_id, title FROM GUIDANCE_TEMPLATE ORDER BY title").fetchall()
+        editing = next((f for f in data["flags"] if f["flag_id"] == edit), None) if me["role"] == "Doctor" else None
         return page(request, "case.html", me=me, can=actions.allowed(conn, case_id, staff_id), templates=templates,
-                    error=error, **data)
+                    error=error, editing=editing, group2=instructions.GROUP2, **data)
 
     def act(staff_id: str, case_id: str, fn, *args, **kw):
         staff(staff_id)
@@ -70,6 +71,22 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
     @app.post("/staff/{staff_id}/cases/{case_id}/close")
     def close(staff_id: str, case_id: str):
         return act(staff_id, case_id, actions.close_case)
+
+    @app.post("/staff/{staff_id}/cases/{case_id}/instructions")
+    async def save_instruction(request: Request, staff_id: str, case_id: str):
+        """CLI FR-025 (doctor only, BR-001, BR-006)."""
+        staff(staff_id)
+        case = conn.execute("SELECT user_id FROM CARE_CASE WHERE case_id = ?", (case_id,)).fetchone()
+        if case is None:
+            raise HTTPException(404, "Unknown case")
+        form = await request.form()
+        try:
+            instructions.save_instruction(conn, case["user_id"], staff_id, clock.now(), form.get("metric") or "",
+                                          note=form.get("note"), template_id=form.get("template_id") or None,
+                                          custom_text=form.get("custom_text"))
+        except actions.ActionError as e:
+            raise HTTPException(e.status, e.message)
+        return RedirectResponse(f"/staff/{staff_id}/cases/{case_id}", status_code=303)
 
     @app.post("/staff/{staff_id}/cases/{case_id}/guidance")
     async def guidance(request: Request, staff_id: str, case_id: str):

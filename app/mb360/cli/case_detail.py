@@ -17,7 +17,8 @@ def load(conn: sqlite3.Connection, case_id: str) -> dict | None:
     profile = conn.execute("SELECT * FROM PREGNANCY_PROFILE WHERE user_id = ?", (uid,)).fetchone()
     clinical = conn.execute("SELECT * FROM PATIENT_CLINICAL_PROFILE WHERE user_id = ?", (uid,)).fetchone()
     visits = conn.execute("SELECT * FROM VISIT WHERE user_id = ? ORDER BY visit_date DESC", (uid,)).fetchall()
-    flags = conn.execute("SELECT * FROM WATCH_FLAG WHERE user_id = ? AND active = 1 ORDER BY metric", (uid,)).fetchall()
+    flags = conn.execute("""SELECT w.*, s.full_name AS doctor_name FROM WATCH_FLAG w JOIN STAFF s ON s.staff_id = w.flagged_by
+                            WHERE w.user_id = ? AND w.active = 1 ORDER BY w.metric""", (uid,)).fetchall()
     week = gestational_week(date.fromisoformat(profile["edd"]), now().date()) if profile else None
 
     report = record = None

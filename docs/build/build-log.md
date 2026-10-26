@@ -15,6 +15,7 @@ did and what the humans decided.
 | `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Merged (PR #6) |
 | `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Merged (PR #7) |
 | `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | In review — 143 passed, 1 xfailed |
+| `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | In review — 159 passed, 1 xfailed |
 
 ## 2. Run entries
 
@@ -226,6 +227,45 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Human review | Pending (pull request) |
 | Tests | `143 passed, 1 xfailed` (all features; xfail = ALR Q9). No test changed; `data/` unchanged |
 | Spec issues found | none new |
+| Commit | see the commit of this entry |
+
+### Entry 16: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --spec specs/spec-CLI.md CLI --name instructions`; Step 1 check; `/speckit-plan` (scope CLI US-3 + ALR FR-019, BR-001, BR-003 to close MVP Alpha G3; stack unchanged); `/speckit-tasks`; `/speckit-analyze` |
+| Feature and tasks | `specs/004-cli-instructions`, T001 – T011 |
+| What the agent produced | snapshot; consistency: 0 NOT FOUND (WATCH_FLAG, NOTIFICATION, NOTIFICATION_PREFERENCE); `plan.md`, `research.md` (R1 – R3), `data-model.md`, `contracts/http-routes.md`, `quickstart.md`, `tasks.md`. Analyze: 0 CRITICAL, 0 HIGH, 2 MEDIUM (FR-019 has no visit-insert path in the MVP, so it is tested as a function — D-59; new instruction has no visit — HLT §10 Q19), 1 LOW (no "Remove instruction") |
+| Human review | Pending — 8 questions of Workshop Guide 2.2 |
+| Tests | none yet |
+| Spec issues found | none new (HLT Q19 already open) |
+| Commit | see the commit of this entry |
+
+### Entry 17: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the Setup and Foundational phases and the test tasks of the US-3 phase (T001 to T006). Do not write any code that makes those tests pass. Run the tests at the end and show me the output.` |
+| Feature and tasks | `specs/004-cli-instructions`, T001 – T006 |
+| What the agent produced | `tests/seed/test_seed_instructions.py`, `tests/unit/test_cli_instructions.py`, `test_alr_watch_flags_kept.py`, `test_alr_visit_notification.py`, `tests/integration/test_cli_instructions_page.py` |
+| Human review | Pending — test reviewer |
+| Tests | `146 passed, 1 xfailed, 6 failed, 1 error` — failures: `cli.instructions` and `notify_visit_result` missing, route 404, no form on S-064. `test_alr_watch_flags_kept` (ALR BR-001) passes before any code: it guards a rule no code breaks today, which is expected for a "never" rule |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
+### Entry 18: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the code tasks of the US-3 phase (T007 to T009). Do not change any test. If a test seems wrong, stop and tell me which and why. Do not change specs/, data/, data/seed/generate_seed.py or the constitution. Run all tests at the end and show me the output. Mark finished tasks [X] in tasks.md.` |
+| Feature and tasks | `specs/004-cli-instructions`, T007 – T009 |
+| What the agent produced | `app/mb360/cli/instructions.py` (FR-025, doctor only, one active instruction per metric); `notify_visit_result()` in `alr/notifications.py` (FR-019, BR-003); route `POST /staff/{staff}/cases/{case}/instructions`; S-064: "Edit" per instruction row and the "Add / edit instruction" form for doctors, "Assigned dd/mm/yyyy · Dr. name"; `cli/case_detail.py` reads the doctor's name |
+| Human review | Pending (pull request) |
+| Tests | `159 passed, 1 xfailed` (xfail = ALR Q9). No test changed; `data/` unchanged |
+| Spec issues found | none |
 | Commit | see the commit of this entry |
 
 ## 3. Spec issues found while building
