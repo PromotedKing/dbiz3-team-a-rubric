@@ -15,7 +15,7 @@ did and what the humans decided.
 | `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Merged (PR #6) |
 | `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Merged (PR #7) |
 | `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | In review — 143 passed, 1 xfailed |
-| `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | Tasks — waiting for review before Step 5 |
+| `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | Building — tests written (T001 – T006) |
 
 ## 2. Run entries
 
@@ -240,6 +240,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Human review | Pending — 8 questions of Workshop Guide 2.2 |
 | Tests | none yet |
 | Spec issues found | none new (HLT Q19 already open) |
+| Commit | see the commit of this entry |
+
+### Entry 17: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the Setup and Foundational phases and the test tasks of the US-3 phase (T001 to T006). Do not write any code that makes those tests pass. Run the tests at the end and show me the output.` |
+| Feature and tasks | `specs/004-cli-instructions`, T001 – T006 |
+| What the agent produced | `tests/seed/test_seed_instructions.py`, `tests/unit/test_cli_instructions.py`, `test_alr_watch_flags_kept.py`, `test_alr_visit_notification.py`, `tests/integration/test_cli_instructions_page.py` |
+| Human review | Pending — test reviewer |
+| Tests | `146 passed, 1 xfailed, 6 failed, 1 error` — failures: `cli.instructions` and `notify_visit_result` missing, route 404, no form on S-064. `test_alr_watch_flags_kept` (ALR BR-001) passes before any code: it guards a rule no code breaks today, which is expected for a "never" rule |
+| Spec issues found | none |
 | Commit | see the commit of this entry |
 
 ## 3. Spec issues found while building
