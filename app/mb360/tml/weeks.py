@@ -2,6 +2,8 @@
 import sqlite3
 from datetime import date, timedelta
 
+from ..hlt.dashboard import sleep_duration
+
 PREGNANCY_DAYS = 280
 FIRST_WEEK, LAST_WEEK = 0, 42          # domain of gestational_week (TML §10 Q14 open)
 # FR-004: adjacent weeks prefetched (server side). An entry is reused only while the database has not changed since
@@ -34,8 +36,9 @@ def _build(conn: sqlite3.Connection, user_id: str, edd: date, n: int, current: i
     for r in conn.execute("""SELECT metric, value, unit, source, measured_at FROM HEALTH_METRIC_RECORD
                              WHERE user_id = ? AND measured_at >= ? AND measured_at < ? ORDER BY measured_at DESC, metric""",
                           (user_id, lo, hi)):
+        value = sleep_duration(r["value"]) if r["metric"] == "Sleep" else _with_unit(r["value"], r["unit"])
         days.setdefault(r["measured_at"][:10], []).append(
-            {"metric": r["metric"], "value": _with_unit(r["value"], r["unit"]), "source": r["source"], "at": r["measured_at"]})
+            {"metric": r["metric"], "value": value, "source": r["source"], "at": r["measured_at"]})
     visits = [dict(v) for v in conn.execute(
         """SELECT visit_date, visit_type, ultrasound_image, fetal_length, estimated_fetal_weight, ultrasound_report_date, doctor_note
            FROM VISIT WHERE user_id = ? AND visit_date >= ? AND visit_date < ? ORDER BY visit_date""", (user_id, lo, hi))]
