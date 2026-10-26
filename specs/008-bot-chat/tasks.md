@@ -25,14 +25,14 @@
 
 ### Implementation
 
-- [ ] T007 [US1] `app/mb360/bot/llm.py` (R1) — makes T003 pass
-- [ ] T008 [P] [US1] `app/mb360/bot/classify.py` + `bot/keywords.json` (R2) — makes T004 pass
-- [ ] T009 [US1] `app/mb360/bot/chat.py` + `alr.cases.open_chatbot_case` (R3, R4) — makes T005 pass
-- [ ] T010 [US1] `app/mb360/bot/routes.py` + register in `main.py`; template `chat.html`; "Health chatbot ›" on Home — makes T006 pass
+- [X] T007 [US1] `app/mb360/bot/llm.py` (R1) — makes T003 pass
+- [X] T008 [P] [US1] `app/mb360/bot/classify.py` + `bot/keywords.json` (R2) — makes T004 pass
+- [X] T009 [US1] `app/mb360/bot/chat.py` + `alr.cases.open_chatbot_case` (R3, R4) — makes T005 pass
+- [X] T010 [US1] `app/mb360/bot/routes.py` + register in `main.py`; template `chat.html`; "Health chatbot ›" on Home — makes T006 pass
 
 ## Phase 4: Polish
 
-- [ ] T011 Walk quickstart.md scenarios 1 – 6 with the fake LLM
+- [X] T011 Walk quickstart.md scenarios 1 – 6 with the fake LLM
 - [ ] T012 [P] Build log entries; note that the Gemini client is untested until a member adds a key
 
 ## Dependencies
