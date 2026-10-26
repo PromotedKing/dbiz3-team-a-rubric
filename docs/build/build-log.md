@@ -18,6 +18,7 @@ did and what the humans decided.
 | `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | In review — 159 passed, 1 xfailed |
 | `specs/005-acc-onboarding` | ACC | US-1 (P1) open the sub-app + consent + guide; US-2 (P1) pregnancy setup + Home | Sang | `sang/005-acc-onboarding` | In review — 198 passed, 1 xfailed |
 | `specs/006-hlt-dashboard` | HLT | US-1 (P1) Health metrics S-023; US-2 (P1) self-tracked metrics S-024 | Sang | `sang/006-hlt-dashboard` | In review — 220 passed, 2 xfailed |
+| `specs/007-tml-timeline` | TML | US-1 (P1) week view S-048 (+ daily indicators D-75); US-2 (P1) diary S-051 / S-052 | Sang | `sang/007-tml-timeline` | Building — tests written (T001 – T005) |
 
 ## 2. Run entries
 
@@ -346,6 +347,32 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Human review | Deferred by Sang. Browser walk (26/10): Lan → S-024 weight 57.4 + sleep 22:00 – 06:30 → "Metrics saved", Weight 57.4 kg, Sleep 8 h 30 min; visit section 15/09/2026 with labels and the reference range |
 | Tests | `220 passed, 2 xfailed` (xfail = ALR Q9, HLT D-16). No test changed; `data/` unchanged |
 | Spec issues found | none new |
+| Commit | see the commit of this entry |
+
+### Entry 26: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --spec specs/spec-TML.md TML --name timeline`; Step 1 check; `/speckit-plan` (scope TML US-1 + US-2; based on PR #12); `/speckit-tasks`; `/speckit-analyze` |
+| Feature and tasks | `specs/007-tml-timeline`, T001 – T010 |
+| What the agent produced | snapshot; consistency: 0 NOT FOUND (DIARY_ENTRY, DIARY_IMAGE, FAMILY_MESSAGE, VISIT, HEALTH_METRIC_RECORD); `plan.md`, `research.md` (R1 – R4), `data-model.md`, `contracts/http-routes.md`, `quickstart.md`, `tasks.md`; seed facts checked with queries. Analyze: 0 CRITICAL, 0 HIGH, 3 MEDIUM (photo storage location not specified → git-ignored `media/`; FR-004 prefetch on server pages → in-memory cache; Messages to Baby shown read-only while D-03 is pending), 1 LOW (ultrasound files absent from the seed → placeholder) |
+| Human review | Deferred by Sang |
+| Tests | none at this step |
+| Spec issues found | none new (Q9, Q10, Q11, Q14, Q15, Q17 already open) |
+| Commit | see the commit of this entry |
+
+### Entry 27: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the Setup and Foundational phases and the test tasks of the US-1/US-2 phase (T001 to T005). Do not write any code that makes those tests pass. Run the tests at the end and show me the output.` |
+| Feature and tasks | `specs/007-tml-timeline`, T001 – T005 |
+| What the agent produced | `app/mb360/tml/__init__.py`; `.gitignore` + `/media/`; `tests/seed/test_seed_tml.py`, `tests/unit/test_tml_weeks.py`, `test_tml_diary.py`, `tests/integration/test_tml_pages.py` |
+| Human review | Deferred by Sang |
+| Tests | `222 passed, 2 xfailed, 3 errors` — the seed tests pass; the 3 TML test files fail to import `tml.weeks` / `tml.diary` (missing code) |
+| Spec issues found | none |
 | Commit | see the commit of this entry |
 
 ## 3. Spec issues found while building
