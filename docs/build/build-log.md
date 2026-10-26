@@ -17,6 +17,7 @@ did and what the humans decided.
 | `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | In review — 143 passed, 1 xfailed |
 | `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | In review — 159 passed, 1 xfailed |
 | `specs/005-acc-onboarding` | ACC | US-1 (P1) open the sub-app + consent + guide; US-2 (P1) pregnancy setup + Home | Sang | `sang/005-acc-onboarding` | In review — 198 passed, 1 xfailed |
+| `specs/006-hlt-dashboard` | HLT | US-1 (P1) Health metrics S-023; US-2 (P1) self-tracked metrics S-024 | Sang | `sang/006-hlt-dashboard` | Building — tests written (T001 – T005) |
 
 ## 2. Run entries
 
@@ -306,6 +307,32 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Human review | Deferred by Sang. Browser walk on Sang's laptop (26/10): simulated TCI account → consent → guide → Skip → setup with LMP 01/04/2026 → card "Week 25 · day 4, Due 06/01/2027" → Confirm → Home "Hello, Demo!", Week 25 |
 | Tests | `198 passed, 1 xfailed` (xfail = ALR Q9). No test changed; `data/` unchanged |
 | Spec issues found | none new |
+| Commit | see the commit of this entry |
+
+### Entry 23: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --spec specs/spec-HLT.md HLT --name dashboard`; Step 1 check; `/speckit-plan` (scope HLT US-1 + US-2; based on PR #11 for Home); `/speckit-tasks`; `/speckit-analyze` |
+| Feature and tasks | `specs/006-hlt-dashboard`, T001 – T010 |
+| What the agent produced | snapshot; consistency: 0 NOT FOUND (HEALTH_METRIC_RECORD, VISIT, THRESHOLD_RULE, WATCH_FLAG, CARE_CASE); `plan.md`, `research.md` (R1 – R5), `data-model.md`, `contracts/http-routes.md`, `quickstart.md`, `tasks.md`. Every seed fact used in the tasks was checked with a query first (entry 21 lesson). Analyze: 0 CRITICAL, 0 HIGH, 2 MEDIUM (D-16 ranges; sleep rules proposed on S-024), 1 LOW (urine protein label shown although the drawing has none — follows FR-001) |
+| Human review | Deferred by Sang |
+| Tests | none at this step |
+| Spec issues found | none new (all open points already marked in S-023 / S-024) |
+| Commit | see the commit of this entry |
+
+### Entry 24: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the Setup and Foundational phases and the test tasks of the US-1/US-2 phase (T001 to T005). Do not write any code that makes those tests pass. Run the tests at the end and show me the output.` |
+| Feature and tasks | `specs/006-hlt-dashboard`, T001 – T005 |
+| What the agent produced | `app/mb360/hlt/__init__.py`; `tests/seed/test_seed_hlt.py`, `tests/unit/test_hlt_dashboard.py`, `test_hlt_self_tracked.py`, `tests/integration/test_hlt_pages.py` |
+| Human review | Deferred by Sang |
+| Tests | seed tests pass; every HLT failure is a missing module (`hlt.dashboard`, `hlt.self_tracked`) or a missing route (404) |
+| Spec issues found | none |
 | Commit | see the commit of this entry |
 
 ## 3. Spec issues found while building
