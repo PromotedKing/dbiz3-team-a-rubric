@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% macro err(field) %}{% if errors.get(field) %}<span class="error" data-error-for="{{ field }}">⚠ {{ errors[field] }}</span>{% endif %}{% endmacro %}
+{% block content %}
+<div class="card">
+  <h1>Add diary entry</h1>
+  <p class="caption">Week {{ current }} – current week · Date {{ today.strftime("%d/%m/%Y") }} (automatic)</p>
+  <form method="post" action="/m/{{ user.user_id }}/diary" enctype="multipart/form-data">
+    <label>Content *<br><textarea name="text" rows="4" cols="40">{{ form.get('text', '') }}</textarea></label>{{ err("text") }}
+    <p>Mood (optional)<br>
+      {% for m in moods %}<label style="display:inline"><input type="radio" name="mood" value="{{ m }}" {% if form.get('mood') == m %}checked{% endif %}> {{ m }}</label> {% endfor %}
+    </p>{{ err("mood") }}
+    <label>Photos (optional) — Take photo / Library, JPG or PNG, up to 5, 10 MB each<br>
+      <input type="file" name="photos" accept="image/jpeg,image/png" multiple capture="environment"></label>{{ err("photos") }}
+    <p class="caption">The diary entry is linked to the current week.</p>
+    <p><a class="button secondary" href="/m/{{ user.user_id }}/timeline">Cancel</a> <button>Save diary entry</button></p>
+  </form>
+</div>
+{% endblock %}
