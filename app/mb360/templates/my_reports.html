@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>My reports</h1>
+<p data-active-status="{{ active_status }}">
+  {% for st in ["All"] + statuses|list %}
+  <a class="label" {% if st == active_status %}style="background:#7a3b69;color:#fff"{% endif %}
+     href="/m/{{ user.user_id }}/my-reports?status={{ '' if st == 'All' else st | urlencode }}&type={{ '' if active_type == 'All' else active_type | urlencode }}">{{ st }}</a>
+  {% endfor %}
+</p>
+<form method="get" action="/m/{{ user.user_id }}/my-reports">
+  <input type="hidden" name="status" value="{{ '' if active_status == 'All' else active_status }}">
+  <label>Type:
+    <select name="type" onchange="this.form.submit()">
+      <option value="" {% if active_type == "All" %}selected{% endif %}>All</option>
+      {% for t in types %}<option value="{{ t }}" {% if t == active_type %}selected{% endif %}>{{ t }}</option>{% endfor %}
+    </select>
+  </label>
+</form>
+
+{% for r in rows %}
+<div class="card" data-report-row>
+  {% if r.kind == "chatbot" %}
+    <a href="/m/{{ user.user_id }}/cases/{{ r.case_id }}">Chatbot · {{ r.question | truncate(60) }} · Sent {{ r.sent_at | show_time }} · <span class="label">{{ r.status }}</span> ›</a>
+  {% elif r.status %}
+    <a href="/m/{{ user.user_id }}/reports/{{ r.report_id }}">{{ r.title }} · <span class="label">{{ r.label }}</span> · {{ r.value or r.symptoms }} · Sent {{ r.sent_at | show_time }} · <span class="label">{{ r.status }}</span> ›</a>
+  {% else %}
+    {{ r.title }} · <span class="label">{{ r.label }}</span> · {{ r.value or r.symptoms }} · Sent {{ r.sent_at | show_time }} · No action needed
+  {% endif %}
+</div>
+{% else %}
+<p class="caption">You have not submitted any reports.</p>
+{% endfor %}
+<p><a href="/m/{{ user.user_id }}/instructions">Doctor's instructions</a></p>
+{% endblock %}

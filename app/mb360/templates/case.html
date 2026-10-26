@@ -19,8 +19,24 @@
 
 <div class="card">
   <h2>Doctor's instructions</h2>
-  {% for f in flags %}<p>{{ f.metric }}{% if f.note %} — {{ f.note }}{% endif %} <span class="caption">Assigned {{ f.flagged_at | show_date }}</span></p>
+  {% for f in flags %}<p>{{ f.metric }}{% if f.note %} — {{ f.note }}{% endif %} <span class="caption">Assigned {{ f.flagged_at | show_date }} · Dr. {{ f.doctor_name }}</span>
+    {% if me.role == "Doctor" %} <a href="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}?edit={{ f.flag_id }}#instruction-form">Edit</a>{% endif %}</p>
   {% else %}<p class="caption">No instructions.</p>{% endfor %}
+  {% if me.role == "Doctor" %}
+  <form id="instruction-form" data-instruction-form method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/instructions">
+    <h2>Add / edit instruction <span class="label">Doctor only</span></h2>
+    <p>Metric to monitor
+      <select name="metric">{% for m in group2 %}<option value="{{ m }}" {% if editing and editing.metric == m %}selected{% endif %}>{{ m }}</option>{% endfor %}</select></p>
+    <p>Note for the mother (how to measure, frequency)<br>
+      <textarea name="note" rows="2" cols="60" placeholder="Enter a note…">{{ editing.note or "" if editing else "" }}</textarea></p>
+    <p>Above-threshold guidance (shown on S-028 when a report is above threshold)<br>
+      <select name="template_id"><option value="">Choose a guidance template ▾</option>
+        {% for t in templates %}<option value="{{ t.template_id }}" {% if editing and editing.template_id == t.template_id %}selected{% endif %}>{{ t.title }}</option>{% endfor %}</select><br>
+      <textarea name="custom_text" maxlength="1000" rows="2" cols="60" placeholder="Add custom text for this mother (optional)…">{{ editing.custom_text or "" if editing else "" }}</textarea></p>
+    <a href="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}">Cancel</a> <button>Save instruction</button>
+    <p class="caption">You can choose only a template, only custom text, or both. If there is nothing, S-028 uses the hospital's default template.</p>
+  </form>
+  {% endif %}
 </div>
 
 <div class="card">
