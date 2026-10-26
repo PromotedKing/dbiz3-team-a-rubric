@@ -25,9 +25,9 @@
 
 ### Implementation
 
-- [ ] T007 [US3] `app/mb360/cli/instructions.py` — `save_instruction()` (R1) — makes T003, T004 pass
-- [ ] T008 [P] [US3] `notify_visit_result()` in `app/mb360/alr/notifications.py` (R3) — makes T005 pass
-- [ ] T009 [US3] Route `POST /staff/{staff_id}/cases/{case_id}/instructions` in `app/mb360/cli/routes.py`; S-064 template: "Edit" per row (doctor), "Add / edit instruction" form (doctor only), "Assigned dd/mm/yyyy · Dr. name" — makes T006 pass
+- [X] T007 [US3] `app/mb360/cli/instructions.py` — `save_instruction()` (R1) — makes T003, T004 pass
+- [X] T008 [P] [US3] `notify_visit_result()` in `app/mb360/alr/notifications.py` (R3) — makes T005 pass
+- [X] T009 [US3] Route `POST /staff/{staff_id}/cases/{case_id}/instructions` in `app/mb360/cli/routes.py`; S-064 template: "Edit" per row (doctor), "Add / edit instruction" form (doctor only), "Assigned dd/mm/yyyy · Dr. name" — makes T006 pass
 
 ## Phase 4: Polish
 

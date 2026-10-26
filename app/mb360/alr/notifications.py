@@ -61,3 +61,21 @@ def notify(conn: sqlite3.Connection, case_id: str, event: str, now: datetime, st
         (notification_id, case["user_id"], title[:100], subtitle[:200] if subtitle else None, now.strftime(DB_TIME), case_id),
     )
     return notification_id
+
+
+def notify_visit_result(conn: sqlite3.Connection, visit_id: str, now: datetime) -> str | None:
+    """ALR FR-019 / BR-003: "Visit result" notification (S-009 #9); no threshold label, never an "Alert".
+    Called by the path that adds a Visit record — none exists in the MVP (D-59); the caller commits."""
+    visit = conn.execute("SELECT user_id, visit_date FROM VISIT WHERE visit_id = ?", (visit_id,)).fetchone()
+    pref = conn.execute("SELECT new_visit_result FROM NOTIFICATION_PREFERENCE WHERE user_id = ?", (visit["user_id"],)).fetchone()
+    if pref is not None and not pref[0]:
+        return None
+    notification_id = str(uuid.uuid4())
+    shown = datetime.strptime(visit["visit_date"], "%Y-%m-%d").strftime("%d/%m/%Y")
+    conn.execute(
+        """INSERT INTO NOTIFICATION (notification_id, user_id, type, title, subtitle, created_at, read_at,
+               case_id, visit_id, watch_flag_id, appointment_ref)
+           VALUES (?, ?, 'Visit result', 'New visit results available', ?, ?, NULL, NULL, ?, NULL, NULL)""",
+        (notification_id, visit["user_id"], f"Visit {shown}", now.strftime(DB_TIME), visit_id),
+    )
+    return notification_id
