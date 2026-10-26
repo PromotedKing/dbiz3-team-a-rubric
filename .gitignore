@@ -21,6 +21,7 @@ Thumbs.db
 /dist/
 /build/
 .env.*
+!.env.example
 *.pem
 *.key
 

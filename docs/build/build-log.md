@@ -19,6 +19,7 @@ did and what the humans decided.
 | `specs/005-acc-onboarding` | ACC | US-1 (P1) open the sub-app + consent + guide; US-2 (P1) pregnancy setup + Home | Sang | `sang/005-acc-onboarding` | In review — 198 passed, 1 xfailed |
 | `specs/006-hlt-dashboard` | HLT | US-1 (P1) Health metrics S-023; US-2 (P1) self-tracked metrics S-024 | Sang | `sang/006-hlt-dashboard` | In review — 220 passed, 2 xfailed |
 | `specs/007-tml-timeline` | TML | US-1 (P1) week view S-048 (+ daily indicators D-75); US-2 (P1) diary S-051 / S-052 | Sang | `sang/007-tml-timeline` | In review — 246 passed, 2 xfailed |
+| `specs/008-bot-chat` | BOT | US-1 (P1) ask a question; US-2 (P1) hand-off to a nurse (fake LLM by default, D-76) | Sang | `sang/008-bot-chat` | In review — 277 passed, 2 xfailed |
 
 ## 2. Run entries
 
@@ -388,6 +389,45 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | none new |
 | Commit | see the commit of this entry |
 
+### Entry 29: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --spec specs/spec-BOT.md BOT --name chat`; Step 1 check; `/speckit-plan` (scope BOT US-1 + US-2; **team decision (Sang, 26/10): LLM interface with a fake client by default, Gemini only when a member puts a key in the local `.env`**); `/speckit-tasks`; `/speckit-analyze` |
+| Feature and tasks | `specs/008-bot-chat`, T001 – T012 |
+| What the agent produced | snapshot; consistency: 0 NOT FOUND (CONVERSATION, CHAT_MESSAGE, AI_RESPONSE_LOG, CARE_CASE); `plan.md`, `research.md` (R1 – R5), `data-model.md`, `contracts/http-routes.md`, `quickstart.md`, `tasks.md`; `specs/spec-BOT.md` §10 Q14 (new conversation per visit; provisional personal-health and topic word lists) and snapshot refreshed. Analyze: 0 CRITICAL, 0 HIGH, 3 MEDIUM (D-47 danger phrases Pending SME; Q12 personal-health recognition by provisional markers; out-of-scope decided by topic words with the fake LLM), 1 LOW (Gemini client untested without a key) |
+| Human review | Deferred by Sang |
+| Tests | none at this step |
+| Spec issues found | §10 Q14 (new) |
+| Commit | see the commit of this entry |
+
+### Entry 30: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the Setup and Foundational phases and the test tasks of the US-1/US-2 phase (T001 to T006). Do not write any code that makes those tests pass. Run the tests at the end and show me the output.` |
+| Feature and tasks | `specs/008-bot-chat`, T001 – T006 |
+| What the agent produced | `app/mb360/bot/__init__.py`; `.env.example` (setting names only) and `!.env.example` in `.gitignore` (the existing `.env.*` rule hid it; `.env` stays ignored); `tests/seed/test_seed_bot.py`, `tests/unit/test_bot_llm.py`, `test_bot_classify.py`, `test_bot_chat.py`, `tests/integration/test_bot_pages.py` |
+| Human review | Changed: the seed test assumed every conversation has `current_session_data`; one edge-case conversation leaves the optional column empty — test and task corrected before any code (same lesson as entry 21: the counts were checked, the empty values were not) |
+| Tests | seed `20 passed`; every BOT failure is a missing module (`bot.llm`, `bot.classify`, `bot.chat`) or a missing route (404). No test calls the network |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
+### Entry 31: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the code tasks of the US-1/US-2 phase (T007 to T010). Do not change any test. If a test seems wrong, stop and tell me which and why. Do not change specs/, data/, data/seed/generate_seed.py or the constitution. Run all tests at the end and show me the output. Mark finished tasks [X] in tasks.md.`; then T011 (browser walk with the fake LLM) |
+| Feature and tasks | `specs/008-bot-chat`, T007 – T011 |
+| What the agent produced | `app/mb360/bot/llm.py` (FakeLLM default; GeminiLLM via the Google AI Studio REST API with the standard library, only when `GEMINI_API_KEY` + `GEMINI_MODEL` are in the environment or the local `.env`), `bot/classify.py` + `bot/keywords.json` (provisional lists, Pending SME), `bot/chat.py` (questions, context without medical record, log, hand-off), `alr.cases.open_chatbot_case` (ALR FR-021 c + FR-018 notification), `bot/routes.py`, template `chat.html` (S-031 / S-032 – S-034), "Health chatbot ›" on Home |
+| Human review | Deferred by Sang. Browser walk (fake LLM): suggested question → answer + disclaimer; "Tôi bị chảy máu từ sáng, có sao không?" → "Signs that need medical attention" + hand-off offer, no answer → "Connect to nurse" → the case is first in Trần Thị B's "Not viewed" queue. **Not tested: the real Gemini call** (no key on this laptop) — to try when a member adds a key to `.env`. **Deviation to review (BOT owner):** when the LLM fails nothing is stored and the question is put back with "Retry", whereas the DM-29 default keeps the question row |
+| Tests | `277 passed, 2 xfailed` (xfail = ALR Q9, HLT D-16), with and without `MB360_LLM=fake`; no test calls the network. No existing test changed; `data/` unchanged |
+| Spec issues found | none new (DM-29 deviation noted above) |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It
@@ -413,3 +453,4 @@ does not happen again.
 | 12 | quickstart.md used `uv run uvicorn`; on Windows with Smart App Control the `uvicorn.exe` shim is blocked ("An Application Control policy has blocked this file") | The app did not start on Sang's laptop (T019 / G1 check) | Start Python tools with `uv run python -m <tool>`; run quickstart on a real laptop before the pull request |
 | 21 | The plan stated a fact about the seed ("every session lasts 12 hours") without checking it | The seed test written from the plan failed | Check every claim about the seed with a query before writing it into plan.md |
 | 28 | A cache added for FR-004 was not invalidated by writes from other modules (stale timeline after a report) | Code reading while writing the routes | When a feature adds a cache, write a test that changes the data from another screen before writing the cache |
+| 30 | Second unchecked seed claim ("every conversation has session data"): the counts were queried, the empty optional values were not | The seed test failed | Query NULLs of every optional column a claim depends on, not only row counts |

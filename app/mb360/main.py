@@ -160,6 +160,8 @@ def create_app(conn: sqlite3.Connection) -> FastAPI:
     hlt_routes.register(app, conn)
     from .tml import routes as tml_routes
     tml_routes.register(app, conn)
+    from .bot import routes as bot_routes
+    bot_routes.register(app, conn)
     return app
 
 

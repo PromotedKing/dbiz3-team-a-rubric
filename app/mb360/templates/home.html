@@ -12,5 +12,6 @@
 <a class="card" style="display:block" href="/m/{{ user.user_id }}/instructions">
   <strong>{{ instructions_title }}</strong> · {{ flags | join(", ") if flags else "none" }} ›
 </a>
+<a class="card" style="display:block" href="/m/{{ user.user_id }}/chat"><strong>Health chatbot ›</strong></a>
 <p class="caption">Appointments and notifications come with later slices (APT, ACC S-009).</p>
 {% endblock %}
