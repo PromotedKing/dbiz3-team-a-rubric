@@ -16,6 +16,7 @@ did and what the humans decided.
 | `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Merged (PR #7) |
 | `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | In review — 143 passed, 1 xfailed |
 | `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | In review — 159 passed, 1 xfailed |
+| `specs/005-acc-onboarding` | ACC | US-1 (P1) open the sub-app + consent + guide; US-2 (P1) pregnancy setup + Home | Sang | `sang/005-acc-onboarding` | Building — tests written (T001 – T007) |
 
 ## 2. Run entries
 
@@ -268,6 +269,32 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | none |
 | Commit | see the commit of this entry |
 
+### Entry 20: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --spec specs/spec-ACC.md ACC --name onboarding`; Step 1 check; `/speckit-plan` (scope ACC US-1 + US-2; simulated TCI app for §10 Q9; stack unchanged); `/speckit-tasks`; `/speckit-analyze`. Sang asked to build the slice first and review later (26/10) |
+| Feature and tasks | `specs/005-acc-onboarding`, T001 – T013 |
+| What the agent produced | snapshot; consistency: 0 NOT FOUND (USER_ACCOUNT, CONSENT_RECORD, NOTIFICATION_PREFERENCE, SESSION, PREGNANCY_PROFILE, HEALTH_METRIC_RECORD); `plan.md`, `research.md` (R1 – R6), `data-model.md`, `contracts/http-routes.md`, `quickstart.md`, `tasks.md`; `specs/spec-ACC.md` §10 Q22 (Notification Preference defaults, greeting, session lifetime) and snapshot refreshed. Analyze: 0 CRITICAL, 0 HIGH, 3 MEDIUM (simulated TCI identity — Q9; LMP rule provisional — Q10; DM-41 defaults — Q22), 1 LOW (S-008 shows only the ALR / HLT cards that exist) |
+| Human review | Deferred by Sang (review after the slice) |
+| Tests | none at this step |
+| Spec issues found | §10 Q22 (new) |
+| Commit | see the commit of this entry |
+
+### Entry 21: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the Setup and Foundational phases and the test tasks of the US-1/US-2 phase (T001 to T007). Do not write any code that makes those tests pass. Run the tests at the end and show me the output.` |
+| Feature and tasks | `specs/005-acc-onboarding`, T001 – T007 |
+| What the agent produced | `app/mb360/acc/__init__.py`; `tests/seed/test_seed_acc.py`, `tests/unit/test_acc_entry.py`, `test_acc_setup.py`, `tests/integration/test_acc_onboarding_flow.py`, `test_acc_setup_page.py`, `test_acc_home_page.py`, `tests/acc_helpers.py` |
+| Human review | Changed: the plan said "every seed session lasts 12 hours" and the seed test failed — only the 7 ordinary sessions do (U06, U07, U08 are edge cases). Test, plan, research and ACC Q22 corrected before any code |
+| Tests | seed `12 passed`; whole suite: every ACC failure is a missing module (`acc.entry`, `acc.setup`) or a missing route (404) |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It
@@ -291,3 +318,4 @@ does not happen again.
 | 3 | The agent added a validation rule (measured time not in the future) that the spec does not state | Read of T010 against spec §5.1 | Every validation in a test task must cite the FR / BR / screen rule it comes from |
 | 10 | A test assumed the order of rows that share the same timestamp | The test failed on correct seed data | Compare sets, or order by a column that is defined to be unique |
 | 12 | quickstart.md used `uv run uvicorn`; on Windows with Smart App Control the `uvicorn.exe` shim is blocked ("An Application Control policy has blocked this file") | The app did not start on Sang's laptop (T019 / G1 check) | Start Python tools with `uv run python -m <tool>`; run quickstart on a real laptop before the pull request |
+| 21 | The plan stated a fact about the seed ("every session lasts 12 hours") without checking it | The seed test written from the plan failed | Check every claim about the seed with a query before writing it into plan.md |
