@@ -14,12 +14,12 @@ did and what the humans decided.
 |---|---|---|---|---|---|
 | `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Merged (PR #6) |
 | `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Merged (PR #7) |
-| `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | In review — 143 passed, 1 xfailed |
-| `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | In review — 159 passed, 1 xfailed |
-| `specs/005-acc-onboarding` | ACC | US-1 (P1) open the sub-app + consent + guide; US-2 (P1) pregnancy setup + Home | Sang | `sang/005-acc-onboarding` | In review — 198 passed, 1 xfailed |
-| `specs/006-hlt-dashboard` | HLT | US-1 (P1) Health metrics S-023; US-2 (P1) self-tracked metrics S-024 | Sang | `sang/006-hlt-dashboard` | In review — 220 passed, 2 xfailed |
-| `specs/007-tml-timeline` | TML | US-1 (P1) week view S-048 (+ daily indicators D-75); US-2 (P1) diary S-051 / S-052 | Sang | `sang/007-tml-timeline` | In review — 246 passed, 2 xfailed |
-| `specs/008-bot-chat` | BOT | US-1 (P1) ask a question; US-2 (P1) hand-off to a nurse (fake LLM by default, D-76) | Sang | `sang/008-bot-chat` | In review — 277 passed, 2 xfailed |
+| `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | Merged (PR #9) |
+| `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | Merged (PR #10) |
+| `specs/005-acc-onboarding` | ACC | US-1 (P1) open the sub-app + consent + guide; US-2 (P1) pregnancy setup + Home | Sang | `sang/005-acc-onboarding` | Merged (PR #11) |
+| `specs/006-hlt-dashboard` | HLT | US-1 (P1) Health metrics S-023; US-2 (P1) self-tracked metrics S-024 | Sang | `sang/006-hlt-dashboard` | Merged (PR #12) |
+| `specs/007-tml-timeline` | TML | US-1 (P1) week view S-048 (+ daily indicators D-75); US-2 (P1) diary S-051 / S-052 | Sang | `sang/007-tml-timeline` | Merged (PR #13) |
+| `specs/008-bot-chat` | BOT | US-1 (P1) ask a question; US-2 (P1) hand-off to a nurse (fake LLM by default, D-76) | Sang | `sang/008-bot-chat` | Merged (PR #14) |
 
 ## 2. Run entries
 
@@ -272,6 +272,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | none |
 | Commit | see the commit of this entry |
 
+### Entry 19: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --use specs/001-alr-core` then `--refresh` (the G4 check found the snapshot drifted); MVP Alpha checklist updated at `2a880f1` |
+| Feature and tasks | `specs/001-alr-core` (snapshot only) |
+| What the agent produced | `specs/001-alr-core/spec.md` refreshed — the only change is ALR §10 Q23 (added by `specs/003-alr-status`), which does not affect US-1, so plan.md and tasks.md stay valid (checked by hand); `docs/build/mvp-alpha-checklist.md`: G2, G3, G4 ticked, limitations 1, 2, 9 updated |
+| Human review | Pending (PR #8) |
+| Tests | `159 passed, 1 xfailed` |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
 ### Entry 20: 26/10 Sang
 
 | Field | Value |
@@ -428,6 +441,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | none new (DM-29 deviation noted above) |
 | Commit | see the commit of this entry |
 
+### Entry 32: 27/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | After merging PRs #11 – #14: fresh-clone check of `main` (`5263a75`); `start_feature.py --refresh` of `specs/001-alr-core`; rename `.env.example` → `env.example`; MVP Alpha checklist updated |
+| Feature and tasks | `specs/001-alr-core` (snapshot only); `docs/build/mvp-alpha-checklist.md` |
+| What the agent produced | snapshot refreshed again (`main` never received the refresh of entry 19 — it is in this pull request); `env.example` (setting names only) replaces `.env.example`, which `tools/check_env.py` reported as a committed `.env` file (T1 FAIL); references updated in `specs/008-bot-chat/` and `bot/llm.py`; `!.env.example` removed from `.gitignore`; checklist at `5263a75`: G2 – G5, G7, G8 met; G1, G6 open; limitations 3, 12 updated, 14 added |
+| Human review | Pending (PR #8) |
+| Tests | `277 passed, 2 xfailed`; `check_env.py --repo` 25 PASS, 1 WARN (W1), 0 FAIL |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It
@@ -454,3 +480,4 @@ does not happen again.
 | 21 | The plan stated a fact about the seed ("every session lasts 12 hours") without checking it | The seed test written from the plan failed | Check every claim about the seed with a query before writing it into plan.md |
 | 28 | A cache added for FR-004 was not invalidated by writes from other modules (stale timeline after a report) | Code reading while writing the routes | When a feature adds a cache, write a test that changes the data from another screen before writing the cache |
 | 30 | Second unchecked seed claim ("every conversation has session data"): the counts were queried, the empty optional values were not | The seed test failed | Query NULLs of every optional column a claim depends on, not only row counts |
+| 32 | A new file name (`.env.example`) broke the course T1 check after merge | Fresh-clone check of `main` | Run `uv run tools/check_env.py --repo` before opening every pull request, not only the tests |

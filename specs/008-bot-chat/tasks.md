@@ -8,7 +8,7 @@
 
 ## Phase 1: Setup
 
-- [X] T001 Create `app/mb360/bot/__init__.py` and `.env.example` (setting names only); confirm `.env` is git-ignored; no new dependency
+- [X] T001 Create `app/mb360/bot/__init__.py` and `env.example` (setting names only); confirm `.env` is git-ignored; no new dependency
 
 ## Phase 2: Foundational
 

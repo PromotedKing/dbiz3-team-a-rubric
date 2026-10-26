@@ -35,7 +35,7 @@ app/mb360/bot/
 └── routes.py
 app/mb360/alr/cases.py  # + open_chatbot_case (ALR FR-021 c)
 app/mb360/templates/    chat.html (S-031 / S-032 – S-034)
-.env.example            # names of the two settings, no value
+env.example            # names of the two settings, no value
 tests/unit/test_bot_classify.py, test_bot_chat.py
 tests/integration/test_bot_pages.py
 ```

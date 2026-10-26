@@ -8,7 +8,7 @@ uv run python -m pytest
 uv run python -m uvicorn mb360.main:app --app-dir app --reload
 ```
 
-Without a key the chatbot uses the **fake LLM** (answers "[Sample chatbot answer]"). To try Gemini, each member creates their own key in Google AI Studio and puts two lines in `.env` at the repository root (the file is git-ignored — never commit it; see `.env.example`):
+Without a key the chatbot uses the **fake LLM** (answers "[Sample chatbot answer]"). To try Gemini, each member creates their own key in Google AI Studio and puts two lines in `.env` at the repository root (the file is git-ignored — never commit it; see `env.example`):
 
 ```text
 GEMINI_API_KEY=<your key>
