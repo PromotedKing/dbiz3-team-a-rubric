@@ -17,7 +17,7 @@ did and what the humans decided.
 | `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | In review — 143 passed, 1 xfailed |
 | `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | In review — 159 passed, 1 xfailed |
 | `specs/005-acc-onboarding` | ACC | US-1 (P1) open the sub-app + consent + guide; US-2 (P1) pregnancy setup + Home | Sang | `sang/005-acc-onboarding` | In review — 198 passed, 1 xfailed |
-| `specs/006-hlt-dashboard` | HLT | US-1 (P1) Health metrics S-023; US-2 (P1) self-tracked metrics S-024 | Sang | `sang/006-hlt-dashboard` | Building — tests written (T001 – T005) |
+| `specs/006-hlt-dashboard` | HLT | US-1 (P1) Health metrics S-023; US-2 (P1) self-tracked metrics S-024 | Sang | `sang/006-hlt-dashboard` | In review — 220 passed, 2 xfailed |
 
 ## 2. Run entries
 
@@ -333,6 +333,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Human review | Deferred by Sang |
 | Tests | seed tests pass; every HLT failure is a missing module (`hlt.dashboard`, `hlt.self_tracked`) or a missing route (404) |
 | Spec issues found | none |
+| Commit | see the commit of this entry |
+
+### Entry 25: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the code tasks of the US-1/US-2 phase (T006 to T008). Do not change any test. If a test seems wrong, stop and tell me which and why. Do not change specs/, data/, data/seed/generate_seed.py or the constitution. Run all tests at the end and show me the output. Mark finished tasks [X] in tasks.md.`; then T009 (browser walk) |
+| Feature and tasks | `specs/006-hlt-dashboard`, T006 – T009 |
+| What the agent produced | `app/mb360/hlt/dashboard.py` (S-023 data, labels from THRESHOLD_RULE, fetal heart rate reference range from the Display only row), `hlt/self_tracked.py` (S-024 validation and Group 1 records), `hlt/routes.py`; `main.py` registers them; templates `health.html` (S-023), `self_tracked.html` (S-024); "Health metrics ›" on Home |
+| Human review | Deferred by Sang. Browser walk (26/10): Lan → S-024 weight 57.4 + sleep 22:00 – 06:30 → "Metrics saved", Weight 57.4 kg, Sleep 8 h 30 min; visit section 15/09/2026 with labels and the reference range |
+| Tests | `220 passed, 2 xfailed` (xfail = ALR Q9, HLT D-16). No test changed; `data/` unchanged |
+| Spec issues found | none new |
 | Commit | see the commit of this entry |
 
 ## 3. Spec issues found while building

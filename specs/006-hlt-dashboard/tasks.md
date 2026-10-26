@@ -24,13 +24,13 @@
 
 ### Implementation
 
-- [ ] T006 [US1] `app/mb360/hlt/dashboard.py` (R1 – R3) — makes T003 pass
-- [ ] T007 [P] [US2] `app/mb360/hlt/self_tracked.py` (R4) — makes T004 pass
-- [ ] T008 [US1] `app/mb360/hlt/routes.py` + register in `main.py`; templates `health.html`, `self_tracked.html`; "Health metrics ›" on `home.html` — makes T005 pass
+- [X] T006 [US1] `app/mb360/hlt/dashboard.py` (R1 – R3) — makes T003 pass
+- [X] T007 [P] [US2] `app/mb360/hlt/self_tracked.py` (R4) — makes T004 pass
+- [X] T008 [US1] `app/mb360/hlt/routes.py` + register in `main.py`; templates `health.html`, `self_tracked.html`; "Health metrics ›" on `home.html` — makes T005 pass
 
 ## Phase 4: Polish
 
-- [ ] T009 Walk quickstart.md scenarios 1 – 5
+- [X] T009 Walk quickstart.md scenarios 1 – 5
 - [ ] T010 [P] Build log entries
 
 ## Dependencies
