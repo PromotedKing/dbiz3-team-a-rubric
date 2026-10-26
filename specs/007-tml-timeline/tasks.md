@@ -24,13 +24,13 @@
 
 ### Implementation
 
-- [ ] T006 [US1] `app/mb360/tml/weeks.py` (R1 – R3) — makes T003 pass
-- [ ] T007 [P] [US2] `app/mb360/tml/diary.py` (R4) — makes T004 pass
-- [ ] T008 [US1] `app/mb360/tml/routes.py` + register in `main.py`; templates `timeline.html`, `diary_form.html`; Home week card → S-048 — makes T005 pass
+- [X] T006 [US1] `app/mb360/tml/weeks.py` (R1 – R3) — makes T003 pass
+- [X] T007 [P] [US2] `app/mb360/tml/diary.py` (R4) — makes T004 pass
+- [X] T008 [US1] `app/mb360/tml/routes.py` + register in `main.py`; templates `timeline.html`, `diary_form.html`; Home week card → S-048 — makes T005 pass
 
 ## Phase 4: Polish
 
-- [ ] T009 Walk quickstart.md scenarios 1 – 6
+- [X] T009 Walk quickstart.md scenarios 1 – 6
 - [ ] T010 [P] Build log entries
 
 ## Dependencies

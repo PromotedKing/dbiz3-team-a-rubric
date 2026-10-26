@@ -18,7 +18,7 @@ did and what the humans decided.
 | `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | In review — 159 passed, 1 xfailed |
 | `specs/005-acc-onboarding` | ACC | US-1 (P1) open the sub-app + consent + guide; US-2 (P1) pregnancy setup + Home | Sang | `sang/005-acc-onboarding` | In review — 198 passed, 1 xfailed |
 | `specs/006-hlt-dashboard` | HLT | US-1 (P1) Health metrics S-023; US-2 (P1) self-tracked metrics S-024 | Sang | `sang/006-hlt-dashboard` | In review — 220 passed, 2 xfailed |
-| `specs/007-tml-timeline` | TML | US-1 (P1) week view S-048 (+ daily indicators D-75); US-2 (P1) diary S-051 / S-052 | Sang | `sang/007-tml-timeline` | Building — tests written (T001 – T005) |
+| `specs/007-tml-timeline` | TML | US-1 (P1) week view S-048 (+ daily indicators D-75); US-2 (P1) diary S-051 / S-052 | Sang | `sang/007-tml-timeline` | In review — 246 passed, 2 xfailed |
 
 ## 2. Run entries
 
@@ -375,6 +375,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | none |
 | Commit | see the commit of this entry |
 
+### Entry 28: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the code tasks of the US-1/US-2 phase (T006 to T008). Do not change any test. If a test seems wrong, stop and tell me which and why. Do not change specs/, data/, data/seed/generate_seed.py or the constitution. Run all tests at the end and show me the output. Mark finished tasks [X] in tasks.md.`; then T009 (browser walk) |
+| Feature and tasks | `specs/007-tml-timeline`, T006 – T009 |
+| What the agent produced | `app/mb360/tml/weeks.py` (week data, prefetch cache), `tml/diary.py` (entry + photos, JPG / PNG by signature, ≤ 5, ≤ 10 MB, no edit / delete), `tml/routes.py` (+ `/media/` file route with a path check); templates `timeline.html` (S-048), `diary_form.html` (S-051 / S-052); Home week card → S-048 |
+| Human review | Deferred by Sang. Two problems found by the agent while building and fixed: (1) the first prefetch cache would have shown stale indicators after a report or a self-tracked value saved on another screen — the cache is now reused only while the database is unchanged; **a regression test (`tests/integration/test_tml_cache_freshness.py`) was added after the fix, in Step 6** — a new test, no existing test changed, but it was not seen failing first; (2) the browser walk showed sleep as "22:30-06:00" on S-048 while S-023 shows "7 h 30 min" — S-048 now uses the same duration. Browser walk: Home → S-048 week 28 → diary with a PNG photo → "Diary entry saved", photo shown |
+| Tests | `246 passed, 2 xfailed` (xfail = ALR Q9, HLT D-16). No existing test changed; `data/` unchanged |
+| Spec issues found | none new |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It
@@ -399,3 +412,4 @@ does not happen again.
 | 10 | A test assumed the order of rows that share the same timestamp | The test failed on correct seed data | Compare sets, or order by a column that is defined to be unique |
 | 12 | quickstart.md used `uv run uvicorn`; on Windows with Smart App Control the `uvicorn.exe` shim is blocked ("An Application Control policy has blocked this file") | The app did not start on Sang's laptop (T019 / G1 check) | Start Python tools with `uv run python -m <tool>`; run quickstart on a real laptop before the pull request |
 | 21 | The plan stated a fact about the seed ("every session lasts 12 hours") without checking it | The seed test written from the plan failed | Check every claim about the seed with a query before writing it into plan.md |
+| 28 | A cache added for FR-004 was not invalidated by writes from other modules (stale timeline after a report) | Code reading while writing the routes | When a feature adds a cache, write a test that changes the data from another screen before writing the cache |
