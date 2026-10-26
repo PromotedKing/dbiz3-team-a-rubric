@@ -14,8 +14,8 @@ did and what the humans decided.
 |---|---|---|---|---|---|
 | `specs/001-alr-core` | ALR | US-1 (P1) — submit a metric or symptom report (US-2 if time allows) | Sang | `sang/001-alr-core` | Merged (PR #6) |
 | `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Merged (PR #7) |
-| `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | In review — 143 passed, 1 xfailed |
-| `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | In review — 159 passed, 1 xfailed |
+| `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | Merged (PR #9) |
+| `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | Merged (PR #10) |
 
 ## 2. Run entries
 
@@ -265,6 +265,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | What the agent produced | `app/mb360/cli/instructions.py` (FR-025, doctor only, one active instruction per metric); `notify_visit_result()` in `alr/notifications.py` (FR-019, BR-003); route `POST /staff/{staff}/cases/{case}/instructions`; S-064: "Edit" per instruction row and the "Add / edit instruction" form for doctors, "Assigned dd/mm/yyyy · Dr. name"; `cli/case_detail.py` reads the doctor's name |
 | Human review | Pending (pull request) |
 | Tests | `159 passed, 1 xfailed` (xfail = ALR Q9). No test changed; `data/` unchanged |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
+### Entry 19: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --use specs/001-alr-core` then `--refresh` (the G4 check found the snapshot drifted); MVP Alpha checklist updated at `2a880f1` |
+| Feature and tasks | `specs/001-alr-core` (snapshot only) |
+| What the agent produced | `specs/001-alr-core/spec.md` refreshed — the only change is ALR §10 Q23 (added by `specs/003-alr-status`), which does not affect US-1, so plan.md and tasks.md stay valid (checked by hand); `docs/build/mvp-alpha-checklist.md`: G2, G3, G4 ticked, limitations 1, 2, 9 updated |
+| Human review | Pending (PR #8) |
+| Tests | `159 passed, 1 xfailed` |
 | Spec issues found | none |
 | Commit | see the commit of this entry |
 
