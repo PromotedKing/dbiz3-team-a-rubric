@@ -26,14 +26,14 @@
 
 ### Implementation
 
-- [ ] T008 [US1] `app/mb360/acc/entry.py` — `open_subapp`, `agree`, session (R2, R3) — makes T003 pass
-- [ ] T009 [P] [US2] `app/mb360/acc/setup.py` — `calculate`, `validate`, `save` (R5) — makes T004 pass
-- [ ] T010 [US1] `app/mb360/acc/routes.py` + register in `main.py` — routes of contracts/http-routes.md — makes T005 – T007 pass with
-- [ ] T011 [P] [US1] templates `tci_home.html`, `consent.html`, `not_female.html`, `guide.html`, `setup.html`, `home.html`
+- [X] T008 [US1] `app/mb360/acc/entry.py` — `open_subapp`, `agree`, session (R2, R3) — makes T003 pass
+- [X] T009 [P] [US2] `app/mb360/acc/setup.py` — `calculate`, `validate`, `save` (R5) — makes T004 pass
+- [X] T010 [US1] `app/mb360/acc/routes.py` + register in `main.py` — routes of contracts/http-routes.md — makes T005 – T007 pass
+- [X] T011 [P] [US1] templates `tci_home.html`, `consent.html`, `not_female.html`, `guide.html`, `setup.html`, `home.html`
 
 ## Phase 4: Polish
 
-- [ ] T012 Walk quickstart.md scenarios 1 – 9 in the browser
+- [X] T012 Walk quickstart.md scenarios 1 – 9 in the browser
 - [ ] T013 [P] Build log entries; MVP Alpha checklist limitation 3 and 12 updated
 
 ## Dependencies

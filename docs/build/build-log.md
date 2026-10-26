@@ -16,7 +16,7 @@ did and what the humans decided.
 | `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Merged (PR #7) |
 | `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | In review — 143 passed, 1 xfailed |
 | `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | In review — 159 passed, 1 xfailed |
-| `specs/005-acc-onboarding` | ACC | US-1 (P1) open the sub-app + consent + guide; US-2 (P1) pregnancy setup + Home | Sang | `sang/005-acc-onboarding` | Building — tests written (T001 – T007) |
+| `specs/005-acc-onboarding` | ACC | US-1 (P1) open the sub-app + consent + guide; US-2 (P1) pregnancy setup + Home | Sang | `sang/005-acc-onboarding` | In review — 198 passed, 1 xfailed |
 
 ## 2. Run entries
 
@@ -293,6 +293,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Human review | Changed: the plan said "every seed session lasts 12 hours" and the seed test failed — only the 7 ordinary sessions do (U06, U07, U08 are edge cases). Test, plan, research and ACC Q22 corrected before any code |
 | Tests | seed `12 passed`; whole suite: every ACC failure is a missing module (`acc.entry`, `acc.setup`) or a missing route (404) |
 | Spec issues found | none |
+| Commit | see the commit of this entry |
+
+### Entry 22: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the code tasks of the US-1/US-2 phase (T008 to T011). Do not change any test. If a test seems wrong, stop and tell me which and why. Do not change specs/, data/, data/seed/generate_seed.py or the constitution. Run all tests at the end and show me the output. Mark finished tasks [X] in tasks.md.`; then T012 (quickstart walked in the browser) |
+| Feature and tasks | `specs/005-acc-onboarding`, T008 – T012 |
+| What the agent produced | `app/mb360/acc/entry.py` (open the sub-app, BR-007, consent, session), `acc/setup.py` (calculate / validate / save, D-72), `acc/routes.py`; `main.py` registers them; templates `tci_home`, `consent`, `not_female`, `guide`, `setup`, `home` |
+| Human review | Deferred by Sang. Browser walk on Sang's laptop (26/10): simulated TCI account → consent → guide → Skip → setup with LMP 01/04/2026 → card "Week 25 · day 4, Due 06/01/2027" → Confirm → Home "Hello, Demo!", Week 25 |
+| Tests | `198 passed, 1 xfailed` (xfail = ALR Q9). No test changed; `data/` unchanged |
+| Spec issues found | none new |
 | Commit | see the commit of this entry |
 
 ## 3. Spec issues found while building
