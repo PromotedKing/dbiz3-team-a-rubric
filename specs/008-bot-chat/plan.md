@@ -49,7 +49,7 @@ tests/integration/test_bot_pages.py
 | FR-010 with the fake LLM | Deciding "outside pregnancy topics" normally belongs to the LLM's system prompt | The code first checks the provisional pregnancy-topic words; a question with none of them is declined without calling the LLM. With Gemini, the system prompt also tells the model to decline |
 | BOT Q13 — decline wording | FR-010 | "I can only help with pregnancy, prenatal care, nutrition and postpartum wellness. Could you ask me a pregnancy question?" (S-034 #10b example) |
 | BOT Q8 — hotline number | FR-007, FR-009 | "1900 xxxx" placeholder as drawn |
-| BOT Q10 — error text and timeout | LLM failure | Gemini call timeout 20 s; on failure the question is kept and S-034 shows "⚠ Could not get an answer. Retry" (DM-29 default) |
+| BOT Q10 — error text and timeout | LLM failure | Gemini call timeout 20 s; on failure **nothing is stored** and the question is put back in the input with "⚠ Could not get an answer. Retry" — this differs from the DM-29 default ("the question row is kept"), recorded in the build log for the BOT owner |
 | BOT Q11 — the same risk question asked again | One case or several | One case per question the mother sends to a nurse ("Connect to nurse" can be tapped once per question) |
 | A new conversation or the last one | No rule in the spec | Each visit to S-031 starts a new conversation when the first question is sent; follow-up questions stay in it (FR-003, D-67) |
 | Gemini model name | `generateContent` needs a model | Read from `GEMINI_MODEL` in `.env`; without both settings the fake client is used |
