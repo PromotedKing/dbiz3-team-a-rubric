@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <p>⇄</p>
+  <h1>Connect to your TCI account</h1>
+  <p>Mother &amp; Baby 360 will use the following information from the TCI app:</p>
+  <ul>
+    <li>Full name, date of birth, phone number ✓</li>
+    <li>Medical record number at Thu Cuc ✓</li>
+    <li>Results of your prenatal visits ✓</li>
+  </ul>
+  <form method="post" action="/tci/consent">
+    {% for k, v in ident.items() %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+    <label><input type="checkbox" name="agree" value="on"> I agree to the Terms and the Privacy Policy</label>
+    {% if error %}<span class="error" data-error-for="{{ error.field }}">{{ error.message }}</span>{% endif %}
+    <p>
+      <button class="secondary" name="action" value="later" style="background:#fff;color:#7a3b69">Later</button>
+      <button name="action" value="agree">Agree &amp; continue</button>
+    </p>
+  </form>
+</div>
+{% endblock %}
