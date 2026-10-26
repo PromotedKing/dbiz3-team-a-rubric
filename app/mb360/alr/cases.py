@@ -3,6 +3,7 @@ import sqlite3
 import uuid
 from datetime import datetime
 
+from . import notifications
 from .reports import DB_TIME
 
 
@@ -19,4 +20,5 @@ def open_case(conn: sqlite3.Connection, user_id: str, report_id: str, case_sourc
         "INSERT INTO CASE_STATUS_HISTORY (case_id, status, changed_at, changed_by, role) VALUES (?, 'Not viewed', ?, NULL, 'System')",
         (case_id, at),
     )
+    notifications.notify(conn, case_id, "created", now)   # FR-018
     return case_id

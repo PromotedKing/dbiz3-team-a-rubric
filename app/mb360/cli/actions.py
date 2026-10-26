@@ -6,6 +6,8 @@ import sqlite3
 import uuid
 from datetime import date, datetime
 
+from ..alr import notifications
+
 DB_TIME = "%Y-%m-%d %H:%M"
 NOT_VIEWED, VIEWED, ESCALATED, RESOLVED = "Not viewed", "Viewed", "Escalated to doctor", "Resolved"
 
@@ -85,6 +87,7 @@ def mark_viewed(conn: sqlite3.Connection, case_id: str, staff_id: str, now: date
     def write():
         conn.execute("UPDATE CARE_CASE SET status = ? WHERE case_id = ?", (VIEWED, case_id))
         _history(conn, case_id, VIEWED, staff_id, role, at)
+        notifications.notify(conn, case_id, VIEWED, now)   # ALR FR-018
     _run(conn, write)
 
 
@@ -100,6 +103,7 @@ def escalate(conn: sqlite3.Connection, case_id: str, staff_id: str, now: datetim
             _history(conn, case_id, VIEWED, staff_id, role, at)
         conn.execute("UPDATE CARE_CASE SET status = ?, assigned_doctor_id = ? WHERE case_id = ?", (ESCALATED, doctor, case_id))
         _history(conn, case_id, ESCALATED, staff_id, role, at)
+        notifications.notify(conn, case_id, ESCALATED, now)   # one notification per action (§10 Q23)
         return doctor
     return _run(conn, write)
 
@@ -114,6 +118,7 @@ def close_case(conn: sqlite3.Connection, case_id: str, staff_id: str, now: datet
         conn.execute("UPDATE CARE_CASE SET status = ?, closed_at = ?, closed_by = ? WHERE case_id = ?",
                      (RESOLVED, at, staff_id, case_id))
         _history(conn, case_id, RESOLVED, staff_id, role, at)
+        notifications.notify(conn, case_id, RESOLVED, now)
     _run(conn, write)
 
 
@@ -134,5 +139,6 @@ def send_guidance(conn: sqlite3.Connection, case_id: str, staff_id: str, now: da
         conn.execute("""INSERT INTO STAFF_RESPONSE (response_id, case_id, responder_id, responder_role, template_id, custom_text, sent_at)
                         VALUES (?, ?, ?, ?, ?, ?, ?)""",
                      (response_id, case_id, staff_id, role, template_id, custom_text, now.strftime(DB_TIME)))
+        notifications.notify(conn, case_id, "response", now, staff_id=staff_id)
         return response_id
     return _run(conn, write)
