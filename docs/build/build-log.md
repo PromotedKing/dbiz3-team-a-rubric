@@ -16,6 +16,10 @@ did and what the humans decided.
 | `specs/002-cli-core` | CLI | US-1 (P1) nurse queue + US-2 (P1) doctor handles escalated case | Sang | `sang/002-cli-core` | Merged (PR #7) |
 | `specs/003-alr-status` | ALR | US-2 (P1) My reports + report status; FR-018 notifications | Sang | `sang/003-alr-status` | Merged (PR #9) |
 | `specs/004-cli-instructions` | CLI (+ ALR FR-019) | US-3 (P2) Doctor's instructions form; ALR BR-001, BR-003 / FR-019 | Sang | `sang/004-cli-instructions` | Merged (PR #10) |
+| `specs/005-acc-onboarding` | ACC | US-1 (P1) open the sub-app + consent + guide; US-2 (P1) pregnancy setup + Home | Sang | `sang/005-acc-onboarding` | Merged (PR #11) |
+| `specs/006-hlt-dashboard` | HLT | US-1 (P1) Health metrics S-023; US-2 (P1) self-tracked metrics S-024 | Sang | `sang/006-hlt-dashboard` | Merged (PR #12) |
+| `specs/007-tml-timeline` | TML | US-1 (P1) week view S-048 (+ daily indicators D-75); US-2 (P1) diary S-051 / S-052 | Sang | `sang/007-tml-timeline` | Merged (PR #13) |
+| `specs/008-bot-chat` | BOT | US-1 (P1) ask a question; US-2 (P1) hand-off to a nurse (fake LLM by default, D-76) | Sang | `sang/008-bot-chat` | Merged (PR #14) |
 
 ## 2. Run entries
 
@@ -281,6 +285,175 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | none |
 | Commit | see the commit of this entry |
 
+### Entry 20: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --spec specs/spec-ACC.md ACC --name onboarding`; Step 1 check; `/speckit-plan` (scope ACC US-1 + US-2; simulated TCI app for §10 Q9; stack unchanged); `/speckit-tasks`; `/speckit-analyze`. Sang asked to build the slice first and review later (26/10) |
+| Feature and tasks | `specs/005-acc-onboarding`, T001 – T013 |
+| What the agent produced | snapshot; consistency: 0 NOT FOUND (USER_ACCOUNT, CONSENT_RECORD, NOTIFICATION_PREFERENCE, SESSION, PREGNANCY_PROFILE, HEALTH_METRIC_RECORD); `plan.md`, `research.md` (R1 – R6), `data-model.md`, `contracts/http-routes.md`, `quickstart.md`, `tasks.md`; `specs/spec-ACC.md` §10 Q22 (Notification Preference defaults, greeting, session lifetime) and snapshot refreshed. Analyze: 0 CRITICAL, 0 HIGH, 3 MEDIUM (simulated TCI identity — Q9; LMP rule provisional — Q10; DM-41 defaults — Q22), 1 LOW (S-008 shows only the ALR / HLT cards that exist) |
+| Human review | Deferred by Sang (review after the slice) |
+| Tests | none at this step |
+| Spec issues found | §10 Q22 (new) |
+| Commit | see the commit of this entry |
+
+### Entry 21: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the Setup and Foundational phases and the test tasks of the US-1/US-2 phase (T001 to T007). Do not write any code that makes those tests pass. Run the tests at the end and show me the output.` |
+| Feature and tasks | `specs/005-acc-onboarding`, T001 – T007 |
+| What the agent produced | `app/mb360/acc/__init__.py`; `tests/seed/test_seed_acc.py`, `tests/unit/test_acc_entry.py`, `test_acc_setup.py`, `tests/integration/test_acc_onboarding_flow.py`, `test_acc_setup_page.py`, `test_acc_home_page.py`, `tests/acc_helpers.py` |
+| Human review | Changed: the plan said "every seed session lasts 12 hours" and the seed test failed — only the 7 ordinary sessions do (U06, U07, U08 are edge cases). Test, plan, research and ACC Q22 corrected before any code |
+| Tests | seed `12 passed`; whole suite: every ACC failure is a missing module (`acc.entry`, `acc.setup`) or a missing route (404) |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
+### Entry 22: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the code tasks of the US-1/US-2 phase (T008 to T011). Do not change any test. If a test seems wrong, stop and tell me which and why. Do not change specs/, data/, data/seed/generate_seed.py or the constitution. Run all tests at the end and show me the output. Mark finished tasks [X] in tasks.md.`; then T012 (quickstart walked in the browser) |
+| Feature and tasks | `specs/005-acc-onboarding`, T008 – T012 |
+| What the agent produced | `app/mb360/acc/entry.py` (open the sub-app, BR-007, consent, session), `acc/setup.py` (calculate / validate / save, D-72), `acc/routes.py`; `main.py` registers them; templates `tci_home`, `consent`, `not_female`, `guide`, `setup`, `home` |
+| Human review | Deferred by Sang. Browser walk on Sang's laptop (26/10): simulated TCI account → consent → guide → Skip → setup with LMP 01/04/2026 → card "Week 25 · day 4, Due 06/01/2027" → Confirm → Home "Hello, Demo!", Week 25 |
+| Tests | `198 passed, 1 xfailed` (xfail = ALR Q9). No test changed; `data/` unchanged |
+| Spec issues found | none new |
+| Commit | see the commit of this entry |
+
+### Entry 23: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --spec specs/spec-HLT.md HLT --name dashboard`; Step 1 check; `/speckit-plan` (scope HLT US-1 + US-2; based on PR #11 for Home); `/speckit-tasks`; `/speckit-analyze` |
+| Feature and tasks | `specs/006-hlt-dashboard`, T001 – T010 |
+| What the agent produced | snapshot; consistency: 0 NOT FOUND (HEALTH_METRIC_RECORD, VISIT, THRESHOLD_RULE, WATCH_FLAG, CARE_CASE); `plan.md`, `research.md` (R1 – R5), `data-model.md`, `contracts/http-routes.md`, `quickstart.md`, `tasks.md`. Every seed fact used in the tasks was checked with a query first (entry 21 lesson). Analyze: 0 CRITICAL, 0 HIGH, 2 MEDIUM (D-16 ranges; sleep rules proposed on S-024), 1 LOW (urine protein label shown although the drawing has none — follows FR-001) |
+| Human review | Deferred by Sang |
+| Tests | none at this step |
+| Spec issues found | none new (all open points already marked in S-023 / S-024) |
+| Commit | see the commit of this entry |
+
+### Entry 24: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the Setup and Foundational phases and the test tasks of the US-1/US-2 phase (T001 to T005). Do not write any code that makes those tests pass. Run the tests at the end and show me the output.` |
+| Feature and tasks | `specs/006-hlt-dashboard`, T001 – T005 |
+| What the agent produced | `app/mb360/hlt/__init__.py`; `tests/seed/test_seed_hlt.py`, `tests/unit/test_hlt_dashboard.py`, `test_hlt_self_tracked.py`, `tests/integration/test_hlt_pages.py` |
+| Human review | Deferred by Sang |
+| Tests | seed tests pass; every HLT failure is a missing module (`hlt.dashboard`, `hlt.self_tracked`) or a missing route (404) |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
+### Entry 25: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the code tasks of the US-1/US-2 phase (T006 to T008). Do not change any test. If a test seems wrong, stop and tell me which and why. Do not change specs/, data/, data/seed/generate_seed.py or the constitution. Run all tests at the end and show me the output. Mark finished tasks [X] in tasks.md.`; then T009 (browser walk) |
+| Feature and tasks | `specs/006-hlt-dashboard`, T006 – T009 |
+| What the agent produced | `app/mb360/hlt/dashboard.py` (S-023 data, labels from THRESHOLD_RULE, fetal heart rate reference range from the Display only row), `hlt/self_tracked.py` (S-024 validation and Group 1 records), `hlt/routes.py`; `main.py` registers them; templates `health.html` (S-023), `self_tracked.html` (S-024); "Health metrics ›" on Home |
+| Human review | Deferred by Sang. Browser walk (26/10): Lan → S-024 weight 57.4 + sleep 22:00 – 06:30 → "Metrics saved", Weight 57.4 kg, Sleep 8 h 30 min; visit section 15/09/2026 with labels and the reference range |
+| Tests | `220 passed, 2 xfailed` (xfail = ALR Q9, HLT D-16). No test changed; `data/` unchanged |
+| Spec issues found | none new |
+| Commit | see the commit of this entry |
+
+### Entry 26: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --spec specs/spec-TML.md TML --name timeline`; Step 1 check; `/speckit-plan` (scope TML US-1 + US-2; based on PR #12); `/speckit-tasks`; `/speckit-analyze` |
+| Feature and tasks | `specs/007-tml-timeline`, T001 – T010 |
+| What the agent produced | snapshot; consistency: 0 NOT FOUND (DIARY_ENTRY, DIARY_IMAGE, FAMILY_MESSAGE, VISIT, HEALTH_METRIC_RECORD); `plan.md`, `research.md` (R1 – R4), `data-model.md`, `contracts/http-routes.md`, `quickstart.md`, `tasks.md`; seed facts checked with queries. Analyze: 0 CRITICAL, 0 HIGH, 3 MEDIUM (photo storage location not specified → git-ignored `media/`; FR-004 prefetch on server pages → in-memory cache; Messages to Baby shown read-only while D-03 is pending), 1 LOW (ultrasound files absent from the seed → placeholder) |
+| Human review | Deferred by Sang |
+| Tests | none at this step |
+| Spec issues found | none new (Q9, Q10, Q11, Q14, Q15, Q17 already open) |
+| Commit | see the commit of this entry |
+
+### Entry 27: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the Setup and Foundational phases and the test tasks of the US-1/US-2 phase (T001 to T005). Do not write any code that makes those tests pass. Run the tests at the end and show me the output.` |
+| Feature and tasks | `specs/007-tml-timeline`, T001 – T005 |
+| What the agent produced | `app/mb360/tml/__init__.py`; `.gitignore` + `/media/`; `tests/seed/test_seed_tml.py`, `tests/unit/test_tml_weeks.py`, `test_tml_diary.py`, `tests/integration/test_tml_pages.py` |
+| Human review | Deferred by Sang |
+| Tests | `222 passed, 2 xfailed, 3 errors` — the seed tests pass; the 3 TML test files fail to import `tml.weeks` / `tml.diary` (missing code) |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
+### Entry 28: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the code tasks of the US-1/US-2 phase (T006 to T008). Do not change any test. If a test seems wrong, stop and tell me which and why. Do not change specs/, data/, data/seed/generate_seed.py or the constitution. Run all tests at the end and show me the output. Mark finished tasks [X] in tasks.md.`; then T009 (browser walk) |
+| Feature and tasks | `specs/007-tml-timeline`, T006 – T009 |
+| What the agent produced | `app/mb360/tml/weeks.py` (week data, prefetch cache), `tml/diary.py` (entry + photos, JPG / PNG by signature, ≤ 5, ≤ 10 MB, no edit / delete), `tml/routes.py` (+ `/media/` file route with a path check); templates `timeline.html` (S-048), `diary_form.html` (S-051 / S-052); Home week card → S-048 |
+| Human review | Deferred by Sang. Two problems found by the agent while building and fixed: (1) the first prefetch cache would have shown stale indicators after a report or a self-tracked value saved on another screen — the cache is now reused only while the database is unchanged; **a regression test (`tests/integration/test_tml_cache_freshness.py`) was added after the fix, in Step 6** — a new test, no existing test changed, but it was not seen failing first; (2) the browser walk showed sleep as "22:30-06:00" on S-048 while S-023 shows "7 h 30 min" — S-048 now uses the same duration. Browser walk: Home → S-048 week 28 → diary with a PNG photo → "Diary entry saved", photo shown |
+| Tests | `246 passed, 2 xfailed` (xfail = ALR Q9, HLT D-16). No existing test changed; `data/` unchanged |
+| Spec issues found | none new |
+| Commit | see the commit of this entry |
+
+### Entry 29: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `uv run tools/start_feature.py --spec specs/spec-BOT.md BOT --name chat`; Step 1 check; `/speckit-plan` (scope BOT US-1 + US-2; **team decision (Sang, 26/10): LLM interface with a fake client by default, Gemini only when a member puts a key in the local `.env`**); `/speckit-tasks`; `/speckit-analyze` |
+| Feature and tasks | `specs/008-bot-chat`, T001 – T012 |
+| What the agent produced | snapshot; consistency: 0 NOT FOUND (CONVERSATION, CHAT_MESSAGE, AI_RESPONSE_LOG, CARE_CASE); `plan.md`, `research.md` (R1 – R5), `data-model.md`, `contracts/http-routes.md`, `quickstart.md`, `tasks.md`; `specs/spec-BOT.md` §10 Q14 (new conversation per visit; provisional personal-health and topic word lists) and snapshot refreshed. Analyze: 0 CRITICAL, 0 HIGH, 3 MEDIUM (D-47 danger phrases Pending SME; Q12 personal-health recognition by provisional markers; out-of-scope decided by topic words with the fake LLM), 1 LOW (Gemini client untested without a key) |
+| Human review | Deferred by Sang |
+| Tests | none at this step |
+| Spec issues found | §10 Q14 (new) |
+| Commit | see the commit of this entry |
+
+### Entry 30: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the Setup and Foundational phases and the test tasks of the US-1/US-2 phase (T001 to T006). Do not write any code that makes those tests pass. Run the tests at the end and show me the output.` |
+| Feature and tasks | `specs/008-bot-chat`, T001 – T006 |
+| What the agent produced | `app/mb360/bot/__init__.py`; `.env.example` (setting names only) and `!.env.example` in `.gitignore` (the existing `.env.*` rule hid it; `.env` stays ignored); `tests/seed/test_seed_bot.py`, `tests/unit/test_bot_llm.py`, `test_bot_classify.py`, `test_bot_chat.py`, `tests/integration/test_bot_pages.py` |
+| Human review | Changed: the seed test assumed every conversation has `current_session_data`; one edge-case conversation leaves the optional column empty — test and task corrected before any code (same lesson as entry 21: the counts were checked, the empty values were not) |
+| Tests | seed `20 passed`; every BOT failure is a missing module (`bot.llm`, `bot.classify`, `bot.chat`) or a missing route (404). No test calls the network |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
+### Entry 31: 26/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `/speckit-implement Only the code tasks of the US-1/US-2 phase (T007 to T010). Do not change any test. If a test seems wrong, stop and tell me which and why. Do not change specs/, data/, data/seed/generate_seed.py or the constitution. Run all tests at the end and show me the output. Mark finished tasks [X] in tasks.md.`; then T011 (browser walk with the fake LLM) |
+| Feature and tasks | `specs/008-bot-chat`, T007 – T011 |
+| What the agent produced | `app/mb360/bot/llm.py` (FakeLLM default; GeminiLLM via the Google AI Studio REST API with the standard library, only when `GEMINI_API_KEY` + `GEMINI_MODEL` are in the environment or the local `.env`), `bot/classify.py` + `bot/keywords.json` (provisional lists, Pending SME), `bot/chat.py` (questions, context without medical record, log, hand-off), `alr.cases.open_chatbot_case` (ALR FR-021 c + FR-018 notification), `bot/routes.py`, template `chat.html` (S-031 / S-032 – S-034), "Health chatbot ›" on Home |
+| Human review | Deferred by Sang. Browser walk (fake LLM): suggested question → answer + disclaimer; "Tôi bị chảy máu từ sáng, có sao không?" → "Signs that need medical attention" + hand-off offer, no answer → "Connect to nurse" → the case is first in Trần Thị B's "Not viewed" queue. **Not tested: the real Gemini call** (no key on this laptop) — to try when a member adds a key to `.env`. **Deviation to review (BOT owner):** when the LLM fails nothing is stored and the question is put back with "Retry", whereas the DM-29 default keeps the question row |
+| Tests | `277 passed, 2 xfailed` (xfail = ALR Q9, HLT D-16), with and without `MB360_LLM=fake`; no test calls the network. No existing test changed; `data/` unchanged |
+| Spec issues found | none new (DM-29 deviation noted above) |
+| Commit | see the commit of this entry |
+
+### Entry 32: 27/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | After merging PRs #11 – #14: fresh-clone check of `main` (`5263a75`); `start_feature.py --refresh` of `specs/001-alr-core`; rename `.env.example` → `env.example`; MVP Alpha checklist updated |
+| Feature and tasks | `specs/001-alr-core` (snapshot only); `docs/build/mvp-alpha-checklist.md` |
+| What the agent produced | snapshot refreshed again (`main` never received the refresh of entry 19 — it is in this pull request); `env.example` (setting names only) replaces `.env.example`, which `tools/check_env.py` reported as a committed `.env` file (T1 FAIL); references updated in `specs/008-bot-chat/` and `bot/llm.py`; `!.env.example` removed from `.gitignore`; checklist at `5263a75`: G2 – G5, G7, G8 met; G1, G6 open; limitations 3, 12 updated, 14 added |
+| Human review | Pending (PR #8) |
+| Tests | `277 passed, 2 xfailed`; `check_env.py --repo` 25 PASS, 1 WARN (W1), 0 FAIL |
+| Spec issues found | none |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It
@@ -304,3 +477,7 @@ does not happen again.
 | 3 | The agent added a validation rule (measured time not in the future) that the spec does not state | Read of T010 against spec §5.1 | Every validation in a test task must cite the FR / BR / screen rule it comes from |
 | 10 | A test assumed the order of rows that share the same timestamp | The test failed on correct seed data | Compare sets, or order by a column that is defined to be unique |
 | 12 | quickstart.md used `uv run uvicorn`; on Windows with Smart App Control the `uvicorn.exe` shim is blocked ("An Application Control policy has blocked this file") | The app did not start on Sang's laptop (T019 / G1 check) | Start Python tools with `uv run python -m <tool>`; run quickstart on a real laptop before the pull request |
+| 21 | The plan stated a fact about the seed ("every session lasts 12 hours") without checking it | The seed test written from the plan failed | Check every claim about the seed with a query before writing it into plan.md |
+| 28 | A cache added for FR-004 was not invalidated by writes from other modules (stale timeline after a report) | Code reading while writing the routes | When a feature adds a cache, write a test that changes the data from another screen before writing the cache |
+| 30 | Second unchecked seed claim ("every conversation has session data"): the counts were queried, the empty optional values were not | The seed test failed | Query NULLs of every optional column a claim depends on, not only row counts |
+| 32 | A new file name (`.env.example`) broke the course T1 check after merge | Fresh-clone check of `main` | Run `uv run tools/check_env.py --repo` before opening every pull request, not only the tests |

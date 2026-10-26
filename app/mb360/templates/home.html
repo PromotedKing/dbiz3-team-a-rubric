@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Hello, {{ given_name }}!</h1>
+<a class="card" style="display:block" href="/m/{{ user.user_id }}/timeline">
+  <h2>Week {{ week }}</h2>
+  <p>Due date: {{ edd | dmy }} · Pregnancy timeline ›</p>
+</a>
+<a class="card" style="display:block" href="/m/{{ user.user_id }}/health"><strong>Health metrics ›</strong></a>
+<a class="card" style="display:block" href="/m/{{ user.user_id }}/my-reports">
+  <strong>My reports</strong> · {{ handling }} report{{ "s" if handling != 1 else "" }} being handled ›
+</a>
+<a class="card" style="display:block" href="/m/{{ user.user_id }}/instructions">
+  <strong>{{ instructions_title }}</strong> · {{ flags | join(", ") if flags else "none" }} ›
+</a>
+<a class="card" style="display:block" href="/m/{{ user.user_id }}/chat"><strong>Health chatbot ›</strong></a>
+<p class="caption">Appointments and notifications come with later slices (APT, ACC S-009).</p>
+{% endblock %}

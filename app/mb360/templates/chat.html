@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<p><a href="/m/{{ user.user_id }}/home">←</a> <strong>Health chatbot</strong></p>
+{% if not conversation_id %}
+<div class="card">
+  <p>🤖 <strong>Hello, Mom!</strong> I can answer general questions about pregnancy and baby care.</p>
+  <p class="caption">ⓘ {{ "The chatbot provides general reference information only and does not replace your doctor's advice." }}</p>
+  <h2>Suggested questions</h2>
+  {% for q in suggested %}
+  <form method="post" action="/m/{{ user.user_id }}/chat" style="margin:4px 0">
+    <input type="hidden" name="text" value="{{ q }}"><button class="secondary" style="background:#fff;color:#7a3b69;text-align:left">{{ q }} ›</button>
+  </form>
+  {% endfor %}
+</div>
+{% else %}
+  {% for b in bubbles %}
+    {% if b.kind == "question" %}
+      <p class="caption" style="text-align:right">{{ b.m.sent_at | show_time }}</p>
+      <div class="card" style="margin-left:20%;background:#3a2a36;color:#fff">{{ b.m.text }}</div>
+    {% elif b.kind == "answer" %}
+      <div class="card" style="margin-right:20%"><span class="label">AI</span> {{ b.m.text }}
+        <p class="caption">{{ "For reference only; does not replace your doctor's advice." }}</p></div>
+    {% elif b.kind == "decline" %}
+      <div class="card" style="margin-right:20%"><span class="label">AI</span> {{ b.m.text }}</div>
+    {% else %}
+      <div class="card warn" style="margin-right:10%">
+        {% if b.danger %}<p><strong>⚠ Signs that need medical attention</strong></p>{% endif %}
+        <p><strong>This needs a proper consultation.</strong></p>
+        <p>Your question relates to your own health, so the chatbot does not answer it directly. If you agree, your question will be sent to a nurse.</p>
+        {% if b.q and b.q.handoff_choice is none %}
+          <form method="post" action="/m/{{ user.user_id }}/chat/{{ conversation_id }}/handoff/{{ b.q.message_id }}" style="display:inline">
+            <button name="choice" value="connect">Connect to nurse</button>
+            <button name="choice" value="decline" class="secondary" style="background:#fff;color:#7a3b69">No, thanks</button>
+          </form>
+        {% elif b.q and b.q.handoff_choice == "Connect to nurse" %}
+          <p class="label">Sent to a nurse</p> <a href="/m/{{ user.user_id }}/my-reports">My reports</a>
+        {% endif %}
+        <p class="caption">If you have any emergency signs, call {{ hotline }}.</p>
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% if error %}<p class="error" data-error-for="text">{{ error }}</p>{% endif %}
+<form method="post" action="/m/{{ user.user_id }}/chat{% if conversation_id %}/{{ conversation_id }}{% endif %}"
+      onsubmit="document.getElementById('typing').style.display='block'">
+  <p id="typing" class="card" style="display:none;width:3em">•••</p>
+  <input name="text" maxlength="500" placeholder="Type your question…" value="{{ text }}" style="width:70%">
+  <button>Send</button>
+</form>
+{% endblock %}

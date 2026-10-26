@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<p><a href="/m/{{ user.user_id }}/home">←</a> <strong>Pregnancy timeline</strong></p>
+{% if saved %}<div class="card notice">Diary entry saved</div>{% endif %}
+<p>
+  {% if w.prev is not none %}<a href="/m/{{ user.user_id }}/timeline?week={{ w.prev }}">‹ Week {{ w.prev }}</a>{% endif %}
+  <strong>Week {{ w.week }}</strong> <span class="caption">{{ w.start | dmy }} – {{ w.end | dmy }}</span>
+  {% if w.next is not none %}<a href="/m/{{ user.user_id }}/timeline?week={{ w.next }}">Week {{ w.next }} ›</a>{% endif %}
+</p>
+
+<div class="card">
+  <h2>Indicators this week</h2>
+  {% for d in w.days %}
+    <p><strong>{{ d.day | dmy }}</strong></p>
+    {% for r in d.rows %}<p>{{ r.metric }} — {{ r.value }} · <span class="label">{{ r.source }}</span></p>{% endfor %}
+  {% else %}
+    <p class="caption">No indicators this week.</p>
+  {% endfor %}
+</div>
+
+{% for v in w.visits %}
+<div class="card">
+  <h2>Visit {{ v.visit_date | dmy }} <span class="label">From visit</span></h2>
+  {% if v.ultrasound_image %}
+    {% if media_exists(v.ultrasound_image) %}<img src="/media/{{ v.ultrasound_image }}" alt="Ultrasound image, {{ v.visit_date | dmy }}" style="max-width:100%">
+    {% else %}<div class="card caption" role="img" aria-label="Ultrasound image, {{ v.visit_date | dmy }}">Ultrasound image, {{ v.visit_date | dmy }}</div>{% endif %}
+  {% endif %}
+  {% if v.fetal_length is not none %}<p>Fetal length — {{ v.fetal_length }} cm</p>{% endif %}
+  {% if v.estimated_fetal_weight is not none %}<p>Estimated weight — {{ v.estimated_fetal_weight }} g</p>{% endif %}
+  {% if v.ultrasound_report_date %}<p class="caption">Measurements per ultrasound report dated {{ v.ultrasound_report_date | dmy }}</p>{% endif %}
+  {% if v.doctor_note %}<p>Doctor's note — {{ v.doctor_note }}</p>{% endif %}
+</div>
+{% else %}
+<div class="card"><p class="caption">No visit this week.</p></div>
+{% endfor %}
+
+{% if w.messages %}
+<div class="card">
+  <h2>Messages to Baby · Week {{ w.week }} <span class="label">Family</span></h2>
+  {% for m in w.messages %}<p><strong>{% if m.author == "Mother" %}From Mom{% else %}From Dad{% endif %} · {{ m.created_at | dmy }}</strong> — "{{ m.text }}"</p>{% endfor %}
+  <p class="caption">Writing messages is pending Client approval (D-03).</p>
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>Diary · Week {{ w.week }}</h2>
+  {% for e in w.diary %}
+    <p>{{ e.entry_date | dmy }} · {{ e.text }}{% if e.mood %} <span class="label">{{ e.mood }}</span>{% endif %}
+      {% if e.photo and media_exists(e.photo) %}<br><img src="/media/{{ e.photo }}" alt="Diary photo, {{ e.entry_date | dmy }}" style="max-width:120px">{% endif %}</p>
+  {% else %}
+    <p class="caption">No diary entry this week.</p>
+  {% endfor %}
+  <p><a class="button" href="/m/{{ user.user_id }}/diary/new">+ Add diary entry</a></p>
+</div>
+{% endblock %}
