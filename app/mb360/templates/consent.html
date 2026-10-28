@@ -1,22 +1,26 @@
 {% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set page_title = "Mother & Baby 360" %}
 {% block content %}
-<div class="card">
-  <p>⇄</p>
-  <h1>Connect to your TCI account</h1>
-  <p>Mother &amp; Baby 360 will use the following information from the TCI app:</p>
-  <ul>
-    <li>Full name, date of birth, phone number ✓</li>
-    <li>Medical record number at Thu Cuc ✓</li>
-    <li>Results of your prenatal visits ✓</li>
-  </ul>
-  <form method="post" action="/tci/consent">
-    {% for k, v in ident.items() %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
-    <label><input type="checkbox" name="agree" value="on"> I agree to the Terms and the Privacy Policy</label>
-    {% if error %}<span class="error" data-error-for="{{ error.field }}">{{ error.message }}</span>{% endif %}
-    <p>
-      <button class="secondary" name="action" value="later" style="background:#fff;color:#7a3b69">Later</button>
-      <button name="action" value="agree">Agree &amp; continue</button>
-    </p>
-  </form>
+<div class="card" style="text-align:center">
+  <span class="feature-icon" style="width:64px;height:64px">⇄</span>
+  <h2>{{ _("Connect to your TCI account") }}</h2>
+  <p>{{ _("Mother & Baby 360 will use the following information from the TCI app:") }}</p>
 </div>
+<div class="card">
+  <ul class="list">
+    <li><span class="k">{{ _("Full name, date of birth, phone number") }}</span><span class="v" style="color:var(--color-primary)">✓</span></li>
+    <li><span class="k">{{ _("Medical record number at Thu Cuc") }}</span><span class="v" style="color:var(--color-primary)">✓</span></li>
+    <li><span class="k">{{ _("Results of your prenatal visits") }}</span><span class="v" style="color:var(--color-primary)">✓</span></li>
+  </ul>
+</div>
+<form method="post" action="/tci/consent">
+  {% for k, v in ident.items() %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+  <label class="check"><input type="checkbox" name="agree" value="on"> {{ _("I agree to the Terms and the Privacy Policy") }}</label>
+  {% if error %}<span class="error" data-error-for="{{ error.field }}">⚠ {{ error.message | t }}</span>{% endif %}
+  <div class="actions">
+    <button class="btn outline" name="action" value="later">{{ _("Later") }}</button>
+    <button class="btn" name="action" value="agree">{{ _("Agree & continue") }}</button>
+  </div>
+</form>
 {% endblock %}

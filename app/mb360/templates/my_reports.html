@@ -1,34 +1,42 @@
 {% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set page_title = "My reports" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/health" %}
+{% set active_tab = "health" %}
 {% block content %}
-<h1>My reports</h1>
-<p data-active-status="{{ active_status }}">
+<div class="chips" data-active-status="{{ active_status }}">
   {% for st in ["All"] + statuses|list %}
-  <a class="label" {% if st == active_status %}style="background:#7a3b69;color:#fff"{% endif %}
-     href="/m/{{ user.user_id }}/my-reports?status={{ '' if st == 'All' else st | urlencode }}&type={{ '' if active_type == 'All' else active_type | urlencode }}">{{ st }}</a>
+  <a class="chip{% if st == active_status %} on{% endif %}"
+     href="/m/{{ user.user_id }}/my-reports?status={{ '' if st == 'All' else st | urlencode }}&type={{ '' if active_type == 'All' else active_type | urlencode }}">{{ st | t }}</a>
   {% endfor %}
-</p>
+</div>
 <form method="get" action="/m/{{ user.user_id }}/my-reports">
   <input type="hidden" name="status" value="{{ '' if active_status == 'All' else active_status }}">
-  <label>Type:
-    <select name="type" onchange="this.form.submit()">
-      <option value="" {% if active_type == "All" %}selected{% endif %}>All</option>
-      {% for t in types %}<option value="{{ t }}" {% if t == active_type %}selected{% endif %}>{{ t }}</option>{% endfor %}
-    </select>
-  </label>
+  <select name="type" onchange="this.form.submit()" aria-label="{{ _('Type: All ▾') }}">
+    <option value="" {% if active_type == "All" %}selected{% endif %}>{{ _("Type: All ▾") }}</option>
+    {% for ty in types %}<option value="{{ ty }}" {% if ty == active_type %}selected{% endif %}>{{ ty | t }}</option>{% endfor %}
+  </select>
 </form>
 
 {% for r in rows %}
-<div class="card" data-report-row>
-  {% if r.kind == "chatbot" %}
-    <a href="/m/{{ user.user_id }}/cases/{{ r.case_id }}">Chatbot · {{ r.question | truncate(60) }} · Sent {{ r.sent_at | show_time }} · <span class="label">{{ r.status }}</span> ›</a>
-  {% elif r.status %}
-    <a href="/m/{{ user.user_id }}/reports/{{ r.report_id }}">{{ r.title }} · <span class="label">{{ r.label }}</span> · {{ r.value or r.symptoms }} · Sent {{ r.sent_at | show_time }} · <span class="label">{{ r.status }}</span> ›</a>
-  {% else %}
-    {{ r.title }} · <span class="label">{{ r.label }}</span> · {{ r.value or r.symptoms }} · Sent {{ r.sent_at | show_time }} · No action needed
-  {% endif %}
-</div>
+  {% set href = "/m/" ~ user.user_id ~ ("/cases/" ~ r.case_id if r.kind == "chatbot" else "/reports/" ~ r.report_id) %}
+  {% if r.kind == "chatbot" or r.status %}<a class="card" data-report-row href="{{ href }}">{% else %}<div class="card" data-report-row>{% endif %}
+    <div class="row">
+      <h3 class="grow" style="margin:0">{{ r.title | t }}</h3>
+      {% if r.status %}<span class="tag status{% if r.status == 'Resolved' %} done{% endif %}">{{ r.status | t }}</span>
+      {% else %}<span class="caption">{{ _("No action needed") }}</span>{% endif %}
+    </div>
+    {% if r.kind == "chatbot" %}
+      <p>{{ r.question | truncate(60) }}</p>
+    {% else %}
+      <p>{% if r.label %}<span class="tag {{ 'above' if r.label == 'Above threshold' else 'normal' if r.label == 'Normal' else '' }}">{{ r.label | t }}</span>{% endif %}
+        {{ r.value | t_known if r.value else (r.symptoms | t_list) }}</p>
+    {% endif %}
+    <div class="row"><span class="caption grow">{{ _("Sent") }} {{ r.sent_at | show_time }}</span>
+      {% if r.kind == "chatbot" or r.status %}<span class="link">{{ _("View report") }} ›</span>{% endif %}</div>
+  {% if r.kind == "chatbot" or r.status %}</a>{% else %}</div>{% endif %}
 {% else %}
-<p class="caption">You have not submitted any reports.</p>
+<div class="empty"><span class="feature-icon">{{ icon.clipboard() }}</span><p>{{ _("You have not submitted any reports.") }}</p></div>
 {% endfor %}
-<p><a href="/m/{{ user.user_id }}/instructions">Doctor's instructions</a></p>
+<p style="margin-top:16px"><a class="link" href="/m/{{ user.user_id }}/instructions">{{ _("Doctor's instructions") }} ›</a></p>
 {% endblock %}

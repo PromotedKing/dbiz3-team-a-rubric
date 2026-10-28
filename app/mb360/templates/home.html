@@ -1,17 +1,61 @@
 {% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set active_tab = "home" %}
+{% block header %}
+<span class="brand"><span class="logo">{{ icon.heart() }}</span><span class="title">{{ _("Mother & Baby 360") }}</span></span>
+{% endblock %}
 {% block content %}
-<h1>Hello, {{ given_name }}!</h1>
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/timeline">
-  <h2>Week {{ week }}</h2>
-  <p>Due date: {{ edd | dmy }} · Pregnancy timeline ›</p>
+<p class="page-title" style="margin:8px 0 4px">{{ _("Hello, {name}!", name=given_name) }}</p>
+
+<a class="card hero" href="/m/{{ user.user_id }}/timeline" data-week-card>
+  <div class="row">
+    <div class="grow">
+      <div class="display">{{ _("Week {n}", n=week) }}</div>
+      <p>{{ _("Due date: {date}", date=edd | dmy) }}</p>
+    </div>
+    <span class="feature-icon" style="background:#fff">{{ icon.baby() }}</span>
+  </div>
+  <p class="link" style="margin-top:10px">{{ _("Pregnancy timeline") }} ›</p>
 </a>
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/health"><strong>Health metrics ›</strong></a>
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/my-reports">
-  <strong>My reports</strong> · {{ handling }} report{{ "s" if handling != 1 else "" }} being handled ›
+
+<a class="card row" href="/m/{{ user.user_id }}/my-reports">
+  <span class="feature-icon">{{ icon.clipboard() }}</span>
+  <span class="grow">
+    <h3>{{ _("My reports") }}</h3>
+    <span class="caption">{{ _("{n} reports being handled", n=handling) }}</span>
+    {% if d.latest_status %}<span class="tag status">{{ d.latest_status | t }}</span>{% endif %}
+  </span>
+  {{ icon.chevron() }}
 </a>
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/instructions">
-  <strong>{{ instructions_title }}</strong> · {{ flags | join(", ") if flags else "none" }} ›
+
+<a class="card row" href="/m/{{ user.user_id }}/instructions">
+  <span class="feature-icon">{{ icon.stethoscope() }}</span>
+  <span class="grow">
+    <h3>{{ _("Doctor's instructions") }}</h3>
+    <span class="caption">{% if flags %}{{ flags | map("t") | join(", ") }}{% else %}{{ _("Your doctor has not given you any instructions yet.") }}{% endif %}</span>
+  </span>
+  {{ icon.chevron() }}
 </a>
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/chat"><strong>Health chatbot ›</strong></a>
-<p class="caption">Appointments and notifications come with later slices (APT, ACC S-009).</p>
+
+<div class="section-head">
+  <h2>{{ _("Self-tracked metrics") }}</h2>
+  <a class="link" href="/m/{{ user.user_id }}/health">{{ _("Health metrics") }} ›</a>
+</div>
+{% if d.self_tracked %}
+<div class="grid2">
+  {% for r in d.self_tracked %}
+  <div class="card">
+    <span class="caption">{{ r.metric | t }}</span>
+    <div class="metric-value">{{ r.value }}</div>
+    <span class="caption">{{ r.at | show_time }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty">
+  <span class="feature-icon">{{ icon.pulse() }}</span>
+  <p>{{ _("No self-tracked metrics yet.") }}</p>
+  <a class="btn sm" href="/m/{{ user.user_id }}/self-tracked">{{ _("+ Enter self-tracked metrics") }}</a>
+</div>
+{% endif %}
 {% endblock %}

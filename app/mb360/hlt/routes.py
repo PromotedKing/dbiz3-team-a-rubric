@@ -1,18 +1,17 @@
 """HLT routes — specs/006-hlt-dashboard/contracts/http-routes.md (S-023, S-024)."""
 import sqlite3
-from datetime import datetime
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+from .. import ui
 from .. import clock
 from . import dashboard, self_tracked
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
-TEMPLATES.env.filters["show_time"] = lambda t: datetime.strptime(t, "%Y-%m-%d %H:%M").strftime("%d/%m/%Y · %H:%M") if t else ""
-TEMPLATES.env.filters["dmy"] = lambda d: datetime.strptime(d, "%Y-%m-%d").strftime("%d/%m/%Y") if d else ""
+ui.install(TEMPLATES)
 
 
 def register(app: FastAPI, conn: sqlite3.Connection) -> None:

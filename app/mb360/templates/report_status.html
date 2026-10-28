@@ -1,55 +1,66 @@
 {% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set page_title = "Report status" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/my-reports" %}
+{% set active_tab = "health" %}
+{% macro label_tag(l) %}<span class="tag {{ 'above' if l == 'Above threshold' else 'normal' if l == 'Normal' else '' }}">{{ l | t }}</span>{% endmacro %}
 {% block content %}
-{% if submitted %}<div class="card notice">Report submitted</div>{% endif %}
-<p><a href="/m/{{ user.user_id }}/my-reports">← My reports</a></p>
-<h1>Report status</h1>
+{% if submitted %}<div class="card notice">{{ _("Report submitted") }}</div>{% endif %}
 <div class="card">
   {% if question %}
-    <h2>Chatbot <span class="label">{{ case.status }}</span></h2>
-    <p>Your question: {{ question.text }}</p>
-    <p class="caption">Sent {{ question.sent_at | show_time }}</p>
+    <div class="row"><h3 class="grow" style="margin:0">{{ _("Chatbot") }}</h3><span class="tag status">{{ case.status | t }}</span></div>
+    <p>{{ _("Your question:") }} {{ question.text }}</p>
+    <p class="caption">{{ _("Sent") }} {{ question.sent_at | show_time }}</p>
   {% else %}
-    <h2>Report code {{ rep.report_code }} <span class="label">{{ case.status if case else "No action needed" }}</span></h2>
+    <div class="row"><h3 class="grow" style="margin:0">{{ _("Report code {code}", code=rep.report_code) }}</h3>
+      <span class="tag status">{{ (case.status if case else "No action needed") | t }}</span></div>
     {% if hmr %}
-      <p>{{ hmr.metric }} <span class="label">{{ label }}</span></p>
-      <p><strong>{{ hmr.value }}{% if hmr.unit %} {{ hmr.unit }}{% endif %}</strong> <span class="label">{{ hmr.source }}</span></p>
-      <p class="caption">Measured {{ hmr.measured_at | show_time }} · Submitted {{ rep.submitted_at | show_time }}</p>
+      <div class="row" style="margin-top:8px"><span class="grow">{{ hmr.metric | t }}</span>{{ label_tag(label) }}</div>
+      <div class="row"><span class="metric-value grow">{{ hmr.value | t_known }}{% if hmr.unit %} {{ hmr.unit }}{% endif %}</span>
+        <span class="tag source">{{ hmr.source | t }}</span></div>
+      <p class="caption">{{ _("Measured") }} {{ hmr.measured_at | show_time }} · {{ _("Submitted") }} {{ rep.submitted_at | show_time }}</p>
     {% else %}
-      <p>Symptom report <span class="label">{{ label }}</span></p>
-      <p class="caption">Submitted {{ rep.submitted_at | show_time }}</p>
+      <div class="row" style="margin-top:8px"><span class="grow">{{ _("Symptom report") }}</span>{{ label_tag(label) }}</div>
+      <p class="caption">{{ _("Submitted") }} {{ rep.submitted_at | show_time }}</p>
     {% endif %}
-    <p>Symptoms: {{ symptoms | map("symptom_label") | join(", ") }}{% if rep.other_symptom_text %} ({{ rep.other_symptom_text }}){% endif %}</p>
-    {% if rep.note %}<p>Mother's note: {{ rep.note }}</p>{% endif %}
+    <p>{{ _("Symptoms:") }} {{ symptoms | map("symptom_label") | map("t") | join(", ") }}{% if rep.other_symptom_text %} ({{ rep.other_symptom_text }}){% endif %}</p>
+    {% if rep.note %}<p>{{ _("Mother's note:") }} {{ rep.note }}</p>{% endif %}
   {% endif %}
 </div>
 
 {% if steps %}
 <div class="card">
-  <h2>Handling progress</h2>
+  <h2>{{ _("Handling progress") }}</h2>
+  <ol class="steps">
   {% for s in steps %}
-  <p data-step-state="{{ s.state }}">
-    {% if s.state == "done" %}●{% elif s.state == "skipped" %}◌{% else %}○{% endif %} <strong>{{ s.status }}</strong>
-    {% if s.note %} — {{ s.note }}{% endif %}{% if s.at %} · {{ s.at }}{% endif %}{% if s.actor %} · {{ s.actor }}{% endif %}
-  </p>
+  <li data-step-state="{{ s.state }}">
+    <strong>{{ s.status | t }}</strong>
+    {% if s.note %}<br><span>{{ s.note | t }}</span>{% endif %}
+    {% if s.at or s.actor %}<br><span class="caption">{{ s.at or "" }}{% if s.at and s.actor %} · {% endif %}{{ s.actor | t if s.actor else "" }}</span>{% endif %}
+  </li>
   {% endfor %}
+  </ol>
 </div>
 
 {% for r in responses %}
-<div class="card notice">
-  <h2>{{ r.heading }}</h2>
+<div class="card info" data-response>
+  <h3>{{ r.heading | t }}</h3>
   <p class="caption">{{ r.at }}</p>
-  <p>{{ r.text }}</p>
+  <p style="color:var(--color-text-primary)">{{ r.text }}</p>
 </div>
 {% endfor %}
 
 {% if safety_note %}
 <div class="card">
-  <h2>Safety note</h2>
-  <p class="caption">Content to be supplied by the hospital (D-25).</p>
+  <h3>{{ _("Safety note") }}</h3>
+  <p class="caption">{{ _("Content to be supplied by the hospital (D-25).") }}</p>
 </div>
 {% endif %}
 {% endif %}
 
-<p><span class="button secondary" title="Hotline number pending (spec-BOT.md §10 Q8)">Emergency call: 1900 xxxx</span></p>
-<p><a href="/m/{{ user.user_id }}/my-reports">My reports</a> · <a href="/m/{{ user.user_id }}/instructions">Doctor's instructions</a></p>
+<div class="actions">
+  <span class="btn accent disabled" title="{{ _('Hotline number pending') }}">{{ icon.phone() }} {{ _("Emergency call") }}: 1900 xxxx</span>
+</div>
+<p style="margin-top:16px"><a class="link" href="/m/{{ user.user_id }}/my-reports">{{ _("My reports") }} ›</a> ·
+  <a class="link" href="/m/{{ user.user_id }}/instructions">{{ _("Doctor's instructions") }} ›</a></p>
 {% endblock %}

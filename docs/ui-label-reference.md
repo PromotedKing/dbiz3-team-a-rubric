@@ -1,32 +1,91 @@
 # UI conventions and label reference: Mother & Baby 360
 
-Shared UI conventions of the wireframes and the mapping from the English labels used in every document to the Vietnamese text drawn on the wireframes. This is the only file with Vietnamese UI text.
+Shared UI conventions of the wireframes and the mapping from the English labels used in every document to the Vietnamese text drawn on the wireframes. This is the only file with Vietnamese UI text; the app reads its on-screen text from the tables below (`app/mb360/ui.py`, D-79).
 
 ## UI conventions
 
-Text version of the UI-conventions page `00-QUY-UOC` of the wireframe (the page has no Screen ID, so its image is not in `screens/img/`). Source decision: **D-27**. Applies to every screen.
+Text version of the UI-conventions page `00-QUY-UOC` of the wireframe (the page has no Screen ID, so its image is not in `screens/img/`), **revised by D-79 (28/10/2026) to match the existing Thu Cuc patient app (TCI app)** from screenshots of its Home and Profile screens. Source decisions: **D-27**, **D-79**. Applies to every screen. Implemented in `app/mb360/static/app.css` (tokens) and `app/mb360/templates/base.html` (header, tab bar, S-083).
 
-### 1. Type (4 levels)
+Markers: **[measured]** = colour sampled from the TCI screenshots (±2–3 units, JPG compression); **[estimated]** = inferred from the screenshots, to confirm with TCI's own design file if one exists; **[added]** = the TCI app has no such element, derived from the TCI palette for this product.
 
-| Level | Size | Style |
+### 1. Type (5 levels)
+
+Font family: **Roboto** (fallback: -apple-system, "SF Pro Text", sans-serif) **[estimated]**. Sizes converted from the screenshots, assuming a 390 pt wide screen **[estimated]**. Only weights 400 (regular) and 700 (bold); no italics.
+
+| Level | Size | Weight | Line height | Colour | Reference in the TCI app |
+|---|---|---|---|---|---|
+| Display (highlighted figure) | 22 | 700 | 28 | `color-primary` | "Member", "250" |
+| Page title | 18 | 700 | 24 | `color-text-primary` | the member's name; "Thu Cuc Health System – TCI" (in `color-primary`) |
+| Section title | 18 | 700 | 24 | `color-text-primary` | "Customer guide", "Profile", "Account & security" |
+| Body | 15 | 400 | 20 | `color-text-primary` | menu rows, article card titles |
+| Caption | 12 | 400 | 16 | `color-text-secondary` | tab-bar labels, "Member tier", "Available points" |
+
+The tagline under the logo ("Lifelong health care for you!") is Body 15/400 in `color-primary`; it is used only for brand subtitles.
+
+### 2. Colours
+
+**2.1 Brand and background**
+
+| Token | Value | Used for | Source |
+|---|---|---|---|
+| `color-primary` | `#00A651` | primary button, active tab, menu icons, highlighted figures, emphasised titles | [measured] |
+| `color-primary-light` | `#48D07C` | light end of the gradient of the round middle tab button | [measured] |
+| `color-primary-pressed` | `#008C44` | pressed state of the primary button | [added] ~15 % darker |
+| `color-primary-soft` | `#CCF6D2` | round background under feature icons | [measured] |
+| `color-hero-gradient` | `#D3EDD2` → `#C3EAD5` | hero card (member card at the top of Profile; gestational-week card) | [measured] |
+| `color-accent` | `#F66A0B` | floating call / hotline button and urgent CTAs only — never for general use | [measured] |
+| `color-avatar` | `#009788` | initials avatar background | [measured] |
+| `color-bg` | `#F5F5F5` | screen background behind cards | [measured] |
+| `color-surface` | `#FFFFFF` | cards, header, tab bar | [measured] |
+
+**2.2 Text and lines**
+
+| Token | Value | Used for |
 |---|---|---|
-| Page title | 18 | bold |
-| Section title | 15 | bold |
-| Body | 13 | regular |
-| Caption | 11 | grey |
+| `color-text-primary` | `#212121` | page title, section title, body |
+| `color-text-secondary` | `#6F6F6F` | caption, secondary text, chevron › |
+| `color-text-disabled` | `#B4B4B4` | inactive tab label / icon, disabled button |
+| `color-border` | `#E0E0E0` | card border, divider between menu rows |
 
-### 2. Buttons
+**2.3 Business states [added]** — the TCI screenshots have no threshold labels or warnings; derived from the TCI palette:
 
-| Type | Look |
-|---|---|
-| Primary | filled |
-| Secondary | outline |
-| Small | "Small – primary" (filled) and "Small – secondary" (outline) |
-| Text link | underlined, with `›` (e.g. "Text link ›") |
+| Token | Background / text | Used for |
+|---|---|---|
+| `color-status-normal` | `#E6F6EC` / `#00873F` | threshold label "Normal" |
+| `color-status-alert` | `#FEEDE1` / `#C4520A` | threshold label "Above threshold"; the Alert on S-028 (same family as `color-accent`) |
+| `color-status-unrated` | `#EEEEEE` / `#6F6F6F` | threshold label "Not assessed" |
+| `color-error` | `#D64545` | network error, input error |
+| `color-info` | `#3B7DD8` | neutral information |
 
-### 3. Fixed CTAs
+Do not use `color-accent` as a solid background for "Above threshold", so that it is not confused with the hotline / promotion buttons. Colour only supplements the text of a label, never replaces it.
 
-Each action always uses the same label:
+### 3. Spacing and shape
+
+| Token | Value | Source |
+|---|---|---|
+| `space-unit` | 4 px (multiples 8, 12, 16, 24) | unchanged |
+| `space-screen-x` | 16 px left / right screen margin | [estimated] |
+| `radius-card` | 16 px | [estimated] |
+| `radius-banner` | 12 px | [estimated] |
+| `radius-button` | 12 px | [added] |
+| `radius-tag` | 999 px (pill) | unchanged |
+| `border-width` | 1 px, `color-border` | [measured] |
+| `shadow-card` | `0 2px 8px rgba(0,0,0,0.06)` | [estimated] |
+
+Two card styles: **floating card** (white, `shadow-card`, no border) on a `color-bg` screen; **bordered card** (white, 1 px `color-border`, no shadow) on a white screen.
+
+### 4. Buttons
+
+| Type | Background | Text | Height | Corners |
+|---|---|---|---|---|
+| Primary (filled) | `color-primary` | white, 15/700 | 48 px | `radius-button` |
+| Secondary (outline) | transparent, `color-primary` border | `color-primary`, 15/700 | 48 px | `radius-button` |
+| Small – primary | `color-primary` | white, 13/700 | 36 px | `radius-button` |
+| Small – secondary | transparent, `color-border` border | `color-text-primary`, 13/400 | 36 px | `radius-button` |
+| Disabled (any type) | `#EEEEEE` | `color-text-disabled` | as above | as above |
+| Text link | none | `color-primary`, not underlined, with `›` | — | — |
+
+**Fixed CTAs** — each action always uses the same label:
 
 | Action | Button label |
 |---|---|
@@ -36,25 +95,32 @@ Each action always uses the same label:
 | Open a report from a list | **View report** |
 | Open the history screen | **View metric history** |
 
-### 4. Threshold labels
+### 5. Icons
 
-Only 3 labels: **Normal** · **Above threshold** · **Not assessed** (D-17).
+| Context | Style | Size | Colour |
+|---|---|---|---|
+| Menu rows, shortcuts | outline, ~1.5 – 2 px stroke | 24 px | `color-primary` |
+| Tab bar | filled | 24 px | active `color-primary` / inactive `color-text-disabled` |
+| Feature grid (TCI Home) | multi-colour illustration on a `color-primary-soft` circle | ~64 px | per illustration |
+| Chevron › at the end of a row | outline | 20 px | `color-text-secondary` |
 
-When colour is used: Normal = green · Above threshold = orange · Not assessed = grey. Red only if the team decides to add a critical level.
+### 6. Threshold labels
 
-### 5. Data source labels
+Only 3 labels: **Normal** · **Above threshold** · **Not assessed** (D-17), Caption 12/700, `radius-tag`, colours of §2.3. Red only if the team decides to add a critical level.
+
+### 7. Data source labels
 
 Three labels: **From visit** · **Self-entered** · **Doctor-assigned** (D-10).
 
 "Doctor-assigned" = a value the mother reports for a metric that is in the Doctor's instructions. The mother can report only such metrics (D-11 revised), so every Group 2 value she reports is "Doctor-assigned"; "Self-entered" is used for Group 1 metrics and the weight declared on S-007 (D-33 revised).
 
-### 6. Report status (same for the mother and clinical staff)
+### 8. Report status (same for the mother and clinical staff)
 
-**Not viewed → Viewed → Escalated to doctor → Resolved** (D-18). Status only moves forward; "Escalated to doctor" may be skipped (D-43).
+**Not viewed → Viewed → Escalated to doctor → Resolved** (D-18). Status only moves forward; "Escalated to doctor" may be skipped (D-43), and the system records "Viewed" when it is skipped.
 
 Only reports that clinical staff need to see have a status. A Normal report with no symptoms has no status.
 
-### 7. Formats
+### 9. Formats
 
 | Type | Example |
 |---|---|
@@ -66,7 +132,7 @@ Only reports that clinical staff need to see have a status. A Normal report with
 | Weight | 56.5 kg |
 | Temperature | 36.8 °C |
 
-### 8. Terms
+### 10. Terms
 
 | Term in documents | Label on screen |
 |---|---|
@@ -75,24 +141,41 @@ Only reports that clinical staff need to see have a status. A Normal report with
 | Alert (S-028 only) | **Alert** |
 | Routine tracking | **Self-tracked metrics** |
 
-The word "Alert" is used only for an above-threshold report on S-028 (D-22).
+The word "Alert" (on screen: "Cảnh báo") is used only for an above-threshold report on S-028 (D-22).
 
-### 9. Header and navigation
+### 11. Header and navigation
 
-- **Header:** ← · left-aligned title · action · ✕. Only Home and the first-time setup screen have no ←.
-- **Bottom bar, 5 tabs:** Home (S-008, S-048, S-051, S-083) · Health (S-023 → S-029 "My reports", metric history) · Appointments (opens the TCI app's booking flow directly, `spec-APT.md` BR-003) · Chatbot (S-031 → S-034) · Profile (S-103).
-- ✕ in the header always opens S-083 (close the sub-app, D-01). S-043 has no ←, ✕ or tab bar (D-50).
+- **Header (child screens):** 56 px, `color-surface`, 1 px `color-border` bottom line, no shadow; ← 24 px · left-aligned page title · action icons · ✕ 24 px. Only Home and the first-time setup screen have no ←. Home uses the brand header: logo + "Mother & Baby 360" in `color-primary`.
+- **Bottom bar, 5 tabs** (64 px plus the safe area, `color-surface`): Home (S-008, S-048, S-051, S-083) · Health (S-023 → S-029 "My reports", metric history) · **Appointments — round floating middle button** (~56 px, gradient `color-primary-light` → `color-primary`, white icon, label always `color-primary`; as the "Book" tab of the TCI app; D-79) — opens the TCI app's booking flow directly, `spec-APT.md` BR-003 · Chatbot (S-031 → S-034) · Profile (S-103). Active tab `color-primary`, inactive `color-text-disabled`, labels Caption 12/400.
+- ✕ in the header always opens S-083 (close the sub-app, D-01) as a bottom sheet. S-043 has no ←, ✕ or tab bar (D-50).
 
-### 10. Shared states
+### 12. Shared states
 
 | State | Look |
 |---|---|
 | **Empty** | Dashed frame: round icon, one sentence describing the state, CTA if needed |
-| **Loading** | Grey placeholders in place of content, layout unchanged |
-| **Load error** | Dashed frame "⚠ Could not load data." + "Retry" link |
-| **Input error** | Field border + "⚠ Value outside the valid range" directly under the field |
+| **Loading** | Grey `#EEEEEE` placeholders in place of content, layout unchanged |
+| **Load error** | "⚠ Could not load data." + "Retry" |
+| **Input error** | Field border in `color-error` + "⚠ Value outside the valid range" directly under the field, in `color-error` |
 
 Valid ranges per metric are not set yet (**D-16, Pending SME**).
+
+### Changes made by D-79
+
+| Item | Before (D-27) | Now (D-79) |
+|---|---|---|
+| Font | not set (wireframe: Inter) | Roboto [estimated] |
+| Type scale | 18 / 15 / 13 / 11 (4 levels) | 22 / 18 / 18 / 15 / 12 (5 levels) |
+| Primary colour | moss green `#2F6F5E` (wireframe) | TCI green `#00A651` |
+| Screen background | `#F7F8FA` | `#F5F5F5` |
+| Text primary / secondary / disabled | `#1A1D1F` / `#6B7280` / `#B0B5BB` | `#212121` / `#6F6F6F` / `#B4B4B4` |
+| Border | `#E2E5E9` | `#E0E0E0` |
+| New tokens | — | `color-primary-light`, `color-primary-soft`, `color-hero-gradient`, `color-accent`, `color-avatar` |
+| Removed | `color-surface-alt` `#F1F5F3` | replaced by `color-primary-soft` / `color-bg` |
+| Icons | one outline style | 3 styles by context |
+| Cards | one style | floating / bordered |
+| Text link | underlined | not underlined, `color-primary` |
+| Appointments tab | ordinary tab | round floating middle button |
 
 ## UI label reference
 
@@ -240,3 +323,223 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | Message | You have no notifications. | Bạn chưa có thông báo nào. |
 | Message | No cases to handle. | Không có ca nào cần xử lý. |
 | Message | Your doctor has not given you any instructions yet. | Bác sĩ chưa có chỉ dẫn nào cho bạn. |
+
+### Labels added for the app (D-79) — proposed, to be reviewed by the owners of `screens/` (Chi, Ánh)
+
+Text the screens need that the wireframes do not show (form labels, messages, demo pages). Same columns as above; `{name}` marks a value filled in by the app.
+
+| Group | English (used in documents) | On-screen text (wireframe) |
+|---|---|---|
+| App shell (D-79) | Back | Quay lại |
+| App shell (D-79) | Mother & Baby 360 is for expectant mothers. | Mẹ & Bé 360 dành cho mẹ bầu. |
+| App shell (D-79) | TCI app (simulated host) | App TCI (mô phỏng) |
+| App shell (D-79) | Thu Cuc Health System – TCI | Hệ Thống Y Tế Thu Cúc – TCI |
+| App shell (D-79) | Lifelong health care for you! | Chăm sóc sức khoẻ trọn đời cho bạn! |
+| App shell (D-79) | Stand-in for the Thu Cuc patient app: how the TCI app passes the identity is still open (spec-ACC §10 Q9). Every identity here is invented. | Mô phỏng app bệnh nhân Thu Cúc: cách app TCI chuyển danh tính vẫn đang mở (spec-ACC §10 Q9). Mọi danh tính ở đây đều là giả. |
+| App shell (D-79) | Open Mother & Baby 360 as | Mở Mẹ & Bé 360 với tài khoản |
+| App shell (D-79) | Simulate another TCI account | Mô phỏng tài khoản TCI khác |
+| App shell (D-79) | TCI app booking flow | Luồng đặt lịch của app TCI |
+| App shell (D-79) | Booking happens in the TCI app (spec-APT BR-001, BR-003). This page stands in for it; no appointment is stored in Mother & Baby 360. | Việc đặt lịch diễn ra trong app TCI (spec-APT BR-001, BR-003). Trang này chỉ mô phỏng; Mẹ & Bé 360 không lưu lịch hẹn nào. |
+| App shell (D-79) | Back to Mother & Baby 360 | Quay lại Mẹ & Bé 360 |
+| App shell (D-79) | Demo start page | Trang bắt đầu demo |
+| App shell (D-79) | Mother side — open from the TCI app | Phía mẹ — mở từ app TCI |
+| App shell (D-79) | Consent, guide and pregnancy setup the first time, then Home. | Lần đầu: đồng ý, hướng dẫn và khai báo thai kỳ; các lần sau vào thẳng Trang chủ. |
+| App shell (D-79) | Clinical web | Web nhân viên y tế |
+| App shell (D-79) | Nurses and doctors handle the mothers' reports. | Y tá và bác sĩ xử lý báo cáo của mẹ. |
+| App shell (D-79) | Go straight to a mother's Home (demo) | Vào thẳng Trang chủ của một mẹ (demo) |
+| App shell (D-79) | You can come back at any time from the TCI app. | Mẹ có thể quay lại bất cứ lúc nào từ app TCI. |
+| App shell (D-79) | Edit profile, pregnancy information, hospital record link and notification settings come with ACC US-3 (S-103, S-010, S-011). | Chỉnh sửa hồ sơ, thông tin thai kỳ, liên kết hồ sơ bệnh viện và cài đặt thông báo sẽ có khi làm ACC US-3 (S-103, S-010, S-011). |
+| App shell (D-79) | Record no. {code} | Mã hồ sơ {code} |
+| App shell (D-79) | Week {n} | Tuần {n} |
+| App shell (D-79) | ‹ Week {n} | ‹ Tuần {n} |
+| App shell (D-79) | Week {n} › | Tuần {n} › |
+| App shell (D-79) | All | Tất cả |
+| App shell (D-79) | Male | Nam |
+| App shell (D-79) | Full name | Họ tên |
+| App shell (D-79) | Date of birth | Ngày sinh |
+| App shell (D-79) | Sex | Giới tính |
+| App shell (D-79) | Phone number | Số điện thoại |
+| App shell (D-79) | Medical record number | Mã hồ sơ khám |
+| App shell (D-79) | Medical record number (optional) | Mã hồ sơ khám (không bắt buộc) |
+| ACC screens (D-79) | Connect to your TCI account | Kết nối với tài khoản TCI của bạn |
+| ACC screens (D-79) | Mother & Baby 360 will use the following information from the TCI app: | Mẹ & Bé 360 sẽ dùng các thông tin sau từ app TCI: |
+| ACC screens (D-79) | Full name, date of birth, phone number | Họ tên, ngày sinh, số điện thoại |
+| ACC screens (D-79) | Medical record number at Thu Cuc | Mã hồ sơ khám tại Thu Cúc |
+| ACC screens (D-79) | Results of your prenatal visits | Kết quả các lần khám thai |
+| ACC screens (D-79) | I agree to the Terms and the Privacy Policy | Tôi đồng ý với Điều khoản và Chính sách quyền riêng tư |
+| ACC screens (D-79) | Wording to be confirmed (spec-ACC §10 Q21). Nothing has been saved. | Câu chữ chờ xác nhận (spec-ACC §10 Q21). Chưa có dữ liệu nào được lưu. |
+| ACC screens (D-79) | Page {n} of {total} | Trang {n}/{total} |
+| ACC screens (D-79) | Guide text to be confirmed (spec-ACC §10 Q20). | Nội dung hướng dẫn chờ xác nhận (spec-ACC §10 Q20). |
+| ACC screens (D-79) | Health dashboard | Bảng sức khỏe |
+| ACC screens (D-79) | See the results of your visits and the metrics your doctor asked you to watch. | Xem kết quả các lần khám và các chỉ số bác sĩ dặn mẹ theo dõi. |
+| ACC screens (D-79) | Report a metric or symptom | Báo cáo chỉ số hoặc triệu chứng |
+| ACC screens (D-79) | Tell the care team when a watched metric or a symptom worries you. | Báo cho đội ngũ chăm sóc khi một chỉ số cần theo dõi hoặc một triệu chứng khiến mẹ lo lắng. |
+| ACC screens (D-79) | Pregnancy timeline & diary | Dòng thời gian & nhật ký thai kỳ |
+| ACC screens (D-79) | Follow your pregnancy week by week and keep your memories. | Theo dõi thai kỳ từng tuần và lưu giữ kỷ niệm. |
+| ACC screens (D-79) | Ask general questions about pregnancy and baby care. | Hỏi các câu hỏi chung về thai kỳ và chăm sóc bé. |
+| ACC screens (D-79) | Pregnancy information | Thông tin thai kỳ |
+| ACC screens (D-79) | So the app knows which gestational week you are in. | Để app biết mẹ đang ở tuần thai thứ mấy. |
+| ACC screens (D-79) | Due date | Ngày dự sinh |
+| ACC screens (D-79) | Due date * | Ngày dự sinh * |
+| ACC screens (D-79) | First day of last period * | Ngày đầu kỳ kinh cuối * |
+| ACC screens (D-79) | The due date your doctor set after an ultrasound (if any). | Ngày dự sinh bác sĩ đã xác định sau siêu âm (nếu có). |
+| ACC screens (D-79) | Week {n} · day {d} | Tuần {n} · ngày {d} |
+| ACC screens (D-79) | Today {today} · Due {edd} | Hôm nay {today} · Dự sinh {edd} |
+| ACC screens (D-79) | Height (optional) | Chiều cao (không bắt buộc) |
+| ACC screens (D-79) | Current weight (optional) | Cân nặng hiện tại (không bắt buộc) |
+| ACC screens (D-79) | Hello, {name}! | Xin chào, {name}! |
+| ACC screens (D-79) | Due date: {date} | Ngày dự sinh: {date} |
+| ACC screens (D-79) | {n} reports being handled | {n} báo cáo đang xử lý |
+| ACC messages (D-79) | Please tick the box to agree to the Terms and the Privacy Policy. | Mẹ hãy tích vào ô để đồng ý với Điều khoản và Chính sách quyền riêng tư. |
+| ACC messages (D-79) | Choose: I know my due date, or I know the first day of my last period. | Hãy chọn: Tôi biết ngày dự sinh, hoặc Tôi biết ngày đầu kỳ kinh cuối. |
+| ACC messages (D-79) | Enter the date. | Hãy nhập ngày. |
+| ACC messages (D-79) | Value outside the valid range: the due date cannot be in the past and the week must be 0 – 42. | Giá trị ngoài khoảng hợp lệ: ngày dự sinh không được ở quá khứ và tuần thai phải trong khoảng 0 – 42. |
+| ACC messages (D-79) | Enter a number. | Hãy nhập một số. |
+| ACC messages (D-79) | The first check-up date must be within this pregnancy and not in the future. | Ngày khám thai đầu tiên phải nằm trong thai kỳ này và không ở tương lai. |
+| HLT screens (D-79) | Data updated. | Đã cập nhật dữ liệu. |
+| HLT screens (D-79) | Latest visit results | Kết quả lần khám gần nhất |
+| HLT screens (D-79) | Visit date {date} · not editable | Ngày khám {date} · không chỉnh sửa được |
+| HLT screens (D-79) | (reference range {range}) | (tham chiếu {range}) |
+| HLT screens (D-79) | No visit results yet. | Chưa có kết quả khám. |
+| HLT screens (D-79) | {n} metrics: {names} | {n} chỉ số: {names} |
+| HLT screens (D-79) | No self-tracked metrics yet. | Chưa có chỉ số tự theo dõi. |
+| HLT screens (D-79) | Optional. Enter the metrics you want to track; you can leave fields you don't need blank. | Không bắt buộc. Mẹ nhập các chỉ số muốn theo dõi; có thể bỏ trống các ô không cần. |
+| HLT screens (D-79) | Enter value | Nhập giá trị |
+| HLT screens (D-79) | Measured at | Thời điểm đo |
+| HLT screens (D-79) | Bedtime | Giờ đi ngủ |
+| HLT screens (D-79) | Wake-up time | Giờ thức dậy |
+| HLT screens (D-79) | No threshold check, no report created. | Không so ngưỡng, không tạo báo cáo. |
+| HLT messages (D-79) | Value outside the valid range | Giá trị ngoài khoảng hợp lệ |
+| HLT messages (D-79) | Enter the measured time. | Hãy nhập thời điểm đo. |
+| HLT messages (D-79) | The measured time cannot be later than now. | Thời điểm đo không được muộn hơn hiện tại. |
+| HLT messages (D-79) | Enter the bedtime. | Hãy nhập giờ đi ngủ. |
+| HLT messages (D-79) | Enter the wake-up time. | Hãy nhập giờ thức dậy. |
+| HLT messages (D-79) | The wake-up time must be after the bedtime (within 24 hours). | Giờ thức dậy phải sau giờ đi ngủ (trong vòng 24 giờ). |
+| HLT messages (D-79) | The wake-up time cannot be later than now. | Giờ thức dậy không được muộn hơn hiện tại. |
+| HLT messages (D-79) | Enter at least one metric. | Hãy nhập ít nhất một chỉ số. |
+| HLT messages (D-79) | Set up the pregnancy first. | Hãy khai báo thai kỳ trước. |
+| ALR screens (D-79) | Report symptoms | Báo cáo triệu chứng |
+| ALR screens (D-79) | Change metric ▾ | Đổi chỉ số ▾ |
+| ALR screens (D-79) | Symptoms only | Chỉ báo cáo triệu chứng |
+| ALR screens (D-79) | Systolic (mmHg) | Tâm thu (mmHg) |
+| ALR screens (D-79) | Diastolic (mmHg) | Tâm trương (mmHg) |
+| ALR screens (D-79) | Measurement time | Thời điểm đo trong ngày |
+| ALR screens (D-79) | Choose… | Chọn… |
+| ALR screens (D-79) | Blood glucose (mmol/L) | Đường huyết (mmol/L) |
+| ALR screens (D-79) | Choose the measurement time to see the threshold. | Chọn thời điểm đo để xem ngưỡng. |
+| ALR screens (D-79) | Above threshold when ≥ {value} | Vượt ngưỡng khi ≥ {value} |
+| ALR screens (D-79) | Accompanying symptoms (select multiple) | Triệu chứng kèm theo (chọn nhiều) |
+| ALR screens (D-79) | Describe other symptom (max 100 characters) | Mô tả triệu chứng khác (tối đa 100 ký tự) |
+| ALR screens (D-79) | Note | Ghi chú |
+| ALR screens (D-79) | Your report has been sent to clinical staff. | Báo cáo của mẹ đã được gửi tới nhân viên y tế. |
+| ALR screens (D-79) | Doctor's guidance | Hướng dẫn của bác sĩ |
+| ALR screens (D-79) | Hotline number pending | Số tổng đài đang chờ xác nhận |
+| ALR screens (D-79) | Call hotline / nurse | Gọi tổng đài / y tá |
+| ALR screens (D-79) | Your question: | Câu hỏi của mẹ: |
+| ALR screens (D-79) | Sent | Gửi lúc |
+| ALR screens (D-79) | Report code {code} | Mã báo cáo {code} |
+| ALR screens (D-79) | Measured | Đo lúc |
+| ALR screens (D-79) | Submitted | Gửi lúc |
+| ALR screens (D-79) | Symptom report | Báo cáo triệu chứng |
+| ALR screens (D-79) | Symptoms: | Triệu chứng: |
+| ALR screens (D-79) | Mother's note: | Ghi chú của mẹ: |
+| ALR screens (D-79) | Handling progress | Tiến trình xử lý |
+| ALR screens (D-79) | Dr. {name} | BS. {name} |
+| ALR screens (D-79) | Nurse {name} | Y tá {name} |
+| ALR screens (D-79) | Response from Dr. {name} | Phản hồi từ BS. {name} |
+| ALR screens (D-79) | Response from Nurse {name} | Phản hồi từ y tá {name} |
+| ALR screens (D-79) | Content to be supplied by the hospital (D-25). | Nội dung do bệnh viện cung cấp (D-25). |
+| ALR messages (D-79) | Choose a metric from your Doctor's instructions, or report symptoms. | Hãy chọn một chỉ số trong Chỉ dẫn của bác sĩ, hoặc báo cáo triệu chứng. |
+| ALR messages (D-79) | Please select your symptoms | Mẹ hãy chọn triệu chứng |
+| ALR messages (D-79) | Choose symptoms from the list. | Hãy chọn triệu chứng trong danh sách. |
+| ALR messages (D-79) | "No symptoms" cannot be combined with other symptoms. | "Không có triệu chứng" không chọn cùng triệu chứng khác được. |
+| ALR messages (D-79) | Describe the other symptom. | Hãy mô tả triệu chứng khác. |
+| ALR messages (D-79) | Only when "Other" is selected. | Chỉ nhập khi đã chọn "Khác". |
+| ALR messages (D-79) | At most {n} characters. | Tối đa {n} ký tự. |
+| ALR messages (D-79) | Enter a whole number (mmHg). | Hãy nhập số nguyên (mmHg). |
+| ALR messages (D-79) | Enter a number (mmol/L). | Hãy nhập một số (mmol/L). |
+| ALR messages (D-79) | Choose the measurement time. | Hãy chọn thời điểm đo trong ngày. |
+| ALR messages (D-79) | Choose a level. | Hãy chọn mức. |
+| TML screens (D-79) | Visit {date} | Lần khám {date} |
+| TML screens (D-79) | Ultrasound image, {date} | Ảnh siêu âm, {date} |
+| TML screens (D-79) | Fetal length | Chiều dài thai |
+| TML screens (D-79) | Estimated weight | Cân nặng ước tính |
+| TML screens (D-79) | Measurements per ultrasound report dated {date} | Số đo theo phiếu siêu âm ngày {date} |
+| TML screens (D-79) | Doctor's note | Ghi chú của bác sĩ |
+| TML screens (D-79) | Family | Gia đình |
+| TML screens (D-79) | From Mom | Mẹ nhắn |
+| TML screens (D-79) | From Dad | Bố nhắn |
+| TML screens (D-79) | Writing messages is pending Client approval (D-03). | Tính năng viết lời nhắn đang chờ Client duyệt (D-03). |
+| TML screens (D-79) | Diary | Nhật ký |
+| TML screens (D-79) | Diary photo, {date} | Ảnh nhật ký, {date} |
+| TML screens (D-79) | No diary entry this week. | Tuần này chưa có nhật ký. |
+| TML screens (D-79) | Week {n} – current week | Tuần {n} – tuần hiện tại |
+| TML screens (D-79) | Date {date} (automatic) | Ngày {date} (tự động) |
+| TML screens (D-79) | Content * | Nội dung * |
+| TML screens (D-79) | Mood (optional) | Tâm trạng (không bắt buộc) |
+| TML screens (D-79) | Photos (optional) — Take photo / Library, JPG or PNG, up to 5, 10 MB each | Ảnh (không bắt buộc) — Chụp ảnh / Thư viện, JPG hoặc PNG, tối đa 5 ảnh, mỗi ảnh 10 MB |
+| TML screens (D-79) | The diary entry is linked to the current week. | Nhật ký được gắn với tuần thai hiện tại. |
+| TML messages (D-79) | Please write something about today. | Mẹ hãy viết vài dòng về hôm nay. |
+| TML messages (D-79) | Choose one of the moods. | Hãy chọn một tâm trạng. |
+| TML messages (D-79) | At most {n} photos. | Tối đa {n} ảnh. |
+| TML messages (D-79) | Photos must be JPG or PNG. | Ảnh phải là JPG hoặc PNG. |
+| TML messages (D-79) | Each photo must be 10 MB or smaller. | Mỗi ảnh tối đa 10 MB. |
+| BOT screens (D-79) | The chatbot provides general reference information only and does not replace your doctor's advice. | Chatbot chỉ cung cấp thông tin tham khảo chung, không thay thế lời khuyên của bác sĩ. |
+| BOT screens (D-79) | Hello, Mom! | Xin chào mẹ! |
+| BOT screens (D-79) | I can answer general questions about pregnancy and baby care. | Mình có thể trả lời các câu hỏi chung về thai kỳ và chăm sóc bé. |
+| BOT screens (D-79) | Suggested questions | Câu hỏi gợi ý |
+| BOT screens (D-79) | How can I eat beef safely during pregnancy? | Ăn thịt bò thế nào cho an toàn khi mang thai? |
+| BOT screens (D-79) | How can I produce more breast milk? | Làm sao để có nhiều sữa mẹ hơn? |
+| BOT screens (D-79) | What should I look for when choosing formula for my baby? | Nên chú ý gì khi chọn sữa công thức cho bé? |
+| BOT screens (D-79) | How should Dad read to the baby during pregnancy? | Bố nên đọc truyện cho bé trong bụng mẹ thế nào? |
+| BOT screens (D-79) | For reference only; does not replace your doctor's advice. | Chỉ để tham khảo; không thay thế lời khuyên của bác sĩ. |
+| BOT screens (D-79) | Your question relates to your own health, so the chatbot does not answer it directly. If you agree, your question will be sent to a nurse. | Câu hỏi liên quan đến sức khỏe của chính mẹ nên chatbot không trả lời trực tiếp. Nếu mẹ đồng ý, câu hỏi sẽ được chuyển cho y tá. |
+| BOT screens (D-79) | If you have any emergency signs, call {hotline}. | Nếu có dấu hiệu khẩn cấp, mẹ hãy gọi {hotline}. |
+| BOT screens (D-79) | Type your question… | Nhập câu hỏi của mẹ… |
+| BOT messages (D-79) | I can only help with pregnancy, prenatal care, nutrition and postpartum wellness. Could you ask me a pregnancy question? | Mình chỉ hỗ trợ các chủ đề thai kỳ, chăm sóc trước sinh, dinh dưỡng và sức khỏe sau sinh. Mẹ hãy hỏi một câu về thai kỳ nhé? |
+| BOT messages (D-79) | [Sample chatbot answer] | [Câu trả lời mẫu của chatbot] |
+| BOT messages (D-79) | Type your question. | Mẹ hãy nhập câu hỏi. |
+| BOT messages (D-79) | ⚠ Could not get an answer. Retry | ⚠ Chưa nhận được câu trả lời. Thử lại |
+| CLI screens (D-79) | Nurse: {name} | Y tá: {name} |
+| CLI screens (D-79) | change | đổi |
+| CLI screens (D-79) | Choose a staff member (demo) | Chọn nhân viên y tế (demo) |
+| CLI screens (D-79) | No sign-in until Session 11 (spec-CLI §10 Q11): staff come from the seed data. | Chưa có đăng nhập đến Session 11 (spec-CLI §10 Q11): nhân viên lấy từ dữ liệu seed. |
+| CLI screens (D-79) | Sort: Newest | Sắp xếp: Mới nhất |
+| CLI screens (D-79) | Gestational age | Tuổi thai |
+| CLI screens (D-79) | Case source | Nguồn ca |
+| CLI screens (D-79) | Content | Nội dung |
+| CLI screens (D-79) | Value | Giá trị |
+| CLI screens (D-79) | Submitted at | Thời điểm gửi |
+| CLI screens (D-79) | Status | Trạng thái |
+| CLI screens (D-79) | Last visit | Lần khám gần nhất |
+| CLI screens (D-79) | Medical history | Tiền sử |
+| CLI screens (D-79) | Obstetric history (PARA) | Tiền sử sản khoa (PARA) |
+| CLI screens (D-79) | Blood type | Nhóm máu |
+| CLI screens (D-79) | Allergies | Dị ứng |
+| CLI screens (D-79) | None | Không có |
+| CLI screens (D-79) | Assigned {date} · Dr. {name} | Chỉ định {date} · BS. {name} |
+| CLI screens (D-79) | No instructions. | Chưa có chỉ dẫn. |
+| CLI screens (D-79) | Add / edit instruction | Thêm / sửa chỉ dẫn |
+| CLI screens (D-79) | Doctor only | Chỉ bác sĩ |
+| CLI screens (D-79) | Metric to monitor | Chỉ số cần theo dõi |
+| CLI screens (D-79) | Note for the mother (how to measure, frequency) | Ghi chú cho mẹ (cách đo, tần suất) |
+| CLI screens (D-79) | Enter a note… | Nhập ghi chú… |
+| CLI screens (D-79) | Above-threshold guidance (shown on S-028 when a report is above threshold) | Hướng dẫn khi vượt ngưỡng (hiện trên S-028 khi báo cáo vượt ngưỡng) |
+| CLI screens (D-79) | Choose a guidance template ▾ | Chọn mẫu hướng dẫn ▾ |
+| CLI screens (D-79) | Add custom text for this mother (optional)… | Thêm nội dung riêng cho mẹ này (không bắt buộc)… |
+| CLI screens (D-79) | You can choose only a template, only custom text, or both. If there is nothing, S-028 uses the hospital's default template. | Có thể chọn chỉ mẫu, chỉ nội dung riêng, hoặc cả hai. Nếu không có gì, S-028 dùng mẫu mặc định của bệnh viện. |
+| CLI screens (D-79) | Report {code} | Báo cáo {code} |
+| CLI screens (D-79) | Source | Nguồn |
+| CLI screens (D-79) | Chatbot question | Câu hỏi chatbot |
+| CLI screens (D-79) | Source: Chatbot · whole conversation (D-78) | Nguồn: Chatbot · toàn bộ hội thoại (D-78) |
+| CLI screens (D-79) | Responses sent | Phản hồi đã gửi |
+| CLI screens (D-79) | Send guidance to the mother | Gửi hướng dẫn cho mẹ |
+| CLI screens (D-79) | Or write / edit the text… | Hoặc viết / sửa nội dung… |
+| CLI screens (D-79) | The mother sees the guidance on S-026. Sending guidance does not change the status. | Mẹ xem hướng dẫn trên S-026. Gửi hướng dẫn không làm đổi trạng thái. |
+| CLI screens (D-79) | Metric history — {metric} | Lịch sử chỉ số — {metric} |
+| CLI screens (D-79) | Latest visit | Lần khám gần nhất |
+| CLI screens (D-79) | Visit history | Lịch sử khám |
+| CLI screens (D-79) | Conclusion: | Kết luận: |
+| CLI screens (D-79) | No visit yet. | Chưa có lần khám. |
+| Visit type (seed, D-79) | Routine antenatal check-up | Khám thai định kỳ |
+| Visit type (seed, D-79) | Anomaly scan | Siêu âm hình thái |

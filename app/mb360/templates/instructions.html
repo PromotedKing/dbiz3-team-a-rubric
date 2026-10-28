@@ -1,18 +1,19 @@
 {% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set page_title = "Doctor's instructions" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/health" %}
+{% set active_tab = "health" %}
 {% block content %}
-<h1>Doctor's instructions</h1>
-{% if submitted %}<div class="card notice">Report submitted</div>{% endif %}
+{% if submitted %}<div class="card notice">{{ _("Report submitted") }}</div>{% endif %}
 {% for f in flags %}
 <div class="card">
-  <h2>{{ f.metric }} <span class="label">Doctor-assigned</span></h2>
+  <div class="row"><h3 class="grow" style="margin:0">{{ f.metric | t }}</h3><span class="tag source">{{ _("Doctor-assigned") }}</span></div>
   {% if f.note %}<p>{{ f.note }}</p>{% endif %}
-  <a class="button" href="/m/{{ user.user_id }}/report?metric={{ f.metric | urlencode }}">+ Report metric</a>
+  <a class="btn sm" style="margin-top:8px" href="/m/{{ user.user_id }}/report?metric={{ f.metric | urlencode }}">{{ _("+ Report metric") }}</a>
 </div>
 {% else %}
-<p class="caption">You have no Doctor's instructions.</p>
+<div class="empty"><span class="feature-icon">{{ icon.stethoscope() }}</span><p>{{ _("Your doctor has not given you any instructions yet.") }}</p></div>
 {% endfor %}
-<div class="card">
-  <a class="button secondary" href="/m/{{ user.user_id }}/report?metric=Symptom">+ Report symptoms</a>
-</div>
-<p><a href="/m/{{ user.user_id }}/my-reports">My reports</a> · <a href="/">Choose another mother</a></p>
+<a class="btn outline block" href="/m/{{ user.user_id }}/report?metric=Symptom">{{ _("+ Report symptoms") }}</a>
+<p style="margin-top:16px"><a class="link" href="/m/{{ user.user_id }}/my-reports">{{ _("My reports") }} ›</a></p>
 {% endblock %}

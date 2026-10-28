@@ -1,37 +1,67 @@
 {% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set page_title = "Health metrics" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/home" %}
+{% set active_tab = "health" %}
+{% block header_actions %}
+<a class="icon-btn" href="/m/{{ user.user_id }}/health?refreshed=1" aria-label="{{ _('Refresh') }}">{{ icon.refresh() }}</a>
+{% endblock %}
 {% block content %}
-<p><a href="/m/{{ user.user_id }}/home">←</a> <strong>Health metrics</strong> · <a href="/m/{{ user.user_id }}/health?refreshed=1">⟳ Refresh</a></p>
-{% if refreshed %}<div class="card notice">Data updated.</div>{% endif %}
-{% if saved %}<div class="card notice">Metrics saved</div>{% endif %}
+{% if refreshed %}<div class="card notice">{{ _("Data updated.") }}</div>{% endif %}
+{% if saved %}<div class="card notice">{{ _("Metrics saved") }}</div>{% endif %}
 
+<div class="section-head">
+  <h2>{{ _("Latest visit results") }}</h2>
+  <span class="tag source">{{ _("From visit") }}</span>
+</div>
 <div class="card">
-  <h2>Latest visit results <span class="label">From visit</span></h2>
   {% if d.visit_date %}
-    <p class="caption">Visit date {{ d.visit_date | dmy }} · not editable</p>
-    {% for r in d.visit_rows %}
-    <p>{{ r.metric }} — {{ r.value or "—" }}
-      {% if r.label %}<span class="label">{{ r.label }}</span>{% endif %}
-      {% if r.reference %}<span class="caption">(reference range {{ r.reference }})</span>{% endif %}</p>
-    {% endfor %}
+    <p class="caption">{{ _("Visit date {date} · not editable", date=d.visit_date | dmy) }}</p>
+    <ul class="list">
+      {% for r in d.visit_rows %}
+      <li>
+        <span class="k">{{ r.metric | t }}
+          {% if r.reference %}<br><span class="caption">{{ _("(reference range {range})", range=r.reference) }}</span>{% endif %}</span>
+        <span class="v">{{ r.value | t_known or "—" }}</span>
+        {% if r.label %}<span class="tag {{ 'above' if r.label == 'Above threshold' else 'normal' if r.label == 'Normal' else '' }}">{{ r.label | t }}</span>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
   {% else %}
-    <p class="caption">No visit results yet.</p>
+    <div class="empty" style="margin:0"><p>{{ _("No visit results yet.") }}</p></div>
   {% endif %}
 </div>
 
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/instructions">
-  <strong>Doctor's instructions</strong> · {% if d.instructions %}{{ d.instructions | length }} metric{{ "s" if d.instructions | length != 1 else "" }}: {{ d.instructions | join(", ") }}{% else %}none yet{% endif %} ›
+<a class="card row" href="/m/{{ user.user_id }}/instructions">
+  <span class="feature-icon">{{ icon.stethoscope() }}</span>
+  <span class="grow"><h3>{{ _("Doctor's instructions") }}</h3>
+    <span class="caption">{% if d.instructions %}{{ _("{n} metrics: {names}", n=d.instructions | length, names=d.instructions | map("t") | join(", ")) }}{% else %}{{ _("Your doctor has not given you any instructions yet.") }}{% endif %}</span>
+  </span>
+  {{ icon.chevron() }}
 </a>
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/my-reports">
-  <strong>My reports</strong> · {{ d.handling }} report{{ "s" if d.handling != 1 else "" }} being handled{% if d.latest_status %} <span class="label">{{ d.latest_status }}</span>{% endif %} ›
+<a class="card row" href="/m/{{ user.user_id }}/my-reports">
+  <span class="feature-icon">{{ icon.clipboard() }}</span>
+  <span class="grow"><h3>{{ _("My reports") }}</h3>
+    <span class="caption">{{ _("{n} reports being handled", n=d.handling) }}</span>
+    {% if d.latest_status %}<span class="tag status">{{ d.latest_status | t }}</span>{% endif %}
+  </span>
+  {{ icon.chevron() }}
 </a>
 
+<div class="section-head">
+  <h2>{{ _("Self-tracked metrics") }}</h2>
+  <span class="tag source">{{ _("Self-entered") }}</span>
+</div>
 <div class="card">
-  <h2>Self-tracked metrics <span class="label">Self-entered</span></h2>
-  {% for r in d.self_tracked %}
-    <p>{{ r.metric }} — {{ r.value }} <span class="caption">{{ r.at | show_time }}</span></p>
+  {% if d.self_tracked %}
+  <ul class="list">
+    {% for r in d.self_tracked %}
+    <li><span class="k">{{ r.metric | t }}<br><span class="caption">{{ r.at | show_time }}</span></span><span class="v">{{ r.value }}</span></li>
+    {% endfor %}
+  </ul>
   {% else %}
-    <p class="caption">No self-tracked metrics yet.</p>
-  {% endfor %}
-  <p><a class="button" href="/m/{{ user.user_id }}/self-tracked">+ Enter self-tracked metrics</a></p>
+  <div class="empty" style="margin:0"><p>{{ _("No self-tracked metrics yet.") }}</p></div>
+  {% endif %}
+  <a class="btn block" style="margin-top:12px" href="/m/{{ user.user_id }}/self-tracked">{{ _("+ Enter self-tracked metrics") }}</a>
 </div>
 {% endblock %}

@@ -1,24 +1,66 @@
+{#- Sub-app shell (ui-label-reference §9): header ← · title · actions · ✕ (S-083), 5-tab bar.
+    A page sets page_title (English label), back_url (none on Home and first-time setup) and active_tab (none = no tab bar). -#}
+{% import "_icons.html" as icon %}
+{%- set page_title = page_title | default("") -%}
+{%- set back_url = back_url | default("") -%}
+{%- set active_tab = active_tab | default("") -%}
+{%- set in_app = user is defined and user -%}
 <!doctype html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Mother &amp; Baby 360{% endblock %}</title>
-  <style>
-    body { font-family: system-ui, sans-serif; font-size: 13px; max-width: 420px; margin: 0 auto; padding: 16px; color: #222; }
-    h1 { font-size: 18px; } h2 { font-size: 15px; }
-    .card { border: 1px solid #ddd; border-radius: 10px; padding: 12px; margin: 10px 0; }
-    .label { display: inline-block; border-radius: 8px; padding: 2px 8px; background: #eee; font-size: 11px; }
-    .warn { border-color: #c0392b; } .notice { background: #eef7ee; }
-    .error { color: #c0392b; font-size: 11px; display: block; }
-    .caption { color: #777; font-size: 11px; }
-    a.button, button { display: inline-block; padding: 8px 14px; border-radius: 8px; border: 1px solid #7a3b69; background: #7a3b69; color: #fff; text-decoration: none; }
-    a.secondary { background: #fff; color: #7a3b69; }
-    label { display: block; margin: 8px 0 2px; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#00A651">
+  <title>{% if page_title %}{{ _(page_title) }} · {% endif %}{{ _("Mother & Baby 360") }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+  <link rel="stylesheet" href="/static/app.css">
 </head>
 <body>
-  <header><strong>Mother &amp; Baby 360</strong>{% if user %} · {{ user.full_name }}{% endif %}</header>
-  {% block content %}{% endblock %}
+<div class="phone">
+  <header class="app-header">
+    {% block header %}
+      {% if back_url %}<a class="icon-btn back" href="{{ back_url }}" aria-label="{{ _('Back') }}" data-back>{{ icon.back() }}</a>{% endif %}
+      <span class="title">{{ _(page_title) }}</span>
+    {% endblock %}
+    {% block header_actions %}{% endblock %}
+    {% if in_app %}
+    <button type="button" class="icon-btn" aria-label="{{ _('Close Mother & Baby 360?') }}" data-close-app
+            onclick="document.getElementById('close-sheet').showModal()">{{ icon.close() }}</button>
+    {% endif %}
+  </header>
+
+  <main class="screen{% if not active_tab %} no-tabs{% endif %} {% block screen_class %}{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% if active_tab and in_app %}
+  <nav class="tabbar" data-tabbar>
+    {% for key, label, path in TABS %}
+      {% if path %}
+      <a class="tab{% if key == active_tab %} active{% endif %}" href="/m/{{ user.user_id }}/{{ path }}" data-tab="{{ key }}"
+         {% if key == active_tab %}aria-current="page"{% endif %}>{{ icon.tab_icon(key) }}<span>{{ _(label) }}</span></a>
+      {% else %}
+      <a class="tab center" href="/tci/booking?from={{ user.user_id }}" data-tab="{{ key }}">
+        <span class="fab">{{ icon.tab_icon(key) }}</span><span>{{ _(label) }}</span></a>
+      {% endif %}
+    {% endfor %}
+  </nav>
+  {% endif %}
+
+  {% if in_app %}
+  <dialog class="sheet" id="close-sheet" aria-labelledby="close-title" onclick="if (event.target === this) this.close()">
+    <div class="handle"></div>
+    <div class="feature-icon">{{ icon.external() }}</div>
+    <h2 id="close-title">{{ _("Close Mother & Baby 360?") }}</h2>
+    <p class="caption">{{ _("You can come back at any time from the TCI app.") }}</p>
+    <form method="dialog" class="actions">
+      <button class="btn outline">{{ _("Stay") }}</button>
+      <a class="btn" href="/tci">{{ _("Close app") }}</a>
+    </form>
+  </dialog>
+  {% endif %}
+</div>
 </body>
 </html>

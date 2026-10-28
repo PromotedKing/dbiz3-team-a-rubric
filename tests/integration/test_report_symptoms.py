@@ -2,6 +2,7 @@
 import pytest
 
 from .helpers import bp_form, case_of, latest_report
+from .helpers import vi
 
 D73 = ["Vaginal bleeding", "Severe abdominal pain", "Waters breaking or fluid leakage",
        "Severe headache, dizziness or blurred vision", "Absence of fetal movement", "Palpitations", "Other"]
@@ -15,7 +16,7 @@ def test_normal_value_with_symptom_opens_a_symptom_case_and_shows_status(client,
     assert r.headers["location"] == f"/m/{u09}/reports/{rep['report_id']}?submitted=1"
     assert case_of(db, rep["report_id"])["case_source"] == "Symptom"
     page = client.get(r.headers["location"]).text
-    assert "Report submitted" in page and "Not viewed" in page
+    assert vi("Report submitted") in page and vi("Not viewed") in page
 
 
 @pytest.mark.parametrize("symptom", D73)

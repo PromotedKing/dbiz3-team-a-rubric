@@ -1,19 +1,20 @@
 """ACC onboarding routes — specs/005-acc-onboarding/contracts/http-routes.md (S-001, S-104, S-007 / S-046, S-008)."""
 import sqlite3
 import uuid
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from .. import clock
+from .. import clock, ui
 from ..alr.reports import gestational_week
+from ..hlt import dashboard
 from . import entry, setup
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
-TEMPLATES.env.filters["dmy"] = lambda d: d.strftime("%d/%m/%Y") if hasattr(d, "strftime") else datetime.strptime(d, "%Y-%m-%d").strftime("%d/%m/%Y")
+ui.install(TEMPLATES)
 IDENTITY = ("tci_account_ref", "full_name", "date_of_birth", "sex", "phone", "record_code")
 GUIDE_PAGES = [   # proposed in screen-spec S-104 #3; text pending (spec-ACC §10 Q20)
     ("Health dashboard", "See the results of your visits and the metrics your doctor asked you to watch."),
@@ -121,4 +122,20 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         handling = conn.execute("SELECT COUNT(*) FROM CARE_CASE WHERE user_id = ? AND status <> 'Resolved'", (user_id,)).fetchone()[0]
         return page(request, "home.html", user=user, given_name=user["full_name"].split()[-1],
                     week=gestational_week(date.fromisoformat(profile["edd"]), clock.now().date()), edd=profile["edd"],
-                    flags=[f["metric"] for f in flags], handling=handling, instructions_title="Doctor's instructions")
+                    flags=[f["metric"] for f in flags], handling=handling,
+                    d=dashboard.load(conn, user_id, clock.now()))    # self-tracked cards and latest status (S-008 #8, #12 – #15)
+
+    @app.get("/m/{user_id}/profile", response_class=HTMLResponse)
+    def profile(request: Request, user_id: str):
+        """Profile tab (ui-label-reference §9). S-103 itself is ACC US-3, not built yet."""
+        user = mother(user_id)
+        row = conn.execute("SELECT edd FROM PREGNANCY_PROFILE WHERE user_id = ?", (user_id,)).fetchone()
+        week = gestational_week(date.fromisoformat(row["edd"]), clock.now().date()) if row else None
+        return page(request, "profile.html", user=user, week=week)
+
+    @app.get("/tci/booking", response_class=HTMLResponse)
+    def tci_booking(request: Request, user_id: str = Query("", alias="from")):
+        """Appointments tab: the TCI app's booking flow, no screen in the sub-app (spec-APT BR-001, BR-003)."""
+        back = f"/m/{user_id}/home" if user_id and conn.execute(
+            "SELECT 1 FROM USER_ACCOUNT WHERE user_id = ?", (user_id,)).fetchone() else ""
+        return page(request, "tci_booking.html", back=back)

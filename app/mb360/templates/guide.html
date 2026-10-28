@@ -1,15 +1,19 @@
 {% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set page_title = "Onboarding guide" %}
+{% set pics = [icon.pulse, icon.clipboard, icon.book, icon.chat] %}
 {% block content %}
-<div class="card" data-guide-pages="{{ total }}">
-  <p class="caption">Page {{ n }} of {{ total }}</p>
-  <h1>{{ title }}</h1>
-  <p>{{ text }}</p>
-  <p class="caption">{% for i in range(1, total + 1) %}{% if i == n %}●{% else %}○{% endif %} {% endfor %}</p>
-  <p>
-    <a class="button secondary" href="/m/{{ user.user_id }}/guide/done">Skip</a>
-    {% if n < total %}<a class="button" href="/m/{{ user.user_id }}/guide?page={{ n + 1 }}">Next</a>
-    {% else %}<a class="button" href="/m/{{ user.user_id }}/guide/done">Get started</a>{% endif %}
-  </p>
-  <p class="caption">Guide text to be confirmed (spec-ACC §10 Q20).</p>
+<div class="card hero" data-guide-pages="{{ total }}" style="text-align:center;padding:32px 16px">
+  <span class="feature-icon" style="width:72px;height:72px;background:#fff">{{ pics[n - 1]() }}</span>
+  <p class="caption" style="margin-top:12px">{{ _("Page {n} of {total}", n=n, total=total) }}</p>
+  <h2>{{ title | t }}</h2>
+  <p>{{ text | t }}</p>
+  <p class="display" style="letter-spacing:4px">{% for i in range(1, total + 1) %}{% if i == n %}●{% else %}○{% endif %}{% endfor %}</p>
 </div>
+<div class="actions">
+  <a class="btn outline" href="/m/{{ user.user_id }}/guide/done">{{ _("Skip") }}</a>
+  {% if n < total %}<a class="btn" href="/m/{{ user.user_id }}/guide?page={{ n + 1 }}">{{ _("Next") }}</a>
+  {% else %}<a class="btn" href="/m/{{ user.user_id }}/guide/done">{{ _("Get started") }}</a>{% endif %}
+</div>
+<p class="caption" style="margin-top:12px">{{ _("Guide text to be confirmed (spec-ACC §10 Q20).") }}</p>
 {% endblock %}

@@ -1,13 +1,13 @@
 """Mother & Baby 360 — routes of specs/001-alr-core/contracts/http-routes.md (ALR US-1)."""
 import sqlite3
-from datetime import datetime
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import clock
+from . import clock, ui
 from . import db as dbmod
 from .alr import cases, my_reports, reports, routing, status, thresholds, validation
 from .alr import status as status_mod
@@ -21,17 +21,13 @@ SYMPTOM_LABELS = {
 GLUCOSE_LABELS = {"fasting": "Fasting", "post_1h": "1 h after meal", "post_2h": "2 h after meal"}
 
 
-def show_time(text: str | None) -> str:
-    """D-27: dd/mm/yyyy · HH:mm."""
-    return datetime.strptime(text, reports.DB_TIME).strftime("%d/%m/%Y · %H:%M") if text else ""
-
-
-TEMPLATES.env.filters["show_time"] = show_time
 TEMPLATES.env.filters["symptom_label"] = lambda s: SYMPTOM_LABELS.get(s, s)
+ui.install(TEMPLATES)
 
 
 def create_app(conn: sqlite3.Connection) -> FastAPI:
     app = FastAPI(title="Mother & Baby 360")
+    app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")   # TCI theme (D-79)
 
     def mother(user_id: str) -> sqlite3.Row:
         row = conn.execute("SELECT * FROM USER_ACCOUNT WHERE user_id = ?", (user_id,)).fetchone()

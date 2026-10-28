@@ -1,29 +1,35 @@
+{#- S-007 first-time pregnancy setup: no ← and no tab bar (D-27). -#}
 {% extends "base.html" %}
-{% macro err(field) %}{% if errors.get(field) %}<span class="error" data-error-for="{{ field }}">⚠ {{ errors[field] }}</span>{% endif %}{% endmacro %}
+{% set page_title = "Pregnancy setup" %}
+{% macro err(field) %}{% if errors.get(field) %}<span class="error" data-error-for="{{ field }}">⚠ {{ errors[field] | t }}</span>{% endif %}{% endmacro %}
 {% block content %}
-<h1>Pregnancy setup</h1>
 <form method="post" action="/m/{{ user.user_id }}/setup" id="setup">
-  <h2>Pregnancy information</h2>
-  <p class="caption">So the app knows which gestational week you are in.</p>
-  <label><input type="radio" name="date_type" value="EDD" {% if form.get('date_type', 'EDD') == 'EDD' %}checked{% endif %}
-         onchange="this.form.method='get';this.form.submit()"> I know my due date</label>
-  <label><input type="radio" name="date_type" value="LMP" {% if form.get('date_type') == 'LMP' %}checked{% endif %}
-         onchange="this.form.method='get';this.form.submit()"> I know the first day of my last period</label>
+  <h2 style="margin-top:8px">{{ _("Pregnancy information") }}</h2>
+  <p class="caption">{{ _("So the app knows which gestational week you are in.") }}</p>
+  <div class="card" style="padding:4px 16px">
+    <label class="radio"><input type="radio" name="date_type" value="EDD" {% if form.get('date_type', 'EDD') == 'EDD' %}checked{% endif %}
+           onchange="this.form.method='get';this.form.submit()"> {{ _("I know my due date") }}</label>
+    <label class="radio"><input type="radio" name="date_type" value="LMP" {% if form.get('date_type') == 'LMP' %}checked{% endif %}
+           onchange="this.form.method='get';this.form.submit()"> {{ _("I know the first day of my last period") }}</label>
+  </div>
   {{ err("date_type") }}
-  <label>{% if form.get('date_type') == 'LMP' %}First day of last period *{% else %}Due date *{% endif %}
-    <input type="date" name="date" value="{{ form.get('date', '') }}" onchange="this.form.method='get';this.form.submit()"></label>
-  {% if form.get('date_type', 'EDD') == 'EDD' %}<p class="caption">The due date your doctor set after an ultrasound (if any).</p>{% endif %}
+  <label>{{ _("First day of last period *") if form.get('date_type') == 'LMP' else _("Due date *") }}</label>
+  <input type="date" name="date" value="{{ form.get('date', '') }}" onchange="this.form.method='get';this.form.submit()">
+  {% if form.get('date_type', 'EDD') == 'EDD' %}<p class="caption">{{ _("The due date your doctor set after an ultrasound (if any).") }}</p>{% endif %}
   {{ err("date") }}
   {% if card %}
-  <div class="card notice">
-    <strong>Calculated by the system</strong>
-    <p>Week {{ card.week }} · day {{ card.day }}</p>
-    <p class="caption">Today {{ today | dmy }} · Due {{ card.edd | dmy }}</p>
+  <div class="card hero">
+    <span class="caption">{{ _("Calculated by the system") }}</span>
+    <div class="display">{{ _("Week {n} · day {d}", n=card.week, d=card.day) }}</div>
+    <p class="caption">{{ _("Today {today} · Due {edd}", today=today | dmy, edd=card.edd | dmy) }}</p>
   </div>
   {% endif %}
-  <label>Height (optional) <input name="height_cm" inputmode="decimal" value="{{ form.get('height_cm', '') }}"> cm</label>{{ err("height_cm") }}
-  <label>Current weight (optional) <input name="weight_kg" inputmode="decimal" value="{{ form.get('weight_kg', '') }}"> kg</label>{{ err("weight_kg") }}
-  <label>Date of first antenatal check-up (optional) <input type="date" name="first_visit_date" value="{{ form.get('first_visit_date', '') }}"></label>{{ err("first_visit_date") }}
-  <p><button onclick="this.form.method='post'">Confirm</button></p>
+  <label>{{ _("Height (optional)") }}</label>
+  <div class="unit-input"><input name="height_cm" inputmode="decimal" value="{{ form.get('height_cm', '') }}"> <span>cm</span></div>{{ err("height_cm") }}
+  <label>{{ _("Current weight (optional)") }}</label>
+  <div class="unit-input"><input name="weight_kg" inputmode="decimal" value="{{ form.get('weight_kg', '') }}"> <span>kg</span></div>{{ err("weight_kg") }}
+  <label>{{ _("Date of first antenatal check-up (optional)") }}</label>
+  <input type="date" name="first_visit_date" value="{{ form.get('first_visit_date', '') }}">{{ err("first_visit_date") }}
+  <div class="actions"><button class="btn block" onclick="this.form.method='post'">{{ _("Confirm") }}</button></div>
 </form>
 {% endblock %}

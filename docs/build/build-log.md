@@ -454,6 +454,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | none |
 | Commit | see the commit of this entry |
 
+### Entry 33: 28/10 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | "Make one MVP where the modules connect like one app, with the Thu Cuc theme" + the team's UI-conventions file (TCI theme). Choices asked of the human: Vietnamese screens (yes), shell and theme first, not the remaining Must stories (yes), round floating Appointments tab (yes). No Spec Kit feature folder: the change is cross-cutting UI conventions (`docs/ui-label-reference.md`), not a module story |
+| Feature and tasks | App shell for `specs/001` – `008` (no new FR); D-79 |
+| What the agent produced | `docs/ui-label-reference.md`: UI conventions rewritten from the TCI file (tokens, type, buttons, icons, header, floating tab) and 213 proposed label rows; `docs/decisions.md` D-79; `app/mb360/ui.py` (reads the label table, `t()`, shared date filters); `static/app.css` (TCI tokens); `base.html` shell (header, ✕ → S-083 sheet, 5-tab bar), `tci_base.html`, `_icons.html`; all 21 templates rewritten (labels through `t()`, no English text on screen); Home (S-008) shows the self-tracked cards and latest status; new routes `/m/{id}/profile` (Profile tab, S-103 not built) and `/tci/booking` (Appointments tab, TCI booking flow stand-in); `/` is a demo start page; tests: assertions moved to `vi()`, a fixture fails any page text missing from the label table, new `test_app_shell.py` (tabs, S-083, "Cảnh báo" only on S-028, booking stores nothing) and `test_ui_labels.py` |
+| Human review | Pending (pull request) |
+| Tests | `294 passed, 2 xfailed`; `check_env.py --repo` 25 PASS, 1 WARN (W1), 0 FAIL; `start_feature.py --check` OK; seed `--check` OK |
+| Spec issues found | #5 (below) |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It
@@ -465,6 +478,7 @@ is never fixed silently in code.
 | 2 | Part 0.3 | ALR §10 Q9 (valid input ranges, D-16) is blocking FR-014 | Ask the Client role; answer in a `## Clarifications` section of `specs/spec-ALR.md`, then `start_feature.py --refresh` | Open |
 | 3 | Step 6, entry 6 | The schema rejects a Health Metric Record measured after it is recorded (`ck_hmr_measured_before_created`, HLT §6), so a future "Measured at" on S-025A would make the save fail. The code shows a field error instead; ALR §5.1 does not state this rule and no test covers it (the rule was removed from T010 in entry 3 because it was not in ALR) | Proposal for the ALR owner (Tâm): add to ALR §5.1 FR-014 "measured time not later than the submission time (HLT §6)", then add a test | Open |
 | 4 | Step 6, entry 11 | CHAT_MESSAGE.`sent_at` has minute precision; a question and the chatbot reply are stored in the same minute, so the order of the transcript on S-064 (D-78) follows the storage order, not a rule | Proposal for the BOT owner (Sang): state in BOT §6 that the question is shown before its reply when the times are equal, or store seconds | Open |
+| 5 | Entry 33 | Vietnamese screens (D-79): the wireframes show Vietnamese, the app showed English; 213 on-screen texts (form labels, messages, demo pages) are not in the UI label reference | Added to `docs/ui-label-reference.md` as proposed rows; the owners of `screens/` (Chi, Ánh) review the wording | Open |
 
 ## 4. Agent mistakes worth remembering
 

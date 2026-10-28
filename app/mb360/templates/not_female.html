@@ -1,8 +1,9 @@
-{% extends "base.html" %}
+{% extends "tci_base.html" %}
 {% block content %}
-<div class="card">
-  <h1>Mother &amp; Baby 360 is for expectant mothers.</h1>
-  <p class="caption">Wording to be confirmed (spec-ACC §10 Q21). Nothing has been saved.</p>
-  <p><a class="button" href="/tci">Back to TCI app</a></p>
+<div class="empty">
+  <span class="feature-icon">{{ icon.heart() }}</span>
+  <h2 style="margin-top:8px">{{ _("Mother & Baby 360 is for expectant mothers.") }}</h2>
+  <p class="caption">{{ _("Wording to be confirmed (spec-ACC §10 Q21). Nothing has been saved.") }}</p>
 </div>
+<a class="btn block" href="/tci">{{ _("Back to TCI app") }}</a>
 {% endblock %}

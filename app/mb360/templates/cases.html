@@ -1,29 +1,31 @@
 {% extends "staff_base.html" %}
 {% block content %}
-<h1>Cases to handle</h1>
-<p>
+<h1>{{ _("Cases to handle") }}</h1>
+<div class="chips" style="margin:8px 0">
   {% for f in filters %}
-  <a class="chip {% if f == active %}on{% endif %}" href="/staff/{{ me.staff_id }}/cases?status={{ f | urlencode }}">{{ f }}{% if f == "Not viewed" %} ({{ not_viewed }}){% endif %}</a>
+  <a class="chip{% if f == active %} on{% endif %}" href="/staff/{{ me.staff_id }}/cases?status={{ f | urlencode }}">{{ f | t }}{% if f == "Not viewed" %} ({{ not_viewed }}){% endif %}</a>
   {% endfor %}
-  <span class="caption">Sort: Newest</span>
-</p>
+  <span class="caption" style="align-self:center">{{ _("Sort: Newest") }}</span>
+</div>
 {% if rows %}
+<div class="card table-wrap" style="padding:4px 8px">
 <table data-active-filter="{{ active }}">
-  <tr><th>Mother</th><th>Gestational age</th><th>Case source</th><th>Content</th><th>Value</th><th>Submitted at</th><th>Status</th><th></th></tr>
+  <tr><th>{{ _("Mother") }}</th><th>{{ _("Gestational age") }}</th><th>{{ _("Case source") }}</th><th>{{ _("Content") }}</th><th>{{ _("Value") }}</th><th>{{ _("Submitted at") }}</th><th>{{ _("Status") }}</th><th></th></tr>
   {% for r in rows %}
-  <tr>
-    <td>{{ r.mother }}</td>
-    <td>{% if r.week is not none %}Week {{ r.week }}{% endif %}</td>
-    <td>{{ r.case_source }}</td>
-    <td>{{ r.content }}</td>
-    <td>{{ r.value or "—" }} <span class="label {% if r.label == 'Above threshold' %}above{% endif %}">{{ r.label }}</span></td>
+  <tr{% if r.label == 'Above threshold' %} class="above-row"{% endif %}>
+    <td><strong>{{ r.mother }}</strong></td>
+    <td>{% if r.week is not none %}{{ _("Week {n}", n=r.week) }}{% endif %}</td>
+    <td>{{ r.case_source | t }}</td>
+    <td>{{ r.content | t_list if r.case_source == "Symptom" else (r.content | t if r.case_source == "Metric report" else r.content) }}</td>
+    <td>{{ r.value | t_known or "—" }} <span class="tag {{ 'above' if r.label == 'Above threshold' else 'normal' if r.label == 'Normal' else '' }}">{{ r.label | t }}</span></td>
     <td>{{ r.submitted_at | show_time }}</td>
-    <td><span class="label">{{ r.status }}</span></td>
-    <td><a href="/staff/{{ me.staff_id }}/cases/{{ r.case_id }}">View report ›</a></td>
+    <td><span class="tag status{% if r.status == 'Resolved' %} done{% endif %}">{{ r.status | t }}</span></td>
+    <td><a class="link" href="/staff/{{ me.staff_id }}/cases/{{ r.case_id }}">{{ _("View report") }} ›</a></td>
   </tr>
   {% endfor %}
 </table>
+</div>
 {% else %}
-<div data-active-filter="{{ active }}"><p>No cases to handle.</p></div>
+<div class="empty" data-active-filter="{{ active }}"><p>{{ _("No cases to handle.") }}</p></div>
 {% endif %}
 {% endblock %}

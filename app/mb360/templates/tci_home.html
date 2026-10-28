@@ -1,21 +1,29 @@
-{% extends "base.html" %}
+{% extends "tci_base.html" %}
 {% block content %}
-<h1>TCI app (simulated host)</h1>
-<p class="caption">Stand-in for the Thu Cuc patient app: how the TCI app passes the identity is still open (spec-ACC §10 Q9). Every identity here is invented.</p>
-<h2>Open Mother &amp; Baby 360 as</h2>
-{% for a in accounts %}
+<h2>{{ _("Open Mother & Baby 360 as") }}</h2>
+<div class="tile-grid">
+  {% for a in accounts %}
+  <form class="tile-form" method="post" action="/tci/open">
+    {% for f in fields %}<input type="hidden" name="{{ f }}" value="{{ a[f] or '' }}">{% endfor %}
+    <button class="tile featured" data-account="{{ a.tci_account_ref }}">
+      <span class="feature-icon">{{ icon.heart() }}</span>
+      <strong>{{ _("Mother & Baby 360") }}</strong>
+      <span>{{ a.full_name }}</span>
+      <span class="caption">{{ a.tci_account_ref }}</span>
+    </button>
+  </form>
+  {% endfor %}
+</div>
+
+<h2>{{ _("Simulate another TCI account") }}</h2>
 <form class="card" method="post" action="/tci/open">
-  {% for f in fields %}<input type="hidden" name="{{ f }}" value="{{ a[f] or '' }}">{% endfor %}
-  <button>M&amp;B · Mother &amp; Baby 360</button> {{ a.full_name }} <span class="caption">{{ a.tci_account_ref }}</span>
+  <label>{{ _("Full name") }}</label><input name="full_name" required>
+  <label>{{ _("Date of birth") }}</label><input type="date" name="date_of_birth" required>
+  <label>{{ _("Sex") }}</label>
+  <select name="sex"><option value="Female">{{ _("Female") }}</option><option value="Male">{{ _("Male") }}</option></select>
+  <label>{{ _("Phone number") }}</label><input name="phone" required>
+  <label>{{ _("Medical record number (optional)") }}</label><input name="record_code">
+  <div class="actions"><button class="btn block">{{ icon.heart() }} {{ _("Mother & Baby 360") }}</button></div>
 </form>
-{% endfor %}
-<h2>Simulate another TCI account</h2>
-<form class="card" method="post" action="/tci/open">
-  <label>Full name <input name="full_name" required></label>
-  <label>Date of birth <input type="date" name="date_of_birth" required></label>
-  <label>Sex <select name="sex"><option value="Female">Female</option><option value="Male">Male</option></select></label>
-  <label>Phone number <input name="phone" required></label>
-  <label>Medical record number (optional) <input name="record_code"></label>
-  <p><button>M&amp;B · Mother &amp; Baby 360</button></p>
-</form>
+<p><a class="link" href="/">{{ _("Demo start page") }} ›</a></p>
 {% endblock %}

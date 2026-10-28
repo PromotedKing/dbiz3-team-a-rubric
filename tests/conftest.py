@@ -1,8 +1,16 @@
 """T006 — shared fixtures: a fresh database from schema + seed for every test, and a fixed clock."""
 import pytest
 
-from mb360 import clock
+from mb360 import clock, ui
 from mb360 import db as dbmod
+
+
+@pytest.fixture(autouse=True)
+def every_label_is_in_the_reference():
+    """D-79: every text a page shows comes from docs/ui-label-reference.md."""
+    ui.MISSING.clear()
+    yield
+    assert not ui.MISSING, f"labels missing from docs/ui-label-reference.md: {sorted(ui.MISSING)}"
 
 
 @pytest.fixture

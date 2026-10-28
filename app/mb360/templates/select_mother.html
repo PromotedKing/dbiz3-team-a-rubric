@@ -1,8 +1,28 @@
-{% extends "base.html" %}
+{#- Demo start page: no sign-in until Session 11 (plan.md, Complexity Tracking). -#}
+{% extends "tci_base.html" %}
 {% block content %}
-<h1>Choose a mother (demo)</h1>
-<p class="caption">No sign-in until Session 11: the mother is chosen from the seed data (plan.md, Complexity Tracking).</p>
-{% for m in mothers %}
-<div class="card"><a href="/m/{{ m.user_id }}/instructions">{{ m.full_name }}</a> <span class="caption">{{ m.record_code or "" }}</span></div>
-{% endfor %}
+<h2>{{ _("Demo start page") }}</h2>
+<a class="card bordered row" href="/tci">
+  <span class="feature-icon">{{ icon.heart() }}</span>
+  <span class="grow"><h3>{{ _("Mother side — open from the TCI app") }}</h3>
+    <span class="caption">{{ _("Consent, guide and pregnancy setup the first time, then Home.") }}</span></span>
+  {{ icon.chevron() }}
+</a>
+<a class="card bordered row" href="/staff">
+  <span class="feature-icon">{{ icon.stethoscope() }}</span>
+  <span class="grow"><h3>{{ _("Clinical web") }}</h3>
+    <span class="caption">{{ _("Nurses and doctors handle the mothers' reports.") }}</span></span>
+  {{ icon.chevron() }}
+</a>
+
+<h2>{{ _("Go straight to a mother's Home (demo)") }}</h2>
+<div class="card bordered" style="padding:4px 16px">
+  <ul class="list">
+  {% for m in mothers %}
+    <li><span class="avatar" style="width:36px;height:36px;font-size:13px">{{ initials(m.full_name) }}</span>
+      <a class="k" href="/m/{{ m.user_id }}/home" data-mother>{{ m.full_name }}</a>
+      <span class="caption">{{ m.record_code or "" }}</span></li>
+  {% endfor %}
+  </ul>
+</div>
 {% endblock %}

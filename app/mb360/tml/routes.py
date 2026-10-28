@@ -1,17 +1,18 @@
 """TML routes — specs/007-tml-timeline/contracts/http-routes.md (S-048, S-051 / S-052)."""
 import sqlite3
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+from .. import ui
 from .. import clock
 from . import diary, weeks
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
-TEMPLATES.env.filters["dmy"] = lambda d: (d if isinstance(d, date) else datetime.strptime(d[:10], "%Y-%m-%d")).strftime("%d/%m/%Y") if d else ""
+ui.install(TEMPLATES)
 
 
 def register(app: FastAPI, conn: sqlite3.Connection) -> None:

@@ -1,5 +1,6 @@
 """T015 — US-1 scenario 6; ALR BR-008 branch 3, BR-009: Normal and "No symptoms" -> no case."""
 from .helpers import bp_form, counts
+from .helpers import vi
 
 
 def test_normal_without_symptoms_stores_report_but_no_case(client, db, user_id):
@@ -11,4 +12,4 @@ def test_normal_without_symptoms_stores_report_but_no_case(client, db, user_id):
     after = counts(db)
     assert {t: after[t] - before[t] for t in after} == {"HEALTH_METRIC_RECORD": 1, "METRIC_REPORT": 1, "REPORT_SYMPTOM": 1,
                                                         "CARE_CASE": 0, "CASE_STATUS_HISTORY": 0}
-    assert "Report submitted" in client.get(r.headers["location"]).text
+    assert vi("Report submitted") in client.get(r.headers["location"]).text
