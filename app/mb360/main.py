@@ -27,7 +27,8 @@ ui.install(TEMPLATES)
 
 def create_app(conn: sqlite3.Connection) -> FastAPI:
     app = FastAPI(title="Mother & Baby 360")
-    app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")   # TCI theme (D-79)
+    app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")   # TCI theme (D-79, D-80)
+    ui.use_connection(conn)
 
     def mother(user_id: str) -> sqlite3.Row:
         row = conn.execute("SELECT * FROM USER_ACCOUNT WHERE user_id = ?", (user_id,)).fetchone()

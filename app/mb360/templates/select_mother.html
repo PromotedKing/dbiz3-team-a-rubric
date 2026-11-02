@@ -1,28 +1,19 @@
 {#- Demo start page: no sign-in until Session 11 (plan.md, Complexity Tracking). -#}
 {% extends "tci_base.html" %}
 {% block content %}
-<h2>{{ _("Demo start page") }}</h2>
-<a class="card bordered row" href="/tci">
-  <span class="feature-icon">{{ icon.heart() }}</span>
-  <span class="grow"><h3>{{ _("Mother side — open from the TCI app") }}</h3>
-    <span class="caption">{{ _("Consent, guide and pregnancy setup the first time, then Home.") }}</span></span>
-  {{ icon.chevron() }}
-</a>
-<a class="card bordered row" href="/staff">
-  <span class="feature-icon">{{ icon.stethoscope() }}</span>
-  <span class="grow"><h3>{{ _("Clinical web") }}</h3>
-    <span class="caption">{{ _("Nurses and doctors handle the mothers' reports.") }}</span></span>
-  {{ icon.chevron() }}
-</a>
-
-<h2>{{ _("Go straight to a mother's Home (demo)") }}</h2>
-<div class="card bordered" style="padding:4px 16px">
-  <ul class="list">
+<p class="t-title">{{ _("Demo start page") }}</p>
+<div class="card bd np">
+  <a class="row" href="/tci"><div class="ic40">{{ icon.pulse() }}</div><span class="grow"><span class="t-body b">{{ _("Mother side — open from the TCI app") }}</span><br><span class="t-cap">{{ _("Consent, guide and pregnancy setup the first time, then Home.") }}</span></span>{{ icon.chev() }}</a>
+  <a class="row" href="/staff"><div class="ic40">{{ icon.user() }}</div><span class="grow"><span class="t-body b">{{ _("Clinical web") }}</span><br><span class="t-cap">{{ _("Nurses and doctors handle the mothers' reports.") }}</span></span>{{ icon.chev() }}</a>
+  <a class="row" href="/session-expired"><div class="ic40">{{ icon.clock() }}</div><span class="grow"><span class="t-body b">{{ _("Session expired") }}</span><br><span class="t-cap">{{ _("Shown when the TCI identity cannot be verified (demo link).") }}</span></span>{{ icon.chev() }}</a>
+</div>
+<p class="t-title">{{ _("Go straight to a mother's Home (demo)") }}</p>
+<div class="card bd np">
   {% for m in mothers %}
-    <li><span class="avatar" style="width:36px;height:36px;font-size:13px">{{ initials(m.full_name) }}</span>
-      <a class="k" href="/m/{{ m.user_id }}/home" data-mother>{{ m.full_name }}</a>
-      <span class="caption">{{ m.record_code or "" }}</span></li>
+  <a class="row" href="/m/{{ m.user_id }}/home" data-mother>
+    <span class="ic40" style="background:#009788;color:#fff;border-radius:20px;font-size:12px;font-weight:700">{{ initials(m.full_name) }}</span>
+    <span class="grow">{{ m.full_name }}</span><span class="t-cap">{{ m.record_code or "" }}</span>
+  </a>
   {% endfor %}
-  </ul>
 </div>
 {% endblock %}

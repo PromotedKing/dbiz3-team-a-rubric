@@ -16,7 +16,7 @@ def test_wireframe_labels():
 
 def test_split_and_ui_forms():
     assert ui.t("Save metrics") == "Lưu chỉ số"                        # "CTA" row
-    assert ui.t("Profile") == "Cá nhân" and ui.t("Appointments") == "Lịch hẹn"      # "Home / Health / … / Profile"
+    assert ui.t("Profile") == "Hồ sơ" and ui.t("Appointments") == "Lịch hẹn"        # "Home / Health / … / Profile"
     assert ui.t("Severe headache / dizziness / blurred vision") == "Đau đầu dữ dội / chóng mặt / hoa mắt"   # "(UI: …)" form
     assert ui.t("Mother & Baby 360") == "Mẹ & Bé 360"                 # "(tile)" note dropped
 
@@ -42,4 +42,4 @@ def test_stored_text_is_translated_only_when_it_is_a_label():
 
 
 def test_every_tab_has_a_label():
-    assert [ui.t(label) for _, label, _ in ui.TABS] == ["Trang chủ", "Sức khỏe", "Lịch hẹn", "Chatbot", "Cá nhân"]
+    assert [ui.t(label) for _, label, _ in ui.TABS] == ["Trang chủ", "Timeline", "Chatbot", "Từ bác sĩ", "Hồ sơ"]

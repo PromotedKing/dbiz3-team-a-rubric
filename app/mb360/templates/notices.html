@@ -1,0 +1,12 @@
+{#- "Từ bác sĩ" tab. The notification list (S-009, ACC FR-025) comes with specs/009-acc-profile. -#}
+{% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set page_title = "Messages from your care team" %}
+{% set active_tab = "doctor" %}
+{% block content %}
+<a href="/m/{{ user.user_id }}/my-reports" class="card" style="display:flex;gap:12px;align-items:center;padding:14px 16px;color:#212121">
+  <div class="ic40">{{ icon.clock() }}</div>
+  <div style="flex:1"><p class="t-body b">{{ _("My reports") }}</p><p class="t-cap">{{ _("See the status of each report") }}</p></div>
+  {{ icon.chev() }}
+</a>
+{% endblock %}

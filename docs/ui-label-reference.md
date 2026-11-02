@@ -4,7 +4,7 @@ Shared UI conventions of the wireframes and the mapping from the English labels 
 
 ## UI conventions
 
-Text version of the UI-conventions page `00-QUY-UOC` of the wireframe (the page has no Screen ID, so its image is not in `screens/img/`), **revised by D-79 (28/10/2026) to match the existing Thu Cuc patient app (TCI app)** from screenshots of its Home and Profile screens. Source decisions: **D-27**, **D-79**. Applies to every screen. Implemented in `app/mb360/static/app.css` (tokens) and `app/mb360/templates/base.html` (header, tab bar, S-083).
+Text version of the UI-conventions page `00-QUY-UOC` of the wireframe (the page has no Screen ID, so its image is not in `screens/img/`), **revised by D-79 (28/10/2026) to match the existing Thu Cuc patient app (TCI app)** from screenshots of its Home and Profile screens, **and by D-80 (02/11/2026) to follow the UI package** in `screens/ui-final/`. Source decisions: **D-27**, **D-79**, **D-80**. Applies to every screen. Implemented in `app/mb360/static/tci.css` (tokens and components of the package; `staff.css` for the clinical web) and `app/mb360/templates/base.html` (header, tab bar, S-083).
 
 Markers: **[measured]** = colour sampled from the TCI screenshots (±2–3 units, JPG compression); **[estimated]** = inferred from the screenshots, to confirm with TCI's own design file if one exists; **[added]** = the TCI app has no such element, derived from the TCI palette for this product.
 
@@ -145,9 +145,9 @@ The word "Alert" (on screen: "Cảnh báo") is used only for an above-threshold 
 
 ### 11. Header and navigation
 
-- **Header (child screens):** 56 px, `color-surface`, 1 px `color-border` bottom line, no shadow; ← 24 px · left-aligned page title · action icons · ✕ 24 px. Only Home and the first-time setup screen have no ←. Home uses the brand header: logo + "Mother & Baby 360" in `color-primary`.
-- **Bottom bar, 5 tabs** (64 px plus the safe area, `color-surface`): Home (S-008, S-048, S-051, S-083) · Health (S-023 → S-029 "My reports", metric history) · **Appointments — round floating middle button** (~56 px, gradient `color-primary-light` → `color-primary`, white icon, label always `color-primary`; as the "Book" tab of the TCI app; D-79) — opens the TCI app's booking flow directly, `spec-APT.md` BR-003 · Chatbot (S-031 → S-034) · Profile (S-103). Active tab `color-primary`, inactive `color-text-disabled`, labels Caption 12/400.
-- ✕ in the header always opens S-083 (close the sub-app, D-01) as a bottom sheet. S-043 has no ←, ✕ or tab bar (D-50).
+- **Header (child screens):** 56 px, `color-surface`, 1 px `color-border` bottom line, no shadow; ← 24 px · left-aligned page title · action icons · ✕ 24 px. Only Home and the first-time setup screen have no ←. Home uses the brand header: logo + "Mother & Baby 360" + tagline in `color-primary`.
+- **Bottom bar, 5 tabs** (64 px, `color-surface`; D-80): Home (S-008) · Timeline (S-048) · Chatbot (S-031 → S-034) · From doctor (S-009, with the unread badge in `color-accent`) · Profile (S-103). Active tab `color-primary`, inactive `color-text-disabled`, labels Caption 12/400. Only these 5 root screens have the bar; other screens have ←. The round floating button (~56 px, gradient) exists only on the "Book" tab of the TCI app.
+- ✕ is on Home and first-time setup and opens S-083 (close the sub-app, D-01) as a centred dialog. S-043 has no ←, ✕ or tab bar (D-50).
 
 ### 12. Shared states
 
@@ -175,7 +175,7 @@ Valid ranges per metric are not set yet (**D-16, Pending SME**).
 | Icons | one outline style | 3 styles by context |
 | Cards | one style | floating / bordered |
 | Text link | underlined | not underlined, `color-primary` |
-| Appointments tab | ordinary tab | round floating middle button |
+| Appointments tab | ordinary tab | round floating middle button; **removed by D-80** |
 
 ## UI label reference
 
@@ -258,7 +258,7 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | Screen text (S-008, S-023) | 2 reports being handled | 2 báo cáo đang xử lý |
 | Screen text (S-009) | Reminder: measure and report Blood pressure | Nhắc đo và báo cáo Huyết áp |
 | Screen text (S-009) | Doctor's instructions · Dr. … | Chỉ dẫn của bác sĩ · BS. … |
-| Term | Pregnancy timeline | Dòng thời gian thai kỳ |
+| Term | Pregnancy timeline | Timeline thai kỳ |
 | Screen title | Mother & Baby 360 | Mẹ & Bé 360 (tile) |
 | Screen title | Pregnancy setup | Khai báo thai kỳ |
 | Screen title | Home | Trang chủ |
@@ -272,13 +272,13 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | Screen title | Report status | Trạng thái báo cáo |
 | Screen title | Metric alert | Cảnh báo chỉ số |
 | Screen title | My reports (S-029; the former tab "Risk assessment" is removed) | Báo cáo của tôi |
-| Screen title | Health chatbot | Chatbot sức khỏe |
-| Screen title | Pregnancy timeline | Dòng thời gian thai kỳ |
+| Screen title | Health chatbot | Trợ lý thai sản |
+| Screen title | Pregnancy timeline | Timeline thai kỳ |
 | Screen title | Add diary entry | Thêm nhật ký |
 | Screen title | Cases to handle | Ca cần xử lý |
 | Screen title | Mother quick profile | Hồ sơ nhanh của mẹ |
 | Screen title | Close Mother & Baby 360? | Đóng Mother & Baby 360? |
-| Screen title | Profile | Cá nhân |
+| Screen title | Profile | Hồ sơ |
 | Screen title | Session expired | Phiên làm việc hết hạn |
 | Screen title (S-104, D-74) | Onboarding guide | Hướng dẫn sử dụng |
 | Screen title (S-105, D-75) | My journey | Hành trình của mẹ |
@@ -286,7 +286,7 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | Screen text (S-048, D-75) | Indicators this week / No indicators this week. | Chỉ số trong tuần / Tuần này chưa có chỉ số. |
 | CTA (S-105, D-75) | Export PDF album | Xuất album PDF |
 | CTA (S-104, D-74) | Skip / Next / Get started | Bỏ qua / Tiếp / Bắt đầu |
-| Tab | Home / Health / Appointments / Chatbot / Profile | Trang chủ / Sức khỏe / Lịch hẹn / Chatbot / Cá nhân |
+| Tab | Home / Health / Appointments / Chatbot / Profile | Trang chủ / Sức khỏe / Lịch hẹn / Chatbot / Hồ sơ |
 | CTA | Save metrics | Lưu chỉ số |
 | CTA | Submit report | Gửi báo cáo |
 | CTA | View status | Xem trạng thái |
@@ -347,7 +347,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | App shell (D-79) | Clinical web | Web nhân viên y tế |
 | App shell (D-79) | Nurses and doctors handle the mothers' reports. | Y tá và bác sĩ xử lý báo cáo của mẹ. |
 | App shell (D-79) | Go straight to a mother's Home (demo) | Vào thẳng Trang chủ của một mẹ (demo) |
-| App shell (D-79) | You can come back at any time from the TCI app. | Mẹ có thể quay lại bất cứ lúc nào từ app TCI. |
+| App shell (D-79) | You can come back at any time from the TCI app. | Mẹ sẽ quay lại app TCI. Dữ liệu đã lưu vẫn được giữ, lần sau mở lại không cần đăng nhập. |
 | App shell (D-79) | Edit profile, pregnancy information, hospital record link and notification settings come with ACC US-3 (S-103, S-010, S-011). | Chỉnh sửa hồ sơ, thông tin thai kỳ, liên kết hồ sơ bệnh viện và cài đặt thông báo sẽ có khi làm ACC US-3 (S-103, S-010, S-011). |
 | App shell (D-79) | Record no. {code} | Mã hồ sơ {code} |
 | App shell (D-79) | Week {n} | Tuần {n} |
@@ -362,7 +362,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | App shell (D-79) | Medical record number | Mã hồ sơ khám |
 | App shell (D-79) | Medical record number (optional) | Mã hồ sơ khám (không bắt buộc) |
 | ACC screens (D-79) | Connect to your TCI account | Kết nối với tài khoản TCI của bạn |
-| ACC screens (D-79) | Mother & Baby 360 will use the following information from the TCI app: | Mẹ & Bé 360 sẽ dùng các thông tin sau từ app TCI: |
+| ACC screens (D-79) | Mother & Baby 360 will use the following information from the TCI app: | Mother & Baby 360 sẽ dùng các thông tin sau từ app TCI, không cần đăng nhập lại: |
 | ACC screens (D-79) | Full name, date of birth, phone number | Họ tên, ngày sinh, số điện thoại |
 | ACC screens (D-79) | Medical record number at Thu Cuc | Mã hồ sơ khám tại Thu Cúc |
 | ACC screens (D-79) | Results of your prenatal visits | Kết quả các lần khám thai |
@@ -387,7 +387,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | ACC screens (D-79) | Today {today} · Due {edd} | Hôm nay {today} · Dự sinh {edd} |
 | ACC screens (D-79) | Height (optional) | Chiều cao (không bắt buộc) |
 | ACC screens (D-79) | Current weight (optional) | Cân nặng hiện tại (không bắt buộc) |
-| ACC screens (D-79) | Hello, {name}! | Xin chào, {name}! |
+| ACC screens (D-79) | Hello, {name}! | Xin chào, Mẹ {name}! |
 | ACC screens (D-79) | Due date: {date} | Ngày dự sinh: {date} |
 | ACC screens (D-79) | {n} reports being handled | {n} báo cáo đang xử lý |
 | ACC messages (D-79) | Please tick the box to agree to the Terms and the Privacy Policy. | Mẹ hãy tích vào ô để đồng ý với Điều khoản và Chính sách quyền riêng tư. |
@@ -431,7 +431,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | ALR screens (D-79) | Accompanying symptoms (select multiple) | Triệu chứng kèm theo (chọn nhiều) |
 | ALR screens (D-79) | Describe other symptom (max 100 characters) | Mô tả triệu chứng khác (tối đa 100 ký tự) |
 | ALR screens (D-79) | Note | Ghi chú |
-| ALR screens (D-79) | Your report has been sent to clinical staff. | Báo cáo của mẹ đã được gửi tới nhân viên y tế. |
+| ALR screens (D-79) | Your report has been sent to clinical staff. | Đã gửi báo cáo tới nhân viên y tế. |
 | ALR screens (D-79) | Doctor's guidance | Hướng dẫn của bác sĩ |
 | ALR screens (D-79) | Hotline number pending | Số tổng đài đang chờ xác nhận |
 | ALR screens (D-79) | Call hotline / nurse | Gọi tổng đài / y tá |
@@ -543,3 +543,69 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | CLI screens (D-79) | No visit yet. | Chưa có lần khám. |
 | Visit type (seed, D-79) | Routine antenatal check-up | Khám thai định kỳ |
 | Visit type (seed, D-79) | Anomaly scan | Siêu âm hình thái |
+| UI package (D-80) | App name | Mother & Baby 360 |
+| UI package (D-80) | With you through pregnancy | Đồng hành suốt thai kỳ |
+| UI package (D-80) | Timeline | Timeline |
+| UI package (D-80) | From doctor | Từ bác sĩ |
+| UI package (D-80) | Messages from your care team | Thông báo từ bác sĩ |
+| UI package (D-80) | See the status of each report | Xem trạng thái từng báo cáo |
+| UI package (D-80) | days to go | ngày nữa |
+| UI package (D-80) | Week {n} + {d} days | Tuần {n} + {d} ngày |
+| UI package (D-80) | Report metric / symptom | Báo cáo chỉ số / triệu chứng |
+| UI package (D-80) | You have {n} new notices | Mẹ có {n} thông báo mới |
+| UI package (D-80) | My metrics | Chỉ số của mẹ |
+| UI package (D-80) | No diary entry today yet | Hôm nay chưa có nhật ký |
+| UI package (D-80) | Note a feeling or a photo of your bump | Ghi lại cảm xúc hay một tấm ảnh bụng bầu |
+| UI package (D-80) | Write | Viết |
+| UI package (D-80) | Fill in what you have, not all 4 are needed. These metrics are not checked against a threshold. | Nhập chỉ số nào có thì điền, không cần đủ cả 4. Các chỉ số này không xét ngưỡng. |
+| UI package (D-80) | The metrics your doctor asked you to measure at home. | Các chỉ số bác sĩ dặn mẹ đo tại nhà. |
+| UI package (D-80) | Systolic | Tâm thu |
+| UI package (D-80) | Diastolic | Tâm trương |
+| UI package (D-80) | Accompanying symptoms | Triệu chứng kèm theo |
+| UI package (D-80) | (select multiple) | (chọn nhiều) |
+| UI package (D-80) | (optional) | (không bắt buộc) |
+| UI package (D-80) | What else should clinical staff know? | Mẹ muốn nhân viên y tế biết thêm điều gì? |
+| UI package (D-80) | Clinical staff view and respond under | Nhân viên y tế xem và phản hồi ở mục |
+| UI package (D-80) | Your visits and diary, week by week. | Ngày khám và nhật ký của mẹ, theo từng tuần. |
+| UI package (D-80) | Visit day | Ngày khám |
+| UI package (D-80) | Has diary | Có nhật ký |
+| UI package (D-80) | Today | Hôm nay |
+| UI package (D-80) | No diary yet | Chưa có nhật ký |
+| UI package (D-80) | This week | Trong tuần này |
+| UI package (D-80) | {n} indicators | {n} chỉ số |
+| UI package (D-80) | Indicators | Chỉ số |
+| UI package (D-80) | Your diary | Nhật ký của mẹ |
+| UI package (D-80) | No diary entry this day. | Ngày này chưa có nhật ký. |
+| UI package (D-80) | Mon | T2 |
+| UI package (D-80) | Tue | T3 |
+| UI package (D-80) | Wed | T4 |
+| UI package (D-80) | Thu | T5 |
+| UI package (D-80) | Fri | T6 |
+| UI package (D-80) | Sat | T7 |
+| UI package (D-80) | Sun | CN |
+| UI package (D-80) | Monday | Thứ Hai |
+| UI package (D-80) | Tuesday | Thứ Ba |
+| UI package (D-80) | Wednesday | Thứ Tư |
+| UI package (D-80) | Thursday | Thứ Năm |
+| UI package (D-80) | Friday | Thứ Sáu |
+| UI package (D-80) | Saturday | Thứ Bảy |
+| UI package (D-80) | Sunday | Chủ Nhật |
+| UI package (D-80) | How do you feel today? | Hôm nay mẹ cảm thấy thế nào? |
+| UI package (D-80) | When the baby kicked, something tasty, or a note for your baby… | Con đạp lúc nào, mẹ ăn gì ngon, hay một lời nhắn gửi con… |
+| UI package (D-80) | Photos | Ảnh |
+| UI package (D-80) | JPG or PNG, up to 5 photos, 10 MB each. | JPG hoặc PNG, tối đa 5 ảnh, mỗi ảnh 10 MB. |
+| UI package (D-80) | Full name, phone number | Họ tên, số điện thoại |
+| UI package (D-80) | Date of birth, sex | Ngày sinh, giới tính |
+| UI package (D-80) | Height | Chiều cao |
+| UI package (D-80) | Your TCI account could not be verified. Go back to the TCI app and open Mother & Baby 360 again from its home screen. | Không xác thực được tài khoản TCI. Mẹ hãy quay lại app TCI và mở lại Mẹ & Bé 360 từ màn chủ. |
+| UI package (D-80) | Shown when the TCI identity cannot be verified (demo link). | Hiện khi không xác thực được danh tính TCI (link demo). |
+| UI package (D-80) | Offers | Ưu đãi |
+| UI package (D-80) | Book | Đặt lịch |
+| UI package (D-80) | Personal tab | Cá nhân |
+| UI package (D-80) | [TCI app banner] | [Banner của app TCI] |
+| UI package (D-80) | Medical records | Hồ sơ khám |
+| UI package (D-80) | Voucher | Voucher |
+| UI package (D-80) | Services | Dịch vụ |
+| UI package (D-80) | New | Mới |
+| UI package (D-80) | Open | Mở |
+| UI package (D-80) | Symptom | Triệu chứng |

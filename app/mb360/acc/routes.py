@@ -4,13 +4,14 @@ import uuid
 from datetime import date
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from .. import clock, ui
 from ..alr.reports import gestational_week
 from ..hlt import dashboard
+from ..tml import weeks
 from . import entry, setup
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
@@ -120,10 +121,25 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
             return go(user_id, "setup")
         flags = conn.execute("SELECT metric FROM WATCH_FLAG WHERE user_id = ? AND active = 1 ORDER BY metric", (user_id,)).fetchall()
         handling = conn.execute("SELECT COUNT(*) FROM CARE_CASE WHERE user_id = ? AND status <> 'Resolved'", (user_id,)).fetchone()[0]
+        today, edd = clock.now().date(), date.fromisoformat(profile["edd"])
+        week = gestational_week(edd, today)
         return page(request, "home.html", user=user, given_name=user["full_name"].split()[-1],
-                    week=gestational_week(date.fromisoformat(profile["edd"]), clock.now().date()), edd=profile["edd"],
-                    flags=[f["metric"] for f in flags], handling=handling,
+                    week=week, week_day=weeks.day_of_week(edd, today), edd=profile["edd"], days_left=(edd - today).days,
+                    progress=weeks.progress(edd, today), trimester=weeks.trimester(week),
+                    flags=[f["metric"] for f in flags], handling=handling, unread_count=ui.unread(user_id),
+                    diary_today=conn.execute("SELECT 1 FROM DIARY_ENTRY WHERE user_id = ? AND entry_date = ?",
+                                             (user_id, today.isoformat())).fetchone() is not None,
                     d=dashboard.load(conn, user_id, clock.now()))    # self-tracked cards and latest status (S-008 #8, #12 – #15)
+
+    @app.get("/m/{user_id}/notices", response_class=HTMLResponse)
+    def notices(request: Request, user_id: str):
+        """"From doctor" tab (D-80). The list itself (S-009) is specs/009-acc-profile."""
+        return page(request, "notices.html", user=mother(user_id))
+
+    @app.get("/session-expired", response_class=HTMLResponse)
+    def session_expired(request: Request):
+        """S-043. Sessions are not checked before Session 11 (no sign-in); reachable from the demo start page."""
+        return page(request, "expired.html")
 
     @app.get("/m/{user_id}/profile", response_class=HTMLResponse)
     def profile(request: Request, user_id: str):
@@ -134,8 +150,6 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         return page(request, "profile.html", user=user, week=week)
 
     @app.get("/tci/booking", response_class=HTMLResponse)
-    def tci_booking(request: Request, user_id: str = Query("", alias="from")):
-        """Appointments tab: the TCI app's booking flow, no screen in the sub-app (spec-APT BR-001, BR-003)."""
-        back = f"/m/{user_id}/home" if user_id and conn.execute(
-            "SELECT 1 FROM USER_ACCOUNT WHERE user_id = ?", (user_id,)).fetchone() else ""
-        return page(request, "tci_booking.html", back=back)
+    def tci_booking(request: Request):
+        """"Book" tab of the simulated TCI host: the TCI app's booking flow, no screen in the sub-app (spec-APT BR-001)."""
+        return page(request, "tci_booking.html")

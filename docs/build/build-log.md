@@ -467,6 +467,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | #5 (below) |
 | Commit | see the commit of this entry |
 
+### Entry 34: 02/11 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | "This is the latest UI for the app: extract, read it all, update on GitHub" + the package `MotherBaby360_UI_hoan-chinh` (PR #16). Choices asked of the human: build the app from it, keeping the safety limits (yes). No Spec Kit feature folder for this part: look and navigation of screens already built, D-80. New screens are in their own features (009 – 011) |
+| Feature and tasks | App shell for `specs/001` – `008`; D-80 |
+| What the agent produced | `static/tci.css` (the package's CSS + app additions), `staff.css` (clinical web, unchanged look); `_icons.html` from the package's SVGs; `base.html` with the 5 new tabs and unread badge; all mother templates rebuilt on the package's components; Home with due-date card and progress (`weeks.progress`, `trimester`, `day_of_week`); timeline week strip and day screen (`weeks.week_days`, `/timeline/day/{date}`); S-028 as popup, S-083 as dialog; S-043 page; `/notices` tab page; 66 label rows; D-80; `test_app_shell.py` rewritten, including tests for what the package may not change (U3 – U8, U16). Mistake caught by the suite: a label `Profile (TCI)` clashed with `Profile`; the first week summary hid a second diary entry of the same day |
+| Human review | Pending (PR #15) |
+| Tests | `310 passed, 2 xfailed`; checked by eye on the running app at phone width: Home, Timeline, Report, My reports, Chatbot |
+| Spec issues found | #6 (below) |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It
@@ -479,6 +492,7 @@ is never fixed silently in code.
 | 3 | Step 6, entry 6 | The schema rejects a Health Metric Record measured after it is recorded (`ck_hmr_measured_before_created`, HLT §6), so a future "Measured at" on S-025A would make the save fail. The code shows a field error instead; ALR §5.1 does not state this rule and no test covers it (the rule was removed from T010 in entry 3 because it was not in ALR) | Proposal for the ALR owner (Tâm): add to ALR §5.1 FR-014 "measured time not later than the submission time (HLT §6)", then add a test | Open |
 | 4 | Step 6, entry 11 | CHAT_MESSAGE.`sent_at` has minute precision; a question and the chatbot reply are stored in the same minute, so the order of the transcript on S-064 (D-78) follows the storage order, not a rule | Proposal for the BOT owner (Sang): state in BOT §6 that the question is shown before its reply when the times are equal, or store seconds | Open |
 | 5 | Entry 33 | Vietnamese screens (D-79): the wireframes show Vietnamese, the app showed English; 213 on-screen texts (form labels, messages, demo pages) are not in the UI label reference | Added to `docs/ui-label-reference.md` as proposed rows; the owners of `screens/` (Chi, Ánh) review the wording | Open |
+| 6 | Entry 34 | D-80 removes the Appointments tab and moves navigation; the app now differs from `spec-APT.md` BR-003, FR-001, S-008 SR-005, S-083 and the tab row of the screen specs | Not edited here: D-80 names them for their owners (Hải Anh for APT; Chi, Ánh for screens). The other differences of the package stay open in `screens/ui-final/README.md` | Open |
 
 ## 4. Agent mistakes worth remembering
 

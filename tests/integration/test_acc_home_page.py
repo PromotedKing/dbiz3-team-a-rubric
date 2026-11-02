@@ -9,7 +9,7 @@ from tests.integration.helpers import vi
 def test_lan_home(client, user_id):
     lan = user_id("tci-000123")
     page = client.get(f"/m/{lan}/home").text
-    for text in (vi("Hello, {name}!", name="Lan"), vi("Week {n}", n=28), vi("Due date: {date}", date="20/12/2026"),
+    for text in (vi("Hello, {name}!", name="Lan"), vi("Week {n} + {d} days", n=28, d=0), vi("Due date"), "20/12/2026",
                  vi("Doctor's instructions"), vi("Blood pressure"), vi("Blood glucose"), vi("My reports")):
         assert text in page, text
     assert f'href="/m/{lan}/instructions"' in page and f'href="/m/{lan}/my-reports"' in page

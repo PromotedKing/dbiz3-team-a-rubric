@@ -13,7 +13,7 @@ def test_tci_home_lists_accounts_and_the_simulate_form(client):
 def test_first_opening_shows_the_consent_sheet(client):
     r = client.post("/tci/open", data=new_identity())
     assert r.status_code == 200
-    for text in map(vi, ("Connect to your TCI account", "Full name, date of birth, phone number", "Medical record number at Thu Cuc",
+    for text in map(vi, ("Connect to your TCI account", "Full name, phone number", "Date of birth, sex", "Medical record number at Thu Cuc",
                          "Results of your prenatal visits", "I agree to the Terms and the Privacy Policy", "Agree & continue", "Later")):
         assert text in r.text, text
     assert 'type="password"' not in r.text

@@ -14,9 +14,21 @@ MISSING: set[str] = set()
 _TRAIL = re.compile(r"\s*\([^()]*\)\s*$")
 _FIELD = re.compile(r"\{(\w+)\}")
 
-# 5-tab bar (ui-label-reference §9): key, label, path under /m/{user_id}/ (None = TCI app booking flow, APT BR-003)
-TABS = (("home", "Home", "home"), ("health", "Health", "health"), ("appointments", "Appointments", None),
-        ("chatbot", "Chatbot", "chat"), ("profile", "Profile", "profile"))
+# 5-tab bar (ui-label-reference §11, D-80): key, label, path under /m/{user_id}/
+TABS = (("home", "Home", "home"), ("timeline", "Timeline", "timeline"), ("chatbot", "Chatbot", "chat"),
+        ("doctor", "From doctor", "notices"), ("profile", "Profile", "profile"))
+_conn = None
+
+
+def use_connection(conn) -> None:
+    """The database behind the tab bar's unread badge."""
+    global _conn
+    _conn = conn
+
+
+def unread(user_id: str) -> int:
+    """Unread notifications of the mother (NOTIFICATION.read_at, ACC FR-025): badge on the "From doctor" tab."""
+    return _conn.execute("SELECT COUNT(*) FROM NOTIFICATION WHERE user_id = ? AND read_at IS NULL", (user_id,)).fetchone()[0]
 
 
 def _pairs(en: str, vi: str):
@@ -115,5 +127,5 @@ def show_time(text: str | None) -> str:
 def install(templates) -> None:
     """Give a Jinja2Templates instance the label lookup, the shared formats and the shell helpers."""
     env = templates.env
-    env.globals.update(_=t, TABS=TABS, initials=initials)
+    env.globals.update(_=t, TABS=TABS, initials=initials, unread=unread)
     env.filters.update(t=t, t_list=t_list, t_known=t_known, dmy=dmy, show_date=dmy, show_time=show_time)

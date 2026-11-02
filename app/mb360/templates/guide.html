@@ -1,19 +1,29 @@
+{#- S-104; layout: screens/ui-final Màn 13. The package draws one of 3 pages; the 4 proposed pages stay until ACC Q20 is answered (U17). -#}
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
 {% set page_title = "Onboarding guide" %}
-{% set pics = [icon.pulse, icon.clipboard, icon.book, icon.chat] %}
-{% block content %}
-<div class="card hero" data-guide-pages="{{ total }}" style="text-align:center;padding:32px 16px">
-  <span class="feature-icon" style="width:72px;height:72px;background:#fff">{{ pics[n - 1]() }}</span>
-  <p class="caption" style="margin-top:12px">{{ _("Page {n} of {total}", n=n, total=total) }}</p>
-  <h2>{{ title | t }}</h2>
-  <p>{{ text | t }}</p>
-  <p class="display" style="letter-spacing:4px">{% for i in range(1, total + 1) %}{% if i == n %}●{% else %}○{% endif %}{% endfor %}</p>
+{% set white = true %}
+{% block header %}
+<div style="height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+  <p class="t-cap">{{ n }} / {{ total }}</p>
+  <a href="/m/{{ user.user_id }}/guide/done" class="lnk" style="min-height:44px;display:flex;align-items:center">{{ _("Skip") }}</a>
 </div>
-<div class="actions">
-  <a class="btn outline" href="/m/{{ user.user_id }}/guide/done">{{ _("Skip") }}</a>
-  {% if n < total %}<a class="btn" href="/m/{{ user.user_id }}/guide?page={{ n + 1 }}">{{ _("Next") }}</a>
-  {% else %}<a class="btn" href="/m/{{ user.user_id }}/guide/done">{{ _("Get started") }}</a>{% endif %}
+{% endblock %}
+{% block main %}
+<div data-guide-pages="{{ total }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:0 24px;text-align:center">
+  <div style="width:240px;height:240px;border-radius:50%;background:#CCF6D2;display:flex;align-items:center;justify-content:center;color:#00A651">{{ icon.mb(120) }}</div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <h1 class="t-title" style="font-size:22px;line-height:28px">{{ title | t }}</h1>
+    <p class="t-body" style="color:#6F6F6F">{{ text | t }}</p>
+    <p class="t-cap">{{ _("Guide text to be confirmed (spec-ACC §10 Q20).") }}</p>
+  </div>
+  <div style="display:flex;gap:6px" aria-hidden="true">
+    {% for i in range(1, total + 1) %}<span style="width:{{ 20 if i == n else 6 }}px;height:6px;border-radius:3px;background:{{ '#00A651' if i == n else '#E0E0E0' }}"></span>{% endfor %}
+  </div>
 </div>
-<p class="caption" style="margin-top:12px">{{ _("Guide text to be confirmed (spec-ACC §10 Q20).") }}</p>
+<div style="flex:none;padding:16px 16px 28px;display:flex;gap:12px">
+  <a href="/m/{{ user.user_id }}/guide/done" class="btn o">{{ _("Skip") }}</a>
+  {% if n < total %}<a href="/m/{{ user.user_id }}/guide?page={{ n + 1 }}" class="btn">{{ _("Next") }}</a>
+  {% else %}<a href="/m/{{ user.user_id }}/guide/done" class="btn">{{ _("Get started") }}</a>{% endif %}
+</div>
 {% endblock %}

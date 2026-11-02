@@ -1,22 +1,32 @@
+{#- S-051 / S-052; design: screens/ui-final Màn 8. -#}
 {% extends "base.html" %}
+{% import "_icons.html" as icon %}
 {% set page_title = "Add diary entry" %}
 {% set back_url = "/m/" ~ user.user_id ~ "/timeline" %}
-{% set active_tab = "home" %}
-{% macro err(field) %}{% if errors.get(field) %}<span class="error" data-error-for="{{ field }}">⚠ {{ errors[field] | t }}</span>{% endif %}{% endmacro %}
-{% block content %}
-<div class="card info"><strong>{{ _("Week {n} – current week", n=current) }}</strong> · {{ _("Date {date} (automatic)", date=today.strftime("%d/%m/%Y")) }}</div>
-<form method="post" action="/m/{{ user.user_id }}/diary" enctype="multipart/form-data">
-  <label for="text">{{ _("Content *") }}</label>
-  <textarea id="text" name="text" rows="5">{{ form.get('text', '') }}</textarea>{{ err("text") }}
-  <span class="field-label">{{ _("Mood (optional)") }}</span>
-  <div class="mood-row">
-    {% for m in moods %}<label><input type="radio" name="mood" value="{{ m }}" {% if form.get('mood') == m %}checked{% endif %}><span>{{ m | t }}</span></label>{% endfor %}
-  </div>{{ err("mood") }}
-  <label for="photos">{{ _("Photos (optional) — Take photo / Library, JPG or PNG, up to 5, 10 MB each") }}</label>
-  <input id="photos" type="file" name="photos" accept="image/jpeg,image/png" multiple capture="environment">{{ err("photos") }}
-  <p class="caption">{{ _("The diary entry is linked to the current week.") }}</p>
-  <div class="actions">
-    <a class="btn outline" href="/m/{{ user.user_id }}/timeline">{{ _("Cancel") }}</a>
+{% set white = true %}
+{% macro err(field) %}{% if errors.get(field) %}<p class="err" data-error-for="{{ field }}">⚠ {{ errors[field] | t }}</p>{% endif %}{% endmacro %}
+{% block main %}
+<form class="fw" method="post" action="/m/{{ user.user_id }}/diary" enctype="multipart/form-data">
+  <div class="body" style="gap:22px">
+    <p class="t-cap">{{ _("Week {n} – current week", n=current) }} · {{ _("Date {date} (automatic)", date=today.strftime("%d/%m/%Y")) }}</p>
+    <div class="fld">
+      <p class="lbl">{{ _("How do you feel today?") }} <span class="opt">{{ _("(optional)") }}</span></p>
+      <div class="chips">
+        {% for m in moods %}<label><input type="radio" name="mood" value="{{ m }}" {% if form.get('mood') == m %}checked{% endif %}><span class="chip">{{ m | t }}</span></label>{% endfor %}
+      </div>{{ err("mood") }}
+    </div>
+    <div class="fld">
+      <label for="text">{{ _("Content") }}</label>
+      <textarea id="text" class="inp" style="height:180px" name="text" placeholder="{{ _('When the baby kicked, something tasty, or a note for your baby…') }}">{{ form.get('text', '') }}</textarea>{{ err("text") }}
+    </div>
+    <div class="fld">
+      <label for="photos">{{ _("Photos") }} <span class="opt">{{ _("(optional)") }}</span></label>
+      <input id="photos" class="inp" type="file" name="photos" accept="image/jpeg,image/png" multiple capture="environment">{{ err("photos") }}
+      <p class="t-cap">{{ _("JPG or PNG, up to 5 photos, 10 MB each.") }}</p>
+    </div>
+  </div>
+  <div class="foot">
+    <a class="btn o" href="/m/{{ user.user_id }}/timeline">{{ _("Cancel") }}</a>
     <button class="btn">{{ _("Save diary entry") }}</button>
   </div>
 </form>

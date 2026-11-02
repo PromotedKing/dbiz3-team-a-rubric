@@ -1,5 +1,5 @@
-{#- Sub-app shell (ui-label-reference §9): header ← · title · actions · ✕ (S-083), 5-tab bar.
-    A page sets page_title (English label), back_url (none on Home and first-time setup) and active_tab (none = no tab bar). -#}
+{#- Sub-app shell (ui-label-reference §11, D-80; design: screens/ui-final). A page sets:
+    page_title (English label), back_url, active_tab (none = child screen, no tab bar), white (white screen), show_close (✕ → S-083). -#}
 {% import "_icons.html" as icon %}
 {%- set page_title = page_title | default("") -%}
 {%- set back_url = back_url | default("") -%}
@@ -11,54 +11,48 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#00A651">
-  <title>{% if page_title %}{{ _(page_title) }} · {% endif %}{{ _("Mother & Baby 360") }}</title>
+  <title>{% if page_title %}{{ _(page_title) }} · {% endif %}{{ _("App name") }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
-  <link rel="stylesheet" href="/static/app.css">
+  <link rel="stylesheet" href="/static/tci.css">
 </head>
-<body>
-<div class="phone">
-  <header class="app-header">
-    {% block header %}
-      {% if back_url %}<a class="icon-btn back" href="{{ back_url }}" aria-label="{{ _('Back') }}" data-back>{{ icon.back() }}</a>{% endif %}
-      <span class="title">{{ _(page_title) }}</span>
-    {% endblock %}
+<body class="app">
+<div class="scr{% if white | default(false) %} w{% endif %}">
+  {% block header %}
+  <div class="hdr"{% if not back_url %} style="padding-left:16px"{% endif %}>
+    {% if back_url %}<a class="ib" href="{{ back_url }}" aria-label="{{ _('Back') }}" data-back>{{ icon.back() }}</a>{% endif %}
+    <h1>{{ _(page_title) }}</h1>
     {% block header_actions %}{% endblock %}
-    {% if in_app %}
-    <button type="button" class="icon-btn" aria-label="{{ _('Close Mother & Baby 360?') }}" data-close-app
-            onclick="document.getElementById('close-sheet').showModal()">{{ icon.close() }}</button>
-    {% endif %}
-  </header>
-
-  <main class="screen{% if not active_tab %} no-tabs{% endif %} {% block screen_class %}{% endblock %}">
-    {% block content %}{% endblock %}
-  </main>
-
+    {% if show_close | default(false) %}<button type="button" class="ib" aria-label="{{ _('Close Mother & Baby 360?') }}" data-close-app onclick="document.getElementById('close-sheet').showModal()">{{ icon.close() }}</button>{% endif %}
+  </div>
+  {% endblock %}
+  {% block main %}<div class="body">{% block content %}{% endblock %}</div>{% endblock %}
   {% if active_tab and in_app %}
-  <nav class="tabbar" data-tabbar>
+  <nav class="tabs" data-tabbar>
     {% for key, label, path in TABS %}
-      {% if path %}
-      <a class="tab{% if key == active_tab %} active{% endif %}" href="/m/{{ user.user_id }}/{{ path }}" data-tab="{{ key }}"
-         {% if key == active_tab %}aria-current="page"{% endif %}>{{ icon.tab_icon(key) }}<span>{{ _(label) }}</span></a>
-      {% else %}
-      <a class="tab center" href="/tci/booking?from={{ user.user_id }}" data-tab="{{ key }}">
-        <span class="fab">{{ icon.tab_icon(key) }}</span><span>{{ _(label) }}</span></a>
-      {% endif %}
+    <a class="tab{% if key == active_tab %} on{% endif %}" href="/m/{{ user.user_id }}/{{ path }}" data-tab="{{ key }}"{% if key == active_tab %} aria-current="page"{% endif %}>
+      {{- icon.tab_icon(key) -}}
+      {%- if key == "doctor" %}{% set n = unread(user.user_id) %}{% if n %}<span class="badge" data-unread>{{ n }}</span>{% endif %}{% endif -%}
+      {{- _(label) -}}
+    </a>
     {% endfor %}
   </nav>
   {% endif %}
-
-  {% if in_app %}
-  <dialog class="sheet" id="close-sheet" aria-labelledby="close-title" onclick="if (event.target === this) this.close()">
-    <div class="handle"></div>
-    <div class="feature-icon">{{ icon.external() }}</div>
-    <h2 id="close-title">{{ _("Close Mother & Baby 360?") }}</h2>
-    <p class="caption">{{ _("You can come back at any time from the TCI app.") }}</p>
-    <form method="dialog" class="actions">
-      <button class="btn outline">{{ _("Stay") }}</button>
-      <a class="btn" href="/tci">{{ _("Close app") }}</a>
-    </form>
+  {% block overlay %}{% endblock %}
+  {% if show_close | default(false) %}
+  <dialog class="dlg-n" id="close-sheet" aria-labelledby="close-title" onclick="if (event.target === this) this.close()">
+    <div class="inner">
+      <div style="display:flex;flex-direction:column;gap:8px;text-align:center;align-items:center">
+        <div class="fe">{{ icon.leave() }}</div>
+        <h2 id="close-title" class="t-title">{{ _("Close Mother & Baby 360?") }}</h2>
+        <p class="t-body" style="color:#6F6F6F">{{ _("You can come back at any time from the TCI app.") }}</p>
+      </div>
+      <form method="dialog" style="display:flex;gap:12px">
+        <button class="btn o">{{ _("Stay") }}</button>
+        <a class="btn" href="/tci">{{ _("Close app") }}</a>
+      </form>
+    </div>
   </dialog>
   {% endif %}
 </div>

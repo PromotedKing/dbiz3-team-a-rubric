@@ -30,7 +30,7 @@ def test_current_week(client, user_id):
     for t in (vi("Week {n}", n=28), "27/09/2026 – 03/10/2026", vi("‹ Week {n}", n=27), vi("Week {n} ›", n=29),
               vi("Indicators this week"), "27/09/2026", "57.0 kg", vi("Self-entered"), vi("No visit this week."),
               vi("Messages to Baby") + " · " + vi("Week {n}", n=28), vi("From Mom"), vi("From Dad"),
-              vi("Diary") + " · " + vi("Week {n}", n=28), "The baby kicked a lot today.", vi("+ Add diary entry")):
+              vi("This week"), vi("Visit day"), vi("Has diary"), "The baby kicked a lot today.", vi("+ Add diary entry")):
         assert t in page, t
     assert "Size of" not in page and "Tip" not in page                       # D-02, D-04
     assert "alert" not in text(page).lower()
@@ -74,3 +74,29 @@ def test_empty_content_is_refused(client, user_id):
 def test_no_edit_or_delete_controls(client, user_id):
     page = client.get(f"/m/{user_id('tci-000123')}/timeline").text
     assert ">" + vi("Edit") + "<" not in page and ">Edit<" not in page and ">Delete<" not in page
+
+
+def test_week_strip_links_past_days_and_not_future_days(client, user_id):
+    lan = user_id("tci-000123")
+    page = client.get(f"/m/{lan}/timeline").text                               # week 28: 27/09/2026 (today, a Sunday) – 03/10/2026
+    assert page.count('class="day off"') == 6
+    assert f'href="/m/{lan}/timeline/day/2026-09-27"' in page
+    assert f'href="/m/{lan}/timeline/day/2026-09-28"' not in page
+
+
+def test_day_screen_shows_the_days_data_read_only(client, user_id):
+    lan = user_id("tci-000123")
+    page = client.get(f"/m/{lan}/timeline/day/2026-09-27").text
+    assert vi("Sunday") in page and "27/09/2026" in page and "57.0 kg" in page and "The baby kicked a lot today." in page
+    assert "<input" not in page and "<textarea" not in page                    # TML BR-001
+    visit = client.get(f"/m/{lan}/timeline/day/2026-09-15").text
+    assert vi("Visit day") in visit and vi("From visit") in visit and vi("Routine antenatal check-up") in visit
+
+
+@pytest.mark.parametrize("day", ["not-a-date", "2026-09-28", "2030-01-01"])
+def test_day_screen_refuses_bad_and_future_days(client, user_id, day):
+    assert client.get(f"/m/{user_id('tci-000123')}/timeline/day/{day}").status_code == 404
+
+
+def test_saved_entry_shows_the_toast(client, user_id):
+    assert 'class="toast"' in client.get(f"/m/{user_id('tci-000123')}/timeline", params={"saved": 1}).text

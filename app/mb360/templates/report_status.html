@@ -1,66 +1,62 @@
+{#- S-026 Report status: kept (ALR FR-005, FR-007, BR-011, BR-012); the UI package has no design for it (U4), so it uses the package's components. -#}
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
 {% set page_title = "Report status" %}
 {% set back_url = "/m/" ~ user.user_id ~ "/my-reports" %}
-{% set active_tab = "health" %}
-{% macro label_tag(l) %}<span class="tag {{ 'above' if l == 'Above threshold' else 'normal' if l == 'Normal' else '' }}">{{ l | t }}</span>{% endmacro %}
+{% macro label_tag(l) %}<span class="tag {{ 'al' if l == 'Above threshold' else 'ok' if l == 'Normal' else 'un' }}">{{ l | t }}</span>{% endmacro %}
 {% block content %}
-{% if submitted %}<div class="card notice">{{ _("Report submitted") }}</div>{% endif %}
-<div class="card">
+{% if submitted %}<div class="okbox">{{ icon.ok() }}<p class="t-body" style="color:inherit">{{ _("Report submitted") }}</p></div>{% endif %}
+<div class="card bl8">
   {% if question %}
-    <div class="row"><h3 class="grow" style="margin:0">{{ _("Chatbot") }}</h3><span class="tag status">{{ case.status | t }}</span></div>
-    <p>{{ _("Your question:") }} {{ question.text }}</p>
-    <p class="caption">{{ _("Sent") }} {{ question.sent_at | show_time }}</p>
+    <div class="sec"><p class="t-body b">{{ _("Chatbot") }}</p><span class="tag inf">{{ case.status | t }}</span></div>
+    <p class="t-body">{{ _("Your question:") }} {{ question.text }}</p>
+    <p class="t-cap">{{ _("Sent") }} {{ question.sent_at | show_time }}</p>
   {% else %}
-    <div class="row"><h3 class="grow" style="margin:0">{{ _("Report code {code}", code=rep.report_code) }}</h3>
-      <span class="tag status">{{ (case.status if case else "No action needed") | t }}</span></div>
+    <div class="sec"><p class="t-body b">{{ _("Report code {code}", code=rep.report_code) }}</p><span class="tag inf">{{ (case.status if case else "No action needed") | t }}</span></div>
     {% if hmr %}
-      <div class="row" style="margin-top:8px"><span class="grow">{{ hmr.metric | t }}</span>{{ label_tag(label) }}</div>
-      <div class="row"><span class="metric-value grow">{{ hmr.value | t_known }}{% if hmr.unit %} {{ hmr.unit }}{% endif %}</span>
-        <span class="tag source">{{ hmr.source | t }}</span></div>
-      <p class="caption">{{ _("Measured") }} {{ hmr.measured_at | show_time }} · {{ _("Submitted") }} {{ rep.submitted_at | show_time }}</p>
+      <div class="sec"><span>{{ hmr.metric | t }}</span>{{ label_tag(label) }}</div>
+      <div class="sec"><span class="val">{{ hmr.value | t_known }}{% if hmr.unit %} {{ hmr.unit }}{% endif %}</span><span class="tag src">{{ hmr.source | t }}</span></div>
+      <p class="t-cap">{{ _("Measured") }} {{ hmr.measured_at | show_time }} · {{ _("Submitted") }} {{ rep.submitted_at | show_time }}</p>
     {% else %}
-      <div class="row" style="margin-top:8px"><span class="grow">{{ _("Symptom report") }}</span>{{ label_tag(label) }}</div>
-      <p class="caption">{{ _("Submitted") }} {{ rep.submitted_at | show_time }}</p>
+      <div class="sec"><span>{{ _("Symptom report") }}</span>{{ label_tag(label) }}</div>
+      <p class="t-cap">{{ _("Submitted") }} {{ rep.submitted_at | show_time }}</p>
     {% endif %}
-    <p>{{ _("Symptoms:") }} {{ symptoms | map("symptom_label") | map("t") | join(", ") }}{% if rep.other_symptom_text %} ({{ rep.other_symptom_text }}){% endif %}</p>
-    {% if rep.note %}<p>{{ _("Mother's note:") }} {{ rep.note }}</p>{% endif %}
+    <p class="t-body">{{ _("Symptoms:") }} {{ symptoms | map("symptom_label") | map("t") | join(", ") }}{% if rep.other_symptom_text %} ({{ rep.other_symptom_text }}){% endif %}</p>
+    {% if rep.note %}<p class="t-body">{{ _("Mother's note:") }} {{ rep.note }}</p>{% endif %}
   {% endif %}
 </div>
 
 {% if steps %}
-<div class="card">
-  <h2>{{ _("Handling progress") }}</h2>
-  <ol class="steps">
-  {% for s in steps %}
-  <li data-step-state="{{ s.state }}">
-    <strong>{{ s.status | t }}</strong>
-    {% if s.note %}<br><span>{{ s.note | t }}</span>{% endif %}
-    {% if s.at or s.actor %}<br><span class="caption">{{ s.at or "" }}{% if s.at and s.actor %} · {% endif %}{{ s.actor | t if s.actor else "" }}</span>{% endif %}
-  </li>
-  {% endfor %}
-  </ol>
+<div class="card bl">
+  <p class="t-title">{{ _("Handling progress") }}</p>
+  <div class="steps">
+    {% for s in steps %}
+    <div class="st{% if s.state == 'done' %} done{% endif %}" data-step-state="{{ s.state }}">
+      <div class="dt"><span class="c">{% if s.state == "done" %}{{ icon.o('<path d="M5 12.5 10 17l9-10"/>', 12, "currentColor", 3.5) }}{% endif %}</span><span class="ln"></span></div>
+      <div style="padding-bottom:12px"><p class="t-body b"{% if s.state != "done" %} style="color:#6F6F6F"{% endif %}>{{ s.status | t }}</p>
+        {% if s.note %}<p class="t-cap">{{ s.note | t }}</p>{% endif %}
+        {% if s.at or s.actor %}<p class="t-cap">{{ s.at or "" }}{% if s.at and s.actor %} · {% endif %}{{ s.actor | t if s.actor else "" }}</p>{% endif %}</div>
+    </div>
+    {% endfor %}
+  </div>
 </div>
 
 {% for r in responses %}
-<div class="card info" data-response>
-  <h3>{{ r.heading | t }}</h3>
-  <p class="caption">{{ r.at }}</p>
-  <p style="color:var(--color-text-primary)">{{ r.text }}</p>
+<div class="card bl8" data-response>
+  <p class="t-body b">{{ r.heading | t }}</p>
+  <p class="t-cap">{{ r.at }}</p>
+  <p class="t-body">{{ r.text }}</p>
 </div>
 {% endfor %}
 
 {% if safety_note %}
-<div class="card">
-  <h3>{{ _("Safety note") }}</h3>
-  <p class="caption">{{ _("Content to be supplied by the hospital (D-25).") }}</p>
+<div class="card bd bl8">
+  <p class="t-body b">{{ _("Safety note") }}</p>
+  <p class="t-cap">{{ _("Content to be supplied by the hospital (D-25).") }}</p>
 </div>
 {% endif %}
 {% endif %}
 
-<div class="actions">
-  <span class="btn accent disabled" title="{{ _('Hotline number pending') }}">{{ icon.phone() }} {{ _("Emergency call") }}: 1900 xxxx</span>
-</div>
-<p style="margin-top:16px"><a class="link" href="/m/{{ user.user_id }}/my-reports">{{ _("My reports") }} ›</a> ·
-  <a class="link" href="/m/{{ user.user_id }}/instructions">{{ _("Doctor's instructions") }} ›</a></p>
+<span class="btn dis full" title="{{ _('Hotline number pending') }}">{{ icon.phone() }}{{ _("Emergency call") }}: 1900 xxxx</span>
+<div class="sec"><a class="lnk" href="/m/{{ user.user_id }}/my-reports">{{ _("My reports") }} ›</a><a class="lnk" href="/m/{{ user.user_id }}/instructions">{{ _("Doctor's instructions") }} ›</a></div>
 {% endblock %}

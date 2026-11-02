@@ -1,0 +1,14 @@
+{#- S-043 Session expired: no ←, ✕ or tab bar (D-50); design: screens/ui-final Màn 14. -#}
+{% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set page_title = "Session expired" %}
+{% set white = true %}
+{% block header %}{% endblock %}
+{% block main %}
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:0 32px;text-align:center">
+  <div style="width:96px;height:96px;border-radius:50%;background:#FEEDE1;display:flex;align-items:center;justify-content:center">{{ icon.lock() }}</div>
+  <h1 class="t-title" style="font-size:22px;line-height:28px">{{ _("Session expired") }}</h1>
+  <p class="t-body" style="color:#6F6F6F">{{ _("Your TCI account could not be verified. Go back to the TCI app and open Mother & Baby 360 again from its home screen.") }}</p>
+</div>
+<div style="flex:none;padding:16px 16px 28px;display:flex"><a href="/tci" class="btn">{{ _("Back to TCI app") }}</a></div>
+{% endblock %}

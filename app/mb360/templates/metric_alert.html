@@ -1,28 +1,38 @@
-{#- S-028: the only screen that uses the word "Alert" (ALR BR-010, D-22). -#}
+{#- S-028: the only screen that uses the word "Alert" (ALR BR-010, D-22). Popup over S-025A; design: screens/ui-final Màn 16.
+    Guidance comes only from GUIDANCE_TEMPLATE / the instruction (BR-013, U8); the hotline number is pending (BOT Q8). -#}
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
 {% set page_title = "Metric alert" %}
-{% set back_url = "/m/" ~ user.user_id ~ "/instructions" %}
-{% set active_tab = "health" %}
+{% set white = true %}
+{% block header %}
+<div class="hdr" style="padding-left:16px"><h1>{{ _("Report metric / symptom") }}</h1></div>
+{% endblock %}
 {% block content %}
-<div class="card warn">
-  <div class="row"><span class="feature-icon" style="background:#fff;color:var(--status-alert-fg)">{{ icon.alert() }}</span>
-    <div class="grow"><h3>{{ hmr.metric | t }}</h3>
-      <div class="metric-value">{{ hmr.value | t_known }}{% if hmr.unit %} {{ hmr.unit }}{% endif %}</div></div>
-    <span class="tag above">{{ _("Above threshold") }}</span></div>
-  <p class="caption">{{ _("Measured at") }} {{ hmr.measured_at | show_time }} · {{ card | t }}</p>
+<div style="height:48px;border-radius:12px;background:#F5F5F5"></div>
+<div style="height:80px;border-radius:16px;border:1px solid #E0E0E0"></div>
+{% endblock %}
+{% block overlay %}
+<div class="ovl"></div>
+<div class="sheet" role="dialog" aria-labelledby="alert-title" style="gap:14px">
+  <div class="grab"></div>
+  <div style="display:flex;gap:12px;align-items:center">
+    <div style="width:48px;height:48px;border-radius:24px;background:#FEEDE1;display:flex;align-items:center;justify-content:center;flex:none">{{ icon.warn(24) }}</div>
+    <h2 id="alert-title" class="t-title">{{ _("Metric alert") }}</h2>
+  </div>
+  <div class="card bd bl8" style="padding:12px 14px">
+    <div class="sec"><p class="t-body b">{{ hmr.metric | t }}: {{ hmr.value | t_known }}{% if hmr.unit %} {{ hmr.unit }}{% endif %}</p><span class="tag al">{{ _("Above threshold") }}</span></div>
+    <p class="t-cap">{{ _("Measured") }} {{ hmr.measured_at | show_time }} · {{ card | t }}</p>
+  </div>
+  <div class="okbox">{{ icon.ok() }}<p class="t-body" style="color:inherit">{{ _("Your report has been sent to clinical staff.") }} {{ _("Track progress in My reports.") }}</p></div>
+  <div class="bl8">
+    <p class="t-body b">{{ _("Above-threshold guidance") }}</p>
+    {% for g in guidance %}<p class="t-body">{{ g }}</p>{% endfor %}
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <a href="/m/{{ user.user_id }}/reports/{{ rep.report_id }}" class="btn full">{{ _("View status") }}</a>
+    <span class="btn dis full" title="{{ _('Hotline number pending') }}">{{ icon.phone() }}{{ _("Call hotline / nurse") }}</span>
+    <a href="/m/{{ user.user_id }}/instructions" class="lnk" style="align-self:center;min-height:36px;display:flex;align-items:center">{{ _("Close") }}</a>
+    <a href="/m/{{ user.user_id }}/my-reports" class="lnk" style="align-self:center">{{ _("My reports") }} ›</a>
+  </div>
 </div>
-<div class="card notice" style="font-weight:400">{{ _("Your report has been sent to clinical staff.") }} {{ _("Track progress in My reports.") }}</div>
-<div class="card">
-  <h2>{{ _("Doctor's guidance") }}</h2>
-  {% for g in guidance %}<p>{{ g }}</p>{% endfor %}
-</div>
-<div class="actions">
-  <a class="btn" href="/m/{{ user.user_id }}/reports/{{ rep.report_id }}">{{ _("View status") }}</a>
-  <span class="btn accent disabled" title="{{ _('Hotline number pending') }}">{{ icon.phone() }} {{ _("Call hotline / nurse") }}</span>
-</div>
-<div class="actions">
-  <a class="btn outline" href="/m/{{ user.user_id }}/instructions">{{ _("Close") }}</a>
-</div>
-<p style="margin-top:16px"><a class="link" href="/m/{{ user.user_id }}/my-reports">{{ _("My reports") }} ›</a></p>
 {% endblock %}

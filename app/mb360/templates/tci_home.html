@@ -1,29 +1,40 @@
 {% extends "tci_base.html" %}
 {% block content %}
-<h2>{{ _("Open Mother & Baby 360 as") }}</h2>
-<div class="tile-grid">
-  {% for a in accounts %}
-  <form class="tile-form" method="post" action="/tci/open">
-    {% for f in fields %}<input type="hidden" name="{{ f }}" value="{{ a[f] or '' }}">{% endfor %}
-    <button class="tile featured" data-account="{{ a.tci_account_ref }}">
-      <span class="feature-icon">{{ icon.heart() }}</span>
-      <strong>{{ _("Mother & Baby 360") }}</strong>
-      <span>{{ a.full_name }}</span>
-      <span class="caption">{{ a.tci_account_ref }}</span>
-    </button>
-  </form>
-  {% endfor %}
+<div style="height:110px;border-radius:12px;background:linear-gradient(135deg,#CCF6D2,#E6F6EC);display:flex;flex-direction:column;justify-content:center;padding:20px"><p class="t-cap" style="color:#00873F">{{ _("[TCI app banner]") }}</p></div>
+<div class="card bd" style="padding:12px 8px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px">
+  <div class="feat"><div class="fe">{{ icon.tci_feature("calendar") }}</div>{{ _("Appointments") }}</div>
+  <div class="feat"><div class="fe">{{ icon.tci_feature("record") }}</div>{{ _("Medical records") }}</div>
+  <div class="feat"><div class="fe">{{ icon.tci_feature("voucher") }}</div>{{ _("Voucher") }}</div>
+  <div class="feat"><div class="fe">{{ icon.tci_feature("service") }}</div>{{ _("Services") }}</div>
+  <a href="#accounts" class="feat" style="outline:2px solid #00A651;outline-offset:-2px">
+    <span class="tag al" style="position:absolute;top:-12px;height:18px;padding:0 6px">{{ _("New") }}</span>
+    <div class="fe">{{ icon.mb() }}</div><span class="b" style="color:#00A651">{{ _("Mother & Baby 360") }}</span>
+  </a>
 </div>
 
-<h2>{{ _("Simulate another TCI account") }}</h2>
-<form class="card" method="post" action="/tci/open">
-  <label>{{ _("Full name") }}</label><input name="full_name" required>
-  <label>{{ _("Date of birth") }}</label><input type="date" name="date_of_birth" required>
-  <label>{{ _("Sex") }}</label>
-  <select name="sex"><option value="Female">{{ _("Female") }}</option><option value="Male">{{ _("Male") }}</option></select>
-  <label>{{ _("Phone number") }}</label><input name="phone" required>
-  <label>{{ _("Medical record number (optional)") }}</label><input name="record_code">
-  <div class="actions"><button class="btn block">{{ icon.heart() }} {{ _("Mother & Baby 360") }}</button></div>
-</form>
-<p><a class="link" href="/">{{ _("Demo start page") }} ›</a></p>
+<div class="bl" id="accounts">
+  <p class="t-title">{{ _("Open Mother & Baby 360 as") }}</p>
+  <div class="card bd np">
+    {% for a in accounts %}
+    <form method="post" action="/tci/open" class="row" style="padding-right:8px">
+      {% for f in fields %}<input type="hidden" name="{{ f }}" value="{{ a[f] or '' }}">{% endfor %}
+      <span class="grow"><span class="t-body">{{ a.full_name }}</span><br><span class="t-cap">{{ a.tci_account_ref }}</span></span>
+      <button class="btn so" data-account="{{ a.tci_account_ref }}">{{ _("Open") }}</button>
+    </form>
+    {% endfor %}
+  </div>
+</div>
+
+<details class="card bd">
+  <summary class="t-body b">{{ _("Simulate another TCI account") }}</summary>
+  <form method="post" action="/tci/open" class="bl" style="margin-top:12px">
+    <div class="fld"><label for="n">{{ _("Full name") }}</label><input id="n" class="inp" name="full_name" required></div>
+    <div class="fld"><label for="b">{{ _("Date of birth") }}</label><input id="b" class="inp" type="date" name="date_of_birth" required></div>
+    <div class="fld"><label for="s">{{ _("Sex") }}</label><select id="s" class="inp" name="sex"><option value="Female">{{ _("Female") }}</option><option value="Male">{{ _("Male") }}</option></select></div>
+    <div class="fld"><label for="p">{{ _("Phone number") }}</label><input id="p" class="inp" name="phone" required></div>
+    <div class="fld"><label for="r">{{ _("Medical record number (optional)") }}</label><input id="r" class="inp" name="record_code"></div>
+    <button class="btn full">{{ _("Mother & Baby 360") }}</button>
+  </form>
+</details>
+<a class="lnk" href="/">{{ _("Demo start page") }} ›</a>
 {% endblock %}

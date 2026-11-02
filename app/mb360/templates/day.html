@@ -1,0 +1,52 @@
+{#- One day of the timeline (design: screens/ui-final Màn 7; no Screen ID yet, U11). Same data as S-048, read-only (TML BR-001). -#}
+{% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set page_title = "Pregnancy timeline" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/timeline?week=" ~ week %}
+{% block header %}
+<div class="hdr">
+  <a class="ib" href="{{ back_url }}" aria-label="{{ _('Back') }}" data-back>{{ icon.back() }}</a>
+  <h1>{{ _(day.long) }}, {{ day.iso | dmy }}</h1>
+  {% if visits %}<span class="tag al" style="margin-right:10px">{{ _("Visit day") }}</span>{% endif %}
+</div>
+{% endblock %}
+{% block content %}
+<p class="t-cap">{{ _("Week {n} + {d} days", n=week, d=week_day) }}</p>
+
+{% for v in visits %}
+<div class="bl">
+  <div class="sec"><p class="t-title">{{ _("From visit") }}</p><span class="t-cap">{{ v.visit_type | t }}</span></div>
+  <div class="card bl8" style="padding:12px">
+    {% if v.ultrasound_image %}
+      {% if media_exists(v.ultrasound_image) %}<img src="/media/{{ v.ultrasound_image }}" alt="{{ _('Ultrasound image, {date}', date=v.visit_date | dmy) }}" style="max-width:100%;border-radius:12px">
+      {% else %}<div style="height:180px;border-radius:12px;background:#1C2427;display:flex;align-items:flex-end;padding:10px" role="img" aria-label="{{ _('Ultrasound image, {date}', date=v.visit_date | dmy) }}"><span class="t-cap" style="color:#B4B4B4">{{ _("Ultrasound image, {date}", date=v.visit_date | dmy) }}</span></div>{% endif %}
+    {% endif %}
+    {% if v.fetal_length is not none %}<div class="kv"><span class="k">{{ _("Fetal length") }}</span><span class="b">{{ v.fetal_length }} cm</span></div>{% endif %}
+    {% if v.estimated_fetal_weight is not none %}<div class="kv"><span class="k">{{ _("Estimated weight") }}</span><span class="b">{{ v.estimated_fetal_weight }} g</span></div>{% endif %}
+    {% if v.doctor_note %}<p class="t-cap">{{ _("Doctor's note") }}</p><p class="t-body">{{ v.doctor_note }}</p>{% endif %}
+  </div>
+</div>
+{% endfor %}
+
+{% if rows %}
+<div class="bl8">
+  <p class="t-title">{{ _("Indicators") }}</p>
+  <div class="card" style="padding:12px 16px">
+    {% for r in rows %}<div class="kv"><span class="k">{{ r.metric | t }}</span><span style="display:flex;gap:8px;align-items:center"><span class="b">{{ r.value | t_known }}</span><span class="tag src">{{ r.source | t }}</span></span></div>{% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div class="bl">
+  <p class="t-title">{{ _("Your diary") }}</p>
+  {% for e in diary %}
+  <div class="card bl8">
+    {% if e.mood %}<div class="sec"><span class="tag ok">{{ e.mood | t }}</span></div>{% endif %}
+    <p class="t-body">{{ e.text }}</p>
+    {% if e.photo and media_exists(e.photo) %}<img src="/media/{{ e.photo }}" alt="{{ _('Diary photo, {date}', date=e.entry_date | dmy) }}" style="width:96px;height:96px;object-fit:cover;border-radius:12px">{% endif %}
+  </div>
+  {% else %}
+  <p class="t-cap">{{ _("No diary entry this day.") }}</p>
+  {% endfor %}
+</div>
+{% endblock %}
