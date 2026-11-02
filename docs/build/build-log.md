@@ -480,6 +480,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | #6 (below) |
 | Commit | see the commit of this entry |
 
+### Entry 35: 02/11 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `start_feature.py --spec specs/spec-ACC.md ACC --name profile`. Plan, research, contracts and tasks written directly in the Spec Kit layout; the `/speckit-*` skills were not invoked and no separate `/speckit-analyze` was run |
+| Feature and tasks | `specs/009-acc-profile`, T001 – T008 (ACC US-3, S-009, S-010, S-011, S-103) |
+| What the agent produced | `acc/profile.py`, `acc/notices.py`; routes; `profile.html`, `edit_profile.html`, `notif_settings.html`, `notices.html`; `ui.t_known` reads `{field}` rows, most specific first; 51 label rows. Tests first: `test_acc_profile.py`, `test_acc_notices.py`, `test_acc_profile_pages.py` seen failing on import. Agent mistakes: tests picked a "Pending" mother who has a later Linked row (fixed: the latest request decides, with a test); `Report {code}` matched before `Report {code} resolved` (found on the running app; test added) |
+| Human review | Pending (pull request) |
+| Tests | see the pull request; checked on the running app: Profile, From doctor |
+| Spec issues found | none new; open points in `plan.md` Complexity Tracking |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It

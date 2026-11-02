@@ -12,7 +12,7 @@ from .. import clock, ui
 from ..alr.reports import gestational_week
 from ..hlt import dashboard
 from ..tml import weeks
-from . import entry, setup
+from . import entry, notices, profile, setup
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
 ui.install(TEMPLATES)
@@ -132,9 +132,26 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
                     d=dashboard.load(conn, user_id, clock.now()))    # self-tracked cards and latest status (S-008 #8, #12 – #15)
 
     @app.get("/m/{user_id}/notices", response_class=HTMLResponse)
-    def notices(request: Request, user_id: str):
-        """"From doctor" tab (D-80). The list itself (S-009) is specs/009-acc-profile."""
-        return page(request, "notices.html", user=mother(user_id))
+    def notices_page(request: Request, user_id: str, type: str = ""):
+        """S-009 behind the "From doctor" tab (D-80): FR-025."""
+        active = type if type in notices.TYPES or type == notices.UNREAD else ""
+        return page(request, "notices.html", user=mother(user_id), rows=notices.list_for(conn, user_id, active), active=active,
+                    types=notices.TYPES, unread_count=notices.unread_count(conn, user_id), unread_filter=notices.UNREAD)
+
+    @app.post("/m/{user_id}/notices/read-all")
+    def notices_read_all(user_id: str):
+        mother(user_id)
+        notices.mark_all_read(conn, user_id, clock.now())
+        return RedirectResponse(f"/m/{user_id}/notices", status_code=303)
+
+    @app.get("/m/{user_id}/notices/{notification_id}")
+    def notice_open(user_id: str, notification_id: str):
+        """FR-026: marks it read and opens its target (S-009 SR-001)."""
+        mother(user_id)
+        target = notices.open_notice(conn, user_id, notification_id, clock.now())
+        if target is None:
+            raise HTTPException(404, "Unknown notification")
+        return RedirectResponse(target, status_code=303)
 
     @app.get("/session-expired", response_class=HTMLResponse)
     def session_expired(request: Request):
@@ -142,12 +159,46 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         return page(request, "expired.html")
 
     @app.get("/m/{user_id}/profile", response_class=HTMLResponse)
-    def profile(request: Request, user_id: str):
-        """Profile tab (ui-label-reference §9). S-103 itself is ACC US-3, not built yet."""
+    def profile_page(request: Request, user_id: str, saved: int = 0):
+        """S-103: ACC US-3 #1, FR-023."""
+        return page(request, "profile.html", user=mother(user_id), p=profile.load(conn, user_id, clock.now()), saved=saved)
+
+    def edit_form(request: Request, user, form: dict, errors: dict, status: int = 200):
+        return page(request, "edit_profile.html", status, user=user, p=profile.load(conn, user["user_id"], clock.now()), form=form, errors=errors)
+
+    @app.get("/m/{user_id}/profile/edit", response_class=HTMLResponse)
+    def profile_edit(request: Request, user_id: str):
+        """S-011: ACC US-3 #2, FR-024."""
         user = mother(user_id)
-        row = conn.execute("SELECT edd FROM PREGNANCY_PROFILE WHERE user_id = ?", (user_id,)).fetchone()
-        week = gestational_week(date.fromisoformat(row["edd"]), clock.now().date()) if row else None
-        return page(request, "profile.html", user=user, week=week)
+        p = profile.load(conn, user_id, clock.now())
+        if p["edd"] is None:                         # BR-006
+            return go(user_id, "setup")
+        return edit_form(request, user, {"edd": p["edd"], "height_cm": "" if p["height_cm"] is None else p["height_cm"]}, {})
+
+    @app.post("/m/{user_id}/profile/edit", response_class=HTMLResponse)
+    async def profile_save(request: Request, user_id: str):
+        user = mother(user_id)
+        form = {k: v for k, v in (await request.form()).items()}
+        try:
+            profile.save(conn, user_id, form, clock.now())
+        except profile.ProfileError as e:
+            return edit_form(request, user, form, e.errors, 422)
+        return RedirectResponse(f"/m/{user_id}/profile?saved=1", status_code=303)
+
+    @app.get("/m/{user_id}/settings/notifications", response_class=HTMLResponse)
+    def notification_settings(request: Request, user_id: str):
+        """S-010."""
+        return page(request, "notif_settings.html", user=mother(user_id), prefs=profile.preferences(conn, user_id))
+
+    @app.post("/m/{user_id}/settings/notifications", response_class=HTMLResponse)
+    async def notification_toggle(request: Request, user_id: str):
+        user = mother(user_id)
+        form = await request.form()
+        try:
+            profile.set_switch(conn, user_id, form.get("key") or "", form.get("value") == "1", clock.now())
+        except profile.ProfileError:
+            return page(request, "notif_settings.html", 422, user=user, prefs=profile.preferences(conn, user_id))
+        return RedirectResponse(f"/m/{user_id}/settings/notifications", status_code=303)
 
     @app.get("/tci/booking", response_class=HTMLResponse)
     def tci_booking(request: Request):

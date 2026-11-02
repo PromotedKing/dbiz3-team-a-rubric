@@ -609,3 +609,54 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | UI package (D-80) | New | Mới |
 | UI package (D-80) | Open | Mở |
 | UI package (D-80) | Symptom | Triệu chứng |
+| ACC screens (specs/009, D-80) | Pregnancy | THAI KỲ |
+| ACC screens (specs/009, D-80) | Last menstrual period | Kỳ kinh cuối |
+| ACC screens (specs/009, D-80) | Gestational age now | Tuổi thai hiện tại |
+| ACC screens (specs/009, D-80) | {w} weeks {d} days | {w} tuần {d} ngày |
+| ACC screens (specs/009, D-80) | Monitor at home, as your doctor asked | BÁC SĨ DẶN THEO DÕI TẠI NHÀ |
+| ACC screens (specs/009, D-80) | See the instructions | Xem chỉ dẫn |
+| ACC screens (specs/009, D-80) | None yet | Chưa có |
+| ACC screens (specs/009, D-80) | Data & privacy | DỮ LIỆU & QUYỀN RIÊNG TƯ |
+| ACC screens (specs/009, D-80) | Data sharing consent | Đồng ý chia sẻ dữ liệu |
+| ACC screens (specs/009, D-80) | Agreed | Đã đồng ý |
+| ACC screens (specs/009, D-80) | Not agreed | Chưa đồng ý |
+| ACC screens (specs/009, D-80) | On | Bật |
+| ACC screens (specs/009, D-80) | Off | Tắt |
+| ACC screens (specs/009, D-80) | Hospital record link | Liên kết hồ sơ bệnh viện |
+| ACC screens (specs/009, D-80) | Linked on | Liên kết ngày |
+| ACC screens (specs/009, D-80) | Requested on | Yêu cầu ngày |
+| ACC screens (specs/009, D-80) | Facility | Cơ sở |
+| ACC screens (specs/009, D-80) | Link request awaiting hospital confirmation | Yêu cầu liên kết đang chờ bệnh viện xác nhận |
+| ACC screens (specs/009, D-80) | Data used in Mother & Baby 360: results of prenatal visits, due date set by the hospital. | Dữ liệu dùng trong Mother & Baby 360: kết quả các lần khám thai, ngày dự sinh do bệnh viện xác định. |
+| ACC screens (specs/009, D-80) | Support — TCI app ↗ | Hỗ trợ — App TCI ↗ |
+| ACC screens (specs/009, D-80) | Edit › | Sửa › |
+| ACC screens (specs/009, D-80) | Record no. {code} • TCI account | Tài khoản TCI · Mã hồ sơ {code} |
+| ACC screens (specs/009, D-80) | From your TCI account – edit in the TCI app | Lấy từ tài khoản TCI, không sửa được ở đây |
+| ACC screens (specs/009, D-80) | Locked because the hospital record is linked | Đã khoá vì hồ sơ bệnh viện đã liên kết |
+| ACC screens (specs/009, D-80) | Hospital record | Hồ sơ bệnh viện |
+| ACC screens (specs/009, D-80) | When clinical staff view or respond to your report | Luôn bật để mẹ không bỏ lỡ phản hồi của nhân viên y tế |
+| ACC screens (specs/009, D-80) | When results from a new visit are available | Khi bệnh viện cập nhật kết quả lần khám |
+| ACC screens (specs/009, D-80) | Reminders to report the metrics your doctor assigned | Nhắc đo và báo cáo chỉ số bác sĩ dặn |
+| ACC screens (specs/009, D-80) | Notifications are sent via the TCI app. | Thông báo được gửi qua app TCI. |
+| ACC screens (specs/009, D-80) | This setting cannot be changed. | Không đổi được cài đặt này. |
+| ACC screens (specs/009, D-80) | {n} unread notifications | {n} thông báo chưa đọc |
+| ACC screens (specs/009, D-80) | Read | Đã đọc |
+| ACC screens (specs/009, D-80) | New notice | Mới |
+| ACC screens (specs/009, D-80) | Unread | Chưa đọc |
+| ACC screens (specs/009, D-80) | Doctors and nurses send these after a visit or after viewing your report. | Bác sĩ, y tá gửi sau khi khám hoặc xem báo cáo của mẹ. |
+| ACC screens (specs/009, D-80) | You only receive information here. To report a metric or symptom, go to | Mẹ chỉ nhận thông tin ở đây. Cần báo chỉ số hay triệu chứng, mẹ vào |
+| ACC screens (specs/009, D-80) | Home › Report | Trang chủ › Báo cáo |
+| ACC screens (specs/009, D-80) | New visit results available | Có kết quả khám mới |
+| ACC screens (specs/009, D-80) | Appointment reminder | Nhắc lịch hẹn |
+| ACC screens (specs/009, D-80) | Reminder: measure and report {metric} | Nhắc đo và báo cáo {metric} |
+| ACC screens (specs/009, D-80) | Your question has been sent to a nurse | Câu hỏi của mẹ đã được chuyển cho y tá |
+| ACC screens (specs/009, D-80) | Your {what} has been sent to clinical staff | {what} của mẹ đã được gửi tới nhân viên y tế |
+| ACC screens (specs/009, D-80) | {actor} responded to your {what} | {actor} đã phản hồi {what} của mẹ |
+| ACC screens (specs/009, D-80) | Your {what} is {status} | {what} của mẹ: {status} |
+| ACC screens (specs/009, D-80) | {metric} report | Báo cáo {metric} |
+| ACC screens (specs/009, D-80) | question | câu hỏi |
+| ACC screens (specs/009, D-80) | Report {code} resolved | Báo cáo {code} đã xử lý |
+| ACC screens (specs/009, D-80) | Report {code} escalated to a doctor | Báo cáo {code} đã chuyển bác sĩ |
+| ACC screens (specs/009, D-80) | Your report has been received | Đã nhận báo cáo của mẹ |
+| ACC screens (specs/009, D-80) | Your report has been viewed | Báo cáo của mẹ đã được xem |
+| ACC screens (specs/009, D-80) | Routine antenatal check-up {date} | Khám thai định kỳ {date} |

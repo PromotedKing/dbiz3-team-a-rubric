@@ -150,7 +150,7 @@ def test_session_expired(client):
 
 def test_profile_tab(client, user_id):
     page = client.get(f"/m/{user_id('tci-000123')}/profile").text
-    assert "Nguyễn Thị Lan" in page and vi("Record no. {code}", code="TC-00123") in page and vi("Week {n}", n=28) in page
+    assert "Nguyễn Thị Lan" in page and "TC-00123" in page and vi("{w} weeks {d} days", w=28, d=0) in page
 
 
 def test_theme_tokens_are_served(client):

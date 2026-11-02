@@ -1,15 +1,61 @@
-{#- "Hồ sơ" tab. S-103 itself (ACC US-3) comes with specs/009-acc-profile; this keeps the tab working with the identity already loaded for Home (ACC FR-017). -#}
+{#- S-103: ACC US-3 #1, FR-023; design: screens/ui-final Màn 12. No logout, password or delete (D-01). -#}
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
 {% set page_title = "Profile" %}
 {% set active_tab = "profile" %}
 {% block content %}
-<div class="hero" style="display:flex;gap:12px;align-items:center">
+{% if saved %}<div class="toast" role="status">{{ icon.ok(20, "#48D07C") }}<p class="t-body" style="color:#fff;flex:1">{{ _("Changes saved") }}</p></div>{% endif %}
+<a href="/m/{{ user.user_id }}/profile/edit" class="hero" style="display:flex;gap:12px;align-items:center">
   <div style="width:56px;height:56px;border-radius:28px;background:#009788;color:#fff;font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none">{{ initials(user.full_name) }}</div>
-  <div style="flex:1">
+  <div style="flex:1;min-width:0">
     <p class="t-title">{{ user.full_name }}</p>
-    <p class="t-cap" style="color:#212121">{% if user.record_code %}{{ _("Record no. {code}", code=user.record_code) }}{% endif %}{% if user.record_code and week is not none %} • {% endif %}{% if week is not none %}{{ _("Week {n}", n=week) }}{% endif %}</p>
+    {% if user.record_code %}<p class="t-cap" style="color:#212121">{{ _("Record no. {code} • TCI account", code=user.record_code) }}</p>{% endif %}
+    <p class="t-cap" style="color:#212121">{{ p.phone }}</p>
+  </div>
+  <span class="lnk" style="font-size:12px">{{ _("Edit ›") }}</span>
+</a>
+
+{% if p.edd %}
+<div class="bl8">
+  <p class="lab">{{ _("Pregnancy") }}</p>
+  <div class="card" style="padding:0 16px">
+    <div class="kv"><span class="k">{{ _("Due date") }}</span><span class="b">{{ p.edd | dmy }}</span></div>
+    {% if p.lmp %}<div class="kv"><span class="k">{{ _("Last menstrual period") }}</span><span>{{ p.lmp | dmy }}</span></div>{% endif %}
+    <div class="kv"><span class="k">{{ _("Gestational age now") }}</span><span>{{ _("{w} weeks {d} days", w=p.week, d=p.week_day) }}</span></div>
   </div>
 </div>
-<div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("Edit profile, pregnancy information, hospital record link and notification settings come with ACC US-3 (S-103, S-010, S-011).") }}</p></div>
+{% endif %}
+
+<div class="bl8">
+  <p class="lab">{{ _("Monitor at home, as your doctor asked") }}</p>
+  <a href="/m/{{ user.user_id }}/instructions" class="card" style="display:flex;flex-direction:column;gap:10px;color:#212121">
+    <div class="sec"><div style="display:flex;gap:8px;flex-wrap:wrap">
+      {% for m in p.instructions %}<span class="tag ok">{{ m | t }}</span>{% else %}<span class="tag un">{{ _("None yet") }}</span>{% endfor %}</div>{{ icon.chev() }}</div>
+    <p class="t-cap">{{ _("Doctor's instructions") }} · {{ _("See the instructions") }}</p>
+  </a>
+</div>
+
+<div class="bl8">
+  <p class="lab">{{ _("Data & privacy") }}</p>
+  <div class="card np">
+    <div class="row"><span class="grow">{{ _("Data sharing consent") }}</span><span class="b" style="color:#00873F">{{ _("Agreed") if p.consent else _("Not agreed") }}</span></div>
+    {% if p.link %}
+    <details class="row" style="display:block">
+      <summary style="display:flex;align-items:center;gap:12px;min-height:40px;cursor:pointer"><span class="grow">{{ _("Hospital record link") }}</span>
+        <span class="tag {{ 'ok' if p.linked else 'un' }}">{{ _("Linked") if p.linked else _("Pending link") }}</span></summary>
+      {% if p.linked %}
+        <div class="kv"><span class="k">{{ _("Medical record number") }}</span><span>{{ p.link.record_code }}</span></div>
+        <div class="kv"><span class="k">{{ _("Linked on") }}</span><span>{{ p.link.linked_at | show_time }}</span></div>
+      {% else %}
+        <p class="t-cap" style="padding:8px 0">{{ _("Link request awaiting hospital confirmation") }}</p>
+        <div class="kv"><span class="k">{{ _("Requested on") }}</span><span>{{ p.link.requested_at | show_time }}</span></div>
+      {% endif %}
+      <div class="kv"><span class="k">{{ _("Facility") }}</span><span>{{ p.link.facility }}</span></div>
+      <p class="t-cap" style="padding:8px 0">{{ _("Data used in Mother & Baby 360: results of prenatal visits, due date set by the hospital.") }}</p>
+    </details>
+    {% endif %}
+    <a href="/m/{{ user.user_id }}/settings/notifications" class="row"><span class="grow">{{ _("Notification settings") }}</span><span class="t-cap">{{ _("On") if p.reminders_on else _("Off") }}</span>{{ icon.chev() }}</a>
+    <a href="/tci" class="row"><span class="grow">{{ _("Support — TCI app ↗") }}</span>{{ icon.chev() }}</a>
+  </div>
+</div>
 {% endblock %}
