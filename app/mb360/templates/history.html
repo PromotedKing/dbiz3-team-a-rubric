@@ -1,0 +1,65 @@
+{#- S-025; design: screens/ui-final Màn 18. Read-only (BR-001). Thresholds and the reference range come from THRESHOLD_RULE (FR-012, hard rule 7). -#}
+{% extends "base.html" %}
+{% set page_title = "Metric history" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/health" %}
+{% set colors = ["#00A651", "#009788"] %}
+{% block content %}
+<form class="bl8" method="get" action="/m/{{ user.user_id }}/history">
+  <select class="inp" name="metric" aria-label="{{ _('Metric') }}" onchange="this.form.submit()">
+    {% for m in metrics %}<option value="{{ m }}"{% if m == h.metric %} selected{% endif %}>{{ m | t }}</option>{% endfor %}
+  </select>
+  {% if h.metric == "Blood glucose" %}
+  <select class="inp" name="context" aria-label="{{ _('Measurement time') }}" onchange="this.form.submit()">
+    <option value="">{{ _("All") }}</option>
+    {% for code, text in contexts %}<option value="{{ code }}"{% if code == h.context %} selected{% endif %}>{{ text | t }}</option>{% endfor %}
+  </select>
+  {% endif %}
+  <div class="grid2">
+    <div class="fld"><label class="t-cap" style="font-weight:400" for="f">{{ _("From date") }}</label><input id="f" class="inp" type="date" name="from" value="{{ h.start.isoformat() }}" onchange="this.form.submit()"></div>
+    <div class="fld"><label class="t-cap" style="font-weight:400" for="to">{{ _("To date") }}</label><input id="to" class="inp" type="date" name="to" value="{{ h.end.isoformat() }}" onchange="this.form.submit()"></div>
+  </div>
+  {% if h.error %}<p class="err" data-error-for="from">⚠ {{ h.error | t }}</p>{% endif %}
+</form>
+
+{% if h.rows %}
+<div class="card bl8" style="padding:14px">
+  <div style="display:flex;gap:14px;flex-wrap:wrap">
+    {% if h.chart.series | length > 1 %}{% for s in h.chart.series %}
+    <span class="t-cap" style="display:flex;align-items:center;gap:6px"><i style="width:14px;height:3px;border-radius:2px;display:block;background:{{ colors[loop.index0] }}"></i>{{ s.name | t }}</span>
+    {% endfor %}{% endif %}
+    {% if h.line_text %}
+    <span class="t-cap" style="display:flex;align-items:center;gap:6px"><i style="width:14px;height:3px;display:block;background:repeating-linear-gradient(90deg,#C4520A 0 4px,transparent 4px 7px)"></i>
+      {{ _("Threshold {value}", value=h.line_text[1]) if h.line_text[0] == "threshold" else _("Reference range {value}", value=h.line_text[1]) }}</span>
+    {% endif %}
+  </div>
+  <svg viewBox="0 0 320 160" width="100%" role="img" aria-label="{{ _('Metric history') }} · {{ h.metric | t }}">
+    <g stroke="#EEEEEE" stroke-width="1">{% for tick in h.chart.ticks %}<line x1="{{ h.chart.left }}" x2="{{ h.chart.right }}" y1="{{ tick.y }}" y2="{{ tick.y }}"/>{% endfor %}</g>
+    <g font-size="10" fill="#6F6F6F" font-family="Roboto, sans-serif">{% for tick in h.chart.ticks %}<text x="0" y="{{ tick.y + 3 }}">{{ tick.text }}</text>{% endfor %}
+      <text x="{{ h.chart.left }}" y="154">{{ h.rows[-1].at[:10] | dmy }}</text><text x="{{ h.chart.right }}" y="154" text-anchor="end">{{ h.rows[0].at[:10] | dmy }}</text></g>
+    {% for line in h.chart.lines %}<line data-line="{{ line.kind }}" x1="{{ h.chart.left }}" x2="{{ h.chart.right }}" y1="{{ line.y }}" y2="{{ line.y }}" stroke="#C4520A" stroke-width="1.2" stroke-dasharray="4 3"/>{% endfor %}
+    {% for s in h.chart.series %}
+      <polyline fill="none" stroke="{{ colors[loop.index0] }}" stroke-width="2" points="{{ s.polyline }}"/>
+      {% set color = colors[loop.index0] %}{% for p in s.points %}<circle cx="{{ p.x }}" cy="{{ p.y }}" r="3" fill="{{ color }}"/>{% endfor %}
+    {% endfor %}
+  </svg>
+  {% if h.stats %}
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+    <div style="background:#F5F5F5;border-radius:12px;padding:8px 10px"><p class="t-cap">{{ _("Average") }}</p><p class="t-body b">{{ h.stats.average }}</p></div>
+    <div style="background:#F5F5F5;border-radius:12px;padding:8px 10px"><p class="t-cap">{{ _("Lowest") }}</p><p class="t-body b">{{ h.stats.lowest }}</p></div>
+    <div style="background:#F5F5F5;border-radius:12px;padding:8px 10px"><p class="t-cap">{{ _("Highest") }}</p><p class="t-body b">{{ h.stats.highest }}</p></div>
+  </div>
+  {% endif %}
+</div>
+<div class="card np">
+  {% for r in h.rows %}
+  <div class="row" data-measure>
+    <div class="grow"><p class="t-body b">{{ r.value | t_known }}</p>
+      <p class="t-cap">{{ r.at | show_time }} · {{ r.source | t }}{% if r.context %} · {{ context_labels[r.context] | t }}{% endif %}</p></div>
+    {% if r.label %}<span class="tag {{ 'al' if r.label == 'Above threshold' else 'ok' }}">{{ r.label | t }}</span>{% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% elif not h.error %}
+<div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("No data for this period.") }}</p></div>
+{% endif %}
+{% endblock %}

@@ -493,6 +493,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | none new; open points in `plan.md` Complexity Tracking |
 | Commit | see the commit of this entry |
 
+### Entry 36: 02/11 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `start_feature.py --spec specs/spec-HLT.md HLT --name history`. Plan, research, contracts and tasks written directly in the Spec Kit layout; the `/speckit-*` skills were not invoked and no separate `/speckit-analyze` was run |
+| Feature and tasks | `specs/010-hlt-history`, T001 – T005 (HLT US-3, US-4; S-027, S-025) |
+| What the agent produced | `hlt/history.py` (rows, statistics, chart geometry, S-027 cards), route, `history.html` (inline SVG), richer `instructions.html`, links on S-023 and S-008; 12 label rows. Tests first: `test_hlt_history.py`, `test_hlt_history_page.py` seen failing on import. Agent mistake: the first test wrote a Self-entered fetal heart rate, which the schema refuses (`ck_hmr_fetal_hr_visit`), so that case is enforced by the database, not by the query alone |
+| Human review | Pending (pull request) |
+| Tests | see the pull request |
+| Spec issues found | none new; HLT Q12 stays open: no statistics for urine protein and sleep, default range 30 days (`plan.md`) |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It

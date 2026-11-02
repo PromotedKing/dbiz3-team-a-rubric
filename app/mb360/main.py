@@ -11,6 +11,7 @@ from . import clock, ui
 from . import db as dbmod
 from .alr import cases, my_reports, reports, routing, status, thresholds, validation
 from .alr import status as status_mod
+from .hlt import history
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))
 # On-screen symptom wording (docs/ui-label-reference.md, D-73); stored values stay as in the schema.
@@ -59,7 +60,7 @@ def create_app(conn: sqlite3.Connection) -> FastAPI:
 
     @app.get("/m/{user_id}/instructions", response_class=HTMLResponse)
     def doctor_instructions(request: Request, user_id: str, submitted: int = 0):
-        return page(request, "instructions.html", user=mother(user_id), flags=instructions(user_id), submitted=submitted)
+        return page(request, "instructions.html", user=mother(user_id), flags=history.instruction_cards(conn, user_id), submitted=submitted)
 
     @app.get("/m/{user_id}/report", response_class=HTMLResponse)
     def new_report(request: Request, user_id: str, metric: str = "Symptom", glucose_context: str = ""):

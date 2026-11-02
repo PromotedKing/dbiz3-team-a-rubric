@@ -660,3 +660,15 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | ACC screens (specs/009, D-80) | Your report has been received | Đã nhận báo cáo của mẹ |
 | ACC screens (specs/009, D-80) | Your report has been viewed | Báo cáo của mẹ đã được xem |
 | ACC screens (specs/009, D-80) | Routine antenatal check-up {date} | Khám thai định kỳ {date} |
+| HLT screens (specs/010, D-80) | Metric | Chỉ số |
+| HLT screens (specs/010, D-80) | From date | Từ ngày |
+| HLT screens (specs/010, D-80) | To date | Đến ngày |
+| HLT screens (specs/010, D-80) | Average | Trung bình |
+| HLT screens (specs/010, D-80) | Lowest | Thấp nhất |
+| HLT screens (specs/010, D-80) | Highest | Cao nhất |
+| HLT screens (specs/010, D-80) | Threshold {value} | Ngưỡng {value} |
+| HLT screens (specs/010, D-80) | Reference range {value} | Tham chiếu {value} |
+| HLT screens (specs/010, D-80) | No data for this period. | Không có dữ liệu trong khoảng này. |
+| HLT screens (specs/010, D-80) | The start date must not be after the end date. | Từ ngày không được sau Đến ngày. |
+| HLT screens (specs/010, D-80) | Latest | Lần gần nhất |
+| HLT screens (specs/010, D-80) | Assigned {date} | chỉ định {date} |
