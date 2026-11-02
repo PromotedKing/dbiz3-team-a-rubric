@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Đã lưu nhật ký</title>
+<link rel="stylesheet" href="./tci.css">
+</head>
+<body style="background:#E9E9E9;display:flex;justify-content:center;padding:24px 0">
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.day{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 6px;border-radius:12px;color:#212121;font-size:15px;line-height:20px;font-weight:700;min-height:64px}
+.day .w{font-size:12px;line-height:16px;font-weight:400;color:#6F6F6F}
+a.day:hover{background:#F5F5F5;color:#212121}
+.day.on{background:#00A651;color:#fff}
+.day.on .w{color:#E6F6EC}
+.day.off{color:#B4B4B4}
+.dt{width:6px;height:6px;border-radius:3px}
+a.card.ent{display:flex;gap:12px;align-items:center;color:#212121}
+.toast{position:absolute;left:16px;right:16px;top:68px;background:#212121;color:#fff;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 16px rgba(0,0,0,.2);z-index:3}
+</style>
+</helmet>
+<div class="scr" style="width: 390px; height: 844px">
+  <div class="hdr" style="padding-left: 16px">
+    <h1>Timeline thai kỳ</h1>
+  </div>
+
+  <div class="toast" role="status">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#48D07C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+    <p class="t-body" style="color: #fff; flex: 1">Đã lưu nhật ký</p>
+  </div>
+
+  <div class="body">
+    <p class="t-body" style="color: #6F6F6F">Ngày khám và nhật ký của mẹ, theo từng tuần.</p>
+
+    <div class="card" style="padding: 12px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: center; justify-content: space-between">
+        <a href="Saved.html" class="ib" aria-label="Tuần trước"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></a>
+        <div style="text-align: center">
+          <p class="t-disp">Tuần 24</p>
+          <p class="t-cap">26/10/2026 – 01/11/2026</p>
+        </div>
+        <a href="Saved.html" class="ib" aria-label="Tuần sau"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px">
+        <a href="Day.html" class="day"><span class="w">T2</span>26<span class="dt" style="background: #F66A0B"></span></a>
+        <a href="Day.html" class="day"><span class="w">T3</span>27<span class="dt" style="background: #00A651"></span></a>
+        <a href="Day.html" class="day on" aria-current="date"><span class="w">T4</span>28<span class="dt" style="background: #fff"></span></a>
+        <div class="day off"><span class="w">T5</span>29<span class="dt"></span></div>
+        <div class="day off"><span class="w">T6</span>30<span class="dt"></span></div>
+        <div class="day off"><span class="w">T7</span>31<span class="dt"></span></div>
+        <div class="day off"><span class="w">CN</span>01<span class="dt"></span></div>
+      </div>
+      <div style="display: flex; gap: 16px; justify-content: center">
+        <span class="t-cap" style="display: flex; align-items: center; gap: 6px"><span class="dt" style="background: #F66A0B"></span>Ngày khám</span>
+        <span class="t-cap" style="display: flex; align-items: center; gap: 6px"><span class="dt" style="background: #00A651"></span>Có nhật ký</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <p class="t-title">Trong tuần này</p>
+      <a href="Day.html" class="card ent" style="padding: 12px; outline: 1.5px solid #00A651; outline-offset: -1.5px">
+        <div style="width: 56px; height: 56px; border-radius: 12px; background: #E8DCD2; flex: none" role="img" aria-label="Ảnh bụng bầu"></div>
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; gap: 8px; align-items: center"><p class="t-body b">Hôm nay 28/10</p><span class="tag ok">Vui</span></div>
+          <p class="t-cap">Chiều nay đi dạo công viên, con đạp liên tục…</p>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+      </a>
+      <a href="Day.html" class="card ent" style="padding: 12px">
+        <div class="ic40" style="width: 56px; height: 56px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></div>
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; gap: 8px; align-items: center"><p class="t-body b">Thứ Ba 27/10</p><span class="tag ok">Vui</span></div>
+          <p class="t-cap">Tối nay bé đạp mạnh lắm, cả nhà cùng đặt tay lên…</p>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+      </a>
+      <a href="Day.html" class="card ent" style="padding: 12px">
+        <div style="width: 56px; height: 56px; border-radius: 12px; background: #263238; flex: none; display: flex; align-items: center; justify-content: center"><div style="width: 26px; height: 20px; border-radius: 50%; background: #78909C"></div></div>
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; gap: 8px; align-items: center"><p class="t-body b">Thứ Hai 26/10</p><span class="tag al">Ngày khám</span></div>
+          <p class="t-cap">Siêu âm tuần 24, tim thai 148 bpm · có nhật ký</p>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <nav class="tabs" aria-label="Điều hướng chính">
+    <a href="Main.html" class="tab"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2.5 11H5v9.5h5.5v-6h3v6H19V11h2.5z"/></svg>Trang chủ</a>
+    <a href="Timeline.html" class="tab on" aria-current="page"><svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path d="M7 2h2v2h6V2h2v2h2a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2zM5 9v10h14V9z"/></svg>Timeline</a>
+    <a href="Chat.html" class="tab"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.5 1.3 4.8 3.4 6.3L4.5 22l4.4-2.4c1 .3 2 .4 3.1.4 5.5 0 10-3.8 10-8.5S17.5 3 12 3z"/></svg>Chatbot</a>
+    <a href="Notices.html" class="tab"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 22a2.5 2.5 0 0 0 2.5-2.5h-5A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 0 0-5.5-6.8V3.5a1.5 1.5 0 0 0-3 0v.7A7 7 0 0 0 5 11v5l-2 2v1h18v-1z"/></svg><span class="badge">1</span>Từ bác sĩ</a>
+    <a href="Profile.html" class="tab"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.5"/><path d="M3 21c0-4.4 4-7.5 9-7.5s9 3.1 9 7.5z"/></svg>Hồ sơ</a>
+  </nav>
+</div>
+</x-dc>
+</body>
+</html>

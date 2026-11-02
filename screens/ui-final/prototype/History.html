@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Lịch sử chỉ số</title>
+<link rel="stylesheet" href="./tci.css">
+</head>
+<body style="background:#E9E9E9;display:flex;justify-content:center;padding:24px 0">
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.lg{display:flex;align-items:center;gap:6px;font-size:12px;line-height:16px;color:#6F6F6F}
+.lg i{width:14px;height:3px;border-radius:2px;display:block}
+.st3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.st3 div{background:#F5F5F5;border-radius:12px;padding:8px 10px}
+</style>
+</helmet>
+<div class="scr" style="width: 390px; height: 844px">
+  <div class="hdr">
+    <a href="Main.html" class="ib" aria-label="Quay lại"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a>
+    <h1>Lịch sử chỉ số</h1>
+  </div>
+
+  <div class="body" style="gap: 12px">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <select class="inp" aria-label="Chọn chỉ số"><option>Huyết áp</option><option>Đường huyết</option><option>Protein niệu</option><option>Tim thai</option><option>Cân nặng</option><option>Nhiệt độ</option><option>Nhịp tim</option><option>Giấc ngủ</option></select>
+      <div class="grid2">
+        <input class="inp" aria-label="Từ ngày" value="Từ 06/10/2026">
+        <input class="inp" aria-label="Đến ngày" value="Đến 28/10/2026">
+      </div>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: column; gap: 10px; padding: 14px">
+      <div style="display: flex; gap: 14px; flex-wrap: wrap">
+        <span class="lg"><i style="background: #00A651"></i>Tâm thu</span>
+        <span class="lg"><i style="background: #009788"></i>Tâm trương</span>
+        <span class="lg"><i style="background: repeating-linear-gradient(90deg, #C4520A 0 4px, transparent 4px 7px)"></i>Ngưỡng 140/90</span>
+      </div>
+      <svg viewBox="0 0 320 160" width="100%" role="img" aria-label="Biểu đồ huyết áp 06/10 đến 27/10/2026, lần đo 27/10 vượt ngưỡng 146/94 mmHg">
+        <g stroke="#EEEEEE" stroke-width="1"><path d="M20 20H310M20 56H310M20 92H310M20 128H310"/></g>
+        <g font-size="10" fill="#6F6F6F" font-family="Roboto, sans-serif"><text x="0" y="23">160</text><text x="0" y="59">130</text><text x="0" y="95">100</text><text x="4" y="131">70</text></g>
+        <path d="M20 44H310" stroke="#C4520A" stroke-width="1.2" stroke-dasharray="4 3"/>
+        <path d="M20 104H310" stroke="#C4520A" stroke-width="1.2" stroke-dasharray="4 3"/>
+        <polyline fill="none" stroke="#00A651" stroke-width="2" points="28,72.8 68,68 108,70.4 148,65.6 188,66.8 228,68 268,70.4 300,36.8"/>
+        <polyline fill="none" stroke="#009788" stroke-width="2" points="28,123.2 68,118.4 108,120.8 148,117.2 188,119.6 228,118.4 268,120.8 300,99.2"/>
+        <g fill="#00A651"><circle cx="28" cy="72.8" r="3"/><circle cx="68" cy="68" r="3"/><circle cx="108" cy="70.4" r="3"/><circle cx="148" cy="65.6" r="3"/><circle cx="188" cy="66.8" r="3"/><circle cx="228" cy="68" r="3"/><circle cx="268" cy="70.4" r="3"/></g>
+        <g fill="#009788"><circle cx="28" cy="123.2" r="3"/><circle cx="68" cy="118.4" r="3"/><circle cx="108" cy="120.8" r="3"/><circle cx="148" cy="117.2" r="3"/><circle cx="188" cy="119.6" r="3"/><circle cx="228" cy="118.4" r="3"/><circle cx="268" cy="120.8" r="3"/></g>
+        <circle cx="300" cy="36.8" r="4.5" fill="#fff" stroke="#C4520A" stroke-width="2.5"/>
+        <circle cx="300" cy="99.2" r="4.5" fill="#fff" stroke="#C4520A" stroke-width="2.5"/>
+        <g font-size="10" fill="#6F6F6F" font-family="Roboto, sans-serif" text-anchor="middle"><text x="28" y="152">06/10</text><text x="108" y="152">13/10</text><text x="188" y="152">20/10</text><text x="268" y="152">26/10</text></g>
+      </svg>
+      <div class="st3">
+        <div><p class="t-cap">Trung bình</p><p class="t-body b">123/80</p></div>
+        <div><p class="t-cap">Thấp nhất</p><p class="t-body b">116/74</p></div>
+        <div><p class="t-cap">Cao nhất</p><p class="t-body b">146/94</p></div>
+      </div>
+    </div>
+
+    <div class="card np">
+      <div class="row"><div class="grow"><p class="t-body b">146/94 mmHg</p><p class="t-cap">27/10/2026 · 08:40 · Bác sĩ chỉ định</p></div><span class="tag al">Vượt ngưỡng</span></div>
+      <div class="row"><div class="grow"><p class="t-body b">118/76 mmHg</p><p class="t-cap">26/10/2026 · 09:30 · Từ lần khám</p></div><span class="tag ok">Bình thường</span></div>
+      <div class="row"><div class="grow"><p class="t-body b">120/78 mmHg</p><p class="t-cap">24/10/2026 · 20:15 · Bác sĩ chỉ định</p></div><span class="tag ok">Bình thường</span></div>
+      <div class="row"><div class="grow"><p class="t-body b">121/77 mmHg</p><p class="t-cap">20/10/2026 · 07:05 · Bác sĩ chỉ định</p></div><span class="tag ok">Bình thường</span></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>
