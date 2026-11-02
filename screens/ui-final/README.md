@@ -1,6 +1,6 @@
 # UI package: Mother & Baby 360, 25 mother-side screens
 
-The team's latest UI design, as delivered in `MotherBaby360_UI_hoan-chinh` (received 02/11/2026). **It is a design input, not yet the source of truth:** where it differs from `docs/prd.md`, `specs/` or `screens/screen-spec-*.md`, the difference below stays open until a person decides it (AGENTS.md rule 1). The running app does not follow this package yet.
+The team's latest UI design, as delivered in `MotherBaby360_UI_hoan-chinh` (received 02/11/2026). **It is a design input, not yet the source of truth:** where it differs from `docs/prd.md`, `specs/` or `screens/screen-spec-*.md`, the difference below stays open until a person decides it (AGENTS.md rule 1). **D-80 (PR #15, Sang, 02/11/2026) builds the app from it with limits:** adopted U1, U11 (day screen), U14; not adopted, the specs stand: U3 – U8, U13, U15 – U18, with the D-75 boundaries for U12; not built, no data: U2, U9; U10 keeps all 4 notification types. The owners can still change any of these. The "App today" column below is the state before D-80.
 
 | Path | Content |
 |---|---|
