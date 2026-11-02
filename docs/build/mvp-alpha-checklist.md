@@ -58,6 +58,7 @@ limitation discovered by the instructor that is not written here is.
 | 14 | Chatbot: the real Gemini call is not tested (no key; fake LLM by default); danger phrases, personal-health markers and topic words are provisional; on an LLM failure the question is not kept (differs from the DM-29 default) | BOT §10 Q2, Q12, Q14; D-47; DM-29 | When a member adds a key; when the SME answers |
 | 13 | Data is rebuilt from the seed every time the app starts; reports made in the demo are lost on restart | `specs/001-alr-core/research.md` R2 | Session 11 (deployment) |
 | 15 | Screens are in Vietnamese (D-79) but free text from the seed (doctor's notes, guidance templates, diary, chat) is English, and 213 added labels are proposed, not yet reviewed | D-79; `docs/ui-label-reference.md` | When Chi and Ánh review the labels; seed text when the hospital supplies content (D-25) |
+| 17 | "Export PDF album" opens a print-ready page and the browser saves it as PDF; the server generates no PDF file | TML FR-014; build log spec issue #7 | When the team decides |
 | 16 | The sub-app has no way to book a visit and no appointment card (D-80, no appointment data); the "Book" tab of the simulated TCI app opens a stand-in page. Session expiry is not checked (no sign-in): S-043 is reachable only from the demo page | D-80; spec-APT BR-001, BR-003; `screens/ui-final/README.md` U2 | When the team decides U2; Session 11 |
 
 ## 4. Sign-off
