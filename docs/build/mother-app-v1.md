@@ -13,6 +13,18 @@ Open http://127.0.0.1:8000/ . On a computer it shows a phone frame; on a phone (
 
 `mb360.main:app` is still the plain app of the seed and the tests. The clinical web is at `/staff`, on the same data: a nurse's or doctor's answer appears in the mother's app.
 
+## Put it on the internet
+
+Render Web Service from `render.yaml` (why: `adr-hosting.md`; errors met: `local-vs-internet.md`).
+
+1. On render.com, sign in with GitHub and allow access to this repository.
+2. **New → Blueprint**, choose the repository; Render reads `render.yaml`. Apply it.
+3. Read the generated `MB360_STAFF_PASSWORD` on the service's Environment page. `/staff`, the reset button and `/tci/accounts` ask for it (any user name). Share it only inside the team.
+4. Optional: add `GEMINI_API_KEY` and `GEMINI_MODEL` on the same page, never in the repository.
+5. Open the `https://….onrender.com` link on a phone over mobile data and run one flow. Add what fails to `local-vs-internet.md`.
+
+Every push to the branch named in `render.yaml` deploys again and returns the data to the sample state.
+
 ## The flow
 
 TCI home → tile Mẹ & Bé 360 → consent → guide (3 pages) → pregnancy setup → Home. The next opening goes straight to Home.

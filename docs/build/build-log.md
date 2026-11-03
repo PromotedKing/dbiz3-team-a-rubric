@@ -554,3 +554,7 @@ does not happen again.
 
 Built without `/speckit-*`, like the three slices before it: the request was one complete app from the UI package, reviewed once it exists (D-81). Checked by the test suite and by a scripted walk of the whole flow in Edge at 390 x 844; not yet tried on a real phone.
 
+## 03/11/2026: ready for hosting (Sang, branch `sang/mother-app-v1`)
+
+Session 11. `render.yaml`, password on the staff and test pages (D-82), Vietnam time in the live clock, one request at a time, Secure cookie on the platform. Checked by the tests and by running the build and start commands locally with `RENDER` set; not yet deployed on Render.
+

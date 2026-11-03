@@ -26,6 +26,7 @@
     <div class="guide-card g2"><p class="t-cap">{{ _("Getting ready for birth") }}</p></div>
   </div>
 </div>
+{% if showcase() %}<p class="t-cap" data-sample-notice>{{ _("Sample data: everyone here is invented, and the medical wording is waiting for hospital review.") }}</p>{% endif %}
 {% endblock %}
 {% block floating %}
 <a href="#" data-hotline-pending="{{ _('The hospital will confirm this number before launch: {hotline}.', hotline='1900 xxxx') }}" aria-label="{{ _('Call hotline / nurse') }}" class="call-fab">{{ icon.phone(24) }}</a>

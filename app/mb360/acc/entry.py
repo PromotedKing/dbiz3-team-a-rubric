@@ -11,6 +11,7 @@ SESSION_HOURS = 12          # provisional: lifetime of the ordinary seed session
 PREFERENCE_DEFAULTS = (1, 1, 1, 0)   # DM-41 seed defaults (§10 Q22): report, visit result, appointment, instruction reminder
 COPY = ("full_name", "phone", "date_of_birth", "record_code")
 COOKIE = "mb360_session"
+SECURE_COOKIE = False     # mb360.server: True on the hosting platform (HTTPS)
 
 
 class EntryError(Exception):

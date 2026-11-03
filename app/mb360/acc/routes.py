@@ -41,7 +41,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
     def signed_in(user_id: str, step: str) -> RedirectResponse:
         """Opened from the TCI app: the session goes with the browser (FR-015)."""
         response = go(user_id, step)
-        response.set_cookie(entry.COOKIE, entry.latest_session(conn, user_id) or "", httponly=True, samesite="lax")
+        response.set_cookie(entry.COOKIE, entry.latest_session(conn, user_id) or "", httponly=True, samesite="lax", secure=entry.SECURE_COOKIE)
         return response
 
     async def identity_of(request: Request) -> dict:

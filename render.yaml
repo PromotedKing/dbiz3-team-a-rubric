@@ -1,0 +1,16 @@
+# Render Blueprint of the hosted app (docs/build/adr-hosting.md). No secret belongs in this file.
+services:
+  - type: web
+    name: mother-baby-360
+    runtime: python
+    plan: free
+    region: singapore
+    branch: sang/mother-app-v1          # change to main once the pull requests are merged
+    buildCommand: pip install uv && uv sync --frozen --no-dev
+    startCommand: uv run --no-sync python -m uvicorn mb360.server:app --app-dir app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /tci
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.3
+      - key: MB360_STAFF_PASSWORD       # Render generates it: read it on the service's Environment page
+        generateValue: true
