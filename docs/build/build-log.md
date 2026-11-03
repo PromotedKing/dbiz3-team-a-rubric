@@ -558,3 +558,7 @@ Built without `/speckit-*`, like the three slices before it: the request was one
 
 Session 11. `render.yaml`, password on the staff and test pages (D-82), Vietnam time in the live clock, one request at a time, Secure cookie on the platform. Checked by the tests and by running the build and start commands locally with `RENDER` set; not yet deployed on Render.
 
+## 03/11/2026: first deploy failed on the seed (Sang, branch `sang/mother-app-v1`)
+
+Render's SQLite refused NULL in `CHECK (json_valid(x))`. Schema: NULL guard on the 3 JSON columns; data model §9 row updated; seed unchanged. Tests pass on SQLite 3.40 and 3.50. Affects `data/schema/schema-MB360.sql` and `data/data-model-MB360.md` (owner: Tâm).
+
