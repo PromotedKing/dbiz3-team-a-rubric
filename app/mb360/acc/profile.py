@@ -3,11 +3,12 @@ import sqlite3
 from datetime import date, datetime
 
 from ..alr.reports import gestational_week
+from ..alr.validation import GROUP2
 from ..tml.weeks import day_of_week
 from . import setup
 
 DEFAULTS = {"report_response": 1, "new_visit_result": 1, "appointment_reminder": 1, "watch_flag_reminder": 0}  # ACC Q22 (a)
-SWITCHES = ("new_visit_result", "watch_flag_reminder")     # S-010: "Report responses" locked on (Q13), appointments hidden (D-77)
+SWITCHES = ("new_visit_result", "appointment_reminder", "watch_flag_reminder")     # S-010: "Report responses" locked on (Q13)
 
 
 class ProfileError(Exception):
@@ -46,7 +47,7 @@ def load(conn: sqlite3.Connection, user_id: str, now: datetime) -> dict:
             "edd_source": p["edd_source"] if p else None, "height_cm": p["height_cm"] if p else None,
             "week": gestational_week(edd, now.date()) if p else None, "week_day": day_of_week(edd, now.date()) if p else None,
             "link": latest_link(conn, user_id), "linked": is_linked(conn, user_id), "consent": bool(consent and consent["accepted"]),
-            "instructions": [f["metric"] for f in flags], "reminders_on": any(prefs[k] for k in SWITCHES)}
+            "instructions": [m for m in GROUP2 if m in {f["metric"] for f in flags}], "reminders_on": any(prefs[k] for k in SWITCHES)}
 
 
 def save(conn: sqlite3.Connection, user_id: str, form: dict, now: datetime) -> None:
@@ -88,7 +89,7 @@ def set_switch(conn: sqlite3.Connection, user_id: str, key: str, value: bool, no
     try:
         conn.execute("""INSERT INTO NOTIFICATION_PREFERENCE (user_id, report_response, new_visit_result, appointment_reminder, watch_flag_reminder, updated_at)
                         VALUES (:user_id, :report_response, :new_visit_result, :appointment_reminder, :watch_flag_reminder, :updated_at)
-                        ON CONFLICT (user_id) DO UPDATE SET new_visit_result = :new_visit_result,
+                        ON CONFLICT (user_id) DO UPDATE SET new_visit_result = :new_visit_result, appointment_reminder = :appointment_reminder,
                             watch_flag_reminder = :watch_flag_reminder, updated_at = :updated_at""",
                      {**prefs, "user_id": user_id, "updated_at": stamp})
         conn.commit()

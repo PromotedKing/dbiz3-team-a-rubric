@@ -1,6 +1,7 @@
 {#- S-026 Report status: kept (ALR FR-005, FR-007, BR-011, BR-012); the UI package has no design for it (U4), so it uses the package's components. -#}
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
+{% import "_bits.html" as bits %}
 {% set page_title = "Report status" %}
 {% set back_url = "/m/" ~ user.user_id ~ "/my-reports" %}
 {% macro label_tag(l) %}<span class="tag {{ 'al' if l == 'Above threshold' else 'ok' if l == 'Normal' else 'un' }}">{{ l | t }}</span>{% endmacro %}
@@ -45,18 +46,18 @@
 <div class="card bl8" data-response>
   <p class="t-body b">{{ r.heading | t }}</p>
   <p class="t-cap">{{ r.at }}</p>
-  <p class="t-body">{{ r.text }}</p>
+  <p class="t-body" style="white-space:pre-line">{{ r.text }}</p>
 </div>
 {% endfor %}
 
 {% if safety_note %}
 <div class="card bd bl8">
   <p class="t-body b">{{ _("Safety note") }}</p>
-  <p class="t-cap">{{ _("Content to be supplied by the hospital (D-25).") }}</p>
+  <p class="t-cap">{{ _("Clinical staff will view your report. If your symptoms get worse, go to the nearest hospital.") }}</p>
 </div>
 {% endif %}
 {% endif %}
 
-<span class="btn dis full" title="{{ _('Hotline number pending') }}">{{ icon.phone() }}{{ _("Emergency call") }}: 1900 xxxx</span>
+{{ bits.hotline(_("Emergency call")) }}
 <div class="sec"><a class="lnk" href="/m/{{ user.user_id }}/my-reports">{{ _("My reports") }} ›</a><a class="lnk" href="/m/{{ user.user_id }}/instructions">{{ _("Doctor's instructions") }} ›</a></div>
 {% endblock %}

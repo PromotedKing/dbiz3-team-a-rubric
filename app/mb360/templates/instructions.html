@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
 {% set page_title = "Doctor's instructions" %}
-{% set back_url = "/m/" ~ user.user_id ~ "/home" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/profile" %}{% set back_auto = true %}
 {% block content %}
 {% if submitted %}<div class="okbox">{{ icon.ok() }}<p class="t-body" style="color:inherit">{{ _("Report submitted") }}</p></div>{% endif %}
 <p class="t-body" style="color:#6F6F6F">{{ _("The metrics your doctor asked you to measure at home.") }}</p>

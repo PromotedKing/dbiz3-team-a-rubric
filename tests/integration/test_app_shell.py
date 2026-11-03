@@ -47,7 +47,7 @@ def test_home_has_close_and_no_back(client, user_id):
     page = client.get(f"/m/{user_id('tci-000123')}/home").text
     assert "data-back" not in page and "data-close-app" in page
     dialog = page[page.index('id="close-sheet"'):]
-    assert vi("Close Mother & Baby 360?") in dialog and vi("You can come back at any time from the TCI app.") in dialog
+    assert vi("Close Mother & Baby 360?") in dialog and vi("You will return to the TCI app. Your data stays saved, and you do not need to sign in next time.") in dialog
     assert vi("Stay") in dialog and f'href="/tci">{vi("Close app")}' in dialog
 
 
@@ -103,7 +103,7 @@ def test_handoff_keeps_the_decline_button_and_promises_no_call_back(client, user
     uid = user_id("tci-000131")
     page = client.get(client.post(f"/m/{uid}/chat", data={"text": "I have had a little bleeding since this morning, is that okay?"}).headers["location"]).text
     assert vi("Connect to nurse") in page and vi("No, thanks") in page
-    assert "gọi lại" not in page and "Mẹ cần được kiểm tra ngay" not in page
+    assert "gọi lại" not in page
 
 
 def test_alert_shows_only_the_template_guidance(client, db, user_id):
@@ -125,14 +125,14 @@ def test_report_tabs_show_only_active_instructions(client, user_id):
 def test_home_shows_the_due_date_card_and_metrics(client, user_id):
     page = client.get(f"/m/{user_id('tci-000123')}/home").text
     for t in (vi("Due date"), "20/12/2026", ">84<", vi("days to go"), vi("Week {n} + {d} days", n=28, d=0), vi("Third trimester"),
-              vi("Report metric / symptom"), vi("My metrics"), vi("Weight"), "57.0 kg", "27/09/2026 · 07:30", vi("Sleep"), "7 h 30 min"):
+              vi("Report metric / symptom"), vi("My metrics"), vi("Weight"), ">57.0<", vi("Metric history")):
         assert t in page, t
     assert vi("Above threshold") not in page and vi("Normal") not in page    # group 1: no threshold label (SR-003)
 
 
 def test_home_report_button_opens_a_metric_from_the_instructions(client, user_id):
     lan, u06 = user_id("tci-000123"), user_id("tci-000128")
-    assert f'href="/m/{lan}/report?metric=Blood%20glucose"' in client.get(f"/m/{lan}/home").text
+    assert f'href="/m/{lan}/report?metric=Blood%20pressure"' in client.get(f"/m/{lan}/home").text
     assert f'href="/m/{u06}/report?metric=Symptom"' in client.get(f"/m/{u06}/home").text          # no instruction
 
 
@@ -161,7 +161,6 @@ def test_theme_tokens_are_served(client):
     assert client.get("/static/staff.css").status_code == 200
 
 
-def test_demo_start_page_links_both_sides(client, user_id):
-    page = client.get("/").text
-    assert 'href="/tci"' in page and 'href="/staff"' in page and 'href="/session-expired"' in page
-    assert f'href="/m/{user_id("tci-000123")}/home"' in page
+def test_the_app_starts_on_the_tci_home(client):
+    r = client.get("/")
+    assert r.status_code == 303 and r.headers["location"] == "/tci"

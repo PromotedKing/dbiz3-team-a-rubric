@@ -21,7 +21,7 @@ def test_load_returns_the_read_only_profile(db, user_id):
     assert d["phone"].count("•") == 3
     assert d["link"]["status"] in ("Linked", "Pending") and d["link"]["facility"]
     assert d["consent"] is True
-    assert d["instructions"] == ["Blood glucose", "Blood pressure"]
+    assert d["instructions"] == ["Blood pressure", "Blood glucose"]
     assert d["height_cm"] is not None
 
 
@@ -99,7 +99,7 @@ def test_switches_save_immediately(db, user_id):
     assert profile.preferences(db, uid)["watch_flag_reminder"] == 0
 
 
-@pytest.mark.parametrize("key", ["report_response", "appointment_reminder", "user_id", "x; DROP TABLE USER_ACCOUNT"])
+@pytest.mark.parametrize("key", ["report_response", "user_id", "x; DROP TABLE USER_ACCOUNT"])
 def test_locked_hidden_and_unknown_switches_are_refused(db, user_id, key):
     uid = user_id("tci-000123")
     before = dict(profile.preferences(db, uid))

@@ -76,6 +76,6 @@ def test_targets(db, lan):
     assert notices.open_notice(db, lan, _add(db, lan, "a", case=report["case_id"]), NOW) == f"{base}/reports/{report['metric_report_id']}"
     assert notices.open_notice(db, lan, _add(db, lan, "b", case=chat), NOW) == f"{base}/cases/{chat}"
     assert notices.open_notice(db, lan, _add(db, lan, "c"), NOW) == f"{base}/my-reports"
-    assert notices.open_notice(db, lan, _add(db, lan, "d", "Visit result", visit=visit), NOW) == f"{base}/health"
+    assert notices.open_notice(db, lan, _add(db, lan, "d", "Visit result", visit=visit), NOW).startswith(f"{base}/timeline/day/")
     assert notices.open_notice(db, lan, _add(db, lan, "e", "Instruction reminder", flag=flag), NOW) == f"{base}/instructions"
     assert notices.open_notice(db, lan, _add(db, lan, "f", "Appointment"), NOW) == "/tci/booking"

@@ -140,4 +140,4 @@ def instruction_cards(conn: sqlite3.Connection, user_id: str) -> list[dict]:
                       "latest_value": _with_unit(last["value"], last["unit"]) if last else None,
                       "latest_at": last["measured_at"] if last else None,
                       "latest_label": thresholds.evaluate(conn, last["metric"], last["value"], last["glucose_context"]) if last else None})
-    return cards
+    return sorted(cards, key=lambda c: GROUP2.index(c["metric"]))

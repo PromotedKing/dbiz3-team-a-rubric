@@ -2,9 +2,9 @@
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
 {% set page_title = "Health metrics" %}
-{% set back_url = "/m/" ~ user.user_id ~ "/home" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/home" %}{% set back_auto = true %}
 {% block header_actions %}
-<a class="ib" href="/m/{{ user.user_id }}/health?refreshed=1" aria-label="{{ _('Refresh') }}">{{ icon.clock(24) }}</a>
+<a class="ib" href="/m/{{ user.user_id }}/health?refreshed=1" aria-label="{{ _('Refresh') }}">{{ icon.refresh() }}</a>
 {% endblock %}
 {% block content %}
 {% if refreshed %}<div class="okbox">{{ icon.ok() }}<p class="t-body" style="color:inherit">{{ _("Data updated.") }}</p></div>{% endif %}

@@ -13,8 +13,7 @@ from . import chat, classify, llm
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
 ui.install(TEMPLATES)
-SUGGESTED = ("How can I eat beef safely during pregnancy?", "How can I produce more breast milk?",
-             "What should I look for when choosing formula for my baby?", "How should Dad read to the baby during pregnancy?")
+SUGGESTED = ("Trouble sleeping during pregnancy", "Should I exercise?", "Leg cramps")   # Màn 11
 HOTLINE = "1900 xxxx"   # placeholder (BOT §10 Q8)
 
 
@@ -58,7 +57,10 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
 
     @app.get("/m/{user_id}/chat", response_class=HTMLResponse)
     def welcome(request: Request, user_id: str):
-        return page(request, mother(user_id), None)
+        """The tab reopens the mother's latest conversation (Màn 11); the welcome only when she has none."""
+        latest = conn.execute("""SELECT m.conversation_id FROM CHAT_MESSAGE m JOIN CONVERSATION c ON c.conversation_id = m.conversation_id
+                                 WHERE c.user_id = ? ORDER BY m.sent_at DESC, m.rowid DESC LIMIT 1""", (user_id,)).fetchone()
+        return page(request, mother(user_id), latest[0] if latest else None)
 
     @app.post("/m/{user_id}/chat", response_class=HTMLResponse)
     async def first_question(request: Request, user_id: str):

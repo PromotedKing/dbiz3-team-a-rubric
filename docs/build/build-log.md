@@ -549,3 +549,8 @@ does not happen again.
 | 28 | A cache added for FR-004 was not invalidated by writes from other modules (stale timeline after a report) | Code reading while writing the routes | When a feature adds a cache, write a test that changes the data from another screen before writing the cache |
 | 30 | Second unchecked seed claim ("every conversation has session data"): the counts were queried, the empty optional values were not | The seed test failed | Query NULLs of every optional column a claim depends on, not only row counts |
 | 32 | A new file name (`.env.example`) broke the course T1 check after merge | Fresh-clone check of `main` | Run `uv run tools/check_env.py --repo` before opening every pull request, not only the tests |
+
+## 02/11/2026: mother app v1.0.0 (Sang, branch `sang/mother-app-v1`, on top of PR #15 – #19)
+
+Built without `/speckit-*`, like the three slices before it: the request was one complete app from the UI package, reviewed once it exists (D-81). Checked by the test suite and by a scripted walk of the whole flow in Edge at 390 x 844; not yet tried on a real phone.
+

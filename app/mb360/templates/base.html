@@ -6,22 +6,30 @@
 {%- set active_tab = active_tab | default("") -%}
 {%- set in_app = user is defined and user -%}
 <!doctype html>
-<html lang="vi">
+<html lang="vi"{% if showcase() %} data-sw="1"{% endif %}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#00A651">
+  <meta name="theme-color" content="#FFFFFF">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Mẹ &amp; Bé 360">
   <title>{% if page_title %}{{ _(page_title) }} · {% endif %}{{ _("App name") }}</title>
+  <link rel="manifest" href="/static/manifest.webmanifest">
+  <link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/static/icon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
   <link rel="stylesheet" href="/static/tci.css">
+  <script src="/static/app.js" defer></script>
 </head>
 <body class="app">
+{% include "_showcase.html" %}
 <div class="scr{% if white | default(false) %} w{% endif %}">
   {% block header %}
   <div class="hdr"{% if not back_url %} style="padding-left:16px"{% endif %}>
-    {% if back_url %}<a class="ib" href="{{ back_url }}" aria-label="{{ _('Back') }}" data-back>{{ icon.back() }}</a>{% endif %}
+    {% if back_url %}<a class="ib" href="{{ back_url }}" aria-label="{{ _('Back') }}" data-back{% if back_auto | default(false) %}="auto"{% endif %}>{{ icon.back() }}</a>{% endif %}
     <h1>{{ _(page_title) }}</h1>
     {% block header_actions %}{% endblock %}
     {% if show_close | default(false) %}<button type="button" class="ib" aria-label="{{ _('Close Mother & Baby 360?') }}" data-close-app onclick="document.getElementById('close-sheet').showModal()">{{ icon.close() }}</button>{% endif %}
@@ -46,7 +54,7 @@
       <div style="display:flex;flex-direction:column;gap:8px;text-align:center;align-items:center">
         <div class="fe">{{ icon.leave() }}</div>
         <h2 id="close-title" class="t-title">{{ _("Close Mother & Baby 360?") }}</h2>
-        <p class="t-body" style="color:#6F6F6F">{{ _("You can come back at any time from the TCI app.") }}</p>
+        <p class="t-body" style="color:#6F6F6F">{{ _("You will return to the TCI app. Your data stays saved, and you do not need to sign in next time.") }}</p>
       </div>
       <form method="dialog" style="display:flex;gap:12px">
         <button class="btn o">{{ _("Stay") }}</button>

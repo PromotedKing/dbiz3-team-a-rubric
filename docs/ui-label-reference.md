@@ -687,3 +687,56 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | TML screens (specs/011, D-80) | To come | Sắp tới |
 | TML screens (specs/011, D-80) | The print sheet opens: choose Save as PDF. Nothing is stored. | Trang in sẽ mở ra: mẹ chọn Lưu thành PDF. Hệ thống không lưu gì. |
 | TML screens (specs/011, D-80) | Export keepsake album (PDF) | Xuất album kỷ niệm (PDF) |
+| Mother app v1.0.0 (D-81) | + Enter metrics | + Nhập chỉ số |
+| Mother app v1.0.0 (D-81) | Antenatal check-up process | Quy trình khám thai |
+| Mother app v1.0.0 (D-81) | Call the emergency hotline | Gọi Hotline cấp cứu |
+| Mother app v1.0.0 (D-81) | Call the hospital | Gọi bệnh viện |
+| Mother app v1.0.0 (D-81) | Clinical staff will view your report. If your symptoms get worse, go to the nearest hospital. | Nhân viên y tế sẽ xem báo cáo của mẹ. Nếu triệu chứng nặng hơn, mẹ đến bệnh viện gần nhất nhé. |
+| Mother app v1.0.0 (D-81) | Clinical web (doctor, nurse) | Web nhân viên y tế (bác sĩ, y tá) |
+| Mother app v1.0.0 (D-81) | Complete antenatal care at Thu Cuc | Khám thai trọn gói tại Thu Cúc |
+| Mother app v1.0.0 (D-81) | Customer guide | Hướng dẫn khách hàng |
+| Mother app v1.0.0 (D-81) | DOCTOR'S COMMENT | BÁC SĨ NHẬN XÉT |
+| Mother app v1.0.0 (D-81) | NURSE'S COMMENT | Y TÁ NHẬN XÉT |
+| Mother app v1.0.0 (D-81) | Date of first antenatal check-up | Ngày khám thai đầu tiên |
+| Mother app v1.0.0 (D-81) | Getting ready for birth | Chuẩn bị đi sinh |
+| Mother app v1.0.0 (D-81) | Highlights | Kỷ niệm nổi bật |
+| Mother app v1.0.0 (D-81) | Week by week | Xem theo từng tuần |
+| Mother app v1.0.0 (D-81) | Mother & Baby 360 will use the following information from the TCI app, with no need to sign in again: | Mother & Baby 360 sẽ dùng các thông tin sau từ app TCI, không cần đăng nhập lại: |
+| Mother app v1.0.0 (D-81) | Next appointment | Lịch khám kế tiếp |
+| Mother app v1.0.0 (D-81) | Open as another TCI account | Mở bằng tài khoản TCI khác |
+| Mother app v1.0.0 (D-81) | Sample data: everyone here is invented, and the medical wording is waiting for hospital review. | Dữ liệu mẫu: mọi tên người đều là giả, nội dung y khoa đang chờ bệnh viện duyệt. |
+| Mother app v1.0.0 (D-81) | See the timeline | Xem dòng thời gian |
+| Mother app v1.0.0 (D-81) | Start again from the first opening | Chạy lại từ lần mở đầu tiên |
+| Mother app v1.0.0 (D-81) | Take / choose photo | Chụp / chọn ảnh |
+| Mother app v1.0.0 (D-81) | Tell Mother & Baby 360 your pregnancy date so it can work out your week. | Cho Mother & Baby 360 biết mốc thai kỳ để tính tuần thai cho mẹ. |
+| Mother app v1.0.0 (D-81) | The hospital will confirm this number before launch: {hotline}. | Số tổng đài chờ bệnh viện xác nhận trước khi phát hành: {hotline}. |
+| Mother app v1.0.0 (D-81) | The mother's app, embedded in the TCI app. Open this address on a phone for the full-screen version. | App dành cho mẹ, nhúng trong app TCI. Mở địa chỉ này trên điện thoại để dùng toàn màn hình. |
+| Mother app v1.0.0 (D-81) | The nurse will view your question and respond under From doctor. If it gets worse, call the emergency hotline, do not wait. | Y tá sẽ xem câu hỏi và phản hồi ở mục Từ bác sĩ. Nếu nặng hơn, mẹ gọi cấp cứu ngay, đừng chờ. |
+| Mother app v1.0.0 (D-81) | This needs a medical assessment. Please do not wait. | Dấu hiệu này cần nhân viên y tế đánh giá. Mẹ đừng chờ đợi. |
+| Mother app v1.0.0 (D-81) | Ultrasound image sent by the hospital · tap to enlarge | Ảnh siêu âm do bệnh viện gửi · chạm để phóng to |
+| Mother app v1.0.0 (D-81) | Ultrasound images are attached to the visit day by the hospital. | Ảnh siêu âm do bệnh viện tự gắn vào ngày khám. |
+| Mother app v1.0.0 (D-81) | Understood | Mẹ đã hiểu |
+| Mother app v1.0.0 (D-81) | WHAT YOU NEED TO DO | MẸ CẦN LÀM |
+| Mother app v1.0.0 (D-81) | WHAT YOU REPORTED | MẸ ĐÃ BÁO |
+| Mother app v1.0.0 (D-81) | With: | Kèm: |
+| Mother app v1.0.0 (D-81) | You chose: {choice} | Mẹ đã chọn: {choice} |
+| Mother app v1.0.0 (D-81) | You need to be checked right away | Mẹ cần được kiểm tra ngay |
+| Mother app v1.0.0 (D-81) | You will return to the TCI app. Your data stays saved, and you do not need to sign in next time. | Mẹ sẽ quay lại app TCI. Dữ liệu đã lưu vẫn được giữ, lần sau mở lại không cần đăng nhập. |
+| Mother app v1.0.0 (D-81) | Your care team sent {n} notice | Bác sĩ vừa gửi {n} thông báo |
+| Mother app v1.0.0 (D-81) | Your doctor booked an earlier visit | Bác sĩ hẹn khám sớm |
+| Mother app v1.0.0 (D-81) | Your report will be sent to clinical staff. | Báo cáo sẽ được gửi tới nhân viên y tế. |
+| Mother app v1.0.0 (D-81) | has diary | có nhật ký |
+| Mother app v1.0.0 (D-81) | today | hôm nay |
+| Mother app v1.0.0 (D-81) | with this chat | kèm đoạn chat |
+| Mother app v1.0.0 (D-81) | {n} days left | Còn {n} ngày |
+| Mother app v1.0.0 (D-81) | Appointment reminders | Nhắc lịch hẹn |
+| Mother app v1.0.0 (D-81) | One day before your visit | Trước buổi khám 1 ngày |
+| Mother app v1.0.0 (D-81) | Follow your pregnancy with Thu Cuc doctors | Theo dõi thai kỳ cùng bác sĩ Thu Cúc |
+| Mother app v1.0.0 (D-81) | Visit results update on their own. Report a metric or symptom and clinical staff will view and respond. | Kết quả mỗi lần khám tự cập nhật về app. Mẹ báo chỉ số hoặc triệu chứng, nhân viên y tế sẽ xem và phản hồi. |
+| Mother app v1.0.0 (D-81) | Keep every moment of your pregnancy | Lưu lại từng khoảnh khắc thai kỳ |
+| Mother app v1.0.0 (D-81) | Your visits, ultrasound images and diary, week by week, ready to keep as an album. | Lần khám, ảnh siêu âm và nhật ký theo từng tuần, sẵn sàng giữ lại thành album. |
+| Mother app v1.0.0 (D-81) | Answers whenever you need them | Có câu trả lời khi mẹ cần |
+| Mother app v1.0.0 (D-81) | Ask the chatbot general questions about pregnancy. For anything about your own health, it passes you to a nurse. | Mẹ hỏi chatbot những điều chung về thai kỳ. Điều gì liên quan đến sức khỏe của riêng mẹ, chatbot sẽ chuyển cho y tá. |
+| Mother app v1.0.0 (D-81) | Trouble sleeping during pregnancy | Mất ngủ khi mang thai |
+| Mother app v1.0.0 (D-81) | Should I exercise? | Có nên tập thể dục? |
+| Mother app v1.0.0 (D-81) | Leg cramps | Chuột rút chân |

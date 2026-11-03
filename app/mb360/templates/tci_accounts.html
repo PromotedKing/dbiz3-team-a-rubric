@@ -1,0 +1,29 @@
+{#- Test tool beside the app: open the sub-app as any seed account or an invented identity, including the not-female path (BR-007). -#}
+{% extends "tci_base.html" %}
+{% block content %}
+<a class="lnk" href="/tci" data-back>‹ {{ _("Back to TCI app") }}</a>
+<div class="bl" id="accounts">
+  <p class="t-title">{{ _("Open Mother & Baby 360 as") }}</p>
+  <div class="card bd np">
+    {% for a in accounts %}
+    <form method="post" action="/tci/open" class="row" style="padding-right:8px">
+      {% for f in fields %}<input type="hidden" name="{{ f }}" value="{{ a[f] or '' }}">{% endfor %}
+      <span class="grow"><span class="t-body">{{ a.full_name }}</span><br><span class="t-cap">{{ a.tci_account_ref }}</span></span>
+      <button class="btn so" data-account="{{ a.tci_account_ref }}">{{ _("Open") }}</button>
+    </form>
+    {% endfor %}
+  </div>
+</div>
+<details class="card bd">
+  <summary class="t-body b">{{ _("Simulate another TCI account") }}</summary>
+  <form method="post" action="/tci/open" class="bl" style="margin-top:12px">
+    <div class="fld"><label for="n">{{ _("Full name") }}</label><input id="n" class="inp" name="full_name" required></div>
+    <div class="fld"><label for="b">{{ _("Date of birth") }}</label><input id="b" class="inp" type="date" name="date_of_birth" required></div>
+    <div class="fld"><label for="s">{{ _("Sex") }}</label><select id="s" class="inp" name="sex"><option value="Female">{{ _("Female") }}</option><option value="Male">{{ _("Male") }}</option></select></div>
+    <div class="fld"><label for="p">{{ _("Phone number") }}</label><input id="p" class="inp" name="phone" required></div>
+    <div class="fld"><label for="r">{{ _("Medical record number (optional)") }}</label><input id="r" class="inp" name="record_code"></div>
+    <button class="btn full">{{ _("Mother & Baby 360") }}</button>
+  </form>
+</details>
+<p class="t-cap">{{ _("Stand-in for the Thu Cuc patient app: how the TCI app passes the identity is still open (spec-ACC §10 Q9). Every identity here is invented.") }}</p>
+{% endblock %}

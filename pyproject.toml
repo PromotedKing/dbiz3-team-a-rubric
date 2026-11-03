@@ -1,7 +1,7 @@
 [project]
 name = "mb360"
-version = "0.1.0"
-description = "Mother & Baby 360 — Session 8 build (feature specs/001-alr-core)"
+version = "1.0.0"
+description = "Mother & Baby 360 — the mother app v1.0.0 and the clinical web"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115",

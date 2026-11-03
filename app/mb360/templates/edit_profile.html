@@ -23,7 +23,7 @@
       <div class="unit"><input id="hh" class="inp{% if errors.get('height_cm') %} er{% endif %}" name="height_cm" inputmode="decimal" value="{{ form.get('height_cm', '') }}"><span>cm</span></div>{{ err("height_cm") }}</div>
   </div>
   <div class="foot">
-    <a class="btn o" href="/m/{{ user.user_id }}/profile">{{ _("Cancel") }}</a>
+    <a class="btn o" href="/m/{{ user.user_id }}/profile" data-back>{{ _("Cancel") }}</a>
     <button class="btn">{{ _("Save changes") }}</button>
   </div>
 </form>

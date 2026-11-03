@@ -1,12 +1,13 @@
 {#- S-103: ACC US-3 #1, FR-023; design: screens/ui-final Màn 12. No logout, password or delete (D-01). -#}
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
+{% import "_bits.html" as bits %}
 {% set page_title = "Profile" %}
 {% set active_tab = "profile" %}
 {% block content %}
-{% if saved %}<div class="toast" role="status">{{ icon.ok(20, "#48D07C") }}<p class="t-body" style="color:#fff;flex:1">{{ _("Changes saved") }}</p></div>{% endif %}
+{% if saved %}{{ bits.toast(_("Changes saved")) }}{% endif %}
 <a href="/m/{{ user.user_id }}/profile/edit" class="hero" style="display:flex;gap:12px;align-items:center">
-  <div style="width:56px;height:56px;border-radius:28px;background:#009788;color:#fff;font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none">{{ initials(user.full_name) }}</div>
+  <div style="width:56px;height:56px;border-radius:28px;background:#009788;color:#fff;font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none">{{ user.full_name.split()[-1][0] }}</div>
   <div style="flex:1;min-width:0">
     <p class="t-title">{{ user.full_name }}</p>
     {% if user.record_code %}<p class="t-cap" style="color:#212121">{{ _("Record no. {code} • TCI account", code=user.record_code) }}</p>{% endif %}
@@ -55,7 +56,7 @@
     </details>
     {% endif %}
     <a href="/m/{{ user.user_id }}/settings/notifications" class="row"><span class="grow">{{ _("Notification settings") }}</span><span class="t-cap">{{ _("On") if p.reminders_on else _("Off") }}</span>{{ icon.chev() }}</a>
-    <a href="/tci" class="row"><span class="grow">{{ _("Support — TCI app ↗") }}</span>{{ icon.chev() }}</a>
+    
   </div>
 </div>
 <a href="/m/{{ user.user_id }}/journey" class="btn o full">{{ icon.download() }}{{ _("Export keepsake album (PDF)") }}</a>

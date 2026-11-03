@@ -2,6 +2,8 @@
 import sqlite3
 from datetime import datetime
 
+from ..alr import thresholds
+
 TYPES = ("Report", "Visit result", "Appointment", "Instruction reminder")
 UNREAD = "Unread"
 
@@ -25,7 +27,8 @@ def unread_count(conn: sqlite3.Connection, user_id: str) -> int:
 def _target(conn: sqlite3.Connection, n: sqlite3.Row) -> str:
     base = f"/m/{n['user_id']}"
     if n["type"] == "Visit result":
-        return f"{base}/health"
+        visit = conn.execute("SELECT visit_date FROM VISIT WHERE visit_id = ?", (n["visit_id"],)).fetchone() if n["visit_id"] else None
+        return f"{base}/timeline/day/{visit[0]}" if visit else f"{base}/health"
     if n["type"] == "Instruction reminder":
         return f"{base}/instructions"
     if n["type"] == "Appointment":
@@ -50,3 +53,89 @@ def open_notice(conn: sqlite3.Connection, user_id: str, notification_id: str, no
 def mark_all_read(conn: sqlite3.Connection, user_id: str, now: datetime) -> None:
     conn.execute("UPDATE NOTIFICATION SET read_at = ? WHERE user_id = ? AND read_at IS NULL", (now.strftime("%Y-%m-%d %H:%M"), user_id))
     conn.commit()
+
+
+def parse_response(text: str | None) -> dict:
+    """The doctor's free text as Màn 10 shows it: "- " lines are to-dos, a "Hẹn khám:" line is the follow-up, the rest is the comment (U9)."""
+    comment, todo, follow_up = [], [], None
+    for line in (text or "").splitlines():
+        line = line.strip()
+        if line.startswith("- "):
+            todo.append(line[2:])
+        elif line.startswith("Hẹn khám:"):
+            follow_up = line.split(":", 1)[1].strip()
+        elif line:
+            comment.append(line)
+    return {"comment": " ".join(comment), "todo": todo, "follow_up": follow_up}
+
+
+def latest_response(conn: sqlite3.Connection, case_id: str | None) -> sqlite3.Row | None:
+    if not case_id:
+        return None
+    return conn.execute("""SELECT r.custom_text, r.responder_role, r.sent_at, s.full_name, t.content AS template_text
+                           FROM STAFF_RESPONSE r JOIN STAFF s ON s.staff_id = r.responder_id
+                           LEFT JOIN GUIDANCE_TEMPLATE t ON t.template_id = r.template_id
+                           WHERE r.case_id = ? ORDER BY r.sent_at DESC, r.rowid DESC LIMIT 1""", (case_id,)).fetchone()
+
+
+def _response_text(resp: sqlite3.Row | None) -> str:
+    return "\n".join(x for x in (resp["template_text"], resp["custom_text"]) if x) if resp else ""
+
+
+def _about(conn: sqlite3.Connection, case_id: str | None) -> dict:
+    """What the mother reported in this case: "above" when the value is over the threshold (never hard-coded, thresholds module)."""
+    empty = {"report": None, "record": None, "symptoms": [], "above": False, "status": None, "question": None}
+    case = conn.execute("SELECT * FROM CARE_CASE WHERE case_id = ?", (case_id,)).fetchone() if case_id else None
+    if case is None:
+        return empty
+    out = {**empty, "status": case["status"]}
+    if case["chat_message_id"]:
+        out["question"] = conn.execute("SELECT text, sent_at FROM CHAT_MESSAGE WHERE message_id = ?", (case["chat_message_id"],)).fetchone()
+        return out
+    rep = conn.execute("SELECT * FROM METRIC_REPORT WHERE report_id = ?", (case["metric_report_id"],)).fetchone()
+    out["report"] = rep
+    out["symptoms"] = [r[0] for r in conn.execute("SELECT symptom FROM REPORT_SYMPTOM WHERE report_id = ? ORDER BY symptom", (rep["report_id"],))]
+    if rep["health_metric_record_id"]:
+        h = conn.execute("SELECT * FROM HEALTH_METRIC_RECORD WHERE record_id = ?", (rep["health_metric_record_id"],)).fetchone()
+        out["record"] = h
+        out["above"] = thresholds.evaluate(conn, h["metric"], h["value"], h["glucose_context"]) == thresholds.ABOVE
+    return out
+
+
+def card(conn: sqlite3.Connection, n: sqlite3.Row) -> dict:
+    """One card of Màn 9: tag, title, preview of the answer, who sent it."""
+    about = _about(conn, n["case_id"])
+    resp = latest_response(conn, n["case_id"])
+    parsed = parse_response(_response_text(resp))
+    if n["type"] != "Report":
+        tag = (n["type"], "ok" if n["type"] == "Visit result" else "un")
+    elif about["status"] == "Resolved":
+        tag = ("Resolved", "un")
+    elif about["above"]:
+        tag = ("Above threshold", "al")
+    else:
+        tag = (about["status"] or "Report", "inf")
+    return {"n": n, "tag": tag, "preview": parsed["comment"] or n["subtitle"], "translate_preview": not parsed["comment"],
+            "doctor": resp["full_name"] if resp else None, "role": resp["responder_role"] if resp else None}
+
+
+def cards_for(conn: sqlite3.Connection, user_id: str, type_: str | None = None) -> list[dict]:
+    return [card(conn, n) for n in list_for(conn, user_id, type_)]
+
+
+def detail(conn: sqlite3.Connection, user_id: str, notification_id: str) -> dict | None:
+    """Màn 10, only for a notification with an answer from clinical staff; the others open their own target."""
+    n = conn.execute("SELECT * FROM NOTIFICATION WHERE notification_id = ? AND user_id = ?", (notification_id, user_id)).fetchone()
+    resp = latest_response(conn, n["case_id"]) if n else None
+    if resp is None:
+        return None
+    return {"n": n, "resp": resp, "about": _about(conn, n["case_id"]), "card": card(conn, n), **parse_response(_response_text(resp))}
+
+
+def home_notice(conn: sqlite3.Connection, user_id: str) -> tuple | None:
+    """The card on Home (Màn 4): the newest unread answer from clinical staff and how many there are; otherwise the newest unread notice."""
+    unread = list_for(conn, user_id, UNREAD)
+    answers = [n for n in unread if latest_response(conn, n["case_id"]) is not None]
+    if answers:
+        return answers[0], len(answers)
+    return (unread[0], 0) if unread else None

@@ -1,7 +1,7 @@
 {#- S-025; design: screens/ui-final Màn 18. Read-only (BR-001). Thresholds and the reference range come from THRESHOLD_RULE (FR-012, hard rule 7). -#}
 {% extends "base.html" %}
 {% set page_title = "Metric history" %}
-{% set back_url = "/m/" ~ user.user_id ~ "/health" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/home" %}{% set back_auto = true %}
 {% set colors = ["#00A651", "#009788"] %}
 {% block content %}
 <form class="bl8" method="get" action="/m/{{ user.user_id }}/history">

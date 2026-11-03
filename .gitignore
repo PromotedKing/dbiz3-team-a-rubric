@@ -34,3 +34,6 @@ Thumbs.db
 
 # Uploaded media (diary photos) — never committed
 /media/
+
+# Local database of the v1.0.0 app (mb360.server)
+/.local/

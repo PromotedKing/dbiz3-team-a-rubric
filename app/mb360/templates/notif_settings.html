@@ -1,4 +1,4 @@
-{#- S-010; design: screens/ui-final Màn 25. "Report responses" locked on (S-010 SR-001, ACC Q13); "Appointment reminders" hidden, APT not built (D-77). -#}
+{#- S-010; design: screens/ui-final Màn 25. "Report responses" locked on (S-010 SR-001, ACC Q13); Reminders of the appointments held by the TCI app (Màn 25). -#}
 {% extends "base.html" %}
 {% set page_title = "Notification settings" %}
 {% set back_url = "/m/" ~ user.user_id ~ "/profile" %}
@@ -9,6 +9,7 @@
     <button class="sw on lock" role="switch" aria-checked="true" aria-disabled="true" aria-label="{{ _('Report responses') }}" disabled></button>
   </div>
   {% for key, title, hint in [("new_visit_result", "New visit results", "When results from a new visit are available"),
+                              ("appointment_reminder", "Appointment reminders", "One day before your visit"),
                               ("watch_flag_reminder", "Doctor's-instruction reminders", "Reminders to report the metrics your doctor assigned")] %}
   <form class="row" method="post" action="/m/{{ user.user_id }}/settings/notifications">
     <input type="hidden" name="key" value="{{ key }}"><input type="hidden" name="value" value="{{ 0 if prefs[key] else 1 }}">

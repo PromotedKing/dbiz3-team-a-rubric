@@ -1,33 +1,41 @@
 {#- Simulated TCI host app (stand-in for the Thu Cuc patient app; spec-ACC §10 Q9); design: screens/ui-final Màn 1. Not part of the sub-app. -#}
 {% import "_icons.html" as icon %}
 <!doctype html>
-<html lang="vi">
+<html lang="vi"{% if showcase() %} data-sw="1"{% endif %}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#00A651">
-  <title>{{ _("TCI app (simulated host)") }}</title>
+  <meta name="theme-color" content="#FFFFFF">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Mẹ &amp; Bé 360">
+  <link rel="manifest" href="/static/manifest.webmanifest">
+  <link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/static/icon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
   <link rel="stylesheet" href="/static/tci.css">
+  <script src="/static/app.js" defer></script>
+  <title>{{ _("TCI app (simulated host)") }}</title>
 </head>
 <body class="app">
+{% include "_showcase.html" %}
 <div class="scr w">
   <div class="bhdr" style="border-bottom:0;padding-top:16px">
-    <div class="logo">Logo<br>TCI</div>
+    <div class="logo tci">TCI</div>
     <div class="brand"><p class="n">{{ _("Thu Cuc Health System – TCI") }}</p><p class="tg">{{ _("Lifelong health care for you!") }}</p></div>
   </div>
   <div class="body" style="padding-top:8px;gap:20px">
     {% block content %}{% endblock %}
-    <p class="t-cap">{{ _("Stand-in for the Thu Cuc patient app: how the TCI app passes the identity is still open (spec-ACC §10 Q9). Every identity here is invented.") }}</p>
   </div>
+  {% block floating %}{% endblock %}
   <nav class="tabs">
     <a href="/tci" class="tab on">{{ icon.tab_icon("home") }}{{ _("Home") }}</a>
     <a href="/tci" class="tab">{{ icon.tab_icon("offers") }}{{ _("Offers") }}</a>
     <a href="/tci/booking" class="tab mid"><span class="fab">{{ icon.tab_icon("timeline") }}</span>{{ _("Book") }}</a>
     <a href="/tci" class="tab">{{ icon.tab_icon("doctor") }}{{ _("Notifications") }}</a>
-    <a href="/" class="tab">{{ icon.tab_icon("profile") }}{{ _("Personal tab") }}</a>
+    <a href="/tci" class="tab">{{ icon.tab_icon("profile") }}{{ _("Personal tab") }}</a>
   </nav>
 </div>
 </body>

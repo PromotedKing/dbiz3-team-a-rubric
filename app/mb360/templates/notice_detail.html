@@ -1,0 +1,50 @@
+{#- Màn 10: an answer from clinical staff, in the structure of the UI package (U9): what the mother reported, the comment, the to-dos, the follow-up. -#}
+{% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% import "_bits.html" as bits %}
+{% set page_title = "Messages from your care team" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/notices" %}
+{% block main %}
+<div class="body">
+  <div class="bl8">
+    <span class="tag {{ d.card.tag[1] }}" style="align-self:flex-start">{{ d.card.tag[0] | t }}</span>
+    <p class="t-title">{{ d.n.title | t_known }}</p>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="avatar">{{ initials(d.resp.full_name) }}</div>
+      <div><p class="t-body b">{{ _("Dr. {name}", name=d.resp.full_name) if d.resp.responder_role == "Doctor" else _("Nurse {name}", name=d.resp.full_name) }}</p><p class="t-cap">{{ _("Sent") }} {{ d.resp.sent_at | show_time }}</p></div>
+    </div>
+  </div>
+  {% if d.about.record or d.about.symptoms or d.about.question %}
+  <div class="card" style="padding:12px 16px">
+    <p class="lab" style="margin-bottom:8px">{{ _("WHAT YOU REPORTED") }}</p>
+    {% if d.about.question %}<p class="t-body">{{ d.about.question.text }}</p>{% endif %}
+    {% if d.about.record %}
+    <div class="kv"><span class="k">{{ d.about.record.metric | t }}</span><span class="b">{{ d.about.record.value | t_known }}{% if d.about.record.unit %} {{ d.about.record.unit }}{% endif %}</span></div>
+    <div class="kv"><span class="k">{{ _("Measured at") }}</span><span>{{ d.about.record.measured_at | show_time }}</span></div>
+    {% endif %}
+    {% set real = d.about.symptoms | reject("eq", "No symptoms") | list %}
+    {% if real %}<div class="kv"><span class="k">{{ _("Symptom") }}</span><span style="text-align:right">{{ real | map("symptom_label") | map("t") | join(", ") }}</span></div>{% endif %}
+  </div>
+  {% endif %}
+  {% if d.comment %}
+  <div class="card"><p class="lab" style="margin-bottom:8px">{{ _("DOCTOR'S COMMENT") if d.resp.responder_role == "Doctor" else _("NURSE'S COMMENT") }}</p><p class="t-body">{{ d.comment }}</p></div>
+  {% endif %}
+  {% if d.todo %}
+  <div class="card">
+    <p class="lab" style="margin-bottom:8px">{{ _("WHAT YOU NEED TO DO") }}</p>
+    <div class="bl8" style="gap:10px">{% for line in d.todo %}<div style="display:flex;gap:10px"><span class="num">{{ loop.index }}</span><p class="t-body">{{ line }}</p></div>{% endfor %}</div>
+  </div>
+  {% endif %}
+  {% if d.follow_up %}
+  <div class="hero" style="display:flex;align-items:center;gap:12px;padding:14px 16px">
+    <div class="ic40" style="background:#fff">{{ icon.cal() }}</div>
+    <div><p class="t-cap" style="color:#212121">{{ _("Your doctor booked an earlier visit") }}</p><p class="t-body b">{{ d.follow_up }}</p></div>
+  </div>
+  {% endif %}
+  <a class="lnk" href="{{ target }}">{{ _("View status") }} ›</a>
+</div>
+<div class="foot">
+  {{ bits.hotline(_("Call the hospital"), "btn o") }}
+  <a href="/m/{{ user.user_id }}/notices" class="btn" data-back>{{ _("Understood") }}</a>
+</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+{#- Shared pieces of the mother's screens. -#}
+{% import "_icons.html" as icon %}
+{#- The hotline number is pending from the hospital (BOT Q8): the button stays, no dialler opens on an invented number. -#}
+{% macro hotline(label, cls="btn acc full") %}<a class="{{ cls }}" href="#" data-hotline-pending="{{ _('The hospital will confirm this number before launch: {hotline}.', hotline='1900 xxxx') }}">{{ icon.phone() }}{{ label }}</a>{% endmacro %}
+{% macro logo() %}<div class="logo"><img src="/static/icon.svg" alt="" width="40" height="40"></div>{% endmacro %}
+{% macro toast(text) %}<div class="toast" role="status">{{ icon.ok(20, "#48D07C") }}<p class="t-body" style="color:#fff;flex:1">{{ text }}</p></div>{% endmacro %}
+{% macro label_tag(l) %}<span class="tag {{ 'al' if l == 'Above threshold' else 'ok' if l == 'Normal' else 'un' }}">{{ l | t }}</span>{% endmacro %}

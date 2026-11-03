@@ -1,40 +1,32 @@
+{#- Màn 1: the home screen of the TCI app; the "Mẹ & Bé 360" tile opens the sub-app with the signed-in identity (FR-015). -#}
 {% extends "tci_base.html" %}
 {% block content %}
-<div style="height:110px;border-radius:12px;background:linear-gradient(135deg,#CCF6D2,#E6F6EC);display:flex;flex-direction:column;justify-content:center;padding:20px"><p class="t-cap" style="color:#00873F">{{ _("[TCI app banner]") }}</p></div>
+<div class="tci-banner">
+  <div><p class="t-title" style="color:#00873F;max-width:200px">{{ _("Complete antenatal care at Thu Cuc") }}</p></div>
+  <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="#fff" opacity=".55"/><circle cx="52" cy="38" r="15" fill="#009788"/><path d="M28 104c0-26 10-46 24-46 12 0 20 8 21 18" stroke="#009788" stroke-width="12" stroke-linecap="round" fill="none"/><circle cx="78" cy="84" r="22" fill="#F66A0B"/><path d="M78 75c-4-6-12-3-12 4 0 6 12 14 12 14s12-8 12-14c0-7-8-10-12-4z" fill="#fff"/></svg>
+</div>
 <div class="card bd" style="padding:12px 8px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px">
   <div class="feat"><div class="fe">{{ icon.tci_feature("calendar") }}</div>{{ _("Appointments") }}</div>
   <div class="feat"><div class="fe">{{ icon.tci_feature("record") }}</div>{{ _("Medical records") }}</div>
   <div class="feat"><div class="fe">{{ icon.tci_feature("voucher") }}</div>{{ _("Voucher") }}</div>
   <div class="feat"><div class="fe">{{ icon.tci_feature("service") }}</div>{{ _("Services") }}</div>
-  <a href="#accounts" class="feat" style="outline:2px solid #00A651;outline-offset:-2px">
-    <span class="tag al" style="position:absolute;top:-12px;height:18px;padding:0 6px">{{ _("New") }}</span>
-    <div class="fe">{{ icon.mb() }}</div><span class="b" style="color:#00A651">{{ _("Mother & Baby 360") }}</span>
-  </a>
+  <form method="post" action="/tci/open" style="display:contents">
+    {% for f in fields %}<input type="hidden" name="{{ f }}" value="{{ account[f] or '' if account else '' }}">{% endfor %}
+    <input type="hidden" name="sex" value="Female">
+    <button class="feat feat-new" data-open-subapp>
+      <span class="tag al">{{ _("New") }}</span>
+      <div class="fe">{{ icon.mb() }}</div><span class="b" style="color:#00A651">{{ _("Mother & Baby 360") }}</span>
+    </button>
+  </form>
 </div>
-
-<div class="bl" id="accounts">
-  <p class="t-title">{{ _("Open Mother & Baby 360 as") }}</p>
-  <div class="card bd np">
-    {% for a in accounts %}
-    <form method="post" action="/tci/open" class="row" style="padding-right:8px">
-      {% for f in fields %}<input type="hidden" name="{{ f }}" value="{{ a[f] or '' }}">{% endfor %}
-      <span class="grow"><span class="t-body">{{ a.full_name }}</span><br><span class="t-cap">{{ a.tci_account_ref }}</span></span>
-      <button class="btn so" data-account="{{ a.tci_account_ref }}">{{ _("Open") }}</button>
-    </form>
-    {% endfor %}
+<div class="bl">
+  <p class="t-title">{{ _("Customer guide") }}</p>
+  <div class="grid2">
+    <div class="guide-card g1"><p class="t-cap">{{ _("Antenatal check-up process") }}</p></div>
+    <div class="guide-card g2"><p class="t-cap">{{ _("Getting ready for birth") }}</p></div>
   </div>
 </div>
-
-<details class="card bd">
-  <summary class="t-body b">{{ _("Simulate another TCI account") }}</summary>
-  <form method="post" action="/tci/open" class="bl" style="margin-top:12px">
-    <div class="fld"><label for="n">{{ _("Full name") }}</label><input id="n" class="inp" name="full_name" required></div>
-    <div class="fld"><label for="b">{{ _("Date of birth") }}</label><input id="b" class="inp" type="date" name="date_of_birth" required></div>
-    <div class="fld"><label for="s">{{ _("Sex") }}</label><select id="s" class="inp" name="sex"><option value="Female">{{ _("Female") }}</option><option value="Male">{{ _("Male") }}</option></select></div>
-    <div class="fld"><label for="p">{{ _("Phone number") }}</label><input id="p" class="inp" name="phone" required></div>
-    <div class="fld"><label for="r">{{ _("Medical record number (optional)") }}</label><input id="r" class="inp" name="record_code"></div>
-    <button class="btn full">{{ _("Mother & Baby 360") }}</button>
-  </form>
-</details>
-<a class="lnk" href="/">{{ _("Demo start page") }} ›</a>
+{% endblock %}
+{% block floating %}
+<a href="#" data-hotline-pending="{{ _('The hospital will confirm this number before launch: {hotline}.', hotline='1900 xxxx') }}" aria-label="{{ _('Call hotline / nurse') }}" class="call-fab">{{ icon.phone(24) }}</a>
 {% endblock %}

@@ -63,4 +63,4 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
             self_tracked.save(conn, user_id, form, clock.now())
         except self_tracked.EntryError as e:
             return form_page(request, user, form, e.errors, 422)
-        return RedirectResponse(f"/m/{user_id}/health?saved=1", status_code=303)
+        return RedirectResponse(f"/m/{user_id}/home?saved=1", status_code=303)

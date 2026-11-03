@@ -29,6 +29,26 @@ class FakeLLM:
         return "[Sample chatbot answer]"
 
 
+class LocalAnswers:
+    """The v1.0.0 app's answers when no Gemini key is set: short general advice in Vietnamese, chosen by topic. Sample text, Pending SME (D-81)."""
+    name = "local"
+    CLOSING = " Mẹ hỏi thêm bác sĩ ở lần khám tới nếu cần nhé."
+    TOPICS = (
+        (("mất ngủ", "khó ngủ", "ngủ"), "Mẹ thử nằm nghiêng, kê gối giữa hai chân và sau lưng, đi ngủ đúng giờ và hạn chế uống nhiều nước ngay trước khi ngủ. Một chút vận động nhẹ ban ngày cũng giúp dễ ngủ hơn."),
+        (("tập thể dục", "vận động", "yoga", "đi bộ"), "Nếu bác sĩ không dặn gì khác, mẹ có thể đi bộ nhẹ, tập yoga bầu hoặc bơi, khoảng 30 phút mỗi ngày. Mẹ tránh động tác dễ ngã hoặc nằm ngửa lâu, và dừng lại khi thấy mệt."),
+        (("chuột rút",), "Khi bị chuột rút, mẹ duỗi thẳng chân, kéo mũi bàn chân về phía người và xoa bóp nhẹ. Ban ngày mẹ nhớ uống đủ nước, vận động nhẹ và ăn thực phẩm giàu canxi."),
+        (("ốm nghén", "nghén"), "Mẹ thử chia nhỏ bữa ăn, ăn chút bánh khô ngay khi thức dậy và tránh mùi gây khó chịu. Gừng và uống từng ngụm nước nhỏ cũng có thể giúp dễ chịu hơn."),
+        (("sữa", "cho con bú"), "Cho bé bú sớm và thường xuyên là cách tốt nhất để có nhiều sữa. Mẹ nhớ uống đủ nước, ăn đủ bữa và nghỉ ngơi khi có thể."),
+        (("ăn", "dinh dưỡng", "thực phẩm", "uống"), "Mẹ nên ăn đa dạng: đạm từ thịt nạc, trứng, cá ít thuỷ ngân; sắt và canxi từ rau xanh đậm, sữa; thêm trái cây và ngũ cốc nguyên hạt. Mẹ tránh đồ sống, tái và rượu bia."),
+    )
+    GENERAL = "Đây là câu hỏi chung về thai kỳ. Mẹ nên giữ lịch khám đều, ăn uống đủ chất, nghỉ ngơi hợp lý và ghi lại những gì muốn hỏi để trao đổi với bác sĩ."
+
+    def answer(self, question: str, context: dict) -> str:
+        text = question.lower()
+        body = next((answer for words, answer in self.TOPICS if any(w in text for w in words)), self.GENERAL)
+        return body + self.CLOSING
+
+
 class GeminiLLM:
     name = "gemini"
     URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
@@ -50,6 +70,15 @@ class GeminiLLM:
         return "".join(p.get("text", "") for p in data["candidates"][0]["content"]["parts"]).strip()
 
 
+_fallback = FakeLLM
+
+
+def use_fallback(client_class) -> None:
+    """The client used when no Gemini key is set (mb360.server: LocalAnswers; tests: FakeLLM)."""
+    global _fallback
+    _fallback = client_class
+
+
 def _env_file_values() -> dict:
     values = {}
     try:
@@ -69,4 +98,4 @@ def get_client():
     file_values = _env_file_values()
     key = os.environ.get("GEMINI_API_KEY") or file_values.get("GEMINI_API_KEY")
     model = os.environ.get("GEMINI_MODEL") or file_values.get("GEMINI_MODEL")
-    return GeminiLLM(key, model) if key and model else FakeLLM()
+    return GeminiLLM(key, model) if key and model else _fallback()

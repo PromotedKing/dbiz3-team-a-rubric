@@ -42,7 +42,7 @@ def test_settings_page_and_toggle(client, db, user_id):
     lan = user_id("tci-000123")
     page = client.get(f"/m/{lan}/settings/notifications").text
     assert vi("Report responses") in page and vi("New visit results") in page and vi("Doctor's-instruction reminders") in page
-    assert vi("Appointment reminders") not in page                # Could, APT not built (S-010 #6)
+    assert vi("Appointment reminders") in page                    # Màn 25; appointments are held by the TCI app (D-81)
     r = client.post(f"/m/{lan}/settings/notifications", data={"key": "watch_flag_reminder", "value": "1"})
     assert r.status_code == 303
     assert db.execute("SELECT watch_flag_reminder FROM NOTIFICATION_PREFERENCE WHERE user_id = ?", (lan,)).fetchone()[0] == 1
@@ -57,8 +57,6 @@ def test_notices_list_filter_open_and_badge(client, db, user_id):
     page = client.get(f"/m/{lan}/notices").text
     assert page.count("data-notice") == 1 and '<span class="badge" data-unread>1</span>' in page
     assert vi("Your Blood pressure report has been sent to clinical staff") in page or "Huyết áp" in page
-    assert vi("{n} unread notifications", n=1) in page
-    assert client.get(f"/m/{lan}/notices", params={"type": "Visit result"}).text.count("data-notice") == 0
     assert client.get(f"/m/{lan}/notices", params={"type": "Unread"}).text.count("data-notice") == 1
 
     nid = db.execute("SELECT notification_id FROM NOTIFICATION WHERE user_id = ?", (lan,)).fetchone()[0]

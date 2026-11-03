@@ -16,6 +16,19 @@ def build(path: str = ":memory:") -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.executescript(SCHEMA.read_text(encoding="utf-8"))
     conn.execute("PRAGMA foreign_keys = ON")
+    load_seed(conn)
+    return conn
+
+
+def open_file(path: str) -> sqlite3.Connection:
+    """An existing database file of mb360.server."""
+    conn = sqlite3.connect(path, check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
+    return conn
+
+
+def load_seed(conn: sqlite3.Connection) -> None:
     for csv_path in sorted(SEED_DIR.glob("[0-9][0-9]_*.csv")):
         table = csv_path.stem.split("_", 1)[1]
         with csv_path.open(encoding="utf-8", newline="") as f:
@@ -26,4 +39,3 @@ def build(path: str = ":memory:") -> sqlite3.Connection:
         marks = ", ".join("?" for _ in header)
         conn.executemany(f"INSERT INTO {table} ({cols}) VALUES ({marks})", rows)
     conn.commit()
-    return conn

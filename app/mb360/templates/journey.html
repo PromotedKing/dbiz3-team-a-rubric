@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
 {% set page_title = "My journey" %}
-{% set back_url = "/m/" ~ user.user_id ~ "/timeline" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/timeline" %}{% set back_auto = true %}
 {% block main %}
 <div class="strip" style="flex-direction:row;overflow-x:auto" data-active-stage="{{ j.stage }}">
   {% for s in j.stages %}<a class="chip{% if s == j.stage %} on{% endif %}" style="flex:none" href="/m/{{ user.user_id }}/journey?stage={{ s | urlencode }}">{{ s | t }}</a>{% endfor %}
@@ -24,7 +24,17 @@
   {% elif not j.weeks %}
   <div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("Nothing to show for this stage yet.") }}</p></div>
   {% else %}
+  {% if j.highlights %}
+  <div class="card bl">
+    <div class="sec"><p class="t-body b">{{ _("Highlights") }}</p><a href="/m/{{ user.user_id }}/timeline" class="lnk" style="font-size:12px">{{ _("See the timeline") }} ›</a></div>
+    <div class="grid3">
+      {% for p in j.highlights[:6] %}{% if loop.last and j.highlights | length > 6 %}<div class="ph-more"><span class="t-cap">+{{ j.highlights | length - 5 }}</span></div>{% elif media_exists(p) %}<img src="/media/{{ p }}" data-zoom alt="{{ _('Diary photo, {date}', date='') }}">{% endif %}{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  <details class="card bd week-list"><summary class="t-body b">{{ _("Week by week") }}</summary>
   {% include "_journey_weeks.html" %}
+  </details>
   {% endif %}
   <div class="card np">
     {% for r in j.stage_rows %}
