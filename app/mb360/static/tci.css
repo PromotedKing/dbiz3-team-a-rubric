@@ -230,7 +230,7 @@ html[data-nav=pop]::view-transition-old(screen){animation-name:vt-out-r}
 /* Phone frame beside the showcase panel */
 @media (min-width:500px){
   body.app{min-height:100%;height:auto;padding:24px 0;align-items:flex-start;gap:40px;background:radial-gradient(1200px 700px at 30% 10%,#E6F6EC,#E9EFEB 60%)}
-  .scr{height:844px;border-radius:32px;box-shadow:0 0 0 8px #1E2422,0 24px 60px rgba(0,60,30,.25);flex:none;max-width:390px;margin:8px 0}
+  .scr{height:min(844px,max(480px,calc(100dvh - 64px)));border-radius:32px;box-shadow:0 0 0 8px #1E2422,0 24px 60px rgba(0,60,30,.25);flex:none;max-width:390px;margin:8px 0}
 }
 .showcase{display:none}
 @media (min-width:900px){
