@@ -63,6 +63,15 @@ def test_answer_from_the_doctor_opens_the_structured_detail(app_client, db):
     assert notices.unread_count(db, persona.USER) == 0
 
 
+def test_home_counts_answered_cases_not_status_notices(db):
+    persona.install(db, NOW)
+    case = db.execute("SELECT case_id FROM NOTIFICATION WHERE user_id = ? AND read_at IS NULL", (persona.USER,)).fetchone()[0]
+    for i in range(3):
+        db.execute("""INSERT INTO NOTIFICATION (notification_id, user_id, type, title, subtitle, created_at, read_at, case_id, visit_id, watch_flag_id, appointment_ref)
+                      VALUES (?, ?, 'Report', 'status', NULL, '2026-11-02 09:00', NULL, ?, NULL, NULL, NULL)""", (f"{i:036d}", persona.USER, case))
+    assert notices.home_notice(db, persona.USER)[1] == 1
+
+
 def test_parse_response_keeps_plain_text_as_the_comment():
     assert notices.parse_response("Mẹ yên tâm nhé.") == {"comment": "Mẹ yên tâm nhé.", "todo": [], "follow_up": None}
     assert notices.parse_response("A\n- B\nHẹn khám: C") == {"comment": "A", "todo": ["B"], "follow_up": "C"}

@@ -133,9 +133,9 @@ def detail(conn: sqlite3.Connection, user_id: str, notification_id: str) -> dict
 
 
 def home_notice(conn: sqlite3.Connection, user_id: str) -> tuple | None:
-    """The card on Home (Màn 4): the newest unread answer from clinical staff and how many there are; otherwise the newest unread notice."""
+    """The card on Home (Màn 4): the newest unread answer from clinical staff and how many cases were answered; otherwise the newest unread notice."""
     unread = list_for(conn, user_id, UNREAD)
     answers = [n for n in unread if latest_response(conn, n["case_id"]) is not None]
     if answers:
-        return answers[0], len(answers)
+        return answers[0], len({n["case_id"] for n in answers})     # one case sends several status notices
     return (unread[0], 0) if unread else None
