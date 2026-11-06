@@ -113,3 +113,24 @@ def test_sample_mother_has_data_only_as_the_schema_allows(db):
     assert db.execute("PRAGMA foreign_key_check").fetchall() == []
     assert db.execute("SELECT 1 FROM CONSENT_RECORD WHERE user_id = ?", (persona.USER,)).fetchone() is None
     assert db.execute("SELECT 1 FROM PREGNANCY_PROFILE WHERE user_id = ?", (persona.USER,)).fetchone() is None
+
+
+def test_close_app_ends_the_session_and_clears_the_cookie(app_client, db):
+    entry.agree(db, dict(tci_feed.host_account(db)), True, NOW)
+    token = entry.latest_session(db, persona.USER)
+    app_client.cookies.set(entry.COOKIE, token)
+    r = app_client.post(f"/m/{persona.USER}/close")
+    assert r.status_code == 303 and r.headers["location"] == "/tci"
+    assert 'mb360_session=""' in r.headers["set-cookie"] or "Max-Age=0" in r.headers["set-cookie"]
+    from datetime import timedelta
+    assert not entry.valid_session(db, token, persona.USER, NOW + timedelta(minutes=1))
+    assert entry.valid_session(db, entry._new_session(db, persona.USER, NOW), persona.USER, NOW)      # reopening from TCI starts a new one
+
+
+def test_ending_a_session_later_uses_the_closing_time(db):
+    persona.install(db, NOW)
+    token = entry._new_session(db, persona.USER, NOW)
+    from datetime import timedelta
+    entry.end_session(db, token, persona.USER, NOW + timedelta(minutes=30))
+    assert db.execute("SELECT expires_at FROM SESSION WHERE session_token = ?", (token,)).fetchone()[0] == "2026-11-02 10:30"
+    assert not entry.valid_session(db, token, persona.USER, NOW + timedelta(minutes=30))

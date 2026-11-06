@@ -104,6 +104,16 @@ def latest_session(conn: sqlite3.Connection, user_id: str) -> str | None:
     return row[0] if row else None
 
 
+def end_session(conn: sqlite3.Connection, token: str | None, user_id: str, now: datetime) -> None:
+    """FR-019, DM-19 default: expires_at = time of closing. A session cannot end in the minute it began (ck_session_period),
+    so it then ends one minute after it began; the cookie is removed at once anyway (FR-021)."""
+    row = conn.execute("SELECT created_at FROM SESSION WHERE session_token = ? AND user_id = ?", (token, user_id)).fetchone() if token else None
+    if row is None:
+        return
+    end = max(now, datetime.strptime(row[0], DB_TIME) + timedelta(minutes=1)).strftime(DB_TIME)
+    _run(conn, lambda: conn.execute("UPDATE SESSION SET expires_at = ? WHERE session_token = ? AND expires_at > ?", (end, token, end)))
+
+
 def valid_session(conn: sqlite3.Connection, token: str | None, user_id: str, now: datetime) -> bool:
     """The token is this mother's and has not expired."""
     if not token:

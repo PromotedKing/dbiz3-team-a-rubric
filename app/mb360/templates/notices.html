@@ -8,7 +8,14 @@
 <div class="scroll-x" data-active-type="{{ active }}">
   <a class="chip{% if not active %} on{% endif %}" href="/m/{{ user.user_id }}/notices">{{ _("All") }}</a>
   <a class="chip{% if active == unread_filter %} on{% endif %}" href="/m/{{ user.user_id }}/notices?type={{ unread_filter }}">{{ _("Unread") }} · {{ unread_count }}</a>
+  {% for ty in types %}<a class="chip{% if active == ty %} on{% endif %}" href="/m/{{ user.user_id }}/notices?type={{ ty | urlencode }}">{{ ty | t }}</a>{% endfor %}
 </div>
+{% if unread_count %}
+<form class="sec" method="post" action="/m/{{ user.user_id }}/notices/read-all">
+  <p class="t-cap">{{ _("{n} unread notifications", n=unread_count) }}</p>
+  <button class="lnk" style="font-size:12px">{{ _("Mark all as read") }}</button>
+</form>
+{% endif %}
 {% for c in rows %}
 <a href="/m/{{ user.user_id }}/notices/{{ c.n.notification_id }}" class="card bl8{% if not c.n.read_at %} unread{% endif %}" style="color:#212121" data-notice>
   <div class="sec"><span class="tag {{ c.tag[1] }}">{{ c.tag[0] | t }}</span>

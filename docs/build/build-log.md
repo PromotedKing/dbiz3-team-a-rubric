@@ -562,3 +562,7 @@ Session 11. `render.yaml`, password on the staff and test pages (D-82), Vietnam 
 
 Render's SQLite refused NULL in `CHECK (json_valid(x))`. Schema: NULL guard on the 3 JSON columns; data model §9 row updated; seed unchanged. Tests pass on SQLite 3.40 and 3.50. Affects `data/schema/schema-MB360.sql` and `data/data-model-MB360.md` (owner: Tâm).
 
+## 06/11/2026: back in line with the Must FRs (Sang, branch `sang/mother-app-v1`)
+
+S-009 type filter and "Mark all as read" back (ACC FR-025, FR-026); the week's visit card and indicators back on S-048 (TML FR-005, FR-012); "Close app" on S-083 ends the sub-app session (ACC FR-019, FR-021, DM-19 default). D-81 updated.
+

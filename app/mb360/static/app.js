@@ -59,6 +59,12 @@
       document.querySelectorAll(".busy").forEach(function (b) { b.classList.remove("busy"); });
     });
 
+    /* S-083 "Close app": FR-021 clears what the sub-app kept on the device */
+    var closing = document.querySelector("[data-close-form]");
+    if (closing) closing.addEventListener("submit", function () {
+      try { Object.keys(sessionStorage).forEach(function (k) { if (k.indexOf("mb360") === 0) sessionStorage.removeItem(k); }); } catch (e) {}
+    });
+
     /* Hotline: the number is pending from the hospital (BOT Q8), so no dialler opens on an invented number */
     document.addEventListener("click", function (e) {
       var h = e.target.closest("[data-hotline-pending]");

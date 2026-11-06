@@ -149,7 +149,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         """S-009 behind the "From doctor" tab (D-80): FR-025."""
         active = type if type in notices.TYPES or type == notices.UNREAD else ""
         return page(request, "notices.html", user=mother(user_id), rows=notices.cards_for(conn, user_id, active), active=active,
-                    unread_count=notices.unread_count(conn, user_id), unread_filter=notices.UNREAD)
+                    types=notices.TYPES, unread_count=notices.unread_count(conn, user_id), unread_filter=notices.UNREAD)
 
     @app.post("/m/{user_id}/notices/read-all")
     def notices_read_all(user_id: str):
@@ -168,6 +168,15 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         if d is None:
             return RedirectResponse(target, status_code=303)
         return page(request, "notice_detail.html", user=user, d=d, target=target)
+
+    @app.post("/m/{user_id}/close")
+    def close_app(request: Request, user_id: str):
+        """S-083 "Close app": FR-019 ends the sub-app session, FR-021 clears its cookie; the TCI account stays signed in."""
+        mother(user_id)
+        entry.end_session(conn, request.cookies.get(entry.COOKIE), user_id, clock.now())
+        response = RedirectResponse("/tci", status_code=303)
+        response.delete_cookie(entry.COOKIE)
+        return response
 
     @app.get("/session-expired", response_class=HTMLResponse)
     def session_expired(request: Request):

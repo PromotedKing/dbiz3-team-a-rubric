@@ -740,3 +740,4 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Mother app v1.0.0 (D-81) | Trouble sleeping during pregnancy | Mất ngủ khi mang thai |
 | Mother app v1.0.0 (D-81) | Should I exercise? | Có nên tập thể dục? |
 | Mother app v1.0.0 (D-81) | Leg cramps | Chuột rút chân |
+| Mother app v1.0.0 (D-81) | Visits this week | Lần khám trong tuần |

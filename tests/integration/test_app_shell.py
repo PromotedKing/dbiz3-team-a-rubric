@@ -48,7 +48,7 @@ def test_home_has_close_and_no_back(client, user_id):
     assert "data-back" not in page and "data-close-app" in page
     dialog = page[page.index('id="close-sheet"'):]
     assert vi("Close Mother & Baby 360?") in dialog and vi("You will return to the TCI app. Your data stays saved, and you do not need to sign in next time.") in dialog
-    assert vi("Stay") in dialog and f'href="/tci">{vi("Close app")}' in dialog
+    assert vi("Stay") in dialog and 'action="/m/' in dialog and f'>{vi("Close app")}</button>' in dialog
 
 
 def test_onboarding_screens_have_no_tab_bar(client, db):

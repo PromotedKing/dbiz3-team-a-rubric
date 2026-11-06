@@ -56,10 +56,10 @@
         <h2 id="close-title" class="t-title">{{ _("Close Mother & Baby 360?") }}</h2>
         <p class="t-body" style="color:#6F6F6F">{{ _("You will return to the TCI app. Your data stays saved, and you do not need to sign in next time.") }}</p>
       </div>
-      <form method="dialog" style="display:flex;gap:12px">
-        <button class="btn o">{{ _("Stay") }}</button>
-        <a class="btn" href="/tci">{{ _("Close app") }}</a>
-      </form>
+      <div style="display:flex;gap:12px">
+        <form method="dialog" style="display:flex;flex:1"><button class="btn o">{{ _("Stay") }}</button></form>
+        <form method="post" action="/m/{{ user.user_id }}/close" style="display:flex;flex:1" data-close-form><button class="btn">{{ _("Close app") }}</button></form>
+      </div>
     </div>
   </dialog>
   {% endif %}

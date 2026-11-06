@@ -56,6 +56,9 @@ def test_notices_list_filter_open_and_badge(client, db, user_id):
     client.post(f"/m/{lan}/report", data=bp_form(150, 95, ["No symptoms"]))     # ALR FR-018 writes one
     page = client.get(f"/m/{lan}/notices").text
     assert page.count("data-notice") == 1 and '<span class="badge" data-unread>1</span>' in page
+    assert vi("{n} unread notifications", n=1) in page and vi("Mark all as read") in page
+    assert client.get(f"/m/{lan}/notices", params={"type": "Visit result"}).text.count("data-notice") == 0
+    assert client.get(f"/m/{lan}/notices", params={"type": "Report"}).text.count("data-notice") == 1
     assert vi("Your Blood pressure report has been sent to clinical staff") in page or "Huyết áp" in page
     assert client.get(f"/m/{lan}/notices", params={"type": "Unread"}).text.count("data-notice") == 1
 

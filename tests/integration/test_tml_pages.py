@@ -28,6 +28,7 @@ def test_current_week(client, user_id):
     lan = user_id("tci-000123")
     page = client.get(f"/m/{lan}/timeline").text
     for t in (vi("Week {n}", n=28), "27/09/2026 – 03/10/2026", vi("‹ Week {n}", n=27), vi("Week {n} ›", n=29),
+              vi("Indicators this week"), "57.0 kg", vi("Self-entered"), vi("Visits this week"), vi("No visit this week."),
               vi("Messages to Baby") + " · " + vi("Week {n}", n=28), vi("From Mom"), vi("From Dad"),
               vi("This week"), vi("Visit day"), vi("Has diary"), "The baby kicked a lot today.", vi("+ Add diary entry")):
         assert t in page, t
@@ -38,7 +39,7 @@ def test_current_week(client, user_id):
 def test_other_weeks(client, user_id):
     lan = user_id("tci-000123")
     w26 = client.get(f"/m/{lan}/timeline", params={"week": 26}).text
-    assert vi("Visit day") in w26 and "13/09/2026 – 19/09/2026" in w26
+    assert vi("Visit day") in w26 and "13/09/2026 – 19/09/2026" in w26 and vi("Visit {date}", date="15/09/2026") in w26
     day = client.get(f"/m/{lan}/timeline/day/2026-08-18").text          # visit details live on Màn 7
     for t in (vi("Fetal length"), "27 cm", vi("Estimated weight"), "480 g", vi("Ultrasound image, {date}", date="18/08/2026")):
         assert t in day, t

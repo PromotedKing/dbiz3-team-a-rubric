@@ -56,6 +56,35 @@
   {% endfor %}
 </div>
 
+<div class="bl" data-week-visits>
+  <p class="t-title">{{ _("Visits this week") }}</p>
+  {% for v in w.visits %}
+  <a href="/m/{{ user.user_id }}/timeline/day/{{ v.visit_date }}" class="card ent" style="padding:12px">
+    {% if v.ultrasound_image and media_exists(v.ultrasound_image) %}<img class="thumb" src="/media/{{ v.ultrasound_image }}" alt="{{ _('Ultrasound image, {date}', date=v.visit_date | dmy) }}">
+    {% else %}<div class="ic40" style="width:56px;height:56px;background:#FEEDE1;color:#C4520A">{{ icon.cal() }}</div>{% endif %}
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+      <div class="sec"><p class="t-body b">{{ _("Visit {date}", date=v.visit_date | dmy) }}</p><span class="tag src">{{ _("From visit") }}</span></div>
+      <p class="t-cap">{{ v.visit_type | t_known }}{% if v.fetal_length is not none %} · {{ _("Fetal length") }} {{ v.fetal_length }} cm{% endif %}{% if v.estimated_fetal_weight is not none %} · {{ _("Estimated weight") }} {{ v.estimated_fetal_weight }} g{% endif %}</p>
+    </div>
+    {{ icon.chev() }}
+  </a>
+  {% else %}
+  <div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("No visit this week.") }}</p></div>
+  {% endfor %}
+</div>
+
+<div class="bl8" data-week-indicators>
+  <p class="t-title">{{ _("Indicators this week") }}</p>
+  <div class="card" style="padding:4px 16px 12px">
+    {% for d in w.days %}
+      <p class="t-cap b" style="padding-top:10px">{{ d.day | dmy }}</p>
+      {% for r in d.rows %}<div class="kv"><span class="k">{{ r.metric | t }}</span><span style="display:flex;gap:8px;align-items:center"><span class="b">{{ r.value | t_known }}</span><span class="tag src">{{ r.source | t }}</span></span></div>{% endfor %}
+    {% else %}
+      <p class="t-body" style="color:#6F6F6F;padding-top:10px">{{ _("No indicators this week.") }}</p>
+    {% endfor %}
+  </div>
+</div>
+
 {% if w.messages %}
 <div class="card bl8">
   <div class="sec"><p class="t-body b">{{ _("Messages to Baby") }} · {{ _("Week {n}", n=w.week) }}</p><span class="tag src">{{ _("Family") }}</span></div>
