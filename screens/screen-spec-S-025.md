@@ -11,6 +11,8 @@
 | Spec version | v1.4 |
 | Status | Draft (revised 29/09/2026 — fetal heart rate per the latest MVP Scope; Self-entered label per D-33 as revised) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Blood pressure, last 30 days by default; blood glucose opens on "fasting"; axis with one decimal on narrow ranges; urine levels by name; no sleep statistics (HLT Q12).
+
 ## 1. Purpose
 
 **Shown when:** the mother taps "View metric history" on `S-023` Health metrics or "View metric history ›" on a metric card on `S-027` Doctor's instructions. `[NEEDS CLARIFICATION: when opened from a card on `S-027`, is that card's metric preselected; when opened from `S-023`, what is the default metric?]`

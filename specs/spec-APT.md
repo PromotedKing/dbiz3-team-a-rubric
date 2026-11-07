@@ -4,9 +4,9 @@
 |---|---|
 | Module ID | `APT` |
 | Module name | Appointment Booking & Visit Management (TCI booking portal in a WebView — Could, D-77) |
-| Spec version | v1.6.0 (14/10/2026: PRD C1 — priority Could, WebView, Q1 and Q11 answered, D-77) — v1.5.1 (review 29/09/2026: APT-01 – APT-04, X-05, X-07 / DM-25 data types) |
+| Spec version | v1.6.1 (07/11/2026: v1.0.0 app — BR-003 and FR-001 out of date, differences §7.3) — v1.6.0 (14/10/2026: PRD C1 — priority Could, WebView, Q1 and Q11 answered, D-77) — v1.5.1 (review 29/09/2026: APT-01 – APT-04, X-05, X-07 / DM-25 data types) |
 | Author (team member) | Hải Anh (drafted 15/09/2026) — diagrams checked node by node by Chi, 16/09/2026 (verifier ≠ converter) |
-| Date | 14/10/2026 |
+| Date | 07/11/2026 |
 | Status | Draft |
 | Approved by (Client role) | *pending* |
 | DBIZ2 source | Function List rows `F-101`–`F-107`, `F-116`–`F-118` (10 rows); Screens `S-012`–`S-022` (reference only, see §1) |
@@ -208,6 +208,16 @@ DBIZ2 has native-booking screens S-012 – S-022 (5 with a mockup). MVP v8 does 
 | Screen ID | Screen name | Priority | Note |
 |---|---|---|---|
 | S-012 – S-022 | Appointment Home, Visit Reason, Clinic & Date Selection, Time Slot Selection, Slot Unavailable, Appointment Review, Appointment Success, Appointment Detail, Appointment List, Appointment Cancellation, Cancellation Success | **Handled by the TCI app — not built in the sub-app** (APT-03) | DBIZ2 mockups of S-012, S-014, S-015, S-017, S-018 are kept as reference only (Figure 13, §4.2). The S-017 mockup shows a price ("300.000 VND"), supporting evidence for In-App Payment = Won't. The module's only MVP touchpoints are the button and card on S-008 and the "Appointments" tab (§7.0). |
+
+### 7.3 Differences in the v1.0.0 app (D-79 – D-85)
+
+**To be decided by the owner:** BR-003 and FR-001 still describe an "Appointments" tab, which the 5-tab bar of D-80 no longer has.
+
+| Item | v1.0.0 app | Source |
+|---|---|---|
+| Next appointment | S-008 shows "Lịch khám kế tiếp" (day, date, time, days left), read from the TCI host app; in the demo a simulated host table (`app/mb360/tci_feed.py`), no MB360 schema change, nothing stored by the sub-app | D-81 (U2) |
+| Booking | No booking path in the sub-app; the TCI host's own "Book" tab is outside the sub-app | D-80 |
+| Reminders | "Appointment reminders" switch on S-010 (ACC FR-027) | D-81 |
 
 ## 8. Success criteria (mandatory)
 

@@ -1,4 +1,4 @@
-<!-- DBIZ3-SNAPSHOT source=specs/spec-TML.md sha256=9dd551755b50ce70538ec229ce14c45800c378cb6b404c707669ad2670de7d89 taken=2026-11-02T08:52Z -->
+<!-- DBIZ3-SNAPSHOT source=specs/spec-TML.md sha256=c899283028b55a7e3f85c5f87f950403c9798f908457e6d622da7343031bbe7f taken=2026-11-07T13:22Z -->
 <!-- Read-only copy for Spec Kit. Do not edit here. Edit specs/spec-TML.md, then run:
      uv run tools/start_feature.py --refresh -->
 
@@ -8,9 +8,9 @@
 |---|---|
 | Module ID | `TML` |
 | Module name | Pregnancy Timeline & Baby Memory Journal |
-| Spec version | v1.6.0 (14/10/2026: PRD alignment — D-75 integrated journey: daily indicators on S-048 (FR-012), journey review by stage and PDF album on S-105 (FR-013, FR-014)) — v1.5.4 (30/09/2026: Family Message `patient_id` declared — DM-33; gestational_week 0–42 per the data-model review; review 29/09/2026: TML-01 – TML-05, HLT-06, X-07 / DM-25 data types; Messages to Baby = Must item, pending Client approval, per the latest MVP Scope) |
+| Spec version | v1.6.1 (07/11/2026: v1.0.0 app — S-048 layout after the UI package, differences §7.3) — v1.6.0 (14/10/2026: PRD alignment — D-75 integrated journey: daily indicators on S-048 (FR-012), journey review by stage and PDF album on S-105 (FR-013, FR-014)) — v1.5.4 (30/09/2026: Family Message `patient_id` declared — DM-33; gestational_week 0–42 per the data-model review; review 29/09/2026: TML-01 – TML-05, HLT-06, X-07 / DM-25 data types; Messages to Baby = Must item, pending Client approval, per the latest MVP Scope) |
 | Author (team member) | Tâm (drafted 16/09/2026) — diagrams checked node by node by Ánh, 17/09/2026 (verifier ≠ converter) |
-| Date | 14/10/2026 |
+| Date | 07/11/2026 |
 | Status | Draft |
 | Approved by (Client role) | *pending* |
 | DBIZ2 source | Function List rows `F-077`, `F-080`, `F-085`–`F-089`, `F-092`–`F-094` (10 rows); Screens `S-044`–`S-053` |
@@ -364,6 +364,15 @@ sequenceDiagram
 | S-047 | Due Date Confirmation Screen | Must | No separate mockup. `[NEEDS CLARIFICATION: do the "Calculated by the system" card and the "Confirm" button on S-007 + S-046 replace S-047]` |
 | S-049 | Pregnancy Week Scroll Screen | Must | No separate mockup; week navigation is now the arrows on S-048 (D-04). `[NEEDS CLARIFICATION: is it still a separate screen]` |
 | S-050 | Pregnancy Week Detail Screen | Must | No separate mockup; week details are shown directly on S-048. `[NEEDS CLARIFICATION: is it still a separate screen]` |
+
+### 7.3 Differences in the v1.0.0 app (D-79 – D-85)
+
+| Item | v1.0.0 app | Source |
+|---|---|---|
+| S-048 top | Week strip (7 days, visit and diary dots), "Today" card, "This week" list (Màn 6) | D-80 |
+| FR-005, FR-012 | The week's visit card ("No visit this week." when none) and the indicators grouped by day stay on S-048, **below** the blocks of Màn 6; a day opens the day screen (Màn 7) with the visit, its ultrasound image, the indicators and the diary of that day | D-81, review (Tâm) |
+| S-105 | "Highlights" grid of photos and ultrasound images; week-by-week content folded under "Xem theo từng tuần" | D-81 |
+| FR-014 | Unchanged: print page saved as PDF by the browser (partly met) | D-80 |
 
 ## 8. Success criteria (mandatory)
 

@@ -590,3 +590,9 @@ Groq answers longer than 500 characters broke the CHAT_MESSAGE length check. Ans
 
 From the note and the two reference pictures in the v1.0.0 review: `cli/dashboard.py`, `staff_dashboard.html`, `staff_board.html`, navigation in `staff_base.html`, `?flag=` on the case list. D-85. 7 new tests; checked in Edge at 1366 and 390 px wide (a card opens its case, no horizontal overflow).
 
+## 07/11/2026: Session 11 EARS lines and specs after the v1.0.0 app (Sang, branch `sang/mother-app-v1`)
+
+- **What the agent did**: added §5.3 "Behaviour on the internet (EARS, Session 11)" to spec-BOT (E-1 – E-4: LLM failure, long answer, what is sent, hand-off without the LLM), spec-ACC (E-1 – E-4: session, Close app, UTC+7, decimal comma) and spec-CLI (E-1 – E-3: team password, no password configured, one action at a time); a §7.3 "Differences in the v1.0.0 app" table to all 7 module specs; marked the questions answered by the v1.0.0 review (BOT Q10, Q14; ACC Q20, Q22, DM-19; HLT Q12) and added ACC Q23 (consent withdrawal); a v1.0.0 note under the header of 18 screen specs; refreshed the 11 spec snapshots; updated `specs/008-bot-chat/research.md` and `docs/build/mvp-alpha-checklist.md`.
+- **Checked by**: pytest, `start_feature.py --check` on every folder, `check_data_model.py`, `generate_seed.py --check`.
+- **To review**: each spec owner reads their §5.3 / §7.3 and the answered questions (written from the build and the 06/11 review, not yet agreed by the owner); spec-APT BR-003 / FR-001 still describe an Appointments tab.
+

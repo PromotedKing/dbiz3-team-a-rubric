@@ -15,3 +15,7 @@
 
 ## R5. Display (BR-004, FR-011)
 - **Decision**: S-031 welcome when no conversation is open; S-034 lists the messages with `dd/mm/yyyy · HH:mm`; every general answer carries "For reference only; does not replace your doctor's advice."; a danger question's hand-off bubble starts with "Signs that need medical attention" (derived from the question, not stored — FR-011); "•••" (S-033) is shown while the form is sending.
+
+## Update 07/11/2026 (v1.0.0 app, spec-BOT v1.9.0)
+- The Chatbot tab reopens the latest conversation instead of starting a new one (BOT §10 Q14 a); the welcome S-031 shows only when the mother has none.
+- The client order is Groq, then Gemini, then local sample answers (D-83, D-84); timeout 15 s; answers kept at 500 characters (BOT §5.3 E-1, E-2).

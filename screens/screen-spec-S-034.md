@@ -12,6 +12,8 @@
 | Spec version | v1.7 |
 | Status | Draft (revised 14/10/2026 — medical-attention notice and out-of-scope decline, D-76; image to redraw) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Danger card: notice, "Mẹ cần được kiểm tra ngay", Call emergency (hotline pending) · Connect to nurse · No, thanks; after connecting "Đã chuyển cho y tá · kèm đoạn chat" and View status, no call-back promise; error "Chưa nhận được câu trả lời. Thử lại" (BOT §5.3).
+
 ## 1. Purpose
 
 The conversation screen between the mother and the chatbot: it answers general pregnancy questions, and for questions about the mother's own health / containing a risk keyword it **does not answer directly** but offers to connect her to a nurse (`spec-BOT.md` BR-002).

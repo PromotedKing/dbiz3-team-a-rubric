@@ -10,6 +10,8 @@
 | Mockup image | `img/S-048.png` |
 | Status | Draft (revised 14/10/2026 — integrated journey layout, D-75; image to redraw) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Week strip, Today card, This week list (Màn 6); visits and indicators of the week below; a day opens the day screen (Màn 7) — TML §7.3.
+
 ## 1. Purpose
 
 View each gestational week, top to bottom (D-75): the week's health indicators listed by day, then the actual visit in that week (ultrasound image, measurements from the report, doctor's note — seed data in the MVP, D-59) and the week's diary entries. The mother's and father's "Messages to Baby" are part of the Must item "Pregnancy Timeline & Baby Memory Journal" in the latest MVP Scope, pending Client approval (D-03); if the Client does not approve, #14 – #19 are removed. There is no system-generated weekly reference content (Tips, "Size of") `[PENDING CLIENT: D-02]`.

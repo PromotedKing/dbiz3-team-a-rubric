@@ -10,6 +10,8 @@
 | Mockup image | `img/S-009.png` |
 | Status | Draft (revised 29/09/2026 — screen-spec fix #5) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Behind the "Từ bác sĩ" tab; chips All · Unread · 4 types; "Mark all as read"; an answer from clinical staff opens a detail screen (Màn 10, no Screen ID yet).
+
 ## 1. Purpose
 
 **Shown when:** the mother taps the **"Notifications"** button in the header of `S-008` Home (D-39).

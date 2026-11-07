@@ -1,4 +1,4 @@
-<!-- DBIZ3-SNAPSHOT source=specs/spec-BOT.md sha256=d7be72135264895006b11b77a88c569997af84f682b0d20e74102415aefb1dc2 taken=2026-10-26T11:38Z -->
+<!-- DBIZ3-SNAPSHOT source=specs/spec-BOT.md sha256=32a003de7aa256d4d0275bfaca99b52677af1e453d47d21fd9aa5f31ad4c8686 taken=2026-11-07T13:22Z -->
 <!-- Read-only copy for Spec Kit. Do not edit here. Edit specs/spec-BOT.md, then run:
      uv run tools/start_feature.py --refresh -->
 
@@ -8,9 +8,9 @@
 |---|---|
 | Module ID | `BOT` |
 | Module name | AI Chatbot L1 Support |
-| Spec version | v1.8.0 (14/10/2026: PRD alignment — D-76 Google AI Studio, pregnancy-only scope with polite decline FR-010, danger-phrase notice FR-011, BR-005) — v1.7.2 (30/09/2026: data-model review decisions applied — DM-11, DM-36, DM-40; review 29/09/2026: BOT-01 – BOT-05, X-01, X-03, X-07 / DM-25 data types) |
+| Spec version | v1.9.0 (07/11/2026: v1.0.0 app and hosting — Session 11 EARS lines (§5.3), D-83/D-84 provider, Q10 and Q14 answered) — v1.8.0 (14/10/2026: PRD alignment — D-76 Google AI Studio, pregnancy-only scope with polite decline FR-010, danger-phrase notice FR-011, BR-005) — v1.7.2 (30/09/2026: data-model review decisions applied — DM-11, DM-36, DM-40; review 29/09/2026: BOT-01 – BOT-05, X-01, X-03, X-07 / DM-25 data types) |
 | Author (team member) | Sang (drafted 16/09/2026) — diagrams checked node by node by Chi, 17/09/2026 (verifier ≠ converter) |
-| Date | 14/10/2026 |
+| Date | 07/11/2026 |
 | Status | Draft |
 | Approved by (Client role) | *pending* |
 | DBIZ2 source | Function List rows `F-140`–`F-144` (5 rows); Screens `S-031`–`S-034`, `S-037` |
@@ -217,9 +217,20 @@ Materially more detailed than Figure 18's version of the same idea: this one sho
 |---|---|---|
 | BR-001 | The chatbot's input context is limited to the mother's question text, the earlier questions / answers of the same conversation, and light profile context (gestational week); the mother's medical record — visits, metrics, reports, clinical profile — must never be sent to the chatbot service. | MVP v8 §5, "AI Chatbot L1 Support" row, verbatim: "Input: the mother's question text plus light profile context... the full medical record is not sent." The earlier questions / answers of the same conversation are a team extension for dialogue continuity (D-67). |
 | BR-002 | Questions about the mother's own health or containing a risk keyword are **not** answered directly by the chatbot. The chatbot says: "This needs a proper consultation. It will be sent to a nurse if you agree", with the buttons "Connect to nurse" / "No, thanks". **A case is created only when the mother taps "Connect to nurse"**: the case goes into the same Nurse/Doctor queue as reports (S-061), case source "Chatbot", initial status "Not viewed" (D-18); the mother follows the case on S-029 "My reports" → S-026. Tapping "No, thanks" → no case is created and the hotline number is shown. Implemented by FR-006 – FR-009. | MVP v8 §5 (the chatbot must not replace clinical screening); D-34 (mother's consent step). Wireframe S-034, S-061. |
-| BR-003 | The chatbot backend is a Python service calling the **Google AI Studio API (Gemini models)**; n8n is explicitly excluded as an implementation option. The API key is a secret kept outside the repository. | PRD M5 (14/10/2026), narrowing MVP v8 §5 "OpenAI or Gemini" (D-76) — a stated constraint, even though it borders on an implementation detail rather than a pure business rule. |
+| BR-003 | *(v1.9.0: the provider is chosen by the server's settings — Groq's free plan first (D-84), Google AI Studio second (D-83), local sample answers without a key; the reasons are in D-83/D-84, pending team review.)* The chatbot backend is a Python service calling the **Google AI Studio API (Gemini models)**; n8n is explicitly excluded as an implementation option. The API key is a secret kept outside the repository. | PRD M5 (14/10/2026), narrowing MVP v8 §5 "OpenAI or Gemini" (D-76) — a stated constraint, even though it borders on an implementation detail rather than a pure business rule. |
 | BR-004 | The chatbot screen always shows a disclaimer: the chatbot provides general reference information only and **does not replace the doctor's advice** — on the welcome screen (S-031: "The chatbot provides general reference information only and does not replace your doctor's advice.") and below every general answer (S-034: "For reference only; does not replace your doctor's advice."). | Wireframe S-031, S-034; spec-BOT §1 out of scope (no personal diagnosis). |
 | BR-005 | The chatbot answers only questions about pregnancy, prenatal care, nutrition and postpartum wellness; other questions are politely declined (FR-010). A question matching a danger phrase halts general advice and gets the medical-attention notice with the hand-off offer (FR-011). Few-shot clinical answers are not part of the prompt until reviewed by the SME. | PRD M5 (14/10/2026); D-76. |
+
+### 5.3 Behaviour on the internet (EARS, Session 11)
+
+Written from what failed when the hosted app was tried from outside the team (`docs/build/local-vs-internet.md`).
+
+| ID | Requirement | Kind | Found |
+|---|---|---|---|
+| E-1 | IF the LLM service does not answer within 15 seconds, refuses the request (for example HTTP 403 "free tier not available" or 429 "quota") or returns an empty answer, THEN THE SYSTEM SHALL show "⚠ Could not get an answer. Retry", keep the mother's question in the text field, store no Chatbot message, and write the HTTP status and the provider's message to the server log without the question or the key. | failure | 07/11/2026, hosted app (Gemini 403) |
+| E-2 | IF an LLM answer is longer than 500 characters, THEN THE SYSTEM SHALL shorten it at the end of its last whole sentence before it is saved and shown. | failure | 07/11/2026, hosted app (CHAT_MESSAGE length check, see DM-36) |
+| E-3 | WHILE the chatbot calls an LLM service, THE SYSTEM SHALL send only the question, the earlier general turns and the gestational week (BR-001), and SHALL read the API key only from the server's environment, never from the repository or the page. | permission | 07/11/2026, before deploying |
+| E-4 | IF a question matches a danger phrase or a personal-health or symptom word, THEN THE SYSTEM SHALL answer it without calling the LLM service, so the hand-off offer still works while the LLM service is down. | waiting | 07/11/2026, hosted app |
 
 ## 6. Key entities
 
@@ -246,6 +257,14 @@ Materially more detailed than Figure 18's version of the same idea: this one sho
 |---|---|---|---|
 | S-037 | Response Rating | **Could — not built in the MVP (BOT-02)** | MVP v8 does not mention rating answers; no FR or entity stores a rating. The "Yes / No" buttons are removed from S-034 |
 
+### 7.3 Differences in the v1.0.0 app (D-79 – D-85)
+
+| Item | v1.0.0 app | Source |
+|---|---|---|
+| S-031 suggested questions | "Mất ngủ khi mang thai", "Có nên tập thể dục?", "Chuột rút chân" (Màn 11) instead of the 4 questions in §7.1 | D-81 |
+| S-034 danger card | "Signs that need medical attention", "Mẹ cần được kiểm tra ngay", buttons Call emergency (hotline pending, Q8) · Connect to nurse · No, thanks; after connecting, no call-back promise | D-80, D-81 |
+| DM-36 | The schema's column check keeps every CHAT_MESSAGE.text at 500 characters or less, so answers are kept at 500 characters (§5.3 E-2) although the 29/09/2026 review said "no limit" for answers | to settle with the data-model owner (Tâm) |
+
 ## 8. Success criteria (mandatory)
 
 | SC ID | Criterion | How it is measured |
@@ -268,11 +287,11 @@ Materially more detailed than Figure 18's version of the same idea: this one sho
 | 5 | [NEEDS CLARIFICATION: the DBIZ2 Usage Flow for Chat box (`docs/architecture/usage-flow.md` §MOM "Chat box") has only one decision ("Is question in Knowledge Base?") with no escalation branch to Nurse at all — a different, additional inconsistency from Q1 above (which is about the two Sequence Diagrams disagreeing with each other). Here the Usage Flow disagrees with *both* Sequence Diagrams (Figure 6 and Figure 18), which do draw an escalation branch, and with MVP v8's own requirement that risk-keyword questions route to Nurse. This spec was written following the Sequence Diagrams (the MVP-aligned version) rather than the Usage Flow. Does the Usage Flow reflect an outdated/incorrect design, or is there a legitimate case where no escalation applies?] | Yes | BA / Product-PM | Open |
 | 8 | [NEEDS CLARIFICATION: the emergency hotline number in "If you have any emergency signs, call 1900 xxxx." (S-034) is a placeholder — the real number is needed from the hospital.] | No | Client | Open |
 | 9 | Where is the "Yes / No" rating result stored? **Resolved (BOT-02):** not applicable — rating is not built in the MVP. | No | BA / Backend | Resolved |
-| 10 | [NEEDS CLARIFICATION: Error message text and timeout when the AI service does not respond] | No | UX/UI / Backend | Open |
+| 10 | [NEEDS CLARIFICATION: Error message text and timeout when the AI service does not respond] | No | UX/UI / Backend | Resolved 07/11/2026 (v1.0.0 app): text "⚠ Could not get an answer. Retry", timeout 15 seconds (§5.3 E-1) |
 | 13 | [NEEDS CLARIFICATION: wording of the polite decline for an out-of-scope question (FR-010); is "postpartum wellness" also open to baby-care questions like the S-031 suggestions on breast milk and formula?] | No | Product-PM / UX/UI | Open |
 | 11 | [NEEDS CLARIFICATION: Same risk-keyword question asked repeatedly: one case or several?] | No | Team | Open |
 | 12 | [NEEDS CLARIFICATION: How is a question that is borderline between "general" and "personal health" classified? MVP v8 describes only "risk keywords" (see Q2 for the keyword list).] | No | BA / Nurse-Clinical SME | Open |
-| 14 | [NEEDS CLARIFICATION: (a) does each visit to S-031 start a new conversation, or does the chatbot continue the last one? The build (`specs/008-bot-chat/research.md`) starts a new one with the first question. (b) The build recognises a "personal health" question with a provisional list of first-person markers ("I have", "I feel", "tôi bị", "is that normal" …) and, with the fake LLM, "outside pregnancy topics" with a provisional topic word list — both in `app/mb360/bot/keywords.json`, to be replaced by the rule the SME / team decides (Q2, Q12).] | No | Team / Nurse-Clinical SME | Open |
+| 14 | [NEEDS CLARIFICATION: (a) does each visit to S-031 start a new conversation, or does the chatbot continue the last one? The build (`specs/008-bot-chat/research.md`) starts a new one with the first question. (b) The build recognises a "personal health" question with a provisional list of first-person markers ("I have", "I feel", "tôi bị", "is that normal" …) and, with the fake LLM, "outside pregnancy topics" with a provisional topic word list — both in `app/mb360/bot/keywords.json`, to be replaced by the rule the SME / team decides (Q2, Q12).] | No | Team / Nurse-Clinical SME | Resolved 07/11/2026 (review of the v1.0.0 app, Chi): (a) the Chatbot tab reopens the latest conversation (D-81; `specs/008-bot-chat/research.md` to be updated); (b) classification in `app/mb360/bot/classify.py`: whole words, accent-free typing compared without accents, symptom and medicine words go to a nurse before the out-of-scope check; word lists still Pending SME (Q2, Q12) |
 | DM-06 | [NEEDS CLARIFICATION: is the audit log a shared entity for BOT, APT and CLI?] | No | BOT / CLI (data model) | Open — default: AI_RESPONSE_LOG only; CASE_STATUS_HISTORY records case actions |
 | DM-07 | Where is the Yes / No rating of a chatbot answer stored? | No | BOT (data model) | Resolved (BOT-02) — not stored; no `rating` column in the MVP |
 | DM-09 | An FR is needed to store a report and an FR to create a case. | No | ALR / BOT (data model) | Resolved (X-01) — ALR FR-020 (store the report), FR-021 (create the case, also for chatbot cases via BOT FR-008) |

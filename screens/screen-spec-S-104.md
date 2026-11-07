@@ -10,6 +10,8 @@
 | Mockup image | not drawn yet (`img/S-104.png` to be added) |
 | Status | Draft (14/10/2026 — PRD alignment) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** 3 pages (ACC Q20).
+
 ## 1. Purpose
 
 Introduce the main features of Mother & Baby 360 once, right after the mother's first agreement on `S-001` and before pregnancy setup, so that she knows where to find her health data, reports, timeline and chatbot (PRD §2: "An intuitive onboarding guide introduces key features before landing on the dashboard").

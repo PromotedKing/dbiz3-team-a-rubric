@@ -10,6 +10,8 @@
 | Mockup image | `img/S-083.png` |
 | Status | Draft |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Centred dialog; "Close app" ends the sub-app session (ACC §5.3 E-2).
+
 ## 1. Purpose
 
 `[PENDING CLIENT: D-01]` — The sub-app has no logout of its own. The mother exits with the ✕ button in the header; this screen asks for confirmation before closing the sub-app and returning to the TCI app. The TCI account stays logged in.

@@ -10,6 +10,8 @@
 | Mockup image | `img/S-031.png` |
 | Status | Draft |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Opens the latest conversation (BOT Q14); suggestions "Mất ngủ khi mang thai", "Có nên tập thể dục?", "Chuột rút chân".
+
 ## 1. Purpose
 
 **Shown when:** the mother taps the **Chatbot** tab in the 5-tab bar.

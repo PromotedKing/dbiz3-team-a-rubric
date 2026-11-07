@@ -10,6 +10,8 @@
 | Mockup image | `img/S-010.png` |
 | Status | Draft (revised 29/09/2026 — screen-spec fix #5) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** 4 switches including "Appointment reminders"; "Report responses" locked on.
+
 ## 1. Purpose
 
 **Shown when:** the mother taps the **"Notification settings"** row on `S-103` Profile (D-39).

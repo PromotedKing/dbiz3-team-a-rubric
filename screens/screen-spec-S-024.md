@@ -10,6 +10,8 @@
 | Mockup image | `img/S-024.png` |
 | Status | Draft (revised 29/09/2026 — screen-spec fix #2) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Value and time side by side per metric; decimal comma; saving returns to S-023 with "Đã lưu chỉ số".
+
 ## 1. Purpose
 
 **Shown when:** the mother taps "+ Enter self-tracked metrics" on `S-023`.

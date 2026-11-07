@@ -1,4 +1,4 @@
-<!-- DBIZ3-SNAPSHOT source=specs/spec-HLT.md sha256=0c32912ad1b5f60e59a898a1ee002cbe66346f3ab60e704fd108a8d32c4bff3d taken=2026-11-02T08:47Z -->
+<!-- DBIZ3-SNAPSHOT source=specs/spec-HLT.md sha256=1204482a65ba97f67f08ecde2066af6d3628d6ec8b70ba9fd55b3269b9cdf2fe taken=2026-11-07T13:22Z -->
 <!-- Read-only copy for Spec Kit. Do not edit here. Edit specs/spec-HLT.md, then run:
      uv run tools/start_feature.py --refresh -->
 
@@ -8,9 +8,9 @@
 |---|---|
 | Module ID | `HLT` |
 | Module name | Health Visibility (Clinical Data Review) — UI: "Health metrics" |
-| Spec version | v1.7.3 (30/09/2026: data-model review decisions applied — DM-10, DM-22, DM-38, DM-40; gestational_week 0–42; fetal_length cm; review 29/09/2026: HLT-01 – HLT-06, X-04, X-07 / DM-25 data types; fetal heart rate = reference range only, per the latest MVP Scope) |
+| Spec version | v1.8.0 (07/11/2026: v1.0.0 app — Q12 answered, entries to S-023 and number input after the review, differences §7.3) — v1.7.3 (30/09/2026: data-model review decisions applied — DM-10, DM-22, DM-38, DM-40; gestational_week 0–42; fetal_length cm; review 29/09/2026: HLT-01 – HLT-06, X-04, X-07 / DM-25 data types; fetal heart rate = reference range only, per the latest MVP Scope) |
 | Author (team member) | Ánh (drafted 15/09/2026) — diagrams checked node by node by Hải Anh, 16/09/2026 (verifier ≠ converter) |
-| Date | 30/09/2026 |
+| Date | 07/11/2026 |
 | Status | Draft |
 | Approved by (Client role) | *pending* |
 | DBIZ2 source | Function List rows `F-051`–`F-054`, `F-078`–`F-079`, `F-083`–`F-084`, `F-090`–`F-091`, `F-095`–`F-096` (12 rows); Screens `S-023`, `S-024` (D-07), `S-027` (reused ID, see §7); `S-025` "Health History" = the "Metric history" screen (original DBIZ2 ID, D-38) |
@@ -268,6 +268,15 @@ Health Metric Record is the single value table for all sources (D-41). Visit and
 
 The "Metric history" screen uses the original DBIZ2 ID `S-025` "Health History" (D-38). The metric / symptom report screen is `S-025A` (owned by `ALR`). The DBIZ2 screens `S-026` "Sync Loading" and `S-027` "Sync Success Screen" are not used; their IDs are reused (S-026 in `ALR`; S-027 in §7.1).
 
+### 7.3 Differences in the v1.0.0 app (D-79 – D-85)
+
+| Item | v1.0.0 app | Source |
+|---|---|---|
+| Entry to S-023 | No "Health" tab (D-80): the title "Chỉ số của mẹ ›" and the metric tiles of S-008 open S-023; "New visit results" notices open S-023 | review (Ánh), S-008 Q3 |
+| S-008 tiles | Blood pressure, blood glucose, fetal heart rate from the last visit with the threshold label (FR-001); weight self-entered with `dd/mm/yyyy · HH:mm`; the instruction tag reads "Bác sĩ dặn theo dõi", not the source label "Bác sĩ chỉ định" | review (Ánh) |
+| S-024 | Value and time side by side; decimal comma accepted; 0 or less, nan and inf refused ("Hãy nhập một số lớn hơn 0.") — a format check, D-16 and U18 stay open; saving returns to S-023 | review (Ánh) |
+| S-025 | Axis keeps one decimal on narrow ranges; sleep shown in hours and minutes in Vietnamese | review (Ánh) |
+
 ## 8. Success criteria (mandatory)
 
 | SC ID | Criterion | How it is measured |
@@ -287,7 +296,7 @@ The "Metric history" screen uses the original DBIZ2 ID `S-025` "Health History" 
 |---|---|---|---|---|
 | 8 | FR-006 (F-079) "weekly progress indicators": no screen displays them. **Resolved (HLT-01):** not a function in the MVP scope → FR-006 is Won't and removed from the Dashboard Summary. | No | BA / UX/UI / Client | Resolved |
 | 11 | Valid value ranges (to block typing mistakes) for each group 1 metric on S-024 (D-16, Pending SME). | Yes | Medical SME / Team | Open |
-| 12 | How to compute average / lowest / highest (FR-011) for urine protein (level values) and sleep (bedtime / wake-up time); the default time range of S-025. | No | BA / UX/UI | Open |
+| 12 | How to compute average / lowest / highest (FR-011) for urine protein (level values) and sleep (bedtime / wake-up time); the default time range of S-025. | No | BA / UX/UI | Resolved 07/11/2026 (review of the v1.0.0 app, Ánh): no statistics for sleep in the MVP; urine protein shows levels by name on the chart and no average; S-025 opens on blood pressure, last 30 days; blood glucose history opens on "fasting" (thresholds differ by timing, SR-002); statistics keep the precision of the readings |
 | 13 | S-024 keeps the DBIZ2 Priority Must while the function is optional for the mother — keep Must (the screen must be built) or lower it? **Resolved (HLT-05):** keep Must — the screen belongs to the Must item "Health Visibility"; entry is optional for the mother. | No | Team | Resolved |
 | 14 | How are Visit and Patient Clinical Profile data created in the MVP? **Resolved (D-59):** they are **simulated as seed data** loaded into the system for the demo (the team acts as the clinical role, per the MVP scope: "demo data … manually entered/simulated by the clinician role"). The MVP has **no visit entry screen** and no EMR integration (Won't). | No | Team | Resolved |
 | 15 | [NEEDS CLARIFICATION: Empty state of the "Self-tracked metrics" section on S-023] | No | UX/UI | Open |
