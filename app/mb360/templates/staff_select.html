@@ -6,7 +6,7 @@
   <table>
     {% for s in staff_rows %}
     <tr><td><span class="row"><span class="avatar" style="width:32px;height:32px;font-size:12px">{{ initials(s.full_name) }}</span>
-      <a href="/staff/{{ s.staff_id }}/cases">{{ s.full_name }}</a></span></td><td>{{ s.role | t }}</td></tr>
+      <a href="/staff/{{ s.staff_id }}/dashboard">{{ s.full_name }}</a></span></td><td>{{ s.role | t }}</td></tr>
     {% endfor %}
   </table>
 </div>

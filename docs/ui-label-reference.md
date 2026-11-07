@@ -749,3 +749,52 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Review fixes 06/11/2026 (D-81) | In the mother's app, lines starting with - become her to-do list, and a line “Hẹn khám: dd/mm/yyyy · HH:mm” shows as the follow-up visit. | Trên app của mẹ, dòng bắt đầu bằng - thành việc mẹ cần làm, còn dòng “Hẹn khám: dd/mm/yyyy · HH:mm” hiện thành lịch khám lại. |
 | Review fixes 06/11/2026 (D-81) | Appointments | Lịch hẹn |
 | Review fixes 06/11/2026 (D-81) | Chatbot: {engine} | Chatbot: {engine} |
+| Clinical dashboard (D-85) | Overview | Tổng quan |
+| Clinical dashboard (D-85) | Case board | Bảng xử lý |
+| Clinical dashboard (D-85) | Case list | Danh sách ca |
+| Clinical dashboard (D-85) | All sources | Mọi nguồn |
+| Clinical dashboard (D-85) | Received from | Nhận từ ngày |
+| Clinical dashboard (D-85) | to | đến |
+| Clinical dashboard (D-85) | Apply | Áp dụng |
+| Clinical dashboard (D-85) | Reset | Đặt lại |
+| Clinical dashboard (D-85) | Cases sent by mothers and how far each one has been handled. | Các ca mẹ gửi và tiến độ xử lý từng ca. |
+| Clinical dashboard (D-85) | Updated {time} | Cập nhật {time} |
+| Clinical dashboard (D-85) | Refresh | Làm mới |
+| Clinical dashboard (D-85) | {n} cases in this view | {n} ca trong phạm vi đang xem |
+| Clinical dashboard (D-85) | Open cases | Ca đang mở |
+| Clinical dashboard (D-85) | From sent to resolved | Từ lúc gửi đến khi xử lý xong |
+| Clinical dashboard (D-85) | Waiting longest: {d}d {h}h | Chờ lâu nhất: {d} ngày {h} giờ |
+| Clinical dashboard (D-85) | Waiting longest: {h}h {m}m | Chờ lâu nhất: {h} giờ {m} phút |
+| Clinical dashboard (D-85) | Nothing waiting | Không có ca nào đang chờ |
+| Clinical dashboard (D-85) | Above threshold, open | Vượt ngưỡng, đang mở |
+| Clinical dashboard (D-85) | Thresholds from THRESHOLD_RULE | Ngưỡng theo bảng THRESHOLD_RULE |
+| Clinical dashboard (D-85) | {n} assigned to me | {n} ca giao cho tôi |
+| Clinical dashboard (D-85) | Waiting for a doctor's decision | Đang chờ bác sĩ quyết định |
+| Clinical dashboard (D-85) | Where cases stand | Tình trạng xử lý |
+| Clinical dashboard (D-85) | Current status · same columns as the case board | Trạng thái hiện tại · cùng các cột của Bảng xử lý |
+| Clinical dashboard (D-85) | Needs attention | Cần chú ý |
+| Clinical dashboard (D-85) | Open the board | Mở bảng xử lý |
+| Clinical dashboard (D-85) | {n} open cases flagged · a case can be in more than one group | {n} ca đang mở cần chú ý · một ca có thể thuộc nhiều nhóm |
+| Clinical dashboard (D-85) | Above threshold, not viewed | Vượt ngưỡng, chưa xem |
+| Clinical dashboard (D-85) | Alarm symptoms | Có triệu chứng báo động |
+| Clinical dashboard (D-85) | No response sent yet | Chưa gửi phản hồi |
+| Clinical dashboard (D-85) | Escalated, waiting for the doctor | Đã chuyển, chờ bác sĩ trả lời |
+| Clinical dashboard (D-85) | From the chatbot | Từ chatbot |
+| Clinical dashboard (D-85) | Handle next | Cần xử lý tiếp |
+| Clinical dashboard (D-85) | See all cases | Xem tất cả ca |
+| Clinical dashboard (D-85) | Not viewed first, above threshold first, then the oldest | Ưu tiên chưa xem, vượt ngưỡng, rồi ca chờ lâu nhất |
+| Clinical dashboard (D-85) | No open cases. | Không có ca đang mở. |
+| Clinical dashboard (D-85) | By source | Theo nguồn |
+| Clinical dashboard (D-85) | Open cases: oldest on top. Tap a card to open the case. | Ca đang mở: ca chờ lâu nhất ở trên cùng. Bấm vào thẻ để mở ca. |
+| Clinical dashboard (D-85) | CASE STATUS | TRẠNG THÁI CA |
+| Clinical dashboard (D-85) | A nurse checks the report first | Y tá xem báo cáo trước |
+| Clinical dashboard (D-85) | A nurse is handling it | Y tá đang xử lý |
+| Clinical dashboard (D-85) | Waiting for the doctor | Chờ bác sĩ |
+| Clinical dashboard (D-85) | Closed by a nurse or a doctor | Y tá hoặc bác sĩ đã đóng ca |
+| Clinical dashboard (D-85) | No cases. | Không có ca nào. |
+| Clinical dashboard (D-85) | {n} more | Còn {n} ca |
+| Clinical dashboard (D-85) | Nurse handling | Y tá xử lý |
+| Clinical dashboard (D-85) | waiting {d}d {h}h | chờ {d} ngày {h} giờ |
+| Clinical dashboard (D-85) | waiting {h}h {m}m | chờ {h} giờ {m} phút |
+| Clinical dashboard (D-85) | Showing: {group} | Đang lọc: {group} |
+| Clinical dashboard (D-85) | Show all | Bỏ lọc |

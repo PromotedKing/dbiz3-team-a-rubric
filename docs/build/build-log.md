@@ -586,3 +586,7 @@ Gemini answered 403: the Google project is not eligible for the free tier. `Groq
 
 Groq answers longer than 500 characters broke the CHAT_MESSAGE length check. Answers are now asked for 450 characters and cut at a sentence end before saving; the schema is unchanged (DM-36 still open for the team).
 
+## 07/11/2026: clinical Overview and Case board (Sang, branch `sang/mother-app-v1`)
+
+From the note and the two reference pictures in the v1.0.0 review: `cli/dashboard.py`, `staff_dashboard.html`, `staff_board.html`, navigation in `staff_base.html`, `?flag=` on the case list. D-85. 7 new tests; checked in Edge at 1366 and 390 px wide (a card opens its case, no horizontal overflow).
+

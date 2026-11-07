@@ -1,14 +1,15 @@
 """Clinical web routes — specs/002-cli-core/contracts/http-routes.md (S-061, S-064)."""
 import sqlite3
+from datetime import date
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from .. import ui
 from .. import clock
-from . import actions, case_detail, instructions, queue
+from . import actions, case_detail, dashboard, instructions, queue
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
 ui.install(TEMPLATES)
@@ -30,15 +31,53 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         rows = conn.execute("SELECT staff_id, full_name, role FROM STAFF ORDER BY role DESC, full_name").fetchall()
         return page(request, "staff_select.html", staff_rows=rows)
 
+    def filters(source: str, start: str, end: str) -> dict:
+        def day(text):
+            try:
+                return date.fromisoformat(text) if text else None
+            except ValueError:
+                return None
+        return {"source": source if source in dashboard.SOURCES else None, "start": day(start), "end": day(end)}
+
+    @app.get("/staff/{staff_id}")
+    def staff_home(staff_id: str):
+        staff(staff_id)
+        return RedirectResponse(f"/staff/{staff_id}/dashboard", status_code=303)
+
+    @app.get("/staff/{staff_id}/dashboard", response_class=HTMLResponse)
+    def staff_dashboard(request: Request, staff_id: str, source: str = "", start: str = Query("", alias="from"), end: str = Query("", alias="to")):
+        """D-85: overview of the cases, every number opens the cases behind it."""
+        me = staff(staff_id)
+        f = filters(source, start, end)
+        rows = dashboard.cases(conn, clock.now(), **f)
+        mine = dashboard.cases(conn, clock.now(), doctor_id=staff_id, **f) if me["role"] == "Doctor" else None
+        return page(request, "staff_dashboard.html", me=me, s=dashboard.summary(rows, staff_id, mine), f=f, sources=dashboard.SOURCES,
+                    badge=queue.doctor_badge(conn, staff_id) if me["role"] == "Doctor" else None, nav="dashboard", updated=clock.now())
+
+    @app.get("/staff/{staff_id}/board", response_class=HTMLResponse)
+    def staff_board(request: Request, staff_id: str, source: str = "", start: str = Query("", alias="from"), end: str = Query("", alias="to")):
+        """D-85: the cases in columns by status; a card opens its case."""
+        me = staff(staff_id)
+        f = filters(source, start, end)
+        return page(request, "staff_board.html", me=me, columns=dashboard.board(dashboard.cases(conn, clock.now(), **f)), f=f,
+                    sources=dashboard.SOURCES, badge=queue.doctor_badge(conn, staff_id) if me["role"] == "Doctor" else None, nav="board")
+
     @app.get("/staff/{staff_id}/cases", response_class=HTMLResponse)
-    def cases(request: Request, staff_id: str, status: str = ""):
+    def cases(request: Request, staff_id: str, status: str = "", flag: str = ""):
         me = staff(staff_id)
         # Default filter: doctor "Escalated to doctor" (CLI-02); nurse "All" (S-061 mockup; spec-CLI §10 Q5 open)
         active = status if status in FILTERS else ("Escalated to doctor" if me["role"] == "Doctor" else "All")
+        flag = flag if flag in dashboard.FLAGS else ""
+        if flag:                               # opened from "Needs attention" on the dashboard: every open case of that group
+            active = "All"
+            ids = dashboard.flagged_ids(dashboard.cases(conn, clock.now()), flag)
         rows = queue.list_cases(conn, None if active == "All" else active)
+        if flag:
+            rows = [r for r in rows if r["case_id"] in ids]
         not_viewed = len(queue.list_cases(conn, "Not viewed"))
         badge = queue.doctor_badge(conn, staff_id) if me["role"] == "Doctor" else None
-        return page(request, "cases.html", me=me, rows=rows, active=active, filters=FILTERS, not_viewed=not_viewed, badge=badge)
+        return page(request, "cases.html", me=me, rows=rows, active=active, filters=FILTERS, not_viewed=not_viewed, badge=badge,
+                    flag=flag, flag_label=dashboard.FLAGS[flag][0] if flag else None, nav="cases")
 
     @app.get("/staff/{staff_id}/cases/{case_id}", response_class=HTMLResponse)
     def case_page(request: Request, staff_id: str, case_id: str, error: str = "", edit: str = ""):
