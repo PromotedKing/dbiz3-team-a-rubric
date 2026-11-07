@@ -54,13 +54,13 @@ class LocalAnswers:
 
 class GeminiLLM:
     """Google AI Studio (Gemini API, free tier possible; D-76, D-83). Only general questions reach it (BR-002) and only the
-    question, the earlier general turns and the gestational week are sent (BR-001). generateContent is tried first; if
-    Google answers 404 for it, the newer Interactions API is used. Any failure raises, so the chat shows "Retry" (BOT §10 Q10)."""
+    question, the earlier general turns and the gestational week are sent (BR-001). The Interactions API is tried first; if
+    the Interactions API answers 404, the older generateContent is used. Any failure raises, so the chat shows "Retry" (BOT §10 Q10)."""
     name = "gemini"
     BASE = "https://generativelanguage.googleapis.com/v1beta"
     MAX_TOKENS = 600
 
-    def __init__(self, api_key: str, model: str, timeout: float = 12.0):
+    def __init__(self, api_key: str, model: str, timeout: float = 15.0):
         self.api_key, self.model, self.timeout = api_key, model, timeout
 
     def _post(self, url: str, body: dict, extra: dict | None = None) -> dict:
@@ -77,7 +77,25 @@ class GeminiLLM:
         week = context.get("gestational_week")
         return turns + [("user", f"(Tuần thai {week}) {question}" if week is not None else question)]
 
+    def _interaction(self, turns) -> str:
+        """Interactions API, the one Google documents for new projects (reference checked 07/11/2026); stateless (store: false)."""
+        *earlier, (_, question) = turns
+        transcript = "".join(f"{'Mẹ hỏi' if role == 'user' else 'Trợ lý trả lời'}: {text}\n" for role, text in earlier)
+        data = self._post(f"{self.BASE}/interactions", {
+            "model": self.model, "system_instruction": SYSTEM_PROMPT, "store": False,
+            "input": (f"Các lượt trước trong cuộc trò chuyện:\n{transcript}\nCâu hỏi mới: {question}" if transcript else question),
+            "generation_config": {"max_output_tokens": self.MAX_TOKENS}})
+        if data.get("output_text"):
+            return data["output_text"]
+        texts = []
+        for step in data.get("steps") or []:
+            if step.get("type") == "model_output":
+                content = step.get("content")
+                texts = [content] if isinstance(content, str) else [c.get("text", "") for c in content or [] if c.get("type") == "text"]
+        return "".join(texts)
+
     def _generate_content(self, turns) -> str:
+        """The older generateContent endpoint, still supported for existing integrations."""
         data = self._post(f"{self.BASE}/models/{self.model}:generateContent", {
             "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
             "contents": [{"role": role, "parts": [{"text": text}]} for role, text in turns],
@@ -85,28 +103,28 @@ class GeminiLLM:
         parts = data["candidates"][0]["content"]["parts"]
         return "".join(p.get("text", "") for p in parts if not p.get("thought"))
 
-    def _interaction(self, turns) -> str:
-        data = self._post(f"{self.BASE}/interactions", {
-            "model": self.model, "system_instruction": SYSTEM_PROMPT, "store": False,
-            "input": [{"type": "user_input" if role == "user" else "model_output", "content": [{"type": "text", "text": text}]} for role, text in turns],
-            "generation_config": {"max_output_tokens": self.MAX_TOKENS}}, {"Api-Revision": "2026-05-20"})
-        if data.get("output_text"):
-            return data["output_text"]
-        out = [step for step in data.get("steps") or data.get("outputs") or [] if step.get("type", "model_output") == "model_output"]
-        content = out[-1].get("content") if out else ""
-        return content if isinstance(content, str) else "".join(c.get("text", "") for c in content if c.get("type", "text") == "text")
-
     def answer(self, question: str, context: dict) -> str:
         turns = self._turns(question, context)
         try:
-            text = self._generate_content(turns)
+            text = self._interaction(turns)
         except urllib.error.HTTPError as e:
             if e.code != 404:
                 raise
-            text = self._interaction(turns)
+            text = self._generate_content(turns)
         if not text.strip():
             raise ValueError("empty answer from Gemini")
         return text.strip()
+
+
+def describe_error(e: Exception) -> str:
+    """One log line: the HTTP status and Google's own error message, without the request (no key, no question)."""
+    if isinstance(e, urllib.error.HTTPError):
+        try:
+            detail = json.loads(e.read().decode("utf-8", "replace")).get("error", {})
+            return f"HTTP {e.code} {detail.get('status', '')}: {detail.get('message', '')[:300]} [{e.url.split('?')[0]}]"
+        except Exception:
+            return f"HTTP {e.code} [{e.url.split('?')[0]}]"
+    return f"{type(e).__name__}: {str(e)[:300]}"
 
 
 DEFAULT_MODEL = "gemini-3.5-flash-lite"    # Google's suggestion for new projects, free tier (checked 07/11/2026)

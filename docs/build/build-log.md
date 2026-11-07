@@ -574,3 +574,7 @@ Requested changes: chatbot matches whole words and accent-free typing, and offer
 
 `GeminiLLM` follows the current Gemini API docs (checked 07/11/2026): generateContent, then the Interactions API if Google answers 404; output capped, thought parts dropped, empty answer = failure ("Retry"); default model `gemini-3.5-flash-lite`; `render.yaml` sets the model, the key is added on Render. D-83. Tested with a fake network; not yet called with a real key.
 
+## 07/11/2026: chatbot failed on the platform (Sang, branch `sang/mother-app-v1`)
+
+With the key set, every answer showed "Retry" and the log said nothing. Now the log names the cause (HTTP status and Google's message, never the key or the question), and the client calls the Interactions API first, as Google's reference does for new projects, falling back to generateContent on 404. Cause not confirmed yet.
+

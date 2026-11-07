@@ -1,5 +1,6 @@
 """BOT routes — specs/008-bot-chat/contracts/http-routes.md (S-031, S-032 – S-034)."""
 import json
+import logging
 import sqlite3
 from pathlib import Path
 
@@ -14,6 +15,7 @@ from . import chat, classify, llm
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
 ui.install(TEMPLATES)
 SUGGESTED = ("Trouble sleeping during pregnancy", "Should I exercise?", "Leg cramps")   # Màn 11
+LOG = logging.getLogger("mb360.bot")
 HOTLINE = "1900 xxxx"   # placeholder (BOT §10 Q8)
 
 
@@ -51,7 +53,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
             if e.status == 404:
                 raise HTTPException(404, e.message)
             return page(request, user, conversation_id, 422, e.message, text)
-        except Exception:   # LLM unavailable (BOT §10 Q10): nothing stored, the question is put back for "Retry"
+        except Exception as e:   # LLM unavailable (BOT §10 Q10): nothing stored, the question is put back for "Retry"
+            LOG.error("chatbot answer failed: %s", llm.describe_error(e))   # the platform log shows why; never the question or the key
             return page(request, user, conversation_id, 503, "⚠ Could not get an answer. Retry", text)
         return RedirectResponse(f"/m/{user_id}/chat/{conversation_id}", status_code=303)
 

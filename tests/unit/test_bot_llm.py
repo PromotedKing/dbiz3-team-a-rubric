@@ -67,31 +67,32 @@ def test_gemini_request_and_answer(monkeypatch):
 
     def fake_urlopen(req, timeout):
         sent.append((req.full_url, dict(req.header_items()), json.loads(req.data)))
-        return _Resp({"candidates": [{"content": {"parts": [{"text": "plan", "thought": True}, {"text": "Mẹ ăn thêm đạm."}]}}]})
+        return _Resp({"status": "completed", "steps": [{"type": "thought", "content": [{"type": "text", "text": "plan"}]},
+                                                      {"type": "model_output", "content": [{"type": "text", "text": "Mẹ ăn thêm đạm."}]}]})
 
     monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
     client = llm.GeminiLLM("test-key-not-real", "gemini-3.5-flash-lite")
     answer = client.answer("Tuần 24 mẹ nên ăn gì?", {"gestational_week": 24, "earlier": [{"question": "Q", "answer": "A"}]})
     assert answer == "Mẹ ăn thêm đạm."
     url, headers, body = sent[0]
-    assert url.endswith("/models/gemini-3.5-flash-lite:generateContent") and headers["X-goog-api-key"] == "test-key-not-real"
-    assert [c["role"] for c in body["contents"]] == ["user", "model", "user"] and "Tuần thai 24" in body["contents"][-1]["parts"][0]["text"]
-    assert "medical record" not in json.dumps(body) and body["generationConfig"]["maxOutputTokens"] > 0
+    assert url.endswith("/v1beta/interactions") and headers["X-goog-api-key"] == "test-key-not-real"
+    assert body["model"] == "gemini-3.5-flash-lite" and body["store"] is False and body["system_instruction"]
+    assert "Mẹ hỏi: Q" in body["input"] and "Tuần thai 24" in body["input"] and body["generation_config"]["max_output_tokens"] > 0
 
 
-def test_gemini_falls_back_to_interactions_on_404(monkeypatch):
+def test_gemini_falls_back_to_generate_content_on_404(monkeypatch):
     def fake_urlopen(req, timeout):
-        if req.full_url.endswith(":generateContent"):
+        if req.full_url.endswith("/interactions"):
             raise urllib.error.HTTPError(req.full_url, 404, "not found", {}, None)
-        assert req.full_url.endswith("/interactions") and json.loads(req.data)["store"] is False
-        return _Resp({"steps": [{"type": "model_output", "content": [{"type": "text", "text": "Trả lời."}]}]})
+        assert req.full_url.endswith("/models/m:generateContent")
+        return _Resp({"candidates": [{"content": {"parts": [{"text": "x", "thought": True}, {"text": "Trả lời."}]}}]})
 
     monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
     assert llm.GeminiLLM("k", "m").answer("q", {}) == "Trả lời."
 
 
 def test_gemini_empty_or_failed_answer_raises(monkeypatch):
-    monkeypatch.setattr(urllib.request, "urlopen", lambda req, timeout: _Resp({"candidates": [{"content": {"parts": []}}]}))
+    monkeypatch.setattr(urllib.request, "urlopen", lambda req, timeout: _Resp({"status": "completed", "steps": []}))
     with pytest.raises(ValueError):
         llm.GeminiLLM("k", "m").answer("q", {})
     def quota(req, timeout):
