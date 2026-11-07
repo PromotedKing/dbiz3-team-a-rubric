@@ -39,13 +39,14 @@ class LocalAnswers:
         (("chuột rút",), "Khi bị chuột rút, mẹ duỗi thẳng chân, kéo mũi bàn chân về phía người và xoa bóp nhẹ. Ban ngày mẹ nhớ uống đủ nước, vận động nhẹ và ăn thực phẩm giàu canxi."),
         (("ốm nghén", "nghén"), "Mẹ thử chia nhỏ bữa ăn, ăn chút bánh khô ngay khi thức dậy và tránh mùi gây khó chịu. Gừng và uống từng ngụm nước nhỏ cũng có thể giúp dễ chịu hơn."),
         (("sữa", "cho con bú"), "Cho bé bú sớm và thường xuyên là cách tốt nhất để có nhiều sữa. Mẹ nhớ uống đủ nước, ăn đủ bữa và nghỉ ngơi khi có thể."),
+        (("rạn da", "kem rạn", "vết rạn", "stretch mark"), "Rạn da khi mang thai rất thường gặp. Mẹ giữ ẩm da hằng ngày, uống đủ nước và tăng cân từ từ theo lời bác sĩ. Trước khi mua kem trị rạn, mẹ hỏi bác sĩ xem thành phần có an toàn khi mang thai không."),
         (("ăn", "dinh dưỡng", "thực phẩm", "uống"), "Mẹ nên ăn đa dạng: đạm từ thịt nạc, trứng, cá ít thuỷ ngân; sắt và canxi từ rau xanh đậm, sữa; thêm trái cây và ngũ cốc nguyên hạt. Mẹ tránh đồ sống, tái và rượu bia."),
     )
     GENERAL = "Đây là câu hỏi chung về thai kỳ. Mẹ nên giữ lịch khám đều, ăn uống đủ chất, nghỉ ngơi hợp lý và ghi lại những gì muốn hỏi để trao đổi với bác sĩ."
 
     def answer(self, question: str, context: dict) -> str:
-        text = question.lower()
-        body = next((answer for words, answer in self.TOPICS if any(w in text for w in words)), self.GENERAL)
+        from .classify import has_any
+        body = next((answer for words, answer in self.TOPICS if has_any(question, list(words))), self.GENERAL)
         return body + self.CLOSING
 
 

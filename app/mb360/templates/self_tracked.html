@@ -1,7 +1,7 @@
 {#- S-024; design: screens/ui-final Màn 17. No valid range is checked: D-16 is pending SME (U18). -#}
 {% extends "base.html" %}
 {% set page_title = "Enter self-tracked metrics" %}
-{% set back_url = "/m/" ~ user.user_id ~ "/home" %}{% set back_auto = true %}
+{% set back_url = "/m/" ~ user.user_id ~ "/health" %}{% set back_auto = true %}
 {% macro err(field) %}{% if errors.get(field) %}<p class="err" data-error-for="{{ field }}">⚠ {{ errors[field] | t }}</p>{% endif %}{% endmacro %}
 {% block main %}
 <form class="fw" method="post" action="/m/{{ user.user_id }}/self-tracked">

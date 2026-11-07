@@ -8,7 +8,8 @@
     var a = e.target.closest("a");
     if (!a) return;
     store(NAV, a.hasAttribute("data-back") ? "pop" : a.classList.contains("tab") ? "tab" : "push");
-    if (a.dataset.back === "auto" && document.referrer.indexOf(location.origin) === 0 && document.referrer !== location.href && history.length > 1) {
+    var from = document.referrer.indexOf(location.origin) === 0 ? new URL(document.referrer).pathname : null;
+    if (a.dataset.back === "auto" && from && from !== location.pathname && history.length > 1) {
       e.preventDefault();
       history.back();
     }
@@ -171,7 +172,15 @@
     /* Chat: newest message in view; the question appears at once while the answer is on its way */
     var chat = document.querySelector("[data-chat]");
     if (chat) {
-      chat.scrollTop = chat.scrollHeight;
+      var toEnd = function () {
+        var last = chat.querySelector(".me:last-of-type, .bot:not(.typing):last-of-type, .card:last-of-type");
+        var items = chat.querySelectorAll(".me, .bot:not(.typing), .card");
+        if (items.length) items[items.length - 1].scrollIntoView({ block: "end" });
+        chat.scrollTop = chat.scrollHeight;
+      };
+      toEnd();
+      window.addEventListener("load", toEnd);
+      setTimeout(toEnd, 120);
       var form = document.querySelector("[data-composer]");
       var send = function (text) {
         var q = document.createElement("p");

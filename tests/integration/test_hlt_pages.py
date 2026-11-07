@@ -17,7 +17,7 @@ def test_health_metrics_page(client, user_id):
               "132/84 mmHg", vi("Normal"), "145 bpm", vi("(reference range {range})", range="110–160 bpm"), "56.5 kg", vi("Negative"),
               vi("{n} metrics: {names}", n=2, names=vi("Blood glucose") + ", " + vi("Blood pressure")),
               vi("{n} reports being handled", n=2), vi("Self-entered"),
-              "57.0 kg", "36.8 °C", "82 bpm", "7 h 30 min", "27/09/2026 · 07:30", vi("+ Enter self-tracked metrics")):
+              "57.0 kg", "36.8 °C", "82 bpm", vi("{h} h {m} min", h=7, m=30), "27/09/2026 · 07:30", vi("+ Enter self-tracked metrics")):
         assert t in page, t
     assert f'href="/m/{lan}/instructions"' in page and f'href="/m/{lan}/my-reports"' in page
     assert "<input" not in page                                     # visit values are read-only (BR-001)
@@ -47,9 +47,9 @@ def test_self_tracked_form(client, user_id):
 def test_save_and_errors(client, user_id):
     lan = user_id("tci-000123")
     r = client.post(f"/m/{lan}/self-tracked", data={"weight": "57.4", "weight_at": "2026-09-27T09:00"})
-    assert r.status_code == 303 and r.headers["location"] == f"/m/{lan}/home?saved=1"
+    assert r.status_code == 303 and r.headers["location"] == f"/m/{lan}/health?saved=1"
     page = client.get(r.headers["location"]).text
-    assert vi("Metrics saved") in page and ">57.4<" in page and "57.4 kg" in client.get(f"/m/{lan}/health").text
+    assert vi("Metrics saved") in page and "57.4 kg" in page
     bad = client.post(f"/m/{lan}/self-tracked", data={"weight": "abc", "weight_at": "2026-09-27T09:00"})
     assert bad.status_code == 422 and 'data-error-for="weight"' in bad.text
 

@@ -1,4 +1,5 @@
 """S-009 notification list: ACC FR-025, FR-026; S-009 SR-001 targets (specs/009-acc-profile, research R3, R6)."""
+import re
 import sqlite3
 from datetime import datetime
 
@@ -27,8 +28,7 @@ def unread_count(conn: sqlite3.Connection, user_id: str) -> int:
 def _target(conn: sqlite3.Connection, n: sqlite3.Row) -> str:
     base = f"/m/{n['user_id']}"
     if n["type"] == "Visit result":
-        visit = conn.execute("SELECT visit_date FROM VISIT WHERE visit_id = ?", (n["visit_id"],)).fetchone() if n["visit_id"] else None
-        return f"{base}/timeline/day/{visit[0]}" if visit else f"{base}/health"
+        return f"{base}/health"          # "New visit results" opens S-023 (Ánh §2, S-008 Q3)
     if n["type"] == "Instruction reminder":
         return f"{base}/instructions"
     if n["type"] == "Appointment":
@@ -56,14 +56,17 @@ def mark_all_read(conn: sqlite3.Connection, user_id: str, now: datetime) -> None
 
 
 def parse_response(text: str | None) -> dict:
-    """The doctor's free text as Màn 10 shows it: "- " lines are to-dos, a "Hẹn khám:" line is the follow-up, the rest is the comment (U9)."""
+    """The doctor's free text as Màn 10 shows it: lines starting with "-", "*", "•" or "+" are to-dos, a "Hẹn khám:" line
+    (any case, spaces around ":" allowed) is the follow-up, the rest is the comment (U9; Tâm's review)."""
     comment, todo, follow_up = [], [], None
     for line in (text or "").splitlines():
         line = line.strip()
-        if line.startswith("- "):
-            todo.append(line[2:])
-        elif line.startswith("Hẹn khám:"):
-            follow_up = line.split(":", 1)[1].strip()
+        bullet = re.match(r"^[-*•+–]\s*(.+)$", line)
+        visit = re.match(r"^hẹn\s+khám\s*:\s*(.*)$", line, re.IGNORECASE)
+        if visit:
+            follow_up = visit.group(1).strip() or None
+        elif bullet:
+            todo.append(bullet.group(1).strip())
         elif line:
             comment.append(line)
     return {"comment": " ".join(comment), "todo": todo, "follow_up": follow_up}

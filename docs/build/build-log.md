@@ -566,3 +566,7 @@ Render's SQLite refused NULL in `CHECK (json_valid(x))`. Schema: NULL guard on t
 
 S-009 type filter and "Mark all as read" back (ACC FR-025, FR-026); the week's visit card and indicators back on S-048 (TML FR-005, FR-012); "Close app" on S-083 ends the sub-app session (ACC FR-019, FR-021, DM-19 default). D-81 updated.
 
+## 06/11/2026: fixes from the v1.0.0 review of Tâm, Ánh and Chi (Sang, branch `sang/mother-app-v1`)
+
+Requested changes: chatbot matches whole words and accent-free typing, and offers a nurse for symptom and medicine questions before declining (`bot/classify.py`, provisional words added, Pending SME D-47); numbers accept a decimal comma and refuse 0, negatives, nan and inf on S-007, S-011 and S-024 (`numbers.py`, not a clinical range: D-16, U18 stay open); switching EDD/LMP clears the date, LMP has its own error. Also: chart axis keeps a decimal on narrow ranges and names urine levels; statistics keep the readings' precision; glucose history opens on fasting; sleep in Vietnamese; S-023 entry from the Home title and tiles, save returns to S-023; Home tiles show the threshold label and "Bác sĩ dặn theo dõi"; ← skips filters of the same screen; chat scrolls to the newest message; staff answers accept more bullet forms; agreed labels (tab "Thai kỳ", "Mẹ & Bé 360", "mẹ" instead of "bạn", "Gọi khẩn cấp"); facility in Vietnamese; S-043 answers 401. Not done: spec and screen-spec updates (owners), consent withdrawal (Client question), one account per tester, the clinical dashboard.
+

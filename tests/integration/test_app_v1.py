@@ -42,7 +42,7 @@ def test_first_opening_goes_consent_guide_setup_home(app_client, db):
     home = app_client.post(f"/m/{persona.USER}/setup", data={"date_type": "EDD", "date": tci_feed.hospital_edd(db, persona.USER)})
     page = app_client.get(home.headers["location"]).text
     assert ">109<" in page and vi("Next appointment") in page and "09/11/2026 · 08:30" in page and vi("{n} days left", n=7) in page
-    assert vi("Your care team sent {n} notice", n=1) in page
+    assert vi("Your doctor sent {n} notice", n=1) in page
 
 
 def test_second_opening_goes_straight_home(app_client, db):

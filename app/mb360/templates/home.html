@@ -36,41 +36,43 @@
 </a>
 
 {% if latest_notice %}
-<a href="/m/{{ user.user_id }}/notices{% if latest_notice[1] == 1 %}/{{ latest_notice[0].notification_id }}{% endif %}" class="card" style="display:flex;gap:12px;align-items:center;padding:14px 16px">
+<a href="/m/{{ user.user_id }}/notices{% if unread_count == 1 %}/{{ latest_notice[0].notification_id }}{% endif %}" class="card" style="display:flex;gap:12px;align-items:center;padding:14px 16px">
   <div class="ic40" style="background:#FEEDE1;color:#C4520A">{{ icon.bell() }}</div>
-  <div style="flex:1;min-width:0"><p class="t-body b">{% if latest_notice[1] %}{{ _("Your care team sent {n} notice", n=latest_notice[1]) }}{% else %}{{ _("You have {n} new notices", n=unread_count) }}{% endif %}</p>
+  <div style="flex:1;min-width:0"><p class="t-body b">{% if latest_notice[1] == unread_count %}{{ _("Your doctor sent {n} notice", n=unread_count) }}{% else %}{{ _("You have {n} new notices", n=unread_count) }}{% endif %}</p>
     {% if latest_notice[0].subtitle %}<p class="t-cap">{{ latest_notice[0].subtitle | t_parts }}</p>{% endif %}</div>
   {{ icon.chev() }}
 </a>
 {% endif %}
 
 <div class="sec">
-  <p class="t-title">{{ _("My metrics") }}</p>
+  <a href="/m/{{ user.user_id }}/health" class="t-title" style="color:#212121" data-health-link>{{ _("My metrics") }} ›</a>
   <a href="/m/{{ user.user_id }}/history" class="lnk">{{ _("Metric history") }} ›</a>
 </div>
 <div class="grid2">
   {% for metric in ("Blood pressure", "Blood glucose", "Fetal heart rate") %}{% for r in d.visit_rows if r.metric == metric and r.value %}
   {% set parts = r.value.split(" ", 1) %}
   <a href="/m/{{ user.user_id }}/health" class="tile">
-    <p class="t-cap">{{ r.metric | t }}</p><p class="val">{{ parts[0] | t_known }}</p>
+    <div class="sec"><p class="t-cap">{{ r.metric | t }}</p>{{ icon.chev() }}</div>
+    <p class="val">{{ parts[0] | t_known }}</p>
     <p class="t-cap">{% if parts | length > 1 %}{{ parts[1] }} · {% endif %}{{ _("From visit") }}</p>
-    {% if r.metric in flags %}<span class="tag src" style="align-self:flex-start">{{ _("Doctor-assigned") }}</span>{% endif %}
+    <div style="display:flex;gap:4px;flex-wrap:wrap">{% if r.label %}<span class="tag {{ 'al' if r.label == 'Above threshold' else 'ok' }}">{{ r.label | t }}</span>{% endif %}
+      {% if r.metric in flags %}<span class="tag inf">{{ _("Doctor asked to monitor") }}</span>{% endif %}</div>
   </a>
   {% endfor %}{% endfor %}
   {% for r in d.self_tracked if r.metric == "Weight" %}
   {% set parts = r.value.split(" ", 1) %}
-  <a href="/m/{{ user.user_id }}/self-tracked" class="tile">
-    <p class="t-cap">{{ r.metric | t }}</p><p class="val">{{ parts[0] }}</p>
-    <p class="t-cap">{{ parts[1] }} · {{ _("Self-entered") }}{% if r.at[:10] == today_iso %} {{ _("today") }}{% endif %}</p>
-    <span class="lnk b" style="font-size:12px;line-height:16px">{{ _("+ Enter metrics") }}</span>
+  <a href="/m/{{ user.user_id }}/health" class="tile">
+    <div class="sec"><p class="t-cap">{{ r.metric | t }}</p>{{ icon.chev() }}</div>
+    <p class="val">{{ parts[0] }}</p>
+    <p class="t-cap">{{ parts[1] }} · {{ _("Self-entered") }} · {{ r.at | show_time }}</p>
   </a>
   {% else %}
-  <a href="/m/{{ user.user_id }}/self-tracked" class="tile">
-    <p class="t-cap">{{ _("Weight") }}</p><p class="val" style="color:#B4B4B4">—</p>
-    <span class="lnk b" style="font-size:12px;line-height:16px">{{ _("+ Enter metrics") }}</span>
+  <a href="/m/{{ user.user_id }}/health" class="tile">
+    <div class="sec"><p class="t-cap">{{ _("Weight") }}</p>{{ icon.chev() }}</div><p class="val" style="color:#B4B4B4">—</p>
   </a>
   {% endfor %}
 </div>
+<a href="/m/{{ user.user_id }}/self-tracked" class="btn o full">{{ _("+ Enter self-tracked metrics") }}</a>
 
 {% if not diary_today %}
 <a href="/m/{{ user.user_id }}/diary/new" class="card" style="display:flex;gap:12px;align-items:center;padding:14px 16px">

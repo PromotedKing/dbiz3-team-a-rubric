@@ -127,7 +127,8 @@ def test_home_shows_the_due_date_card_and_metrics(client, user_id):
     for t in (vi("Due date"), "20/12/2026", ">84<", vi("days to go"), vi("Week {n} + {d} days", n=28, d=0), vi("Third trimester"),
               vi("Report metric / symptom"), vi("My metrics"), vi("Weight"), ">57.0<", vi("Metric history")):
         assert t in page, t
-    assert vi("Above threshold") not in page and vi("Normal") not in page    # group 1: no threshold label (SR-003)
+    weight = page[page.index(">57.0<") - 400:page.index(">57.0<") + 400]
+    assert vi("Above threshold") not in weight and vi("Normal") not in weight    # group 1: no threshold label (SR-003)
 
 
 def test_home_report_button_opens_a_metric_from_the_instructions(client, user_id):

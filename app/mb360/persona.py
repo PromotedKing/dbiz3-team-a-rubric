@@ -12,7 +12,7 @@ from .tml.diary import MEDIA_DIR
 
 TCI_REF = "tci-000200"
 DAYS_LEFT = 109              # 24 weeks + 3 days, as in the UI package
-FACILITY = "Thu Cuc Hospital"
+FACILITY = "Bệnh viện Thu Cúc"
 
 
 def _id(name: str) -> str:

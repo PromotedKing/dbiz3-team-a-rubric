@@ -258,7 +258,7 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | Screen text (S-008, S-023) | 2 reports being handled | 2 báo cáo đang xử lý |
 | Screen text (S-009) | Reminder: measure and report Blood pressure | Nhắc đo và báo cáo Huyết áp |
 | Screen text (S-009) | Doctor's instructions · Dr. … | Chỉ dẫn của bác sĩ · BS. … |
-| Term | Pregnancy timeline | Timeline thai kỳ |
+| Term | Pregnancy timeline | Thai kỳ theo tuần |
 | Screen title | Mother & Baby 360 | Mẹ & Bé 360 (tile) |
 | Screen title | Pregnancy setup | Khai báo thai kỳ |
 | Screen title | Home | Trang chủ |
@@ -273,11 +273,11 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | Screen title | Metric alert | Cảnh báo chỉ số |
 | Screen title | My reports (S-029; the former tab "Risk assessment" is removed) | Báo cáo của tôi |
 | Screen title | Health chatbot | Trợ lý thai sản |
-| Screen title | Pregnancy timeline | Timeline thai kỳ |
+| Screen title | Pregnancy timeline | Thai kỳ theo tuần |
 | Screen title | Add diary entry | Thêm nhật ký |
 | Screen title | Cases to handle | Ca cần xử lý |
 | Screen title | Mother quick profile | Hồ sơ nhanh của mẹ |
-| Screen title | Close Mother & Baby 360? | Đóng Mother & Baby 360? |
+| Screen title | Close Mother & Baby 360? | Đóng Mẹ & Bé 360? |
 | Screen title | Profile | Hồ sơ |
 | Screen title | Session expired | Phiên làm việc hết hạn |
 | Screen title (S-104, D-74) | Onboarding guide | Hướng dẫn sử dụng |
@@ -286,7 +286,7 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | Screen text (S-048, D-75) | Indicators this week / No indicators this week. | Chỉ số trong tuần / Tuần này chưa có chỉ số. |
 | CTA (S-105, D-75) | Export PDF album | Xuất album PDF |
 | CTA (S-104, D-74) | Skip / Next / Get started | Bỏ qua / Tiếp / Bắt đầu |
-| Tab | Home / Health / Appointments / Chatbot / Profile | Trang chủ / Sức khỏe / Lịch hẹn / Chatbot / Hồ sơ |
+| Tab | Home / Timeline / Chatbot / From doctor / Profile | Trang chủ / Thai kỳ / Chatbot / Từ bác sĩ / Hồ sơ |
 | CTA | Save metrics | Lưu chỉ số |
 | CTA | Submit report | Gửi báo cáo |
 | CTA | View status | Xem trạng thái |
@@ -319,10 +319,10 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | Message | ⚠ Could not load data. | ⚠ Không tải được dữ liệu. |
 | Message | ⚠ Value outside the valid range | ⚠ Giá trị ngoài khoảng hợp lệ |
 | Message | No visit this week. | Tuần này chưa có lần khám. |
-| Message | You have not submitted any reports. | Bạn chưa gửi báo cáo nào. |
-| Message | You have no notifications. | Bạn chưa có thông báo nào. |
+| Message | You have not submitted any reports. | Mẹ chưa gửi báo cáo nào. |
+| Message | You have no notifications. | Mẹ chưa có thông báo nào. |
 | Message | No cases to handle. | Không có ca nào cần xử lý. |
-| Message | Your doctor has not given you any instructions yet. | Bác sĩ chưa có chỉ dẫn nào cho bạn. |
+| Message | Your doctor has not given you any instructions yet. | Bác sĩ chưa có chỉ dẫn nào cho mẹ. |
 
 ### Labels added for the app (D-79) — proposed, to be reviewed by the owners of `screens/` (Chi, Ánh)
 
@@ -348,7 +348,6 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | App shell (D-79) | Nurses and doctors handle the mothers' reports. | Y tá và bác sĩ xử lý báo cáo của mẹ. |
 | App shell (D-79) | Go straight to a mother's Home (demo) | Vào thẳng Trang chủ của một mẹ (demo) |
 | App shell (D-79) | You can come back at any time from the TCI app. | Mẹ sẽ quay lại app TCI. Dữ liệu đã lưu vẫn được giữ, lần sau mở lại không cần đăng nhập. |
-| App shell (D-79) | Edit profile, pregnancy information, hospital record link and notification settings come with ACC US-3 (S-103, S-010, S-011). | Chỉnh sửa hồ sơ, thông tin thai kỳ, liên kết hồ sơ bệnh viện và cài đặt thông báo sẽ có khi làm ACC US-3 (S-103, S-010, S-011). |
 | App shell (D-79) | Record no. {code} | Mã hồ sơ {code} |
 | App shell (D-79) | Week {n} | Tuần {n} |
 | App shell (D-79) | ‹ Week {n} | ‹ Tuần {n} |
@@ -361,8 +360,8 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | App shell (D-79) | Phone number | Số điện thoại |
 | App shell (D-79) | Medical record number | Mã hồ sơ khám |
 | App shell (D-79) | Medical record number (optional) | Mã hồ sơ khám (không bắt buộc) |
-| ACC screens (D-79) | Connect to your TCI account | Kết nối với tài khoản TCI của bạn |
-| ACC screens (D-79) | Mother & Baby 360 will use the following information from the TCI app: | Mother & Baby 360 sẽ dùng các thông tin sau từ app TCI, không cần đăng nhập lại: |
+| ACC screens (D-79) | Connect to your TCI account | Kết nối với tài khoản TCI của mẹ |
+| ACC screens (D-79) | Mother & Baby 360 will use the following information from the TCI app: | Mẹ & Bé 360 sẽ dùng các thông tin sau từ app TCI, không cần đăng nhập lại: |
 | ACC screens (D-79) | Full name, date of birth, phone number | Họ tên, ngày sinh, số điện thoại |
 | ACC screens (D-79) | Medical record number at Thu Cuc | Mã hồ sơ khám tại Thu Cúc |
 | ACC screens (D-79) | Results of your prenatal visits | Kết quả các lần khám thai |
@@ -543,11 +542,11 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | CLI screens (D-79) | No visit yet. | Chưa có lần khám. |
 | Visit type (seed, D-79) | Routine antenatal check-up | Khám thai định kỳ |
 | Visit type (seed, D-79) | Anomaly scan | Siêu âm hình thái |
-| UI package (D-80) | App name | Mother & Baby 360 |
+| UI package (D-80) | App name | Mẹ & Bé 360 |
 | UI package (D-80) | With you through pregnancy | Đồng hành suốt thai kỳ |
-| UI package (D-80) | Timeline | Timeline |
+| UI package (D-80) | Timeline | Thai kỳ |
 | UI package (D-80) | From doctor | Từ bác sĩ |
-| UI package (D-80) | Messages from your care team | Thông báo từ bác sĩ |
+| UI package (D-80) | Notices from your doctor | Thông báo từ bác sĩ |
 | UI package (D-80) | See the status of each report | Xem trạng thái từng báo cáo |
 | UI package (D-80) | days to go | ngày nữa |
 | UI package (D-80) | Week {n} + {d} days | Tuần {n} + {d} ngày |
@@ -627,7 +626,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | ACC screens (specs/009, D-80) | Requested on | Yêu cầu ngày |
 | ACC screens (specs/009, D-80) | Facility | Cơ sở |
 | ACC screens (specs/009, D-80) | Link request awaiting hospital confirmation | Yêu cầu liên kết đang chờ bệnh viện xác nhận |
-| ACC screens (specs/009, D-80) | Data used in Mother & Baby 360: results of prenatal visits, due date set by the hospital. | Dữ liệu dùng trong Mother & Baby 360: kết quả các lần khám thai, ngày dự sinh do bệnh viện xác định. |
+| ACC screens (specs/009, D-80) | Data used in Mother & Baby 360: results of prenatal visits, due date set by the hospital. | Dữ liệu dùng trong Mẹ & Bé 360: kết quả các lần khám thai, ngày dự sinh do bệnh viện xác định. |
 | ACC screens (specs/009, D-80) | Support — TCI app ↗ | Hỗ trợ — App TCI ↗ |
 | ACC screens (specs/009, D-80) | Edit › | Sửa › |
 | ACC screens (specs/009, D-80) | Record no. {code} • TCI account | Tài khoản TCI · Mã hồ sơ {code} |
@@ -689,7 +688,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | TML screens (specs/011, D-80) | Export keepsake album (PDF) | Xuất album kỷ niệm (PDF) |
 | Mother app v1.0.0 (D-81) | + Enter metrics | + Nhập chỉ số |
 | Mother app v1.0.0 (D-81) | Antenatal check-up process | Quy trình khám thai |
-| Mother app v1.0.0 (D-81) | Call the emergency hotline | Gọi Hotline cấp cứu |
+| Mother app v1.0.0 (D-81) | Call the emergency hotline | Gọi khẩn cấp |
 | Mother app v1.0.0 (D-81) | Call the hospital | Gọi bệnh viện |
 | Mother app v1.0.0 (D-81) | Clinical staff will view your report. If your symptoms get worse, go to the nearest hospital. | Nhân viên y tế sẽ xem báo cáo của mẹ. Nếu triệu chứng nặng hơn, mẹ đến bệnh viện gần nhất nhé. |
 | Mother app v1.0.0 (D-81) | Clinical web (doctor, nurse) | Web nhân viên y tế (bác sĩ, y tá) |
@@ -701,14 +700,14 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Mother app v1.0.0 (D-81) | Getting ready for birth | Chuẩn bị đi sinh |
 | Mother app v1.0.0 (D-81) | Highlights | Kỷ niệm nổi bật |
 | Mother app v1.0.0 (D-81) | Week by week | Xem theo từng tuần |
-| Mother app v1.0.0 (D-81) | Mother & Baby 360 will use the following information from the TCI app, with no need to sign in again: | Mother & Baby 360 sẽ dùng các thông tin sau từ app TCI, không cần đăng nhập lại: |
+| Mother app v1.0.0 (D-81) | Mother & Baby 360 will use the following information from the TCI app, with no need to sign in again: | Mẹ & Bé 360 sẽ dùng các thông tin sau từ app TCI, không cần đăng nhập lại: |
 | Mother app v1.0.0 (D-81) | Next appointment | Lịch khám kế tiếp |
 | Mother app v1.0.0 (D-81) | Open as another TCI account | Mở bằng tài khoản TCI khác |
 | Mother app v1.0.0 (D-81) | Sample data: everyone here is invented, and the medical wording is waiting for hospital review. | Dữ liệu mẫu: mọi tên người đều là giả, nội dung y khoa đang chờ bệnh viện duyệt. |
 | Mother app v1.0.0 (D-81) | See the timeline | Xem dòng thời gian |
 | Mother app v1.0.0 (D-81) | Start again from the first opening | Chạy lại từ lần mở đầu tiên |
 | Mother app v1.0.0 (D-81) | Take / choose photo | Chụp / chọn ảnh |
-| Mother app v1.0.0 (D-81) | Tell Mother & Baby 360 your pregnancy date so it can work out your week. | Cho Mother & Baby 360 biết mốc thai kỳ để tính tuần thai cho mẹ. |
+| Mother app v1.0.0 (D-81) | Tell Mother & Baby 360 your pregnancy date so it can work out your week. | Cho Mẹ & Bé 360 biết mốc thai kỳ để tính tuần thai cho mẹ. |
 | Mother app v1.0.0 (D-81) | The hospital will confirm this number before launch: {hotline}. | Số tổng đài chờ bệnh viện xác nhận trước khi phát hành: {hotline}. |
 | Mother app v1.0.0 (D-81) | The mother's app, embedded in the TCI app. Open this address on a phone for the full-screen version. | App dành cho mẹ, nhúng trong app TCI. Mở địa chỉ này trên điện thoại để dùng toàn màn hình. |
 | Mother app v1.0.0 (D-81) | The nurse will view your question and respond under From doctor. If it gets worse, call the emergency hotline, do not wait. | Y tá sẽ xem câu hỏi và phản hồi ở mục Từ bác sĩ. Nếu nặng hơn, mẹ gọi cấp cứu ngay, đừng chờ. |
@@ -722,7 +721,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Mother app v1.0.0 (D-81) | You chose: {choice} | Mẹ đã chọn: {choice} |
 | Mother app v1.0.0 (D-81) | You need to be checked right away | Mẹ cần được kiểm tra ngay |
 | Mother app v1.0.0 (D-81) | You will return to the TCI app. Your data stays saved, and you do not need to sign in next time. | Mẹ sẽ quay lại app TCI. Dữ liệu đã lưu vẫn được giữ, lần sau mở lại không cần đăng nhập. |
-| Mother app v1.0.0 (D-81) | Your care team sent {n} notice | Bác sĩ vừa gửi {n} thông báo |
+| Mother app v1.0.0 (D-81) | Your doctor sent {n} notice | Bác sĩ vừa gửi {n} thông báo |
 | Mother app v1.0.0 (D-81) | Your doctor booked an earlier visit | Bác sĩ hẹn khám sớm |
 | Mother app v1.0.0 (D-81) | Your report will be sent to clinical staff. | Báo cáo sẽ được gửi tới nhân viên y tế. |
 | Mother app v1.0.0 (D-81) | has diary | có nhật ký |
@@ -741,3 +740,11 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Mother app v1.0.0 (D-81) | Should I exercise? | Có nên tập thể dục? |
 | Mother app v1.0.0 (D-81) | Leg cramps | Chuột rút chân |
 | Mother app v1.0.0 (D-81) | Visits this week | Lần khám trong tuần |
+| Review fixes 06/11/2026 (D-81) | Enter a number greater than 0. | Hãy nhập một số lớn hơn 0. |
+| Review fixes 06/11/2026 (D-81) | The first day of the last period cannot be in the future, and the week must be 0 – 42. | Ngày đầu kỳ kinh cuối không được ở tương lai, và tuần thai phải trong khoảng 0 – 42. |
+| Review fixes 06/11/2026 (D-81) | e.g. {value} | VD: {value} |
+| Review fixes 06/11/2026 (D-81) | Doctor asked to monitor | Bác sĩ dặn theo dõi |
+| Review fixes 06/11/2026 (D-81) | {h} h {m} min | {h} giờ {m} phút |
+| Review fixes 06/11/2026 (D-81) | {h} h | {h} giờ |
+| Review fixes 06/11/2026 (D-81) | In the mother's app, lines starting with - become her to-do list, and a line “Hẹn khám: dd/mm/yyyy · HH:mm” shows as the follow-up visit. | Trên app của mẹ, dòng bắt đầu bằng - thành việc mẹ cần làm, còn dòng “Hẹn khám: dd/mm/yyyy · HH:mm” hiện thành lịch khám lại. |
+| Review fixes 06/11/2026 (D-81) | Appointments | Lịch hẹn |

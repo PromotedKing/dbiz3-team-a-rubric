@@ -111,7 +111,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         user = mother(user_id)
         if entry.next_step(conn, user_id) == "home":   # BR-006
             return go(user_id, "home")
-        return setup_page(request, user, {"date_type": date_type, "date": date or (tci_feed.hospital_edd(conn, user_id) if date_type == "EDD" else "") or ""}, {})
+        prefill = tci_feed.hospital_edd(conn, user_id) if date_type == "EDD" and "date" not in request.query_params else ""
+        return setup_page(request, user, {"date_type": date_type, "date": date or prefill or ""}, {})
 
     @app.post("/m/{user_id}/setup", response_class=HTMLResponse)
     async def setup_post(request: Request, user_id: str):
@@ -181,7 +182,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
     @app.get("/session-expired", response_class=HTMLResponse)
     def session_expired(request: Request):
         """S-043. Sessions are not checked before Session 11 (no sign-in); reachable from the demo start page."""
-        return page(request, "expired.html")
+        return page(request, "expired.html", 401)
 
     @app.get("/m/{user_id}/profile", response_class=HTMLResponse)
     def profile_page(request: Request, user_id: str, saved: int = 0):
