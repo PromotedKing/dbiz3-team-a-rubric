@@ -6,6 +6,7 @@ MB360_LLM=fake forces the fake client. Only the question, the earlier turns of t
 gestational week are ever passed in (BR-001)."""
 import json
 import os
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -14,7 +15,8 @@ SYSTEM_PROMPT = (
     "You are the first-line assistant of the Mother & Baby 360 app of Thu Cuc Hospital. Answer only general questions "
     "about pregnancy, prenatal care, nutrition and postpartum wellness, briefly and in the language of the question. "
     "Politely decline any other topic. Never diagnose, never interpret the mother's own symptoms or results, never "
-    "give a personal treatment; say that a nurse or doctor should be consulted instead."
+    "give a personal treatment or a medicine dose; say that a nurse or doctor should be consulted instead. "
+    "Address the user as 'mẹ'. Keep answers under 120 words, in plain sentences without markdown."
 )
 
 
@@ -51,24 +53,69 @@ class LocalAnswers:
 
 
 class GeminiLLM:
+    """Google AI Studio (Gemini API, free tier possible; D-76, D-83). Only general questions reach it (BR-002) and only the
+    question, the earlier general turns and the gestational week are sent (BR-001). generateContent is tried first; if
+    Google answers 404 for it, the newer Interactions API is used. Any failure raises, so the chat shows "Retry" (BOT §10 Q10)."""
     name = "gemini"
-    URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+    BASE = "https://generativelanguage.googleapis.com/v1beta"
+    MAX_TOKENS = 600
 
-    def __init__(self, api_key: str, model: str, timeout: float = 20.0):
+    def __init__(self, api_key: str, model: str, timeout: float = 12.0):
         self.api_key, self.model, self.timeout = api_key, model, timeout
 
-    def answer(self, question: str, context: dict) -> str:
-        contents = []
-        for turn in context.get("earlier", []):
-            contents.append({"role": "user", "parts": [{"text": turn["question"]}]})
-            contents.append({"role": "model", "parts": [{"text": turn["answer"]}]})
-        contents.append({"role": "user", "parts": [{"text": f"(Gestational week {context.get('gestational_week')}) {question}"}]})
-        body = json.dumps({"systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]}, "contents": contents}).encode("utf-8")
-        req = urllib.request.Request(self.URL.format(model=self.model), data=body, method="POST",
-                                     headers={"Content-Type": "application/json", "x-goog-api-key": self.api_key})
+    def _post(self, url: str, body: dict, extra: dict | None = None) -> dict:
+        req = urllib.request.Request(url, data=json.dumps(body).encode("utf-8"), method="POST",
+                                     headers={"Content-Type": "application/json", "x-goog-api-key": self.api_key, **(extra or {})})
         with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-        return "".join(p.get("text", "") for p in data["candidates"][0]["content"]["parts"]).strip()
+            return json.loads(resp.read().decode("utf-8"))
+
+    @staticmethod
+    def _turns(question: str, context: dict) -> list[tuple[str, str]]:
+        turns = []
+        for t in context.get("earlier", []):
+            turns += [("user", t["question"]), ("model", t["answer"])]
+        week = context.get("gestational_week")
+        return turns + [("user", f"(Tuần thai {week}) {question}" if week is not None else question)]
+
+    def _generate_content(self, turns) -> str:
+        data = self._post(f"{self.BASE}/models/{self.model}:generateContent", {
+            "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+            "contents": [{"role": role, "parts": [{"text": text}]} for role, text in turns],
+            "generationConfig": {"maxOutputTokens": self.MAX_TOKENS}})
+        parts = data["candidates"][0]["content"]["parts"]
+        return "".join(p.get("text", "") for p in parts if not p.get("thought"))
+
+    def _interaction(self, turns) -> str:
+        data = self._post(f"{self.BASE}/interactions", {
+            "model": self.model, "system_instruction": SYSTEM_PROMPT, "store": False,
+            "input": [{"type": "user_input" if role == "user" else "model_output", "content": [{"type": "text", "text": text}]} for role, text in turns],
+            "generation_config": {"max_output_tokens": self.MAX_TOKENS}}, {"Api-Revision": "2026-05-20"})
+        if data.get("output_text"):
+            return data["output_text"]
+        out = [step for step in data.get("steps") or data.get("outputs") or [] if step.get("type", "model_output") == "model_output"]
+        content = out[-1].get("content") if out else ""
+        return content if isinstance(content, str) else "".join(c.get("text", "") for c in content if c.get("type", "text") == "text")
+
+    def answer(self, question: str, context: dict) -> str:
+        turns = self._turns(question, context)
+        try:
+            text = self._generate_content(turns)
+        except urllib.error.HTTPError as e:
+            if e.code != 404:
+                raise
+            text = self._interaction(turns)
+        if not text.strip():
+            raise ValueError("empty answer from Gemini")
+        return text.strip()
+
+
+DEFAULT_MODEL = "gemini-3.5-flash-lite"    # Google's suggestion for new projects, free tier (checked 07/11/2026)
+
+
+def describe() -> str:
+    """For the panel beside the phone: which chatbot answers."""
+    client = get_client()
+    return f"Gemini · {client.model}" if isinstance(client, GeminiLLM) else client.name
 
 
 _fallback = FakeLLM
@@ -99,4 +146,13 @@ def get_client():
     file_values = _env_file_values()
     key = os.environ.get("GEMINI_API_KEY") or file_values.get("GEMINI_API_KEY")
     model = os.environ.get("GEMINI_MODEL") or file_values.get("GEMINI_MODEL")
-    return GeminiLLM(key, model) if key and model else _fallback()
+    return GeminiLLM(key, model or DEFAULT_MODEL) if key else _fallback()
+
+
+if __name__ == "__main__":          # uv run python app/mb360/bot/llm.py  → one test question, to check the key
+    client = get_client()
+    print("client:", describe())
+    try:
+        print(client.answer("Tuần 24 mẹ nên ăn thêm gì?", {"gestational_week": 24, "earlier": []}))
+    except urllib.error.HTTPError as e:
+        print("Gemini refused:", e.code, e.read().decode("utf-8", "replace")[:300])

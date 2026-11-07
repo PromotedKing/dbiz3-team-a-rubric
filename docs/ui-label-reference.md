@@ -748,3 +748,4 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Review fixes 06/11/2026 (D-81) | {h} h | {h} giờ |
 | Review fixes 06/11/2026 (D-81) | In the mother's app, lines starting with - become her to-do list, and a line “Hẹn khám: dd/mm/yyyy · HH:mm” shows as the follow-up visit. | Trên app của mẹ, dòng bắt đầu bằng - thành việc mẹ cần làm, còn dòng “Hẹn khám: dd/mm/yyyy · HH:mm” hiện thành lịch khám lại. |
 | Review fixes 06/11/2026 (D-81) | Appointments | Lịch hẹn |
+| Review fixes 06/11/2026 (D-81) | Chatbot: {engine} | Chatbot: {engine} |
