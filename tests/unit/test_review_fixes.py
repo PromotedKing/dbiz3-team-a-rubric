@@ -53,3 +53,13 @@ def test_numbers_read(text, value, error):
 def test_parse_response_accepts_other_bullets(text, todo, follow_up):
     parsed = notices.parse_response(text)
     assert parsed["comment"] == "A" and parsed["todo"] == todo and parsed["follow_up"] == follow_up
+
+
+def test_long_llm_answers_fit_the_stored_limit():
+    from mb360.bot import chat
+    long = "Câu một rất dài. " * 60
+    out = chat.fit(long)
+    assert len(out) <= chat.ANSWER_MAX and out.endswith(".")
+    words = "chữ " * 300
+    assert len(chat.fit(words)) <= chat.ANSWER_MAX and chat.fit(words).endswith("…")
+    assert chat.fit("**Ngắn** thôi.") == "Ngắn thôi."

@@ -582,3 +582,7 @@ With the key set, every answer showed "Retry" and the log said nothing. Now the 
 
 Gemini answered 403: the Google project is not eligible for the free tier. `GroqLLM` calls Groq's OpenAI-style chat completions (model `openai/gpt-oss-120b`), first when `GROQ_API_KEY` is set; Gemini stays second. D-84. Tested with a fake network and a call to Groq with a fake key; not yet with a real key.
 
+## 07/11/2026: long chatbot answers could not be saved (Sang, branch `sang/mother-app-v1`)
+
+Groq answers longer than 500 characters broke the CHAT_MESSAGE length check. Answers are now asked for 450 characters and cut at a sentence end before saving; the schema is unchanged (DM-36 still open for the team).
+

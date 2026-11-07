@@ -13,6 +13,7 @@ from . import classify
 
 DB_TIME = "%Y-%m-%d %H:%M"
 MAX_LEN = 500   # D-46
+ANSWER_MAX = 500   # the schema holds every CHAT_MESSAGE.text to 500 characters; the limit for answers is open (DM-36)
 HANDOFF_TEXT = "This needs a proper consultation. It will be sent to a nurse if you agree"
 DECLINE_TEXT = ("I can only help with pregnancy, prenatal care, nutrition and postpartum wellness. "
                 "Could you ask me a pregnancy question?")   # wording open (BOT §10 Q13)
@@ -42,6 +43,16 @@ def _earlier(conn, conversation_id: str) -> list[dict]:
             pairs.append({"question": pending, "answer": m["text"]})
             pending = None
     return pairs
+
+
+def fit(answer: str, limit: int = ANSWER_MAX) -> str:
+    """An LLM answer cut to the stored limit at the end of a sentence (or a word), so it can always be saved."""
+    answer = answer.replace("**", "").strip()
+    if len(answer) <= limit:
+        return answer
+    cut = answer[:limit - 1]
+    end = max(cut.rfind(c) for c in ".!?\n")
+    return cut[:end + 1].strip() if end >= limit // 2 else cut[:cut.rfind(" ")].rstrip(",;:") + "…"
 
 
 def _message(conn, conversation_id, sender, text, at, intent=None, is_risk=0) -> str:
@@ -80,7 +91,7 @@ def ask(conn: sqlite3.Connection, user_id: str, conversation_id: str | None, tex
         elif kind["category"] == "out_of_scope":
             _message(conn, conversation_id, "Chatbot", DECLINE_TEXT, at)          # FR-010
         else:
-            _message(conn, conversation_id, "Chatbot", answer, at)
+            _message(conn, conversation_id, "Chatbot", fit(answer), at)
             conn.execute("INSERT INTO AI_RESPONSE_LOG (log_id, conversation_id, ai_response_data, audit_log_entry) VALUES (?, ?, ?, ?)",
                          (str(uuid.uuid4()), conversation_id, answer, json.dumps({"client": getattr(client, "name", "unknown")})))
         conn.execute("UPDATE CONVERSATION SET current_session_data = ? WHERE conversation_id = ?",
