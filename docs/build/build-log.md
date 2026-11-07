@@ -578,3 +578,7 @@ Requested changes: chatbot matches whole words and accent-free typing, and offer
 
 With the key set, every answer showed "Retry" and the log said nothing. Now the log names the cause (HTTP status and Google's message, never the key or the question), and the client calls the Interactions API first, as Google's reference does for new projects, falling back to generateContent on 404. Cause not confirmed yet.
 
+## 07/11/2026: chatbot on Groq's free plan (Sang, branch `sang/mother-app-v1`)
+
+Gemini answered 403: the Google project is not eligible for the free tier. `GroqLLM` calls Groq's OpenAI-style chat completions (model `openai/gpt-oss-120b`), first when `GROQ_API_KEY` is set; Gemini stays second. D-84. Tested with a fake network and a call to Groq with a fake key; not yet with a real key.
+

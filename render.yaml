@@ -14,7 +14,11 @@ services:
         value: 3.13.3
       - key: MB360_STAFF_PASSWORD       # Render generates it: read it on the service's Environment page
         generateValue: true
-      - key: GEMINI_MODEL               # free tier on Google AI Studio (D-83)
+      - key: GROQ_MODEL                 # Groq free plan (D-84); used when GROQ_API_KEY is set
+        value: openai/gpt-oss-120b
+      - key: GROQ_API_KEY               # secret: add it on the Environment page; never in this file
+        sync: false
+      - key: GEMINI_MODEL               # Google AI Studio (D-83); used only without a Groq key
         value: gemini-3.5-flash-lite
       - key: GEMINI_API_KEY             # secret: Render asks for it, or add it on the Environment page; never in this file
         sync: false

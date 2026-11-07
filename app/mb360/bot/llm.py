@@ -121,18 +121,49 @@ def describe_error(e: Exception) -> str:
     if isinstance(e, urllib.error.HTTPError):
         try:
             detail = json.loads(e.read().decode("utf-8", "replace")).get("error", {})
-            return f"HTTP {e.code} {detail.get('status', '')}: {detail.get('message', '')[:300]} [{e.url.split('?')[0]}]"
+            return f"HTTP {e.code} {detail.get('status') or detail.get('code') or ''}: {str(detail.get('message', ''))[:300]} [{e.url.split('?')[0]}]"
         except Exception:
             return f"HTTP {e.code} [{e.url.split('?')[0]}]"
     return f"{type(e).__name__}: {str(e)[:300]}"
 
 
-DEFAULT_MODEL = "gemini-3.5-flash-lite"    # Google's suggestion for new projects, free tier (checked 07/11/2026)
+class GroqLLM:
+    """Groq's free plan (D-84): OpenAI-style chat completions, no card needed. Same rules as GeminiLLM: only general
+    questions, only the question, the earlier general turns and the gestational week (BR-001, BR-002); any failure raises."""
+    name = "groq"
+    URL = "https://api.groq.com/openai/v1/chat/completions"
+    MAX_TOKENS = 1024        # reasoning models count their thinking here too
+
+    def __init__(self, api_key: str, model: str, timeout: float = 15.0):
+        self.api_key, self.model, self.timeout = api_key, model, timeout
+
+    def answer(self, question: str, context: dict) -> str:
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        for t in context.get("earlier", []):
+            messages += [{"role": "user", "content": t["question"]}, {"role": "assistant", "content": t["answer"]}]
+        week = context.get("gestational_week")
+        messages.append({"role": "user", "content": f"(Tuần thai {week}) {question}" if week is not None else question})
+        body = {"model": self.model, "messages": messages, "max_completion_tokens": self.MAX_TOKENS}
+        req = urllib.request.Request(self.URL, data=json.dumps(body).encode("utf-8"), method="POST", headers={
+            "Content-Type": "application/json", "Authorization": f"Bearer {self.api_key}",
+            "User-Agent": "mb360-chatbot/1.0"})       # Groq's edge refuses the default Python agent
+        with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        text = (data["choices"][0]["message"].get("content") or "").strip()
+        if not text:
+            raise ValueError("empty answer from Groq")
+        return text
+
+
+DEFAULT_MODEL = "gemini-3.5-flash-lite"
+GROQ_DEFAULT_MODEL = "openai/gpt-oss-120b"     # on Groq's free plan (checked 07/11/2026)    # Google's suggestion for new projects, free tier (checked 07/11/2026)
 
 
 def describe() -> str:
     """For the panel beside the phone: which chatbot answers."""
     client = get_client()
+    if isinstance(client, GroqLLM):
+        return f"Groq · {client.model}"
     return f"Gemini · {client.model}" if isinstance(client, GeminiLLM) else client.name
 
 
@@ -162,9 +193,14 @@ def get_client():
     if os.environ.get("MB360_LLM") == "fake":
         return FakeLLM()
     file_values = _env_file_values()
-    key = os.environ.get("GEMINI_API_KEY") or file_values.get("GEMINI_API_KEY")
-    model = os.environ.get("GEMINI_MODEL") or file_values.get("GEMINI_MODEL")
-    return GeminiLLM(key, model or DEFAULT_MODEL) if key else _fallback()
+    def setting(name):
+        return os.environ.get(name) or file_values.get(name)
+
+    if setting("GROQ_API_KEY"):          # D-84: Groq first, it is free
+        return GroqLLM(setting("GROQ_API_KEY"), setting("GROQ_MODEL") or GROQ_DEFAULT_MODEL)
+    if setting("GEMINI_API_KEY"):
+        return GeminiLLM(setting("GEMINI_API_KEY"), setting("GEMINI_MODEL") or DEFAULT_MODEL)
+    return _fallback()
 
 
 if __name__ == "__main__":          # uv run python app/mb360/bot/llm.py  → one test question, to check the key
@@ -173,4 +209,4 @@ if __name__ == "__main__":          # uv run python app/mb360/bot/llm.py  → on
     try:
         print(client.answer("Tuần 24 mẹ nên ăn thêm gì?", {"gestational_week": 24, "earlier": []}))
     except urllib.error.HTTPError as e:
-        print("Gemini refused:", e.code, e.read().decode("utf-8", "replace")[:300])
+        print("Refused:", e.code, e.read().decode("utf-8", "replace")[:300])

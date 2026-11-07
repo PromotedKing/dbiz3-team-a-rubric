@@ -9,6 +9,7 @@ from mb360.bot import llm
 
 
 def test_fake_client_without_settings(monkeypatch, tmp_path):
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     monkeypatch.delenv("GEMINI_MODEL", raising=False)
     monkeypatch.delenv("MB360_LLM", raising=False)
@@ -17,6 +18,7 @@ def test_fake_client_without_settings(monkeypatch, tmp_path):
 
 
 def test_gemini_client_with_both_settings(monkeypatch, tmp_path):
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
     monkeypatch.delenv("MB360_LLM", raising=False)
     monkeypatch.setattr(llm, "ENV_FILE", tmp_path / ".env")
     monkeypatch.setenv("GEMINI_API_KEY", "test-key-not-real")
@@ -26,6 +28,7 @@ def test_gemini_client_with_both_settings(monkeypatch, tmp_path):
 
 
 def test_env_file_is_read(monkeypatch, tmp_path):
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     monkeypatch.delenv("GEMINI_MODEL", raising=False)
     monkeypatch.delenv("MB360_LLM", raising=False)
@@ -103,8 +106,40 @@ def test_gemini_empty_or_failed_answer_raises(monkeypatch):
 
 
 def test_key_alone_uses_the_default_model(monkeypatch, tmp_path):
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
     monkeypatch.delenv("MB360_LLM", raising=False)
     monkeypatch.delenv("GEMINI_MODEL", raising=False)
     monkeypatch.setattr(llm, "ENV_FILE", tmp_path / ".env")
     monkeypatch.setenv("GEMINI_API_KEY", "test-key-not-real")
     assert llm.get_client().model == llm.DEFAULT_MODEL and llm.describe() == f"Gemini · {llm.DEFAULT_MODEL}"
+
+
+def test_groq_request_and_answer(monkeypatch):
+    sent = []
+
+    def fake_urlopen(req, timeout):
+        sent.append((req.full_url, dict(req.header_items()), json.loads(req.data)))
+        return _Resp({"choices": [{"message": {"role": "assistant", "content": "Mẹ ngủ nghiêng trái.", "reasoning": "…"}}]})
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    answer = llm.GroqLLM("test-key-not-real", "openai/gpt-oss-120b").answer("Mất ngủ?", {"gestational_week": 24, "earlier": [{"question": "Q", "answer": "A"}]})
+    assert answer == "Mẹ ngủ nghiêng trái."
+    url, headers, body = sent[0]
+    assert url == "https://api.groq.com/openai/v1/chat/completions" and headers["Authorization"] == "Bearer test-key-not-real"
+    assert headers["User-agent"].startswith("mb360")
+    assert [m["role"] for m in body["messages"]] == ["system", "user", "assistant", "user"] and "Tuần thai 24" in body["messages"][-1]["content"]
+
+
+def test_groq_key_comes_first(monkeypatch, tmp_path):
+    monkeypatch.delenv("MB360_LLM", raising=False)
+    monkeypatch.delenv("GROQ_MODEL", raising=False)
+    monkeypatch.setattr(llm, "ENV_FILE", tmp_path / ".env")
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key-not-real")
+    monkeypatch.setenv("GROQ_API_KEY", "test-key-not-real")
+    assert isinstance(llm.get_client(), llm.GroqLLM) and llm.describe() == f"Groq · {llm.GROQ_DEFAULT_MODEL}"
+
+
+def test_groq_empty_answer_raises(monkeypatch):
+    monkeypatch.setattr(urllib.request, "urlopen", lambda req, timeout: _Resp({"choices": [{"message": {"content": ""}}]}))
+    with pytest.raises(ValueError):
+        llm.GroqLLM("k", "m").answer("q", {})
