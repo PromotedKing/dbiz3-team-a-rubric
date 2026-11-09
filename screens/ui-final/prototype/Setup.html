@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Khai báo thai kỳ</title>
+<link rel="stylesheet" href="./tci.css">
+</head>
+<body style="background:#E9E9E9;display:flex;justify-content:center;padding:24px 0">
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="scr w" style="width: 390px; height: 844px">
+  <div class="hdr" style="padding-left: 16px">
+    <h1>Khai báo thai kỳ</h1>
+    <a href="TciHome.html" class="ib" aria-label="Đóng Mother &amp; Baby 360"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+
+  <div class="body" style="gap: 20px">
+    <p class="t-body" style="color: #6F6F6F">Chào mẹ Mai! Cho Mother &amp; Baby 360 biết mốc thai kỳ để tính tuần thai cho mẹ.</p>
+
+    <div class="seg" role="tablist" aria-label="Cách khai báo">
+      <button class="on" role="tab" aria-selected="true">Tôi biết ngày dự sinh</button>
+      <button role="tab" aria-selected="false">Tôi biết ngày đầu kỳ kinh cuối</button>
+    </div>
+
+    <div class="fld">
+      <label for="edd">Ngày dự sinh</label>
+      <input id="edd" class="inp" value="14/02/2027">
+    </div>
+
+    <div style="background: #E6F6EC; border-radius: 12px; padding: 12px 14px; display: flex; gap: 12px; align-items: center">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00A651" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+      <div>
+        <p class="t-cap" style="color: #00873F">Hệ thống tính được</p>
+        <p class="t-body b" style="color: #00873F">Tuần 24 + 3 ngày · Tam cá nguyệt 2</p>
+      </div>
+    </div>
+
+    <div style="height: 1px; background: #E0E0E0"></div>
+
+    <div class="grid2">
+      <div class="fld"><label for="h">Chiều cao <span class="opt">(không bắt buộc)</span></label><div class="unit"><input id="h" class="inp" inputmode="numeric" placeholder="158"><span>cm</span></div></div>
+      <div class="fld"><label for="w">Cân nặng <span class="opt">(không bắt buộc)</span></label><div class="unit"><input id="w" class="inp" inputmode="decimal" placeholder="52.0"><span>kg</span></div></div>
+    </div>
+    <div class="fld">
+      <label for="f">Ngày khám thai đầu tiên <span class="opt">(không bắt buộc)</span></label>
+      <input id="f" class="inp" placeholder="dd/mm/yyyy">
+    </div>
+  </div>
+
+  <div class="foot">
+    <a href="Main.html" class="btn">Bắt đầu</a>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

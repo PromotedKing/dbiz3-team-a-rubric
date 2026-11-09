@@ -1,0 +1,204 @@
+# Quy ước giao diện — Mother & Baby 360°
+
+> Chuẩn theo app **Hệ Thống Y Tế Thu Cúc – TCI** hiện có (đối chiếu từ ảnh chụp màn Trang chủ và Cá nhân).
+> Mã màu đánh dấu **[đo]** = lấy mẫu pixel trực tiếp từ ảnh chụp (sai số ±2–3 đơn vị do nén JPG).
+> Giá trị đánh dấu **[ước lượng]** = suy ra từ ảnh, cần xác nhận với file thiết kế gốc của TCI nếu có.
+> Giá trị đánh dấu **[bổ sung]** = app TCI không có thành phần này; được suy ra từ bảng màu TCI để dùng cho nghiệp vụ riêng.
+
+## 1. Chữ (5 cấp)
+
+Font family: **Roboto** (fallback: -apple-system, "SF Pro Text", sans-serif). **[ước lượng]** — không xác định chắc chắn được font từ ảnh chụp; Roboto là font gần nhất với nét chữ trong app (sans-serif, không chân, hỗ trợ dấu tiếng Việt tốt).
+
+Cỡ chữ quy đổi từ chiều cao chữ trong ảnh, giả định màn rộng 390pt **[ước lượng]**:
+
+| Cấp | Cỡ | Weight | Line-height | Màu | Tham chiếu trong app TCI |
+|---|---|---|---|---|---|
+| Display (số liệu nổi bật) | 22 | 700 | 28 | `color-primary` | "Member", "250" |
+| Page title | 18 | 700 | 24 | `color-text-primary` | Tên "[tên thành viên]", "Hệ Thống Y Tế Thu Cúc - TCI" (màu primary) |
+| Section title | 18 | 700 | 24 | `color-text-primary` | "Hướng dẫn khách hàng", "Cá nhân", "Tài khoản & bảo mật" |
+| Body | 15 | 400 | 20 | `color-text-primary` | "Hồ sơ người thân", "Lịch hẹn", tiêu đề card bài viết |
+| Caption | 12 | 400 | 16 | `color-text-secondary` | Nhãn tab bar, "Hạng thành viên", "Điểm khả dụng" |
+
+Ghi chú:
+- App TCI không dùng chữ nghiêng, không dùng weight 500/600 thấy rõ trên 2 màn — chỉ 400 (thường) và 700 (đậm).
+- Tagline dưới logo ("Chăm sóc sức khoẻ trọn đời cho bạn!") là Body 15/400 màu `color-primary` — dùng cho dòng phụ đề mang tính thương hiệu, không dùng cho nội dung thường.
+
+## 2. Màu sắc
+
+### 2.1 Màu thương hiệu & nền
+
+| Token | Mã màu | Dùng ở đâu | Nguồn |
+|---|---|---|---|
+| `color-primary` | `#00A651` | Nút chính, tab active, icon menu, số liệu nổi bật, tiêu đề nhấn | [đo] logo, tiêu đề, tab active |
+| `color-primary-light` | `#48D07C` | Điểm sáng của gradient nút tròn "Đặt lịch" | [đo] |
+| `color-primary-pressed` | `#008C44` | Trạng thái nhấn của nút chính | [bổ sung] tối hơn primary ~15% |
+| `color-primary-soft` | `#CCF6D2` | Nền tròn/ellipse dưới icon tính năng | [đo] |
+| `color-hero-gradient` | `#D3EDD2` → `#C3EAD5` | Card thông tin thành viên (đầu màn Cá nhân) | [đo] |
+| `color-accent` | `#F66A0B` | Nút gọi nổi (hotline), CTA khuyến mãi ("CLICK NGAY!") — chỉ dùng cho hành động khẩn/nổi bật, không dùng đại trà | [đo] |
+| `color-avatar` | `#009788` | Nền avatar chữ cái đầu | [đo] |
+| `color-bg` | `#F5F5F5` | Nền toàn màn (phía sau card) | [đo] màn Cá nhân |
+| `color-surface` | `#FFFFFF` | Nền card, header, tab bar, nền màn Trang chủ | [đo] |
+
+### 2.2 Chữ & đường nét
+
+| Token | Mã màu | Dùng ở đâu | Nguồn |
+|---|---|---|---|
+| `color-text-primary` | `#212121` | Page title, Section title, Body | [đo] menu, tiêu đề mục |
+| `color-text-secondary` | `#6F6F6F` | Caption, mô tả phụ, icon chevron (›) | [đo] chevron |
+| `color-text-disabled` | `#B4B4B4` | Nhãn/icon tab inactive, nút vô hiệu | [đo] tab inactive |
+| `color-border` | `#E0E0E0` | Viền card, divider giữa các dòng menu | [đo] |
+
+### 2.3 Trạng thái nghiệp vụ **[bổ sung]**
+
+App TCI không có nhãn ngưỡng / cảnh báo trên 2 màn đã chụp. Bảng dưới được suy ra từ bảng màu TCI:
+
+| Token | Nền / chữ | Dùng ở đâu |
+|---|---|---|
+| `color-status-normal` (Bình thường) | nền `#E6F6EC` / chữ `#00873F` | Nhãn ngưỡng |
+| `color-status-alert` (Vượt ngưỡng) | nền `#FEEDE1` / chữ `#C4520A` | Nhãn ngưỡng, Cảnh báo (S-028) — cùng họ với `color-accent` |
+| `color-status-unrated` (Chưa đánh giá) | nền `#EEEEEE` / chữ `#6F6F6F` | Nhãn ngưỡng |
+| `color-error` | `#D64545` | Lỗi mạng, lỗi ô nhập |
+| `color-info` | `#3B7DD8` | Thông báo trung tính |
+
+Lưu ý: không dùng `color-accent` (cam) cho "Vượt ngưỡng" ở dạng nền đặc, để tránh nhầm với nút hotline / khuyến mãi.
+
+## 3. Spacing & shape
+
+| Token | Giá trị | Nguồn |
+|---|---|---|
+| `space-unit` | 4px (bội số: 8, 12, 16, 24) | giữ nguyên |
+| `space-screen-x` | 16px (lề trái/phải màn) | [ước lượng] |
+| `radius-card` | 16px | [ước lượng] card màn Cá nhân |
+| `radius-banner` | 12px | [ước lượng] banner Trang chủ |
+| `radius-button` | 12px | [bổ sung] |
+| `radius-tag` | 999px (pill) | giữ nguyên |
+| `border-width` | 1px, `color-border` | [đo] |
+| `shadow-card` | `0 2px 8px rgba(0,0,0,0.06)` | [ước lượng] card màn Cá nhân có bóng mờ nhẹ |
+
+App TCI dùng 2 kiểu card:
+- **Card nổi** (màn Cá nhân): nền trắng, `shadow-card`, không viền, trên nền `color-bg`.
+- **Card viền** (khối 4 tính năng ở Trang chủ): nền trắng, viền 1px `color-border`, không bóng, trên nền trắng.
+
+Quy tắc: màn có nền `color-bg` → dùng card nổi; màn nền trắng → dùng card viền.
+
+## 4. Nút
+
+| Loại | Nền | Chữ | Chiều cao | Bo góc |
+|---|---|---|---|---|
+| Chính (filled) | `color-primary` | trắng, 15/700 | 48px | `radius-button` |
+| Phụ (outline) | trong suốt, viền `color-primary` | `color-primary`, 15/700 | 48px | `radius-button` |
+| Nhỏ – chính | `color-primary` | trắng, 13/700 | 36px | `radius-button` |
+| Nhỏ – phụ | trong suốt, viền `color-border` | `color-text-primary`, 13/400 | 36px | `radius-button` |
+| Vô hiệu (mọi loại) | `#EEEEEE` | `color-text-disabled` | như trên | như trên |
+| Liên kết văn bản | không nền | `color-primary`, không gạch chân | — | — |
+
+Ghi chú: link "Xem tất cả" trong app TCI hiển thị màu xanh thương hiệu, không gạch chân **[ước lượng]** (bị nút hotline che một phần trong ảnh).
+
+**CTA cố định:**
+
+| Màn / ngữ cảnh | Nhãn CTA |
+|---|---|
+| Nhập chỉ số nhóm 1 | Lưu chỉ số |
+| Báo cáo nhóm 2 / triệu chứng | Gửi báo cáo |
+| Mở S-026 | Xem trạng thái |
+| Mở báo cáo từ danh sách | Xem báo cáo |
+| Mở màn lịch sử | Xem lịch sử chỉ số |
+
+## 5. Icon
+
+App TCI dùng 3 kiểu icon, mỗi kiểu một ngữ cảnh:
+
+| Ngữ cảnh | Kiểu | Kích thước | Màu |
+|---|---|---|---|
+| Menu danh sách, lối tắt (Đổi điểm / Voucher / Quyền lợi) | Outline, nét ~1.5–2px (Lucide/Feather) | 24px | `color-primary` |
+| Tab bar | Filled (đặc) | 24px | active `color-primary` / inactive `color-text-disabled` |
+| Lưới tính năng Trang chủ (Lịch hẹn, Hồ sơ khám…) | Minh hoạ nhiều màu, đặt trên ellipse `color-primary-soft` | ~64px | theo minh hoạ |
+| Chevron (›) cuối dòng | Outline | 20px | `color-text-secondary` |
+
+## 6. Header
+
+| Thuộc tính | Giá trị |
+|---|---|
+| Chiều cao | 56px |
+| Nền | `color-surface` |
+| Viền dưới | 1px `color-border`, không đổ bóng |
+| Icon back (←) | 24px, `color-text-primary`; chỉ Home và màn khai báo lần đầu không có ← |
+| Tiêu đề | `text-page-title`, căn trái |
+| Icon hành động / ✕ (phải) | 24px, `color-text-primary` |
+
+Ghi chú: 2 màn TCI đã chụp là màn gốc của tab nên không có header dạng này; quy ước trên áp dụng cho màn con **[bổ sung]**. Trang chủ dùng header thương hiệu: logo + tên hệ thống (18/700 `color-primary`) + tagline (15/400 `color-primary`).
+
+## 7. Tab bar (5 tab)
+
+| Thuộc tính | Giá trị |
+|---|---|
+| Chiều cao | 64px (chưa gồm vùng an toàn đáy) |
+| Nền | `color-surface`, không viền trên rõ rệt |
+| Icon + label — active | `color-primary`, label Caption 12/400 |
+| Icon + label — inactive | `color-text-disabled` (`#B4B4B4`) |
+| Tab giữa | Nút tròn nổi ~56px, gradient `color-primary-light` → `color-primary`, icon trắng; label bên dưới luôn màu `color-primary` |
+| Thứ tự | Trang chủ (S-008) · Sức khỏe (S-023 → S-029) · Lịch hẹn · Chatbot (S-031 → S-034) · Cá nhân (S-103) |
+
+Lưu ý: trong app TCI, tab giữa là "Đặt lịch". Nếu áp đúng mẫu này, tab giữa của Mother & Baby 360° là **Lịch hẹn**. Cần quyết định có dùng nút tròn nổi cho tab giữa hay không — chưa thay đổi thứ tự tab trong tài liệu này.
+
+## 8. Nhãn ngưỡng
+
+`Bình thường` · `Vượt ngưỡng` · `Chưa đánh giá` — màu tương ứng ở mục 2.3. Chữ Caption 12/700, bo `radius-tag`.
+
+## 9. Nhãn nguồn dữ liệu
+
+`Từ lần khám` · `Mẹ tự nhập` · `Bác sĩ chỉ định`
+
+Bác sĩ chỉ định = giá trị mẹ báo cáo cho chỉ số nằm trong Chỉ dẫn của bác sĩ.
+
+## 10. Trạng thái báo cáo (mẹ = nhân viên y tế)
+
+`Chưa xem` → `Đã xem` → `Đã chuyển bác sĩ` → `Đã xử lý`
+
+Chỉ báo cáo cần nhân viên y tế xem mới có trạng thái. Báo cáo Bình thường, không triệu chứng: không có trạng thái. Quy tắc chuyển trạng thái chỉ đi tới; "Đã chuyển bác sĩ" có thể được bỏ qua; hệ thống tự ghi "Đã xem" khi bỏ qua.
+
+## 11. Định dạng
+
+| Loại | Ví dụ |
+|---|---|
+| Ngày | 26/09/2026 |
+| Giờ | 20:15 |
+| Ngày + giờ | 26/09/2026 · 20:15 |
+| Huyết áp | 150/95 mmHg |
+| Tim thai / nhịp tim | 145 bpm |
+| Cân nặng | 56.5 kg |
+| Nhiệt độ | 36.8 °C |
+
+## 12. Thuật ngữ
+
+| Thuật ngữ nội bộ | Hiển thị cho người dùng |
+|---|---|
+| Watch-flag | Chỉ dẫn của bác sĩ |
+| Report | Báo cáo |
+| Alert (chỉ S-028) | Cảnh báo |
+| Routine tracking | Chỉ số tự theo dõi |
+
+## 13. Trạng thái trống / đang tải / lỗi
+
+| Trạng thái | Nội dung mẫu |
+|---|---|
+| Trống | `[Trạng thái trống]` + 1 câu mô tả + CTA (nếu cần) |
+| Đang tải | Khung xám `#EEEEEE` thay cho nội dung, giữ nguyên bố cục màn |
+| Lỗi | ⚠ "Không tải được dữ liệu." + Thử lại · lỗi ô nhập hiện ngay dưới ô, màu `color-error` |
+
+## Phụ lục — Thay đổi so với bản trước
+
+| Mục | Bản trước | Bản này |
+|---|---|---|
+| Font | Inter | Roboto [ước lượng] |
+| Thang chữ | 18 / 15 / 13 / 11 | 22 / 18 / 18 / 15 / 12 |
+| `color-primary` | `#2F6F5E` (xanh rêu) | `#00A651` (xanh TCI) |
+| `color-bg` | `#F7F8FA` | `#F5F5F5` |
+| `color-text-primary` | `#1A1D1F` | `#212121` |
+| `color-text-secondary` | `#6B7280` | `#6F6F6F` |
+| `color-text-disabled` | `#B0B5BB` | `#B4B4B4` |
+| `color-border` | `#E2E5E9` | `#E0E0E0` |
+| Mới thêm | — | `color-primary-light`, `color-primary-soft`, `color-hero-gradient`, `color-accent`, `color-avatar` |
+| Bỏ | `color-surface-alt` `#F1F5F3` | thay bằng `color-primary-soft` / `color-bg` tuỳ ngữ cảnh |
+| Icon | 1 kiểu outline | 3 kiểu theo ngữ cảnh (outline / filled tab bar / minh hoạ) |
+| Card | 1 kiểu | 2 kiểu (nổi / viền) |
