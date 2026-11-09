@@ -36,7 +36,7 @@
 
 <div class="sec">
   <p class="t-title">{{ _("My metrics") }}</p>
-  <a href="/m/{{ user.user_id }}/health" class="lnk">{{ _("Health metrics") }} ›</a>
+  <a href="/m/{{ user.user_id }}/history" class="lnk">{{ _("Metric history") }} ›</a>
 </div>
 <div class="grid2">
   {% for r in d.visit_rows if r.value and r.metric != "Weight" %}
@@ -49,6 +49,11 @@
 <a href="/m/{{ user.user_id }}/self-tracked" class="btn o full">{{ _("+ Enter self-tracked metrics") }}</a>
 
 <div class="card np">
+  <a href="/m/{{ user.user_id }}/health" class="row">
+    <div class="ic40">{{ icon.pulse() }}</div>
+    <span class="grow"><span class="t-body b">{{ _("Health metrics") }}</span><br><span class="t-cap">{{ _("Latest visit results") }}</span></span>
+    {{ icon.chev() }}
+  </a>
   <a href="/m/{{ user.user_id }}/my-reports" class="row">
     <div class="ic40">{{ icon.clock() }}</div>
     <span class="grow"><span class="t-body b">{{ _("My reports") }}</span><br><span class="t-cap">{{ _("{n} reports being handled", n=handling) }}</span>
