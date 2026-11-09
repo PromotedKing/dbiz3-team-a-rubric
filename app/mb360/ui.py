@@ -69,8 +69,9 @@ def load(path: Path = REF) -> tuple[dict[str, str], list[tuple[re.Pattern, str]]
     for en, vi in labels.items():
         if _FIELD.search(en):
             rx = "".join(f"(?P<{p}>.+?)" if i % 2 else re.escape(p) for i, p in enumerate(_FIELD.split(en)))
-            patterns.append((re.compile(rx + r"\Z"), vi))
-    return labels, patterns, conflicts
+            patterns.append((re.compile(rx + r"\Z"), vi, len(_FIELD.sub("", en))))
+    patterns.sort(key=lambda p: -p[2])               # most specific row first: "Report {code} resolved" before "Report {code}"
+    return labels, [p[:2] for p in patterns], conflicts
 
 
 LABELS, PATTERNS, CONFLICTS = load()
@@ -101,8 +102,22 @@ def t_list(text: str | None) -> str:
 
 
 def t_known(text: str | None) -> str:
-    """Stored text that may be a fixed system message (chatbot decline, sample answer): translated only if it is a label."""
-    return LABELS.get(text, text) if text else ""
+    """Stored text that may be a fixed system message (chatbot decline, notification title): translated only if it is a label.
+    Values inside a {field} row are translated too; anything else is shown as stored and is not a missing label."""
+    if not text:
+        return ""
+    if text in LABELS:
+        return LABELS[text]
+    for rx, vi in PATTERNS:
+        m = rx.match(text)
+        if m:
+            return vi.format(**{k: t_known(v) for k, v in m.groupdict().items()})
+    return text
+
+
+def t_parts(text: str | None) -> str:
+    """A stored " · "-joined line (notification subtitle), each part through t_known."""
+    return " · ".join(t_known(p) for p in text.split(" · ")) if text else ""
 
 
 def initials(full_name: str) -> str:
@@ -128,4 +143,4 @@ def install(templates) -> None:
     """Give a Jinja2Templates instance the label lookup, the shared formats and the shell helpers."""
     env = templates.env
     env.globals.update(_=t, TABS=TABS, initials=initials, unread=unread)
-    env.filters.update(t=t, t_list=t_list, t_known=t_known, dmy=dmy, show_date=dmy, show_time=show_time)
+    env.filters.update(t=t, t_list=t_list, t_known=t_known, t_parts=t_parts, dmy=dmy, show_date=dmy, show_time=show_time)

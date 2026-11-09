@@ -1,0 +1,21 @@
+{#- S-010; design: screens/ui-final Màn 25. "Report responses" locked on (S-010 SR-001, ACC Q13); "Appointment reminders" hidden, APT not built (D-77). -#}
+{% extends "base.html" %}
+{% set page_title = "Notification settings" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/profile" %}
+{% block content %}
+<div class="card np">
+  <div class="row">
+    <div class="grow"><p class="t-body">{{ _("Report responses") }}</p><p class="t-cap">{{ _("When clinical staff view or respond to your report") }}</p></div>
+    <button class="sw on lock" role="switch" aria-checked="true" aria-disabled="true" aria-label="{{ _('Report responses') }}" disabled></button>
+  </div>
+  {% for key, title, hint in [("new_visit_result", "New visit results", "When results from a new visit are available"),
+                              ("watch_flag_reminder", "Doctor's-instruction reminders", "Reminders to report the metrics your doctor assigned")] %}
+  <form class="row" method="post" action="/m/{{ user.user_id }}/settings/notifications">
+    <input type="hidden" name="key" value="{{ key }}"><input type="hidden" name="value" value="{{ 0 if prefs[key] else 1 }}">
+    <div class="grow"><p class="t-body">{{ _(title) }}</p><p class="t-cap">{{ _(hint) }}</p></div>
+    <button class="sw{% if prefs[key] %} on{% endif %}" role="switch" aria-checked="{{ 'true' if prefs[key] else 'false' }}" aria-label="{{ _(title) }}"></button>
+  </form>
+  {% endfor %}
+</div>
+<p class="t-cap">{{ _("Notifications are sent via the TCI app.") }}</p>
+{% endblock %}

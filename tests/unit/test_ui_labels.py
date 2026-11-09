@@ -28,6 +28,15 @@ def test_fields_and_patterns():
     assert ui.t_list("Palpitations, Other") == "Hồi hộp, Khác"
 
 
+def test_stored_notification_titles():
+    assert ui.t_known("Report BC-0926-015 resolved") == "Báo cáo BC-0926-015 đã xử lý"          # not "Report {code}"
+    assert ui.t_known("Your Blood pressure report has been sent to clinical staff") == "Báo cáo Huyết áp của mẹ đã được gửi tới nhân viên y tế"
+    assert ui.t_known("Nurse Trần Thị B responded to your Blood pressure report") == "Y tá Trần Thị B đã phản hồi Báo cáo Huyết áp của mẹ"
+    assert ui.t_known("Your Symptom report is Viewed") == "Báo cáo triệu chứng của mẹ: Đã xem"
+    assert ui.t_parts("150/95 mmHg · Above threshold") == "150/95 mmHg · Vượt ngưỡng"
+    assert ui.t_known("sample text") == "sample text" and ui.MISSING == set()
+
+
 def test_missing_label_is_shown_in_english_and_recorded():
     ui.MISSING.clear()
     assert ui.t("A label nobody wrote down") == "A label nobody wrote down"
