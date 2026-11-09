@@ -6,7 +6,8 @@
 {% set active_tab = "timeline" %}
 {% block content %}
 {% if saved %}<div class="toast" role="status">{{ icon.ok(20, "#48D07C") }}<p class="t-body" style="color:#fff;flex:1">{{ _("Diary entry saved") }}</p></div>{% endif %}
-<p class="t-body" style="color:#6F6F6F">{{ _("Your visits and diary, week by week.") }}</p>
+<div class="sec"><p class="t-body" style="color:#6F6F6F">{{ _("Your visits and diary, week by week.") }}</p>
+  <a class="lnk" style="flex:none" href="/m/{{ user.user_id }}/journey">{{ _("My journey") }} ›</a></div>
 
 <div class="card" style="padding:12px;display:flex;flex-direction:column;gap:10px">
   <div style="display:flex;align-items:center;justify-content:space-between">

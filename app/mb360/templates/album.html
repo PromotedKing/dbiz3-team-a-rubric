@@ -1,0 +1,39 @@
+{#- FR-014, BR-007: keepsake album of a stage; the browser's print sheet saves it as PDF, nothing is stored on the server (plan, Complexity Tracking). -#}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ _("My journey") }} · {{ j.stage | t }} · {{ user.full_name }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+  <link rel="stylesheet" href="/static/tci.css">
+  <style>
+    body { background: #fff; }
+    .album { max-width: 640px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 16px; }
+    .album .card { box-shadow: none; border: 1px solid #E0E0E0; }
+    @media print {
+      .no-print { display: none !important; }
+      .album { max-width: none; padding: 0; }
+      section { break-inside: avoid; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+<main class="album">
+  <div class="hero">
+    <p class="t-disp">{{ _("My journey") }}</p>
+    <p class="t-title">{{ user.full_name }}</p>
+    <p class="t-body">{{ j.stage | t }} · {{ _("Weeks {a} – {b}", a=j.first, b=j.last) }}</p>
+  </div>
+  {% include "_journey_weeks.html" %}
+  <div class="no-print" style="display:flex;gap:12px">
+    <a class="btn o" href="/m/{{ user.user_id }}/journey?stage={{ j.stage | urlencode }}">{{ _("Back") }}</a>
+    <button class="btn" onclick="window.print()">{{ _("Export PDF album") }}</button>
+  </div>
+</main>
+{% if auto_print %}<script>addEventListener("load", function () { window.print(); });</script>{% endif %}
+</body>
+</html>

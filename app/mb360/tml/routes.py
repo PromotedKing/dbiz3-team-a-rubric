@@ -2,6 +2,7 @@
 import sqlite3
 from datetime import date
 from pathlib import Path
+from urllib.parse import quote
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
@@ -9,7 +10,7 @@ from fastapi.templating import Jinja2Templates
 
 from .. import ui
 from .. import clock
-from . import diary, weeks
+from . import diary, journey, weeks
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
 ui.install(TEMPLATES)
@@ -81,6 +82,26 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         except diary.DiaryError as e:
             return form_page(request, user, {"text": form.get("text") or "", "mood": form.get("mood") or ""}, e.errors, 422)
         return RedirectResponse(f"/m/{user_id}/timeline?saved=1", status_code=303)
+
+    @app.get("/m/{user_id}/journey", response_class=HTMLResponse)
+    def journey_page(request: Request, user_id: str, stage: str = ""):
+        """S-105: TML US-4, FR-013."""
+        user = mother(user_id)
+        j = journey.load(conn, user_id, stage, clock.now())
+        if j is None:
+            return RedirectResponse(f"/m/{user_id}/setup", status_code=303)
+        return page(request, "journey.html", user=user, j=j, media_exists=media_exists)
+
+    @app.get("/m/{user_id}/journey/album", response_class=HTMLResponse)
+    def journey_album(request: Request, user_id: str, stage: str = "", print: int = 0):
+        """FR-014, BR-007: print-ready page, nothing stored."""
+        user = mother(user_id)
+        j = journey.load(conn, user_id, stage, clock.now())
+        if j is None:
+            return RedirectResponse(f"/m/{user_id}/setup", status_code=303)
+        if not j["can_export"]:
+            return RedirectResponse(f"/m/{user_id}/journey?stage={quote(j['stage'])}", status_code=303)
+        return page(request, "album.html", user=user, j=j, media_exists=media_exists, auto_print=bool(print))
 
     @app.get("/media/{path:path}")
     def media(path: str):

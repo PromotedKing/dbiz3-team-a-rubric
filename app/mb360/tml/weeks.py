@@ -88,6 +88,11 @@ def _build(conn: sqlite3.Connection, user_id: str, edd: date, n: int, current: i
             "visits": visits, "diary": diary, "messages": messages}
 
 
+def week_content(conn: sqlite3.Connection, user_id: str, edd: date, n: int, current: int) -> dict:
+    """One week, freshly read and not cached (S-105)."""
+    return _build(conn, user_id, edd, n, current)
+
+
 def load_week(conn: sqlite3.Connection, user_id: str, n: int | None, today: date) -> dict | None:
     edd_row = conn.execute("SELECT edd FROM PREGNANCY_PROFILE WHERE user_id = ?", (user_id,)).fetchone()
     if edd_row is None:

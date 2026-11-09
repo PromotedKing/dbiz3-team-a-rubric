@@ -506,6 +506,19 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | none new; HLT Q12 stays open: no statistics for urine protein and sleep, default range 30 days (`plan.md`) |
 | Commit | see the commit of this entry |
 
+### Entry 37: 02/11 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `start_feature.py --spec specs/spec-TML.md TML --name journey`. Plan, research, contracts and tasks written directly in the Spec Kit layout; the `/speckit-*` skills were not invoked and no separate `/speckit-analyze` was run |
+| Feature and tasks | `specs/011-tml-journey`, T001 – T005 (TML US-4; S-105) |
+| What the agent produced | `tml/journey.py`, `weeks.week_content`, routes, `journey.html`, `album.html`, `_journey_weeks.html`, links on S-048 and S-103; 15 label rows. Tests first: `test_tml_journey.py`, `test_tml_journey_pages.py` seen failing on import. **FR-014 is met only in part:** the album is a print-ready page and the browser saves it as PDF; no `application/pdf` file is generated (no new dependency without the team) |
+| Human review | Pending (pull request) |
+| Tests | see the pull request |
+| Spec issues found | #7 (below) |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It
@@ -519,6 +532,7 @@ is never fixed silently in code.
 | 4 | Step 6, entry 11 | CHAT_MESSAGE.`sent_at` has minute precision; a question and the chatbot reply are stored in the same minute, so the order of the transcript on S-064 (D-78) follows the storage order, not a rule | Proposal for the BOT owner (Sang): state in BOT §6 that the question is shown before its reply when the times are equal, or store seconds | Open |
 | 5 | Entry 33 | Vietnamese screens (D-79): the wireframes show Vietnamese, the app showed English; 213 on-screen texts (form labels, messages, demo pages) are not in the UI label reference | Added to `docs/ui-label-reference.md` as proposed rows; the owners of `screens/` (Chi, Ánh) review the wording | Open |
 | 6 | Entry 34 | D-80 removes the Appointments tab and moves navigation; the app now differs from `spec-APT.md` BR-003, FR-001, S-008 SR-005, S-083 and the tab row of the screen specs | Not edited here: D-80 names them for their owners (Hải Anh for APT; Chi, Ánh for screens). The other differences of the package stay open in `screens/ui-final/README.md` | Open |
+| 7 | Entry 37 | TML FR-014 asks for a PDF file; Vietnamese text in a generated PDF needs a new library and an embedded font | No spec change; `specs/011-tml-journey/plan.md` states the limit. The team decides: keep the browser's Save as PDF, or add a library | Open |
 
 ## 4. Agent mistakes worth remembering
 

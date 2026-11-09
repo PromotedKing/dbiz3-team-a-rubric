@@ -672,3 +672,18 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | HLT screens (specs/010, D-80) | The start date must not be after the end date. | Từ ngày không được sau Đến ngày. |
 | HLT screens (specs/010, D-80) | Latest | Lần gần nhất |
 | HLT screens (specs/010, D-80) | Assigned {date} | chỉ định {date} |
+| TML screens (specs/011, D-80) | Weeks {a} – {b} | Tuần {a} – tuần {b} |
+| TML screens (specs/011, D-80) | weeks {a} – {b} | tuần {a} – {b} |
+| TML screens (specs/011, D-80) | You are in week {n} | mẹ đang ở tuần {n} |
+| TML screens (specs/011, D-80) | visits | lần khám |
+| TML screens (specs/011, D-80) | diary entries | nhật ký |
+| TML screens (specs/011, D-80) | photos | ảnh |
+| TML screens (specs/011, D-80) | {n} visits | {n} lần khám |
+| TML screens (specs/011, D-80) | Not reached yet | Chưa đến giai đoạn này |
+| TML screens (specs/011, D-80) | Nothing to show for this stage yet. | Giai đoạn này chưa có gì để hiển thị. |
+| TML screens (specs/011, D-80) | Nothing to export yet. | Chưa có gì để xuất. |
+| TML screens (specs/011, D-80) | Past | Đã qua |
+| TML screens (specs/011, D-80) | Current | Hiện tại |
+| TML screens (specs/011, D-80) | To come | Sắp tới |
+| TML screens (specs/011, D-80) | The print sheet opens: choose Save as PDF. Nothing is stored. | Trang in sẽ mở ra: mẹ chọn Lưu thành PDF. Hệ thống không lưu gì. |
+| TML screens (specs/011, D-80) | Export keepsake album (PDF) | Xuất album kỷ niệm (PDF) |
