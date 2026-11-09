@@ -48,6 +48,7 @@
     <div style="background:#F5F5F5;border-radius:12px;padding:8px 10px"><p class="t-cap">{{ _("Lowest") }}</p><p class="t-body b">{{ h.stats.lowest }}</p></div>
     <div style="background:#F5F5F5;border-radius:12px;padding:8px 10px"><p class="t-cap">{{ _("Highest") }}</p><p class="t-body b">{{ h.stats.highest }}</p></div>
   </div>
+  {% if h.metric == "Blood pressure" %}<p class="t-cap" data-bp-stats-note>{{ _("Lowest and highest are taken for systolic and diastolic separately, so they can come from two different readings.") }}</p>{% endif %}
   {% endif %}
 </div>
 <div class="card np">

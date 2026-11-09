@@ -605,3 +605,10 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Tests**: `tests/integration/test_review_0911.py`; 470 passed, 2 xfailed.
 - **Not changed**: C4 seed staff names (seed owner Hải Anh, generator only), C7 hotline, C9 DM-29 (open), B3 split of #20 (owners confirm by part instead), C11 (done on 07/11, commit 7b31274).
 
+## 09/11/2026: remarks left on PRs #15 – #20 (Sang, branch `sang/mother-app-v1`)
+
+- **Read**: every review, comment and inline comment on #15 – #20 (all six approved by Chi, Ánh and Tâm on 08 – 09/11/2026).
+- **Changed**: S-025 note under the blood pressure statistics (Ánh, #18); internal codes out of the TCI booking stand-in, four unused label rows with codes removed, the "Cá nhân" row marked as the TCI host's tab (Chi, #15, #17); spec-TML §7.3 and S-048 say the week's indicators are in two places (Ánh, #19); S-025 Q3 resolved and Q4 annotated (Ánh, #20); spec-BOT Q15 negated danger phrases recorded for the SME (Chi, #20); spec snapshots refreshed.
+- **Checked, already done**: tab "Thai kỳ", "Mẹ & Bé 360", "mẹ" instead of "bạn" on the sub-app (06/11); screen-spec notes for S-008, S-083, S-103, S-010, S-009, S-023 (07/11); urine protein without a value shows "Chưa đánh giá" on S-023 (test added).
+- **Left open**: S-025 Q8 date range rules; ACC Q23; BOT Q2, Q12, Q15; D-83 / D-84 for the whole team.
+

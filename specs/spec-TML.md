@@ -366,7 +366,7 @@ sequenceDiagram
 | Item | v1.0.0 app | Source |
 |---|---|---|
 | S-048 top | Week strip (7 days, visit and diary dots), "Today" card, "This week" list (Màn 6) | D-80 |
-| FR-005, FR-012 | The week's visit card ("No visit this week." when none) and the indicators grouped by day stay on S-048, **below** the blocks of Màn 6; a day opens the day screen (Màn 7) with the visit, its ultrasound image, the indicators and the diary of that day | D-81, review (Tâm) |
+| FR-005, FR-012 | The week's visit card ("No visit this week." when none) stays on S-048, **below** the blocks of Màn 6. The week's indicators are shown in two places, as D-75 says: the block "Indicators this week" ("Chỉ số trong tuần") on S-048, grouped by day with the source label ("No indicators this week." when none), and the count "{n} indicators" on each day of the "This week" list. A day opens the day screen (Màn 7) with the visit, its ultrasound image, the indicators and the diary of that day | D-75, D-81, review (Tâm; Ánh on PR #19) |
 | S-105 | "Highlights" grid of photos and ultrasound images; week-by-week content folded under "Xem theo từng tuần" | D-81 |
 | FR-014 | Unchanged: print page saved as PDF by the browser (partly met) | D-80 |
 

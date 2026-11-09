@@ -1,4 +1,4 @@
-<!-- DBIZ3-SNAPSHOT source=specs/spec-TML.md sha256=c899283028b55a7e3f85c5f87f950403c9798f908457e6d622da7343031bbe7f taken=2026-11-07T13:22Z -->
+<!-- DBIZ3-SNAPSHOT source=specs/spec-TML.md sha256=b61f9bfd7864d822fbaa58c497bc039140d6c31dfb79f805af61e516999c672d taken=2026-11-09T08:39Z -->
 <!-- Read-only copy for Spec Kit. Do not edit here. Edit specs/spec-TML.md, then run:
      uv run tools/start_feature.py --refresh -->
 
@@ -370,7 +370,7 @@ sequenceDiagram
 | Item | v1.0.0 app | Source |
 |---|---|---|
 | S-048 top | Week strip (7 days, visit and diary dots), "Today" card, "This week" list (Màn 6) | D-80 |
-| FR-005, FR-012 | The week's visit card ("No visit this week." when none) and the indicators grouped by day stay on S-048, **below** the blocks of Màn 6; a day opens the day screen (Màn 7) with the visit, its ultrasound image, the indicators and the diary of that day | D-81, review (Tâm) |
+| FR-005, FR-012 | The week's visit card ("No visit this week." when none) stays on S-048, **below** the blocks of Màn 6. The week's indicators are shown in two places, as D-75 says: the block "Indicators this week" ("Chỉ số trong tuần") on S-048, grouped by day with the source label ("No indicators this week." when none), and the count "{n} indicators" on each day of the "This week" list. A day opens the day screen (Màn 7) with the visit, its ultrasound image, the indicators and the diary of that day | D-75, D-81, review (Tâm; Ánh on PR #19) |
 | S-105 | "Highlights" grid of photos and ultrasound images; week-by-week content folded under "Xem theo từng tuần" | D-81 |
 | FR-014 | Unchanged: print page saved as PDF by the browser (partly met) | D-80 |
 

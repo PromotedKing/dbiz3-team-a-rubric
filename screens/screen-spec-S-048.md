@@ -10,7 +10,7 @@
 | Mockup image | `img/S-048.png` |
 | Status | Draft (revised 14/10/2026 — integrated journey layout, D-75; image to redraw) |
 
-> **v1.0.0 app (07/11/2026, D-80 – D-85):** Week strip, Today card, This week list (Màn 6); visits and indicators of the week below; a day opens the day screen (Màn 7) — TML §7.3.
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Week strip, Today card, This week list (Màn 6) with "{n} indicators" on each day; below them the week's visit card and the block "Indicators this week" grouped by day with the source label (D-75); a day opens the day screen (Màn 7) — TML §7.3.
 
 ## 1. Purpose
 

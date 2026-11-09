@@ -60,6 +60,29 @@ def test_side_panel_names_both_keys(monkeypatch):
 
 def test_no_internal_codes_on_staff_and_test_pages():
     """C3: decision and question numbers stay in the documents, not on the pages."""
-    for name in ("case.html", "staff_select.html", "tci_accounts.html"):
+    for name in ("case.html", "staff_select.html", "tci_accounts.html", "tci_booking.html"):
         visible = re.sub(r"\{#.*?#\}", "", (TEMPLATES / name).read_text(encoding="utf-8"), flags=re.S)
-        assert not re.search(r"\bD-\d\d\b|§10 Q\d", visible), name
+        assert not re.search(r"\bD-\d\d\b|§10 Q\d|spec-[A-Z]{3}", visible), name
+
+
+def test_blood_pressure_statistics_say_how_they_are_taken(client, user_id):
+    """Review of PR #18 (Ánh): lowest / highest per component may come from two readings."""
+    from tests.integration.helpers import bp_form, vi
+    lan = user_id("tci-000123")
+    client.post(f"/m/{lan}/report", data=bp_form(150, 70, ["No symptoms"]))
+    client.post(f"/m/{lan}/report", data=bp_form(120, 95, ["No symptoms"]))
+    note = vi("Lowest and highest are taken for systolic and diastolic separately, so they can come from two different readings.")
+    assert note in client.get(f"/m/{lan}/history", params={"metric": "Blood pressure"}).text
+    assert note not in client.get(f"/m/{lan}/history", params={"metric": "Weight"}).text
+
+
+def test_urine_protein_without_a_value_is_not_assessed(client, db, user_id):
+    """Review of PR #18 (Ánh): S-023 shows "Chưa đánh giá" for urine protein when the last visit has no value."""
+    from tests.integration.helpers import vi
+    row = db.execute("""SELECT v.user_id FROM VISIT v WHERE v.visit_date = (SELECT MAX(visit_date) FROM VISIT w WHERE w.user_id = v.user_id)
+                        AND NOT EXISTS (SELECT 1 FROM HEALTH_METRIC_RECORD h WHERE h.visit_id = v.visit_id AND h.metric = 'Urine protein')
+                        LIMIT 1""").fetchone()
+    assert row is not None
+    page = client.get(f"/m/{row[0]}/health").text
+    cell = page[page.index(vi("Urine protein")):]
+    assert vi("Not assessed") in cell[:600]

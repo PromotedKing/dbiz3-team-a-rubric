@@ -339,7 +339,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | App shell (D-79) | Open Mother & Baby 360 as | Mở Mẹ & Bé 360 với tài khoản |
 | App shell (D-79) | Simulate another TCI account | Mô phỏng tài khoản TCI khác |
 | App shell (D-79) | TCI app booking flow | Luồng đặt lịch của app TCI |
-| App shell (D-79) | Booking happens in the TCI app (spec-APT BR-001, BR-003). This page stands in for it; no appointment is stored in Mother & Baby 360. | Việc đặt lịch diễn ra trong app TCI (spec-APT BR-001, BR-003). Trang này chỉ mô phỏng; Mẹ & Bé 360 không lưu lịch hẹn nào. |
+| App shell (D-79) | Booking happens in the TCI app. This page stands in for it; no appointment is stored in Mother & Baby 360. | Việc đặt lịch diễn ra trong app TCI. Trang này chỉ đứng thay cho nó; Mẹ & Bé 360 không lưu lịch hẹn nào. |
 | App shell (D-79) | Back to Mother & Baby 360 | Quay lại Mẹ & Bé 360 |
 | App shell (D-79) | Demo start page | Trang bắt đầu demo |
 | App shell (D-79) | Mother side — open from the TCI app | Phía mẹ — mở từ app TCI |
@@ -366,9 +366,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | ACC screens (D-79) | Medical record number at Thu Cuc | Mã hồ sơ khám tại Thu Cúc |
 | ACC screens (D-79) | Results of your prenatal visits | Kết quả các lần khám thai |
 | ACC screens (D-79) | I agree to the Terms and the Privacy Policy | Tôi đồng ý với Điều khoản và Chính sách quyền riêng tư |
-| ACC screens (D-79) | Wording to be confirmed (spec-ACC §10 Q21). Nothing has been saved. | Câu chữ chờ xác nhận (spec-ACC §10 Q21). Chưa có dữ liệu nào được lưu. |
 | ACC screens (D-79) | Page {n} of {total} | Trang {n}/{total} |
-| ACC screens (D-79) | Guide text to be confirmed (spec-ACC §10 Q20). | Nội dung hướng dẫn chờ xác nhận (spec-ACC §10 Q20). |
 | ACC screens (D-79) | Health dashboard | Bảng sức khỏe |
 | ACC screens (D-79) | See the results of your visits and the metrics your doctor asked you to watch. | Xem kết quả các lần khám và các chỉ số bác sĩ dặn mẹ theo dõi. |
 | ACC screens (D-79) | Report a metric or symptom | Báo cáo chỉ số hoặc triệu chứng |
@@ -447,7 +445,6 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | ALR screens (D-79) | Nurse {name} | Y tá {name} |
 | ALR screens (D-79) | Response from Dr. {name} | Phản hồi từ BS. {name} |
 | ALR screens (D-79) | Response from Nurse {name} | Phản hồi từ y tá {name} |
-| ALR screens (D-79) | Content to be supplied by the hospital (D-25). | Nội dung do bệnh viện cung cấp (D-25). |
 | ALR messages (D-79) | Choose a metric from your Doctor's instructions, or report symptoms. | Hãy chọn một chỉ số trong Chỉ dẫn của bác sĩ, hoặc báo cáo triệu chứng. |
 | ALR messages (D-79) | Please select your symptoms | Mẹ hãy chọn triệu chứng |
 | ALR messages (D-79) | Choose symptoms from the list. | Hãy chọn triệu chứng trong danh sách. |
@@ -468,7 +465,6 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | TML screens (D-79) | Family | Gia đình |
 | TML screens (D-79) | From Mom | Mẹ nhắn |
 | TML screens (D-79) | From Dad | Bố nhắn |
-| TML screens (D-79) | Writing messages is pending Client approval (D-03). | Tính năng viết lời nhắn đang chờ Client duyệt (D-03). |
 | TML screens (D-79) | Diary | Nhật ký |
 | TML screens (D-79) | Diary photo, {date} | Ảnh nhật ký, {date} |
 | TML screens (D-79) | No diary entry this week. | Tuần này chưa có nhật ký. |
@@ -600,7 +596,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | UI package (D-80) | Shown when the TCI identity cannot be verified (demo link). | Hiện khi không xác thực được danh tính TCI (link demo). |
 | UI package (D-80) | Offers | Ưu đãi |
 | UI package (D-80) | Book | Đặt lịch |
-| UI package (D-80) | Personal tab | Cá nhân |
+| TCI host app tab bar, not the sub-app (D-80; the sub-app tab is "Hồ sơ") | Personal tab | Cá nhân |
 | UI package (D-80) | [TCI app banner] | [Banner của app TCI] |
 | UI package (D-80) | Medical records | Hồ sơ khám |
 | UI package (D-80) | Voucher | Voucher |
@@ -664,6 +660,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | HLT screens (specs/010, D-80) | To date | Đến ngày |
 | HLT screens (specs/010, D-80) | Average | Trung bình |
 | HLT screens (specs/010, D-80) | Lowest | Thấp nhất |
+| HLT screens (review of PR #18, Ánh) | Lowest and highest are taken for systolic and diastolic separately, so they can come from two different readings. | Thấp nhất và cao nhất tính riêng cho tâm thu và tâm trương, nên có thể lấy từ hai lần đo khác nhau. |
 | HLT screens (specs/010, D-80) | Highest | Cao nhất |
 | HLT screens (specs/010, D-80) | Threshold {value} | Ngưỡng {value} |
 | HLT screens (specs/010, D-80) | Reference range {value} | Tham chiếu {value} |
