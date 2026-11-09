@@ -1,5 +1,6 @@
 """T010 — US-1 #5 - #9 (nurse on S-064)."""
 from tests.cli_helpers import RPT006, RPT010, a_template, case_by_code, case_row, written
+from tests.integration.helpers import vi
 
 
 def test_nurse_flow_on_rpt006(client, db, staff_id):
@@ -20,7 +21,7 @@ def test_nurse_flow_on_rpt006(client, db, staff_id):
     assert row["status"] == "Escalated to doctor" and row["assigned_doctor_id"] == staff_id("Phạm Quốc Dũng")
 
     page = client.get(base).text
-    assert "Close case" not in page
+    assert vi("Close case") not in page
     before = written(db)
     assert client.post(f"{base}/close").status_code in (403, 409)
     assert written(db) == before
@@ -34,5 +35,5 @@ def test_nurse_closes_a_case_not_escalated(client, db, staff_id):
 
 def test_doctors_instructions_are_view_only_for_the_nurse(client, db, staff_id):
     page = client.get(f"/staff/{staff_id('Trần Thị B')}/cases/{case_by_code(db, RPT006)}").text
-    assert "Doctor's instructions" in page
-    assert ">Edit<" not in page and "data-instruction-form" not in page
+    assert vi("Doctor's instructions") in page
+    assert ">" + vi("Edit") + "<" not in page and "data-instruction-form" not in page

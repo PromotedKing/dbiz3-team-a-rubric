@@ -1,18 +1,22 @@
+{#- S-027; design: screens/ui-final Màn 23. The report buttons stay (HLT US-3, U15). -#}
 {% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set page_title = "Doctor's instructions" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/home" %}
 {% block content %}
-<h1>Doctor's instructions</h1>
-{% if submitted %}<div class="card notice">Report submitted</div>{% endif %}
+{% if submitted %}<div class="okbox">{{ icon.ok() }}<p class="t-body" style="color:inherit">{{ _("Report submitted") }}</p></div>{% endif %}
+<p class="t-body" style="color:#6F6F6F">{{ _("The metrics your doctor asked you to measure at home.") }}</p>
 {% for f in flags %}
-<div class="card">
-  <h2>{{ f.metric }} <span class="label">Doctor-assigned</span></h2>
-  {% if f.note %}<p>{{ f.note }}</p>{% endif %}
-  <a class="button" href="/m/{{ user.user_id }}/report?metric={{ f.metric | urlencode }}">+ Report metric</a>
+<div class="card" style="display:flex;flex-direction:column;gap:10px">
+  <div class="sec"><p class="t-title">{{ f.metric | t }}</p><span class="tag src">{{ _("Doctor-assigned") }}</span></div>
+  {% if f.note %}<p class="t-body">{{ f.note }}</p>{% endif %}
+  <div class="sec" style="border-top:1px solid #E0E0E0;padding-top:10px;justify-content:flex-end">
+    <a class="btn s" href="/m/{{ user.user_id }}/report?metric={{ f.metric | urlencode }}">{{ _("+ Report metric") }}</a>
+  </div>
 </div>
 {% else %}
-<p class="caption">You have no Doctor's instructions.</p>
+<div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("Your doctor has not given you any instructions yet.") }}</p></div>
 {% endfor %}
-<div class="card">
-  <a class="button secondary" href="/m/{{ user.user_id }}/report?metric=Symptom">+ Report symptoms</a>
-</div>
-<p><a href="/m/{{ user.user_id }}/my-reports">My reports</a> · <a href="/">Choose another mother</a></p>
+<a class="btn o full" href="/m/{{ user.user_id }}/report?metric=Symptom">{{ _("+ Report symptoms") }}</a>
+<a class="lnk" href="/m/{{ user.user_id }}/my-reports">{{ _("My reports") }} ›</a>
 {% endblock %}

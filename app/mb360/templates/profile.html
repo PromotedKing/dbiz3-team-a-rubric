@@ -1,0 +1,15 @@
+{#- "Hồ sơ" tab. S-103 itself (ACC US-3) comes with specs/009-acc-profile; this keeps the tab working with the identity already loaded for Home (ACC FR-017). -#}
+{% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set page_title = "Profile" %}
+{% set active_tab = "profile" %}
+{% block content %}
+<div class="hero" style="display:flex;gap:12px;align-items:center">
+  <div style="width:56px;height:56px;border-radius:28px;background:#009788;color:#fff;font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none">{{ initials(user.full_name) }}</div>
+  <div style="flex:1">
+    <p class="t-title">{{ user.full_name }}</p>
+    <p class="t-cap" style="color:#212121">{% if user.record_code %}{{ _("Record no. {code}", code=user.record_code) }}{% endif %}{% if user.record_code and week is not none %} • {% endif %}{% if week is not none %}{{ _("Week {n}", n=week) }}{% endif %}</p>
+  </div>
+</div>
+<div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("Edit profile, pregnancy information, hospital record link and notification settings come with ACC US-3 (S-103, S-010, S-011).") }}</p></div>
+{% endblock %}

@@ -1,37 +1,58 @@
+{#- S-023 Health metrics: kept (HLT FR-001); the UI package has no design for it (U3), so it uses the package's components. -#}
 {% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set page_title = "Health metrics" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/home" %}
+{% block header_actions %}
+<a class="ib" href="/m/{{ user.user_id }}/health?refreshed=1" aria-label="{{ _('Refresh') }}">{{ icon.clock(24) }}</a>
+{% endblock %}
 {% block content %}
-<p><a href="/m/{{ user.user_id }}/home">←</a> <strong>Health metrics</strong> · <a href="/m/{{ user.user_id }}/health?refreshed=1">⟳ Refresh</a></p>
-{% if refreshed %}<div class="card notice">Data updated.</div>{% endif %}
-{% if saved %}<div class="card notice">Metrics saved</div>{% endif %}
+{% if refreshed %}<div class="okbox">{{ icon.ok() }}<p class="t-body" style="color:inherit">{{ _("Data updated.") }}</p></div>{% endif %}
+{% if saved %}<div class="okbox">{{ icon.ok() }}<p class="t-body" style="color:inherit">{{ _("Metrics saved") }}</p></div>{% endif %}
 
-<div class="card">
-  <h2>Latest visit results <span class="label">From visit</span></h2>
-  {% if d.visit_date %}
-    <p class="caption">Visit date {{ d.visit_date | dmy }} · not editable</p>
-    {% for r in d.visit_rows %}
-    <p>{{ r.metric }} — {{ r.value or "—" }}
-      {% if r.label %}<span class="label">{{ r.label }}</span>{% endif %}
-      {% if r.reference %}<span class="caption">(reference range {{ r.reference }})</span>{% endif %}</p>
-    {% endfor %}
-  {% else %}
-    <p class="caption">No visit results yet.</p>
-  {% endif %}
+<div class="bl8">
+  <div class="sec"><p class="t-title">{{ _("Latest visit results") }}</p><span class="tag src">{{ _("From visit") }}</span></div>
+  <div class="card" style="padding:12px 16px">
+    {% if d.visit_date %}
+      <p class="t-cap">{{ _("Visit date {date} · not editable", date=d.visit_date | dmy) }}</p>
+      {% for r in d.visit_rows %}
+      <div class="kv">
+        <span class="k">{{ r.metric | t }}{% if r.reference %}<br><span class="t-cap">{{ _("(reference range {range})", range=r.reference) }}</span>{% endif %}</span>
+        <span style="display:flex;gap:8px;align-items:center"><span class="b">{{ r.value | t_known or "—" }}</span>
+          {% if r.label %}<span class="tag {{ 'al' if r.label == 'Above threshold' else 'ok' if r.label == 'Normal' else 'un' }}">{{ r.label | t }}</span>{% endif %}</span>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="t-body" style="color:#6F6F6F">{{ _("No visit results yet.") }}</p>
+    {% endif %}
+  </div>
 </div>
 
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/instructions">
-  <strong>Doctor's instructions</strong> · {% if d.instructions %}{{ d.instructions | length }} metric{{ "s" if d.instructions | length != 1 else "" }}: {{ d.instructions | join(", ") }}{% else %}none yet{% endif %} ›
-</a>
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/my-reports">
-  <strong>My reports</strong> · {{ d.handling }} report{{ "s" if d.handling != 1 else "" }} being handled{% if d.latest_status %} <span class="label">{{ d.latest_status }}</span>{% endif %} ›
-</a>
+<div class="card np">
+  <a class="row" href="/m/{{ user.user_id }}/instructions">
+    <div class="ic40">{{ icon.pulse() }}</div>
+    <span class="grow"><span class="t-body b">{{ _("Doctor's instructions") }}</span><br>
+      <span class="t-cap">{% if d.instructions %}{{ _("{n} metrics: {names}", n=d.instructions | length, names=d.instructions | map("t") | join(", ")) }}{% else %}{{ _("Your doctor has not given you any instructions yet.") }}{% endif %}</span></span>
+    {{ icon.chev() }}
+  </a>
+  <a class="row" href="/m/{{ user.user_id }}/my-reports">
+    <div class="ic40">{{ icon.clock() }}</div>
+    <span class="grow"><span class="t-body b">{{ _("My reports") }}</span><br>
+      <span class="t-cap">{{ _("{n} reports being handled", n=d.handling) }}</span>
+      {% if d.latest_status %}<span class="tag inf">{{ d.latest_status | t }}</span>{% endif %}</span>
+    {{ icon.chev() }}
+  </a>
+</div>
 
-<div class="card">
-  <h2>Self-tracked metrics <span class="label">Self-entered</span></h2>
-  {% for r in d.self_tracked %}
-    <p>{{ r.metric }} — {{ r.value }} <span class="caption">{{ r.at | show_time }}</span></p>
-  {% else %}
-    <p class="caption">No self-tracked metrics yet.</p>
-  {% endfor %}
-  <p><a class="button" href="/m/{{ user.user_id }}/self-tracked">+ Enter self-tracked metrics</a></p>
+<div class="bl8">
+  <div class="sec"><p class="t-title">{{ _("Self-tracked metrics") }}</p><span class="tag src">{{ _("Self-entered") }}</span></div>
+  <div class="card" style="padding:12px 16px">
+    {% for r in d.self_tracked %}
+    <div class="kv"><span class="k">{{ r.metric | t }}<br><span class="t-cap">{{ r.at | show_time }}</span></span><span class="b">{{ r.value }}</span></div>
+    {% else %}
+    <p class="t-body" style="color:#6F6F6F">{{ _("No self-tracked metrics yet.") }}</p>
+    {% endfor %}
+  </div>
+  <a class="btn full" href="/m/{{ user.user_id }}/self-tracked">{{ _("+ Enter self-tracked metrics") }}</a>
 </div>
 {% endblock %}

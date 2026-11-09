@@ -54,3 +54,22 @@ def test_prefetch_and_limits(db, user_id):
     assert {(lan, 27), (lan, 28), (lan, 29)} <= set(weeks.CACHE)               # FR-004
     assert weeks.load_week(db, lan, 0, TODAY)["prev"] is None
     assert weeks.load_week(db, lan, 42, TODAY)["next"] is None
+
+
+def test_day_of_week_progress_and_trimester():
+    edd = date(2026, 12, 20)
+    assert weeks.day_of_week(edd, date(2026, 9, 27)) == 0 and weeks.day_of_week(edd, date(2026, 9, 30)) == 3
+    assert weeks.progress(edd, date(2026, 9, 27)) == 70 and weeks.progress(edd, date(2027, 2, 1)) == 100
+    assert weeks.progress(edd, date(2026, 1, 1)) == 0
+    assert [weeks.trimester(w) for w in (0, 13, 14, 27, 28, 42)] == ["First trimester", "First trimester", "Second trimester",
+                                                                     "Second trimester", "Third trimester", "Third trimester"]
+
+
+def test_week_days_marks_today_future_and_content():
+    w = {"start": date(2026, 9, 27), "days": [{"day": "2026-09-27", "rows": [{}, {}]}], "visits": [{"visit_date": "2026-09-28"}],
+         "diary": [{"entry_date": "2026-09-27", "text": "Hello", "mood": "Calm"}]}
+    days = weeks.week_days(w, date(2026, 9, 28))
+    assert [d["short"] for d in days] == ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    assert (days[0]["has_diary"], days[0]["mood"], days[0]["diary_texts"], days[0]["row_count"]) == (True, "Calm", ["Hello"], 2)
+    assert days[1]["is_today"] and days[1]["has_visit"] and not days[1]["future"]
+    assert days[2]["future"] and not days[0]["future"]

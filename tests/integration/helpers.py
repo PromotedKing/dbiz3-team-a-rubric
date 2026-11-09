@@ -1,5 +1,15 @@
 """Shared helpers for the US-1 integration tests."""
-WRITTEN = ["HEALTH_METRIC_RECORD", "METRIC_REPORT", "REPORT_SYMPTOM", "CARE_CASE", "CASE_STATUS_HISTORY"]
+from markupsafe import escape
+
+from mb360.ui import t
+
+
+def vi(label: str, **fields) -> str:
+    """On-screen text of an English label, HTML-escaped as in the page (docs/ui-label-reference.md, D-79)."""
+    return str(escape(t(label, **fields)))
+
+
+WRITTEN =["HEALTH_METRIC_RECORD", "METRIC_REPORT", "REPORT_SYMPTOM", "CARE_CASE", "CASE_STATUS_HISTORY"]
 
 
 def counts(db):

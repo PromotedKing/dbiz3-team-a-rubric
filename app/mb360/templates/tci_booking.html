@@ -1,0 +1,9 @@
+{#- "Book" tab of the TCI host: the TCI app's own booking flow (spec-APT BR-001). The sub-app has no booking screen. -#}
+{% extends "tci_base.html" %}
+{% block content %}
+<div class="card bd" style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px">
+  <div class="fe">{{ icon.tci_feature("calendar") }}</div>
+  <p class="t-title">{{ _("TCI app booking flow") }}</p>
+  <p class="t-body" style="color:#6F6F6F">{{ _("Booking happens in the TCI app (spec-APT BR-001, BR-003). This page stands in for it; no appointment is stored in Mother & Baby 360.") }}</p>
+</div>
+{% endblock %}

@@ -1,5 +1,6 @@
 """T009 — US-1 #1 - #4, US-2 #1, BR-005 (S-061 "Cases to handle")."""
 from tests.cli_helpers import RPT006, case_by_code
+from tests.integration.helpers import vi
 
 
 def test_staff_selector_lists_the_seed_staff(client):
@@ -10,24 +11,24 @@ def test_staff_selector_lists_the_seed_staff(client):
 
 def test_nurse_queue_header_and_default_filter(client, staff_id):
     page = client.get(f"/staff/{staff_id('Trần Thị B')}/cases").text
-    assert "Nurse: Trần Thị B" in page
+    assert vi("Nurse: {name}", name="Trần Thị B") in page
     assert 'data-active-filter="All"' in page
-    assert page.count("View report ›") == 10
+    assert page.count(vi("View report") + " ›") == 10
 
 
 def test_doctor_default_filter_and_notifications(client, staff_id):
     page = client.get(f"/staff/{staff_id('Nguyễn Văn A')}/cases").text
-    assert "Dr. Nguyễn Văn A" in page
+    assert vi("Dr. {name}", name="Nguyễn Văn A") in page
     assert 'data-active-filter="Escalated to doctor"' in page
-    assert page.count("View report ›") == 1
-    assert "Notifications (1)" in page
+    assert page.count(vi("View report") + " ›") == 1
+    assert '<span class="badge">1</span>' in page
 
 
 def test_filter_and_empty_state(client, db, staff_id):
     nurse = staff_id("Trần Thị B")
-    assert client.get(f"/staff/{nurse}/cases", params={"status": "Not viewed"}).text.count("View report ›") == 4
+    assert client.get(f"/staff/{nurse}/cases", params={"status": "Not viewed"}).text.count(vi("View report") + " ›") == 4
     db.execute("UPDATE CARE_CASE SET status = 'Not viewed' WHERE status = 'Viewed'")
-    assert "No cases to handle." in client.get(f"/staff/{nurse}/cases", params={"status": "Viewed"}).text
+    assert vi("No cases to handle.") in client.get(f"/staff/{nurse}/cases", params={"status": "Viewed"}).text
 
 
 def test_view_report_opens_the_case(client, db, staff_id):

@@ -1,51 +1,52 @@
+{#- S-031 / S-032 / S-034; design: screens/ui-final Màn 11, 22. Kept from the spec: the decline button (BOT FR-011, U6) and no call-back promise (U7);
+    the sample clinical wording of the package is not used (U8). The hotline number is pending (BOT Q8). -#}
 {% extends "base.html" %}
-{% block content %}
-<p><a href="/m/{{ user.user_id }}/home">←</a> <strong>Health chatbot</strong></p>
-{% if not conversation_id %}
-<div class="card">
-  <p>🤖 <strong>Hello, Mom!</strong> I can answer general questions about pregnancy and baby care.</p>
-  <p class="caption">ⓘ {{ "The chatbot provides general reference information only and does not replace your doctor's advice." }}</p>
-  <h2>Suggested questions</h2>
-  {% for q in suggested %}
-  <form method="post" action="/m/{{ user.user_id }}/chat" style="margin:4px 0">
-    <input type="hidden" name="text" value="{{ q }}"><button class="secondary" style="background:#fff;color:#7a3b69;text-align:left">{{ q }} ›</button>
-  </form>
-  {% endfor %}
+{% import "_icons.html" as icon %}
+{% set page_title = "Health chatbot" %}
+{% set active_tab = "chatbot" %}
+{% block main %}
+<div class="infobar">{{ _("The chatbot provides general reference information only and does not replace your doctor's advice.") }}</div>
+<div class="body" style="gap:12px">
+  {% if not conversation_id %}
+    <p class="bot"><span class="b">{{ _("Hello, Mom!") }}</span> {{ _("I can answer general questions about pregnancy and baby care.") }}</p>
+    <p class="t-body b">{{ _("Suggested questions") }}</p>
+    {% for q in suggested %}
+    <form method="post" action="/m/{{ user.user_id }}/chat"><input type="hidden" name="text" value="{{ q | t }}"><button class="chip" style="height:auto;min-height:36px;padding:8px 14px;white-space:normal;text-align:left;line-height:16px">{{ q | t }}</button></form>
+    {% endfor %}
+  {% else %}
+    {% for b in bubbles %}
+      {% if b.kind == "question" %}
+        <p class="me">{{ b.m.text }}</p>
+      {% elif b.kind == "answer" %}
+        <div class="bot"><p>{{ b.m.text | t_known }}</p><p class="t-cap" style="margin-top:6px">{{ _("For reference only; does not replace your doctor's advice.") }}</p></div>
+      {% elif b.kind == "decline" %}
+        <p class="bot">{{ b.m.text | t_known }}</p>
+      {% else %}
+        <div class="card danger">
+          {% if b.danger %}<span class="tag al" style="align-self:flex-start">{{ icon.warn(14, "currentColor") }}{{ _("Signs that need medical attention") }}</span>{% endif %}
+          <p class="t-body b">{{ _("This needs a proper consultation.") }}</p>
+          <p class="t-body" style="color:#6F6F6F">{{ _("Your question relates to your own health, so the chatbot does not answer it directly. If you agree, your question will be sent to a nurse.") }}</p>
+          {% if b.q and b.q.handoff_choice is none %}
+            <form method="post" action="/m/{{ user.user_id }}/chat/{{ conversation_id }}/handoff/{{ b.q.message_id }}" class="bl8">
+              <button class="btn full" name="choice" value="connect">{{ _("Connect to nurse") }}</button>
+              <button class="btn o full" name="choice" value="decline">{{ _("No, thanks") }}</button>
+            </form>
+          {% elif b.q and b.q.handoff_choice == "Connect to nurse" %}
+            <div class="okbox">{{ icon.ok() }}<p class="t-body" style="color:inherit">{{ _("Sent to a nurse") }}</p></div>
+            <a class="btn o full" href="/m/{{ user.user_id }}/my-reports">{{ _("My reports") }}</a>
+          {% endif %}
+          <span class="btn dis full" title="{{ _('Hotline number pending') }}">{{ icon.phone() }}{{ _("If you have any emergency signs, call {hotline}.", hotline=hotline) }}</span>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  <p id="typing" class="bot typing">•••</p>
+  {% if error %}<p class="err" data-error-for="text">{{ error | t }}</p>{% endif %}
 </div>
-{% else %}
-  {% for b in bubbles %}
-    {% if b.kind == "question" %}
-      <p class="caption" style="text-align:right">{{ b.m.sent_at | show_time }}</p>
-      <div class="card" style="margin-left:20%;background:#3a2a36;color:#fff">{{ b.m.text }}</div>
-    {% elif b.kind == "answer" %}
-      <div class="card" style="margin-right:20%"><span class="label">AI</span> {{ b.m.text }}
-        <p class="caption">{{ "For reference only; does not replace your doctor's advice." }}</p></div>
-    {% elif b.kind == "decline" %}
-      <div class="card" style="margin-right:20%"><span class="label">AI</span> {{ b.m.text }}</div>
-    {% else %}
-      <div class="card warn" style="margin-right:10%">
-        {% if b.danger %}<p><strong>⚠ Signs that need medical attention</strong></p>{% endif %}
-        <p><strong>This needs a proper consultation.</strong></p>
-        <p>Your question relates to your own health, so the chatbot does not answer it directly. If you agree, your question will be sent to a nurse.</p>
-        {% if b.q and b.q.handoff_choice is none %}
-          <form method="post" action="/m/{{ user.user_id }}/chat/{{ conversation_id }}/handoff/{{ b.q.message_id }}" style="display:inline">
-            <button name="choice" value="connect">Connect to nurse</button>
-            <button name="choice" value="decline" class="secondary" style="background:#fff;color:#7a3b69">No, thanks</button>
-          </form>
-        {% elif b.q and b.q.handoff_choice == "Connect to nurse" %}
-          <p class="label">Sent to a nurse</p> <a href="/m/{{ user.user_id }}/my-reports">My reports</a>
-        {% endif %}
-        <p class="caption">If you have any emergency signs, call {{ hotline }}.</p>
-      </div>
-    {% endif %}
-  {% endfor %}
-{% endif %}
-
-{% if error %}<p class="error" data-error-for="text">{{ error }}</p>{% endif %}
-<form method="post" action="/m/{{ user.user_id }}/chat{% if conversation_id %}/{{ conversation_id }}{% endif %}"
+<form class="composer" method="post" action="/m/{{ user.user_id }}/chat{% if conversation_id %}/{{ conversation_id }}{% endif %}"
       onsubmit="document.getElementById('typing').style.display='block'">
-  <p id="typing" class="card" style="display:none;width:3em">•••</p>
-  <input name="text" maxlength="500" placeholder="Type your question…" value="{{ text }}" style="width:70%">
-  <button>Send</button>
+  <label for="ask" class="sr">{{ _("Type your question…") }}</label>
+  <input id="ask" class="inp" name="text" maxlength="500" placeholder="{{ _('Type your question…') }}" value="{{ text }}">
+  <button class="btn">{{ _("Send") }}</button>
 </form>
 {% endblock %}

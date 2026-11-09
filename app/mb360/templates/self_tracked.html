@@ -1,22 +1,31 @@
+{#- S-024; design: screens/ui-final Màn 17. No valid range is checked: D-16 is pending SME (U18). -#}
 {% extends "base.html" %}
-{% macro err(field) %}{% if errors.get(field) %}<span class="error" data-error-for="{{ field }}">⚠ {{ errors[field] }}</span>{% endif %}{% endmacro %}
-{% block content %}
-<h1>Enter self-tracked metrics</h1>
-<p class="caption">Optional. Enter the metrics you want to track; you can leave fields you don't need blank.</p>
-{{ err("form") }}
-<form method="post" action="/m/{{ user.user_id }}/self-tracked">
-  {% for key, label, unit in [("weight", "Weight", "kg"), ("temperature", "Temperature", "°C"), ("heart_rate", "Heart rate", "bpm")] %}
-  <div class="card">
-    <label>{{ label }} <input name="{{ key }}" inputmode="decimal" placeholder="Enter value" value="{{ form.get(key, '') }}"> {{ unit }}</label>{{ err(key) }}
-    <label>Measured at <input type="datetime-local" name="{{ key }}_at" value="{{ form.get(key ~ '_at', '') }}"></label>{{ err(key ~ "_at") }}
+{% set page_title = "Enter self-tracked metrics" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/health" %}
+{% macro err(field) %}{% if errors.get(field) %}<p class="err" data-error-for="{{ field }}">⚠ {{ errors[field] | t }}</p>{% endif %}{% endmacro %}
+{% block main %}
+<form class="fw" method="post" action="/m/{{ user.user_id }}/self-tracked">
+  <div class="body" style="gap:12px">
+    <p class="t-cap">{{ _("Fill in what you have, not all 4 are needed. These metrics are not checked against a threshold.") }}</p>
+    {{ err("form") }}
+    {% for key, label, unit in [("weight", "Weight", "kg"), ("temperature", "Temperature", "°C"), ("heart_rate", "Heart rate", "bpm")] %}
+    <div class="card bl8">
+      <p class="t-body b">{{ _(label) }}</p>
+      <div class="unit"><input class="inp{% if errors.get(key) %} er{% endif %}" name="{{ key }}" inputmode="decimal" placeholder="{{ _('Enter value') }}" value="{{ form.get(key, '') }}" aria-label="{{ _(label) }}"><span>{{ unit }}</span></div>
+      {{ err(key) }}
+      <label class="t-cap" for="{{ key }}_at">{{ _("Measured at") }}</label>
+      <input class="inp" id="{{ key }}_at" type="datetime-local" name="{{ key }}_at" value="{{ form.get(key ~ '_at', '') }}">
+      {{ err(key ~ "_at") }}
+    </div>
+    {% endfor %}
+    <div class="card bl8">
+      <p class="t-body b">{{ _("Sleep") }}</p>
+      <label class="t-cap" for="bedtime">{{ _("Bedtime") }}</label>
+      <input class="inp" id="bedtime" type="datetime-local" name="bedtime" value="{{ form.get('bedtime', '') }}">{{ err("bedtime") }}
+      <label class="t-cap" for="wakeup">{{ _("Wake-up time") }}</label>
+      <input class="inp" id="wakeup" type="datetime-local" name="wakeup" value="{{ form.get('wakeup', '') }}">{{ err("wakeup") }}
+    </div>
   </div>
-  {% endfor %}
-  <div class="card">
-    <strong>Sleep</strong>
-    <label>Bedtime <input type="datetime-local" name="bedtime" value="{{ form.get('bedtime', '') }}"></label>{{ err("bedtime") }}
-    <label>Wake-up time <input type="datetime-local" name="wakeup" value="{{ form.get('wakeup', '') }}"></label>{{ err("wakeup") }}
-  </div>
-  <p><a class="button secondary" href="/m/{{ user.user_id }}/health">Cancel</a> <button>Save metrics</button></p>
-  <p class="caption">No threshold check, no report created.</p>
+  <div class="foot"><button class="btn">{{ _("Save metrics") }}</button></div>
 </form>
 {% endblock %}

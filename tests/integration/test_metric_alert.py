@@ -2,6 +2,7 @@
 import re
 
 from .helpers import bp_form, case_of, latest_report
+from .helpers import vi
 
 
 def _guidance(db, uid, metric):
@@ -14,9 +15,9 @@ def test_metric_alert_shows_value_threshold_and_instruction_guidance(client, db,
     u01 = user_id("tci-000123")
     r = client.post(f"/m/{u01}/report", data=bp_form(150, 95, ["No symptoms"]))
     page = client.get(r.headers["location"]).text
-    assert "Metric alert" in page
+    assert vi("Metric alert") in page
     assert "150/95 mmHg" in page and "27/09/2026 · 09:00" in page and "140/90 mmHg" in page
-    assert "Your report has been sent to clinical staff" in page
+    assert vi("Your report has been sent to clinical staff.") in page
     assert _guidance(db, u01, "Blood pressure") in page   # W01 -> template G02
 
 
@@ -40,7 +41,7 @@ def test_close_returns_to_instructions_and_keeps_the_report(client, db, user_id)
     u09 = user_id("tci-000131")
     r = client.post(f"/m/{u09}/report", data=bp_form(160, 100, ["No symptoms"]))
     page = client.get(r.headers["location"]).text
-    close = re.search(r'<a[^>]*href="([^"]+)"[^>]*>\s*Close\s*</a>', page)
+    close = re.search(r'<a[^>]*href="([^"]+)"[^>]*>\s*' + vi("Close") + r'\s*</a>', page)
     assert close and close.group(1) == f"/m/{u09}/instructions"
     rep = latest_report(db, u09)
     assert client.get(close.group(1)).status_code == 200

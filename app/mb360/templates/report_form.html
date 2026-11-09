@@ -1,54 +1,68 @@
+{#- S-025A; design: screens/ui-final Màn 5. Metric tabs = the mother's active instructions only (D-11, U16); a report goes to clinical staff, not straight to a doctor (U5). -#}
 {% extends "base.html" %}
-{% macro err(field) %}{% if errors.get(field) %}<span class="error" data-error-for="{{ field }}">{{ errors[field] }}</span>{% endif %}{% endmacro %}
-{% block content %}
-<h1>{% if metric == "Symptom" %}Report symptoms{% else %}Report a metric{% endif %}</h1>
-<form method="get" action="/m/{{ user.user_id }}/report">
-  <label for="change">Change metric ▾</label>
-  <select id="change" name="metric" onchange="this.form.submit()">
-    {% for m in metrics %}<option value="{{ m }}" {% if m == metric %}selected{% endif %}>{{ m }}</option>{% endfor %}
-    <option value="Symptom" {% if metric == "Symptom" %}selected{% endif %}>Symptoms only</option>
-  </select>
-</form>
-
-{% if flag %}
-<div class="card"><h2>Doctor's instructions</h2><p>{{ flag.note or "" }}</p></div>
-{% endif %}
-
-<form method="post" action="/m/{{ user.user_id }}/report">
-  <input type="hidden" name="metric" value="{{ metric }}">
-  {{ err("metric") }}
-  {% if metric == "Blood pressure" %}
-    <label>Systolic (mmHg)</label><input name="systolic" inputmode="numeric" value="{{ form.get('systolic', '') }}">{{ err("systolic") }}
-    <label>Diastolic (mmHg)</label><input name="diastolic" inputmode="numeric" value="{{ form.get('diastolic', '') }}">{{ err("diastolic") }}
-  {% elif metric == "Blood glucose" %}
-    <label>Measurement time</label>
-    <select name="glucose_context">
-      <option value="">Choose…</option>
-      {% for code, text in glucose_labels.items() %}<option value="{{ code }}" {% if form.get('glucose_context') == code %}selected{% endif %}>{{ text }}</option>{% endfor %}
-    </select>{{ err("glucose_context") }}
-    <label>Blood glucose (mmol/L)</label><input name="value" inputmode="decimal" value="{{ form.get('value', '') }}">{{ err("value") }}
-  {% elif metric == "Urine protein" %}
-    <label>Urine protein</label>
-    <select name="level">{% for lv in urine_scale %}<option value="{{ lv }}" {% if form.get('level') == lv %}selected{% endif %}>{{ lv }}</option>{% endfor %}</select>{{ err("level") }}
-  {% endif %}
-
-  {% if metric != "Symptom" %}
-  <div class="card warn" data-threshold-card>{{ card or "Choose the measurement time to see the threshold." }}</div>
-  {% endif %}
-
-  <label>Measured at</label><input type="datetime-local" name="measured_at" value="{{ form.get('measured_at', '') }}">{{ err("measured_at") }}
-
-  <label>Accompanying symptoms (select multiple)</label>
-  {% for s in symptoms %}
-    {% if not (metric == "Symptom" and s == "No symptoms") %}
-    <label><input type="checkbox" name="symptoms" value="{{ s }}" {% if s in form.get('symptoms', []) %}checked{% endif %}> {{ s | symptom_label }}</label>
+{% import "_icons.html" as icon %}
+{% set page_title = "Report metric / symptom" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/home" %}
+{% set white = true %}
+{% macro err(field) %}{% if errors.get(field) %}<p class="err" data-error-for="{{ field }}">⚠ {{ errors[field] | t }}</p>{% endif %}{% endmacro %}
+{% block header_actions %}<a class="ib" href="/m/{{ user.user_id }}/my-reports" aria-label="{{ _('My reports') }}">{{ icon.clock(24) }}</a>{% endblock %}
+{% block main %}
+<div class="body" style="gap:20px;padding-bottom:0;flex:none">
+  <form method="get" action="/m/{{ user.user_id }}/report" class="seg" style="grid-template-columns:repeat({{ metrics | length + 1 }},minmax(0,1fr))" aria-label="{{ _('Change metric ▾') }}">
+    {% for m in metrics %}<button name="metric" value="{{ m }}"{% if m == metric %} class="on" aria-pressed="true"{% endif %}>{{ m | t }}</button>{% endfor %}
+    <button name="metric" value="Symptom"{% if metric == "Symptom" %} class="on" aria-pressed="true"{% endif %}>{{ _("Symptom") }}</button>
+  </form>
+</div>
+<form class="fw" method="post" action="/m/{{ user.user_id }}/report">
+  <div class="body" style="gap:20px">
+    <input type="hidden" name="metric" value="{{ metric }}">
+    {{ err("metric") }}
+    {% if flag %}
+    <div class="card bd bl8" style="padding:12px 14px">
+      <div class="sec"><p class="t-body b">{{ _("Doctor's instructions") }}</p><span class="tag src">{{ _("Doctor-assigned") }}</span></div>
+      {% if flag.note %}<p class="t-body" style="color:#6F6F6F">{{ flag.note }}</p>{% endif %}
+    </div>
     {% endif %}
-  {% endfor %}
-  {{ err("symptoms") }}
-  <label>Describe other symptom (max 100 characters)</label>
-  <input name="other_symptom_text" maxlength="100" value="{{ form.get('other_symptom_text', '') }}">{{ err("other_symptom_text") }}
-  <label>Note</label><textarea name="note">{{ form.get('note', '') }}</textarea>
-  <p><button type="submit">Submit report</button></p>
+    {% if metric == "Blood pressure" %}
+    <div class="grid2">
+      <div class="fld"><label for="sys">{{ _("Systolic") }}</label><div class="unit"><input id="sys" class="inp{% if errors.get('systolic') %} er{% endif %}" name="systolic" inputmode="numeric" value="{{ form.get('systolic', '') }}"><span>mmHg</span></div>{{ err("systolic") }}</div>
+      <div class="fld"><label for="dia">{{ _("Diastolic") }}</label><div class="unit"><input id="dia" class="inp{% if errors.get('diastolic') %} er{% endif %}" name="diastolic" inputmode="numeric" value="{{ form.get('diastolic', '') }}"><span>mmHg</span></div>{{ err("diastolic") }}</div>
+    </div>
+    {% elif metric == "Blood glucose" %}
+    <div class="fld"><label for="ctx">{{ _("Measurement time") }}</label>
+      <select id="ctx" class="inp" name="glucose_context">
+        <option value="">{{ _("Choose…") }}</option>
+        {% for code, text in glucose_labels.items() %}<option value="{{ code }}" {% if form.get('glucose_context') == code %}selected{% endif %}>{{ text | t }}</option>{% endfor %}
+      </select>{{ err("glucose_context") }}</div>
+    <div class="fld"><label for="val">{{ _("Blood glucose") }}</label><div class="unit"><input id="val" class="inp" name="value" inputmode="decimal" value="{{ form.get('value', '') }}"><span>mmol/L</span></div>{{ err("value") }}</div>
+    {% elif metric == "Urine protein" %}
+    <div class="fld"><label for="lv">{{ _("Urine protein") }}</label>
+      <select id="lv" class="inp" name="level">{% for lv in urine_scale %}<option value="{{ lv }}" {% if form.get('level') == lv %}selected{% endif %}>{{ lv | t }}</option>{% endfor %}</select>{{ err("level") }}</div>
+    {% endif %}
+
+    {% if metric != "Symptom" %}
+    <div class="warnbox" data-threshold-card>{{ icon.warn() }}<p class="t-cap" style="color:#8A3A07">{{ card | t if card else _("Choose the measurement time to see the threshold.") }}</p></div>
+    {% endif %}
+
+    <div class="fld"><label for="at">{{ _("Measured at") }}</label><input id="at" class="inp" type="datetime-local" name="measured_at" value="{{ form.get('measured_at', '') }}">{{ err("measured_at") }}</div>
+
+    <div class="fld">
+      <p class="lbl">{{ _("Accompanying symptoms") }} <span class="opt">{{ _("(select multiple)") }}</span></p>
+      <div class="chips">
+        {% for s in symptoms %}{% if not (metric == "Symptom" and s == "No symptoms") %}
+        <label><input type="checkbox" name="symptoms" value="{{ s }}" {% if s in form.get('symptoms', []) %}checked{% endif %}><span class="chip">{{ s | symptom_label | t }}</span></label>
+        {% endif %}{% endfor %}
+      </div>
+      {{ err("symptoms") }}
+    </div>
+    <div class="fld"><label for="other">{{ _("Describe other symptom (max 100 characters)") }}</label>
+      <input id="other" class="inp" name="other_symptom_text" maxlength="100" value="{{ form.get('other_symptom_text', '') }}">{{ err("other_symptom_text") }}</div>
+    <div class="fld"><label for="note">{{ _("Note") }} <span class="opt">{{ _("(optional)") }}</span></label>
+      <textarea id="note" class="inp" style="height:88px" name="note" placeholder="{{ _('What else should clinical staff know?') }}">{{ form.get('note', '') }}</textarea></div>
+  </div>
+  <div class="foot" style="flex-direction:column;gap:8px">
+    <button type="submit" class="btn full">{{ _("Submit report") }}</button>
+    <p class="t-cap" style="text-align:center">{{ _("Clinical staff view and respond under") }} <a href="/m/{{ user.user_id }}/notices">{{ _("From doctor") }}</a></p>
+  </div>
 </form>
-<p><a href="/m/{{ user.user_id }}/instructions">Back</a></p>
 {% endblock %}

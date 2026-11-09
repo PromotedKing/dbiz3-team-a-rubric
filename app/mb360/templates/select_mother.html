@@ -1,8 +1,19 @@
-{% extends "base.html" %}
+{#- Demo start page: no sign-in until Session 11 (plan.md, Complexity Tracking). -#}
+{% extends "tci_base.html" %}
 {% block content %}
-<h1>Choose a mother (demo)</h1>
-<p class="caption">No sign-in until Session 11: the mother is chosen from the seed data (plan.md, Complexity Tracking).</p>
-{% for m in mothers %}
-<div class="card"><a href="/m/{{ m.user_id }}/instructions">{{ m.full_name }}</a> <span class="caption">{{ m.record_code or "" }}</span></div>
-{% endfor %}
+<p class="t-title">{{ _("Demo start page") }}</p>
+<div class="card bd np">
+  <a class="row" href="/tci"><div class="ic40">{{ icon.pulse() }}</div><span class="grow"><span class="t-body b">{{ _("Mother side — open from the TCI app") }}</span><br><span class="t-cap">{{ _("Consent, guide and pregnancy setup the first time, then Home.") }}</span></span>{{ icon.chev() }}</a>
+  <a class="row" href="/staff"><div class="ic40">{{ icon.user() }}</div><span class="grow"><span class="t-body b">{{ _("Clinical web") }}</span><br><span class="t-cap">{{ _("Nurses and doctors handle the mothers' reports.") }}</span></span>{{ icon.chev() }}</a>
+  <a class="row" href="/session-expired"><div class="ic40">{{ icon.clock() }}</div><span class="grow"><span class="t-body b">{{ _("Session expired") }}</span><br><span class="t-cap">{{ _("Shown when the TCI identity cannot be verified (demo link).") }}</span></span>{{ icon.chev() }}</a>
+</div>
+<p class="t-title">{{ _("Go straight to a mother's Home (demo)") }}</p>
+<div class="card bd np">
+  {% for m in mothers %}
+  <a class="row" href="/m/{{ m.user_id }}/home" data-mother>
+    <span class="ic40" style="background:#009788;color:#fff;border-radius:20px;font-size:12px;font-weight:700">{{ initials(m.full_name) }}</span>
+    <span class="grow">{{ m.full_name }}</span><span class="t-cap">{{ m.record_code or "" }}</span>
+  </a>
+  {% endfor %}
+</div>
 {% endblock %}

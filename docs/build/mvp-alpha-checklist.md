@@ -57,6 +57,8 @@ limitation discovered by the instructor that is not written here is.
 | 12 | The other Must modules now have their P1 stories (ACC #11, HLT #12, TML #13, BOT #14). Not built yet: ACC US-3 profile, HLT US-3 / US-4, TML US-3 (pending Client D-03) and US-4 (journey review, PDF album), APT (Could) | PRD M1, M2, M4, M5, C1 | Sessions 9 – 11 |
 | 14 | Chatbot: the real Gemini call is not tested (no key; fake LLM by default); danger phrases, personal-health markers and topic words are provisional; on an LLM failure the question is not kept (differs from the DM-29 default) | BOT §10 Q2, Q12, Q14; D-47; DM-29 | When a member adds a key; when the SME answers |
 | 13 | Data is rebuilt from the seed every time the app starts; reports made in the demo are lost on restart | `specs/001-alr-core/research.md` R2 | Session 11 (deployment) |
+| 15 | Screens are in Vietnamese (D-79) but free text from the seed (doctor's notes, guidance templates, diary, chat) is English, and 213 added labels are proposed, not yet reviewed | D-79; `docs/ui-label-reference.md` | When Chi and Ánh review the labels; seed text when the hospital supplies content (D-25) |
+| 16 | The sub-app has no way to book a visit and no appointment card (D-80, no appointment data); the "Book" tab of the simulated TCI app opens a stand-in page. Session expiry is not checked (no sign-in): S-043 is reachable only from the demo page | D-80; spec-APT BR-001, BR-003; `screens/ui-final/README.md` U2 | When the team decides U2; Session 11 |
 
 ## 4. Sign-off
 

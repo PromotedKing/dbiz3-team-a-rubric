@@ -1,22 +1,38 @@
+{#- S-001 state 2; design: screens/ui-final Màn 2. -#}
 {% extends "base.html" %}
-{% block content %}
-<div class="card">
-  <p>⇄</p>
-  <h1>Connect to your TCI account</h1>
-  <p>Mother &amp; Baby 360 will use the following information from the TCI app:</p>
-  <ul>
-    <li>Full name, date of birth, phone number ✓</li>
-    <li>Medical record number at Thu Cuc ✓</li>
-    <li>Results of your prenatal visits ✓</li>
-  </ul>
-  <form method="post" action="/tci/consent">
-    {% for k, v in ident.items() %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
-    <label><input type="checkbox" name="agree" value="on"> I agree to the Terms and the Privacy Policy</label>
-    {% if error %}<span class="error" data-error-for="{{ error.field }}">{{ error.message }}</span>{% endif %}
-    <p>
-      <button class="secondary" name="action" value="later" style="background:#fff;color:#7a3b69">Later</button>
-      <button name="action" value="agree">Agree &amp; continue</button>
-    </p>
-  </form>
+{% import "_icons.html" as icon %}
+{% block header %}
+<div class="bhdr">
+  <div class="logo">{{ icon.mb() }}</div>
+  <div class="brand"><p class="n">{{ _("App name") }}</p></div>
+  <a href="/tci" class="ib" aria-label="{{ _('Close') }}">{{ icon.close() }}</a>
 </div>
+{% endblock %}
+{% block content %}
+<div style="height:120px;border-radius:16px;background:#EEEEEE"></div>
+<div class="grid2"><div style="height:90px;border-radius:16px;background:#EEEEEE"></div><div style="height:90px;border-radius:16px;background:#EEEEEE"></div></div>
+{% endblock %}
+{% block overlay %}
+<div class="ovl"></div>
+<form class="sheet" role="dialog" aria-labelledby="ttl" method="post" action="/tci/consent">
+  {% for k, v in ident.items() %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+  <div class="grab"></div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+    <div class="fe" style="width:64px;height:64px">{{ icon.link2() }}</div>
+    <h2 id="ttl" class="t-title">{{ _("Connect to your TCI account") }}</h2>
+    <p class="t-body" style="color:#6F6F6F">{{ _("Mother & Baby 360 will use the following information from the TCI app:") }}</p>
+  </div>
+  <div class="card bd np" style="padding:0 16px">
+    <div class="kv"><span>{{ _("Full name, phone number") }}</span>{{ icon.tick() }}</div>
+    <div class="kv"><span>{{ _("Date of birth, sex") }}</span>{{ icon.tick() }}</div>
+    <div class="kv"><span>{{ _("Medical record number at Thu Cuc") }}</span>{{ icon.tick() }}</div>
+    <div class="kv"><span>{{ _("Results of your prenatal visits") }}</span>{{ icon.tick() }}</div>
+  </div>
+  <label class="chk"><input type="checkbox" name="agree" value="on" style="width:22px;height:22px;accent-color:#00A651;flex:none;margin:0"><span>{{ _("I agree to the Terms and the Privacy Policy") }}</span></label>
+  {% if error %}<p class="err" data-error-for="{{ error.field }}">⚠ {{ error.message | t }}</p>{% endif %}
+  <div style="display:flex;gap:12px">
+    <button class="btn o" name="action" value="later">{{ _("Later") }}</button>
+    <button class="btn" name="action" value="agree">{{ _("Agree & continue") }}</button>
+  </div>
+</form>
 {% endblock %}

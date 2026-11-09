@@ -1,18 +1,18 @@
 """BOT routes — specs/008-bot-chat/contracts/http-routes.md (S-031, S-032 – S-034)."""
 import json
 import sqlite3
-from datetime import datetime
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+from .. import ui
 from .. import clock
 from . import chat, classify, llm
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
-TEMPLATES.env.filters["show_time"] = lambda t: datetime.strptime(t, "%Y-%m-%d %H:%M").strftime("%d/%m/%Y · %H:%M") if t else ""
+ui.install(TEMPLATES)
 SUGGESTED = ("How can I eat beef safely during pregnancy?", "How can I produce more breast milk?",
              "What should I look for when choosing formula for my baby?", "How should Dad read to the baby during pregnancy?")
 HOTLINE = "1900 xxxx"   # placeholder (BOT §10 Q8)

@@ -1,10 +1,11 @@
 """T011 — US-2 #2 - #5, BR-001 (doctor on S-064)."""
 from tests.cli_helpers import RPT004, RPT006, a_template, case_by_code, case_row, written
+from tests.integration.helpers import vi
 
 
 def test_doctor_page_has_no_nurse_buttons(client, db, staff_id):
     page = client.get(f"/staff/{staff_id('Nguyễn Văn A')}/cases/{case_by_code(db, RPT004)}").text
-    assert "Dr. Nguyễn Văn A" in page
+    assert vi("Dr. {name}", name="Nguyễn Văn A") in page
     assert "Mark as viewed" not in page and "Escalate to doctor</button>" not in page
 
 

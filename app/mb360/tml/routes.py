@@ -1,17 +1,18 @@
 """TML routes — specs/007-tml-timeline/contracts/http-routes.md (S-048, S-051 / S-052)."""
 import sqlite3
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+from .. import ui
 from .. import clock
 from . import diary, weeks
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
-TEMPLATES.env.filters["dmy"] = lambda d: (d if isinstance(d, date) else datetime.strptime(d[:10], "%Y-%m-%d")).strftime("%d/%m/%Y") if d else ""
+ui.install(TEMPLATES)
 
 
 def register(app: FastAPI, conn: sqlite3.Connection) -> None:
@@ -33,7 +34,32 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         w = weeks.load_week(conn, user_id, week, clock.now().date())
         if w is None:
             return RedirectResponse(f"/m/{user_id}/setup", status_code=303)
-        return page(request, "timeline.html", user=user, w=w, saved=saved, media_exists=media_exists)
+        today = clock.now().date()
+        strip = weeks.week_days(w, today)
+        return page(request, "timeline.html", user=user, w=w, saved=saved, media_exists=media_exists, strip=strip,
+                    today_cell=next((d for d in strip if d["is_today"]), None))
+
+    @app.get("/m/{user_id}/timeline/day/{day}", response_class=HTMLResponse)
+    def timeline_day(request: Request, user_id: str, day: str):
+        """One day of the week view (D-75, D-80): the same data as S-048, read-only."""
+        user = mother(user_id)
+        edd_row = conn.execute("SELECT edd FROM PREGNANCY_PROFILE WHERE user_id = ?", (user_id,)).fetchone()
+        if edd_row is None:
+            return RedirectResponse(f"/m/{user_id}/setup", status_code=303)
+        try:
+            when = date.fromisoformat(day)
+        except ValueError:
+            raise HTTPException(404, "Unknown day")
+        edd, today = date.fromisoformat(edd_row[0]), clock.now().date()
+        n = weeks.current_week(edd, when)
+        if when > today or not weeks.FIRST_WEEK <= n <= weeks.LAST_WEEK:
+            raise HTTPException(404, "Unknown day")
+        w = weeks.load_week(conn, user_id, n, today)
+        cell = next(d for d in weeks.week_days(w, today) if d["iso"] == day)
+        return page(request, "day.html", user=user, day=cell, week=n, week_day=weeks.day_of_week(edd, when), media_exists=media_exists,
+                    visits=[v for v in w["visits"] if v["visit_date"] == day],
+                    rows=next((d["rows"] for d in w["days"] if d["day"] == day), []),
+                    diary=[e for e in w["diary"] if e["entry_date"] == day])
 
     def form_page(request: Request, user, form: dict, errors: dict, status: int = 200):
         edd = conn.execute("SELECT edd FROM PREGNANCY_PROFILE WHERE user_id = ?", (user["user_id"],)).fetchone()

@@ -9,6 +9,8 @@ FIRST_WEEK, LAST_WEEK = 0, 42          # domain of gestational_week (TML §10 Q1
 # FR-004: adjacent weeks prefetched (server side). An entry is reused only while the database has not changed since
 # it was built (same connection, same total_changes), so a report or a self-tracked value never shows stale data.
 CACHE: dict[tuple[str, int], tuple[tuple[int, int], dict]] = {}
+SHORT_DAYS = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+LONG_DAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
 
 def current_week(edd: date, today: date) -> int:
@@ -18,6 +20,37 @@ def current_week(edd: date, today: date) -> int:
 def week_range(edd: date, n: int) -> tuple[date, date]:
     start = edd - timedelta(days=PREGNANCY_DAYS) + timedelta(days=7 * n)
     return start, start + timedelta(days=6)
+
+
+def day_of_week(edd: date, day: date) -> int:
+    """Days past the whole gestational week ("Week 24 + 3 days")."""
+    return (PREGNANCY_DAYS - (edd - day).days) % 7
+
+
+def progress(edd: date, today: date) -> int:
+    """Share of the 280 days already passed, 0 – 100 (bar on S-008)."""
+    return max(0, min(100, round((PREGNANCY_DAYS - (edd - today).days) * 100 / PREGNANCY_DAYS)))
+
+
+def trimester(week: int) -> str:
+    """Stage of a gestational week: boundaries 0 – 13 / 14 – 27 / 28 – 42 of D-75, Pending SME (TML §10 Q16)."""
+    return "First trimester" if week <= 13 else "Second trimester" if week <= 27 else "Third trimester"
+
+
+def week_days(w: dict, today: date) -> list[dict]:
+    """The 7 days of a week for the strip and the "This week" list of S-048 (D-80), oldest first."""
+    rows = {d["day"]: d["rows"] for d in w["days"]}
+    visits = {v["visit_date"] for v in w["visits"]}
+    out = []
+    for i in range(7):
+        day = w["start"] + timedelta(days=i)
+        iso = day.isoformat()
+        diary = [e for e in w["diary"] if e["entry_date"] == iso]
+        out.append({"iso": iso, "num": day.strftime("%d"), "short": SHORT_DAYS[day.weekday()], "long": LONG_DAYS[day.weekday()],
+                    "future": day > today, "is_today": day == today, "has_visit": iso in visits, "has_diary": bool(diary),
+                    "has_rows": iso in rows, "row_count": len(rows.get(iso, [])),
+                    "mood": next((e["mood"] for e in diary if e["mood"]), None), "diary_texts": [e["text"] for e in diary]})
+    return out
 
 
 def clear(user_id: str) -> None:

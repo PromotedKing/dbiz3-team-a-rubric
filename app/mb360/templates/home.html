@@ -1,17 +1,73 @@
+{#- S-008 Home; design: screens/ui-final Màn 4. No appointment card: no appointment data (D-77, U2). -#}
 {% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set active_tab = "home" %}
+{% set show_close = true %}
+{% block header %}
+<div class="bhdr">
+  <div class="logo">{{ icon.mb() }}</div>
+  <div class="brand"><p class="n">{{ _("App name") }}</p><p class="tg">{{ _("With you through pregnancy") }}</p></div>
+  <button type="button" class="ib" aria-label="{{ _('Close Mother & Baby 360?') }}" data-close-app onclick="document.getElementById('close-sheet').showModal()">{{ icon.close() }}</button>
+</div>
+{% endblock %}
 {% block content %}
-<h1>Hello, {{ given_name }}!</h1>
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/timeline">
-  <h2>Week {{ week }}</h2>
-  <p>Due date: {{ edd | dmy }} · Pregnancy timeline ›</p>
+<p class="t-title">{{ _("Hello, {name}!", name=given_name) }}</p>
+
+<a href="/m/{{ user.user_id }}/timeline" class="hero" style="display:flex;flex-direction:column;gap:10px" data-week-card>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div><p class="t-cap" style="color:#212121">{{ _("Due date") }}</p><p class="t-disp">{{ edd | dmy }}</p></div>
+    {% if days_left >= 0 %}<p class="t-body" style="text-align:right"><span class="t-disp">{{ days_left }}</span> {{ _("days to go") }}</p>{% endif %}
+  </div>
+  <div class="bar"><i style="width:{{ progress }}%"></i></div>
+  <div class="sec"><span class="t-cap" style="color:#212121">{{ _("Week {n} + {d} days", n=week, d=week_day) }}</span><span class="t-cap" style="color:#212121">{{ _(trimester) }}</span></div>
 </a>
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/health"><strong>Health metrics ›</strong></a>
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/my-reports">
-  <strong>My reports</strong> · {{ handling }} report{{ "s" if handling != 1 else "" }} being handled ›
+
+<a href="/m/{{ user.user_id }}/report?metric={{ (flags[0] if flags else 'Symptom') | urlencode }}" class="btn full" style="height:56px;justify-content:flex-start;gap:12px;padding:0 16px" data-report-cta>
+  {{ icon.pulse(24) }}<span style="flex:1;text-align:left">{{ _("Report metric / symptom") }}</span>{{ icon.chevw() }}
 </a>
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/instructions">
-  <strong>{{ instructions_title }}</strong> · {{ flags | join(", ") if flags else "none" }} ›
+
+{% if unread_count %}
+<a href="/m/{{ user.user_id }}/notices" class="card" style="display:flex;gap:12px;align-items:center;padding:14px 16px">
+  <div class="ic40" style="background:#FEEDE1;color:#C4520A">{{ icon.bell() }}</div>
+  <div style="flex:1"><p class="t-body b">{{ _("You have {n} new notices", n=unread_count) }}</p></div>
+  {{ icon.chev() }}
 </a>
-<a class="card" style="display:block" href="/m/{{ user.user_id }}/chat"><strong>Health chatbot ›</strong></a>
-<p class="caption">Appointments and notifications come with later slices (APT, ACC S-009).</p>
+{% endif %}
+
+<div class="sec">
+  <p class="t-title">{{ _("My metrics") }}</p>
+  <a href="/m/{{ user.user_id }}/health" class="lnk">{{ _("Health metrics") }} ›</a>
+</div>
+<div class="grid2">
+  {% for r in d.visit_rows if r.value and r.metric != "Weight" %}
+  <div class="tile"><p class="t-cap">{{ r.metric | t }}</p><p class="val">{{ r.value | t_known }}</p><p class="t-cap">{{ _("From visit") }}</p></div>
+  {% endfor %}
+  {% for r in d.self_tracked %}
+  <a href="/m/{{ user.user_id }}/self-tracked" class="tile" style="color:#212121"><p class="t-cap">{{ r.metric | t }}</p><p class="val">{{ r.value }}</p><p class="t-cap">{{ _("Self-entered") }} · {{ r.at | show_time }}</p></a>
+  {% endfor %}
+</div>
+<a href="/m/{{ user.user_id }}/self-tracked" class="btn o full">{{ _("+ Enter self-tracked metrics") }}</a>
+
+<div class="card np">
+  <a href="/m/{{ user.user_id }}/my-reports" class="row">
+    <div class="ic40">{{ icon.clock() }}</div>
+    <span class="grow"><span class="t-body b">{{ _("My reports") }}</span><br><span class="t-cap">{{ _("{n} reports being handled", n=handling) }}</span>
+      {% if d.latest_status %}<span class="tag inf">{{ d.latest_status | t }}</span>{% endif %}</span>
+    {{ icon.chev() }}
+  </a>
+  <a href="/m/{{ user.user_id }}/instructions" class="row">
+    <div class="ic40">{{ icon.pulse() }}</div>
+    <span class="grow"><span class="t-body b">{{ _("Doctor's instructions") }}</span><br>
+      <span class="t-cap">{% if flags %}{{ flags | map("t") | join(", ") }}{% else %}{{ _("Your doctor has not given you any instructions yet.") }}{% endif %}</span></span>
+    {{ icon.chev() }}
+  </a>
+</div>
+
+{% if not diary_today %}
+<a href="/m/{{ user.user_id }}/diary/new" class="card" style="display:flex;gap:12px;align-items:center;padding:14px 16px">
+  <div class="ic40">{{ icon.pen() }}</div>
+  <div style="flex:1"><p class="t-body b">{{ _("No diary entry today yet") }}</p><p class="t-cap">{{ _("Note a feeling or a photo of your bump") }}</p></div>
+  <span class="lnk b">{{ _("Write") }}</span>
+</a>
+{% endif %}
 {% endblock %}
