@@ -129,7 +129,7 @@ def t_parts(text: str | None) -> str:
 def _chatbot_engine() -> str:
     from .bot import llm
     name = llm.describe()
-    return {"local": "câu trả lời có sẵn (chưa có GEMINI_API_KEY)", "fake": "câu trả lời mẫu"}.get(name, name)
+    return {"local": "câu trả lời có sẵn (chưa đặt GROQ_API_KEY hay GEMINI_API_KEY)", "fake": "câu trả lời mẫu"}.get(name, name)
 
 
 def initials(full_name: str) -> str:

@@ -11,6 +11,8 @@ uv run python -m uvicorn mb360.server:app --app-dir app --port 8000
 
 Open http://127.0.0.1:8000/ . On a computer it shows a phone frame; on a phone (same Wi-Fi, add `--host 0.0.0.0`) it fills the screen and can be added to the home screen. "Chạy lại từ lần mở đầu tiên" beside the frame restores the sample data. Data stays in `.local/` between restarts.
 
+Tests: `uv run python -m pytest` → `470 passed, 2 xfailed` (09/11/2026; one warning from Starlette about `httpx`, harmless).
+
 `mb360.main:app` is still the plain app of the seed and the tests. The clinical web is at `/staff`, on the same data: a nurse's or doctor's answer appears in the mother's app.
 
 ## Put it on the internet
@@ -25,6 +27,10 @@ Render Web Service from `render.yaml` (why: `adr-hosting.md`; errors met: `local
 6. Open the `https://….onrender.com` link on a phone over mobile data and run one flow. Add what fails to `local-vs-internet.md`.
 
 Every push to the branch named in `render.yaml` deploys again and returns the data to the sample state.
+
+**Tell the people who try it:** on Render's free plan the data is not kept. A deploy, a restart, or the service waking up after 15 minutes without visits brings back the sample data, so reports, diary entries and photos made during a test can disappear (`adr-hosting.md`). The first page after a pause takes about a minute.
+
+`render.yaml` deploys `branch: sang/mother-app-v1`. After PRs #15 – #20 are merged, change it to `branch: main` in a pull request (`merge-guide.md` §4), then check on Render that the service follows `main`.
 
 ## The flow
 

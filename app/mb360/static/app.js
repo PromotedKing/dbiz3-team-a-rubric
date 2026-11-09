@@ -3,23 +3,42 @@
   var NAV = "mb360-nav";
   function store(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (e) { return null; } }
 
+  /* The screens the mother walked through since the last tab screen, so "←" goes back to the screen she came from.
+     A screen already in the list cuts the list back to it (two screens that link to each other never make a loop),
+     a form that was sent is taken out (no way back into a sent form), and with no earlier screen "←" uses its own link. */
+  var STACK = "mb360-stack", SENT = "mb360-sent";
+  function stack(v) {
+    if (v !== undefined) return store(STACK, JSON.stringify(v.slice(-30)));
+    try { return JSON.parse(store(STACK) || "[]"); } catch (e) { return []; }
+  }
+  function pathOf(u) { return u.split("?")[0]; }
+  (function record() {
+    var s = document.querySelector("[data-tabbar]") ? [] : stack();
+    if (store(SENT)) { s.pop(); store(SENT, ""); }
+    for (var i = 0; i < s.length; i++) if (pathOf(s[i]) === location.pathname) { s = s.slice(0, i); break; }
+    s.push(location.pathname + location.search);
+    stack(s);
+  })();
+
   /* Screen transitions: back = pop, tab = fade, everything else = push */
   document.addEventListener("click", function (e) {
     var a = e.target.closest("a");
     if (!a) return;
     store(NAV, a.hasAttribute("data-back") ? "pop" : a.classList.contains("tab") ? "tab" : "push");
-    var from = document.referrer.indexOf(location.origin) === 0 ? new URL(document.referrer).pathname : null;
-    if (a.dataset.back === "auto" && from && from !== location.pathname && history.length > 1) {
-      e.preventDefault();
-      history.back();
+    if (a.hasAttribute("data-back")) {
+      var s = stack();
+      while (s.length && pathOf(s[s.length - 1]) === location.pathname) s.pop();
+      if (s.length) { e.preventDefault(); location.href = s[s.length - 1]; }
     }
   });
+
+  /* A screen brought back from the browser's cache would show old counts (unread badge, case status): load it again */
+  window.addEventListener("pageshow", function (e) { if (e.persisted && location.pathname.indexOf("/m/") === 0) location.reload(); });
   window.addEventListener("pagereveal", function (e) {
     if (e.viewTransition) {
       document.documentElement.dataset.nav = store(NAV) || "tab";
       var done = function () { delete document.documentElement.dataset.nav; };
-      e.viewTransition.finished.then(done, done);
-    }
+      e.viewTransition.finished.then(done, done);    }
   });
 
   function ready(fn) { if (document.readyState !== "loading") fn(); else document.addEventListener("DOMContentLoaded", fn); }
@@ -47,6 +66,7 @@
     document.querySelectorAll("form").forEach(function (form) {
       form.addEventListener("submit", function (e) {
         store(NAV, form.method.toLowerCase() === "get" ? "tab" : "push");
+        if (form.method.toLowerCase() === "post") store(SENT, "1");
         var btn = e.submitter;
         if (form.method.toLowerCase() === "post" && btn && btn.classList.contains("btn")) {
           if (form.dataset.sent) { e.preventDefault(); return; }

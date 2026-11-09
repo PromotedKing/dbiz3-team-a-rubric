@@ -63,7 +63,9 @@ def _message(conn, conversation_id, sender, text, at, intent=None, is_risk=0) ->
     return mid
 
 
-def ask(conn: sqlite3.Connection, user_id: str, conversation_id: str | None, text: str, now: datetime, client) -> str:
+def prepare(conn: sqlite3.Connection, user_id: str, conversation_id: str | None, text: str, now: datetime) -> dict:
+    """Checks the question and reads what the answer needs. `context` is set only for a general question (BR-002):
+    it is all that goes to the LLM service (BR-001)."""
     text = (text or "").strip()
     if not text:
         raise ChatError(422, "Type your question.")
@@ -74,11 +76,21 @@ def ask(conn: sqlite3.Connection, user_id: str, conversation_id: str | None, tex
         raise ChatError(404, "Unknown conversation")
     kind = classify.classify(text)
     week = _week(conn, user_id, now)
-    at = now.strftime(DB_TIME)
-    answer = None
-    if kind["category"] == "general":            # only general questions reach the LLM (BR-002)
-        earlier = _earlier(conn, conversation_id) if conversation_id else []
-        answer = client.answer(text, {"gestational_week": week, "earlier": earlier})
+    context = None
+    if kind["category"] == "general":
+        context = {"gestational_week": week, "earlier": _earlier(conn, conversation_id) if conversation_id else []}
+    return {"user_id": user_id, "conversation_id": conversation_id, "text": text, "kind": kind, "week": week,
+            "at": now.strftime(DB_TIME), "context": context}
+
+
+def ask(conn: sqlite3.Connection, user_id: str, conversation_id: str | None, text: str, now: datetime, client) -> str:
+    q = prepare(conn, user_id, conversation_id, text, now)
+    return save(conn, q, client.answer(q["text"], q["context"]) if q["context"] is not None else None, client)
+
+
+def save(conn: sqlite3.Connection, q: dict, answer: str | None, client) -> str:
+    """Stores the question and the chatbot's reply in one transaction; returns the conversation."""
+    user_id, conversation_id, text, kind, week, at = q["user_id"], q["conversation_id"], q["text"], q["kind"], q["week"], q["at"]
     try:
         if conversation_id is None:
             conversation_id = str(uuid.uuid4())

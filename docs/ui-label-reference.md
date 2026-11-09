@@ -335,7 +335,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | App shell (D-79) | TCI app (simulated host) | App TCI (mô phỏng) |
 | App shell (D-79) | Thu Cuc Health System – TCI | Hệ Thống Y Tế Thu Cúc – TCI |
 | App shell (D-79) | Lifelong health care for you! | Chăm sóc sức khoẻ trọn đời cho bạn! |
-| App shell (D-79) | Stand-in for the Thu Cuc patient app: how the TCI app passes the identity is still open (spec-ACC §10 Q9). Every identity here is invented. | Mô phỏng app bệnh nhân Thu Cúc: cách app TCI chuyển danh tính vẫn đang mở (spec-ACC §10 Q9). Mọi danh tính ở đây đều là giả. |
+| App shell (D-79) | Stand-in for the Thu Cuc patient app: how the real app passes the identity is not decided yet. Every identity here is invented. | Mô phỏng app bệnh nhân Thu Cúc: cách app thật chuyển danh tính chưa được quyết định. Mọi danh tính ở đây đều là giả. |
 | App shell (D-79) | Open Mother & Baby 360 as | Mở Mẹ & Bé 360 với tài khoản |
 | App shell (D-79) | Simulate another TCI account | Mô phỏng tài khoản TCI khác |
 | App shell (D-79) | TCI app booking flow | Luồng đặt lịch của app TCI |
@@ -502,7 +502,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | CLI screens (D-79) | Nurse: {name} | Y tá: {name} |
 | CLI screens (D-79) | change | đổi |
 | CLI screens (D-79) | Choose a staff member (demo) | Chọn nhân viên y tế (demo) |
-| CLI screens (D-79) | No sign-in until Session 11 (spec-CLI §10 Q11): staff come from the seed data. | Chưa có đăng nhập đến Session 11 (spec-CLI §10 Q11): nhân viên lấy từ dữ liệu seed. |
+| CLI screens (D-79) | Staff come from the sample data; there is no staff sign-in yet. | Nhân viên lấy từ dữ liệu mẫu; chưa có đăng nhập cho nhân viên. |
 | CLI screens (D-79) | Sort: Newest | Sắp xếp: Mới nhất |
 | CLI screens (D-79) | Gestational age | Tuổi thai |
 | CLI screens (D-79) | Case source | Nguồn ca |
@@ -530,7 +530,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | CLI screens (D-79) | Report {code} | Báo cáo {code} |
 | CLI screens (D-79) | Source | Nguồn |
 | CLI screens (D-79) | Chatbot question | Câu hỏi chatbot |
-| CLI screens (D-79) | Source: Chatbot · whole conversation (D-78) | Nguồn: Chatbot · toàn bộ hội thoại (D-78) |
+| CLI screens (D-79) | Source: Chatbot · whole conversation | Nguồn: Chatbot · toàn bộ hội thoại |
 | CLI screens (D-79) | Responses sent | Phản hồi đã gửi |
 | CLI screens (D-79) | Send guidance to the mother | Gửi hướng dẫn cho mẹ |
 | CLI screens (D-79) | Or write / edit the text… | Hoặc viết / sửa nội dung… |

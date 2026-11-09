@@ -1,14 +1,13 @@
 """The v1.0.0 mother app: `python -m uvicorn mb360.server:app --app-dir app`. Real clock, sample mother, TCI session checked on every
 sub-app page, data kept in a local file between restarts. mb360.main stays the plain app that the tests build.
 On the hosting platform (render.yaml, RENDER is set there): see docs/build/adr-hosting.md."""
-import asyncio
 import os
 from pathlib import Path
 
 from fastapi import Request
 from fastapi.responses import RedirectResponse, Response
 
-from . import clock, gate, persona, ui
+from . import clock, gate, persona, serial, ui
 from . import db as dbmod
 from .acc import entry
 from .bot import llm
@@ -47,19 +46,16 @@ async def tci_session(request: Request, call_next):
     return await call_next(request)
 
 
-one_at_a_time = asyncio.Lock()      # one SQLite connection: parallel requests must not mix their transactions
-
-
 @app.middleware("http")
 async def public_internet(request: Request, call_next):
     """D-82: password on the pages a stranger must not reach, and a demo that search engines leave out."""
     if gate.is_protected(request.url.path) and not gate.allowed(request.headers.get("authorization"), STAFF_PASSWORD, HOSTED):
         return Response("Cần mật khẩu của nhóm.", status_code=401, media_type="text/plain; charset=utf-8",
                         headers={"WWW-Authenticate": 'Basic realm="Mother & Baby 360", charset="UTF-8"'})
-    if request.url.path.startswith("/static/"):
+    if request.url.path.startswith("/static/") or serial.locks_itself(request.method, request.url.path):
         response = await call_next(request)
     else:
-        async with one_at_a_time:
+        async with serial.LOCK:      # one SQLite connection: parallel requests must not mix their transactions
             response = await call_next(request)
     response.headers["X-Robots-Tag"] = "noindex"
     return response

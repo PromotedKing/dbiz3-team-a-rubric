@@ -1,9 +1,10 @@
-"""LLM clients for the chatbot (research R1; D-76; team decision 26/10/2026).
+"""LLM clients for the chatbot (research R1; D-76, D-83, D-84).
 
-FakeLLM is the default: no network, no key — tests and every laptop work with it. GeminiLLM (Google AI Studio)
-is used only when GEMINI_API_KEY and GEMINI_MODEL are set in the environment or in the local, git-ignored `.env`.
-MB360_LLM=fake forces the fake client. Only the question, the earlier turns of the conversation and the
-gestational week are ever passed in (BR-001)."""
+get_client() picks, in this order: FakeLLM when MB360_LLM=fake; GroqLLM (Groq's free plan, D-84) when GROQ_API_KEY is
+set; GeminiLLM (Google AI Studio, D-83) when GEMINI_API_KEY is set; otherwise the fallback — FakeLLM for the tests and
+mb360.main, LocalAnswers (a few written answers, no network) for mb360.server. Keys are read from the environment or the
+local, git-ignored `.env`, never from the repository. Only the question, the earlier general turns of the conversation and
+the gestational week are ever passed in (BR-001; BOT §5.3 E-3)."""
 import json
 import os
 import urllib.error
@@ -32,7 +33,7 @@ class FakeLLM:
 
 
 class LocalAnswers:
-    """The v1.0.0 app's answers when no Gemini key is set: short general advice in Vietnamese, chosen by topic. Sample text, Pending SME (D-81)."""
+    """The v1.0.0 app's answers when no Groq or Gemini key is set: short general advice in Vietnamese, chosen by topic. Sample text, Pending SME (D-81)."""
     name = "local"
     CLOSING = " Mẹ hỏi thêm bác sĩ ở lần khám tới nếu cần nhé."
     TOPICS = (
@@ -155,8 +156,8 @@ class GroqLLM:
         return text
 
 
-DEFAULT_MODEL = "gemini-3.5-flash-lite"
-GROQ_DEFAULT_MODEL = "openai/gpt-oss-120b"     # on Groq's free plan (checked 07/11/2026)    # Google's suggestion for new projects, free tier (checked 07/11/2026)
+DEFAULT_MODEL = "gemini-3.5-flash-lite"          # Google's suggestion for new projects, free tier (checked 07/11/2026)
+GROQ_DEFAULT_MODEL = "openai/gpt-oss-120b"     # on Groq's free plan (checked 07/11/2026)
 
 
 def describe() -> str:
@@ -171,7 +172,7 @@ _fallback = FakeLLM
 
 
 def use_fallback(client_class) -> None:
-    """The client used when no Gemini key is set (mb360.server: LocalAnswers; tests: FakeLLM)."""
+    """The client used when no Groq or Gemini key is set (mb360.server: LocalAnswers; tests: FakeLLM)."""
     global _fallback
     _fallback = client_class
 

@@ -7,9 +7,9 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+from starlette.concurrency import run_in_threadpool
 
-from .. import ui
-from .. import clock
+from .. import clock, serial, ui
 from . import chat, classify, llm
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
@@ -47,8 +47,13 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
     async def handle_ask(request: Request, user_id: str, conversation_id: str | None):
         user = mother(user_id)
         text = (await request.form()).get("text") or ""
+        client = llm.get_client()
         try:
-            conversation_id = chat.ask(conn, user_id, conversation_id, text, clock.now(), llm.get_client())
+            async with serial.LOCK:              # the database part only; the LLM service is awaited outside (serial.py)
+                q = chat.prepare(conn, user_id, conversation_id, text, clock.now())
+            answer = await run_in_threadpool(client.answer, q["text"], q["context"]) if q["context"] is not None else None
+            async with serial.LOCK:
+                conversation_id = chat.save(conn, q, answer, client)
         except chat.ChatError as e:
             if e.status == 404:
                 raise HTTPException(404, e.message)

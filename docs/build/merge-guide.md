@@ -21,6 +21,23 @@ Rules:
 - The review written in the shared document on 06/11/2026 does not count for G6. The approval must be on GitHub.
 - Never push to `main` directly (AGENTS.md rule 5).
 
+### Who approves which part of #20
+
+#20 is large (about 6,400 lines in 140 files). It is not split, because its parts depend on each other (the hosted app
+needs the v1.0.0 screens, the chatbot change needs the hosting settings), but each part has its owner (AGENTS.md §7).
+GitHub counts one approval; the others confirm their part in a comment on #20.
+
+| Part of #20 | Files | Owner who confirms |
+|---|---|---|
+| Mother app screens and flow (D-81) | `app/mb360/templates/`, `app/mb360/static/`, `app/mb360/acc/`, `hlt/`, `tml/`, `alr/` | Chi (screens), Ánh |
+| Hosting and team password (D-82) | `render.yaml`, `app/mb360/server.py`, `gate.py`, `serial.py`, `docs/build/adr-hosting.md` | Trung |
+| Chatbot on Groq / Gemini (D-83, D-84) | `app/mb360/bot/`, `spec-BOT.md` | Sang owns spec-BOT, so Chi (its reviewer) confirms |
+| Clinical Overview and Case board (D-85) | `app/mb360/cli/dashboard.py`, `staff_*.html`, `spec-CLI.md` | Trung |
+| Schema: three `json_valid` checks allow NULL | `data/schema/schema-MB360.sql`, `data/data-model-MB360.md` | Tâm (reviewer: Trung) |
+| Decisions D-81 – D-85 | `docs/decisions.md` | Trung (reviewer: Chi) |
+| Spec updates (§5.3 EARS, §7.3, answered questions) and 18 screen specs | `specs/spec-*.md`, `specs/0*/spec.md` (copies), `screens/screen-spec-*.md` | each spec owner for their file; the copies follow the spec |
+| Labels | `docs/ui-label-reference.md` | Chi (reviewer: Ánh) |
+
 ## 2. Approving (reviewer)
 
 1. Open the PR on GitHub, tab **Files changed**. For #20 (142 files), read at least `docs/build/mother-app-v1.md` and your own spec's §5.3 and §7.3 and the questions marked "Resolved 07/11/2026" in its §10.

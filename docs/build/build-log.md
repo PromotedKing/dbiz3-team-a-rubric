@@ -596,3 +596,12 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Checked by**: pytest, `start_feature.py --check` on every folder, `check_data_model.py`, `generate_seed.py --check`.
 - **To review**: each spec owner reads their §5.3 / §7.3 and the answered questions (written from the build and the 06/11 review, not yet agreed by the owner); spec-APT BR-003 / FR-001 still describe an Appointments tab.
 
+## 09/11/2026: fixes from the project review "Session 8 alpha" (Sang, branch `sang/mother-app-v1`)
+
+- **A1 back arrow**: `static/app.js` keeps the screens walked since the last tab screen; "←" goes to the previous one, a screen already in the list cuts the list back to it (S-027 ↔ S-029 no longer loop), a sent form is taken out, and with no earlier screen "←" follows its own link. A screen restored from the browser's cache is loaded again, so the unread badge is not stale (C1). Walked in Edge at phone size: Profile → S-027 → S-029 → ← S-027 → ← Profile; S-027 → report → sent → ← Profile; Từ bác sĩ → S-029 → S-026 → ← S-029 → ← notices. The old script, same walk: ← went back into the sent form and looped between S-029 and S-026.
+- **A2 lock**: `serial.py`; a chatbot question takes the database lock only to read and to save; the LLM service is awaited outside it, in a worker thread (`bot/chat.py` prepare / save, `bot/routes.py`).
+- **C2, C3**: panel text names both keys; `llm.py` header and comments; decision and question numbers removed from three staff / test pages (label rows changed in `docs/ui-label-reference.md`).
+- **Docs**: A3 data loss and the branch of `render.yaml` in `mother-app-v1.md`; who confirms which part of #20 in `merge-guide.md` (B2, B3); the privacy risk of D-83 / D-84 for the team to accept (B1).
+- **Tests**: `tests/integration/test_review_0911.py`; 470 passed, 2 xfailed.
+- **Not changed**: C4 seed staff names (seed owner Hải Anh, generator only), C7 hotline, C9 DM-29 (open), B3 split of #20 (owners confirm by part instead), C11 (done on 07/11, commit 7b31274).
+
