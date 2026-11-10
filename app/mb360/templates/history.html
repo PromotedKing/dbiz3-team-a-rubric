@@ -5,11 +5,11 @@
 {% set colors = ["#00A651", "#009788"] %}
 {% block content %}
 <form class="bl8" method="get" action="/m/{{ user.user_id }}/history">
-  <select class="inp" name="metric" aria-label="{{ _('Metric') }}" onchange="this.form.submit()">
+  <select class="inp history-select" name="metric" aria-label="{{ _('Metric') }}" onchange="this.form.submit()">
     {% for m in metrics %}<option value="{{ m }}"{% if m == h.metric %} selected{% endif %}>{{ m | t }}</option>{% endfor %}
   </select>
   {% if h.metric == "Blood glucose" %}
-  <select class="inp" name="context" aria-label="{{ _('Measurement time') }}" onchange="this.form.submit()">
+  <select class="inp history-select" name="context" aria-label="{{ _('Measurement time') }}" onchange="this.form.submit()">
     <option value="all"{% if not h.context %} selected{% endif %}>{{ _("All") }}</option>
     {% for code, text in contexts %}<option value="{{ code }}"{% if code == h.context %} selected{% endif %}>{{ text | t }}</option>{% endfor %}
   </select>

@@ -370,3 +370,71 @@ input.dt-masked{color:transparent}
 .dt-show.empty{color:var(--t3)}
 .inp.ro+.dt-show{color:var(--t2)}
 input[type=datetime-local][data-short]{padding-right:4px}
+
+/* Notification list and detail — review 10/11/2026 */
+.notice-intro{color:var(--t2);line-height:22px}
+.notice-filters{display:flex;flex-wrap:wrap;gap:8px}
+a.notice-card{display:flex;flex-direction:column;gap:10px;min-width:0}
+.notice-meta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 12px}
+.notice-time{display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+.notice-title{font-size:16px;line-height:23px;font-weight:700;overflow-wrap:anywhere}
+.notice-preview{color:var(--t2);line-height:22px}
+.notice-sender{padding-top:2px}
+.notice-heading{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:0 0 4px}
+.notice-author{display:flex;align-items:center;gap:10px;width:100%;min-width:0}
+.notice-author .avatar{flex:none}
+.notice-author-text{display:flex;flex-direction:column;gap:4px;min-width:0;overflow-wrap:anywhere}
+.notice-section{display:flex;flex-direction:column;gap:12px}
+.notice-section .lab{font-size:12px;line-height:18px;color:var(--t2);font-weight:700}
+.notice-section .t-body{line-height:23px;overflow-wrap:anywhere}
+.notice-field{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:0 0 12px;border-bottom:1px solid var(--bd)}
+.notice-field:last-child{padding-bottom:0;border-bottom:0}
+.notice-field .k{font-size:12px;line-height:18px;color:var(--t2)}
+.notice-field>span:last-child{font-size:15px;line-height:23px;overflow-wrap:anywhere}
+.notice-status-link{display:flex;align-items:center;min-height:44px;align-self:flex-start}
+.notice-actions .btn{flex:1 1 0;height:auto;min-height:48px;white-space:normal;text-align:center;padding:10px 8px;overflow-wrap:anywhere}
+.notice-actions .btn svg{flex:none}
+
+.notice-tabs{display:flex;gap:4px;padding:4px;background:var(--un-bg);border-radius:12px}
+.notice-tabs a{flex:1;display:flex;align-items:center;justify-content:center;min-height:40px;padding:8px;font-size:15px;font-weight:700;color:var(--t2);border-radius:9px}
+.notice-tabs a.on{background:var(--sf);color:var(--pp);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.notice-tags{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+
+.notice-filter-form{display:flex;align-items:center;justify-content:flex-start;gap:8px}
+.notice-select{min-width:0;max-width:100%;min-height:40px;padding:8px 10px;border:1px solid var(--bd);border-radius:10px;background:var(--sf);color:var(--t1);font-family:inherit;font-size:13px;cursor:pointer}
+.notice-select:focus-visible{outline:2px solid var(--p);outline-offset:2px}
+
+.notice-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.notice-toolbar>form{margin:0;min-width:0}
+.notice-toolbar .notice-filter-form{margin-left:auto;flex-shrink:0;max-width:52%}
+.notice-read-all{font-size:12px;line-height:18px;min-height:40px;text-align:left}
+
+/* Keep the dropdown arrow independent of the platform's native select chrome. */
+.notice-toolbar{gap:12px}
+.notice-toolbar .notice-filter-form{flex:0 1 48%;max-width:48%}
+.notice-toolbar .notice-select,.report-select{width:100%;height:40px;min-height:40px;appearance:none;-webkit-appearance:none;padding:0 34px 0 12px;line-height:normal;background-color:var(--sf);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236F6F6F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-size:16px 16px}
+.notice-toolbar>form:first-child:not(.notice-filter-form){flex:1}
+.notice-read-all{display:flex;align-items:center;justify-content:center;width:100%;min-height:40px;padding:8px 10px;border:1px solid #91D7AE;border-radius:10px;background:#D6F1E1;color:#006E35;font-size:12px;line-height:18px;font-weight:700;text-align:center}
+.notice-read-all:hover{background:var(--ps)}
+
+/* My reports: two filters, consistent card hierarchy and one action style. */
+.report-controls{display:flex;flex-direction:column;gap:10px;padding:12px 16px}
+.report-filters{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:0}
+.report-list{gap:12px}
+.report-card{display:flex;flex-direction:column;gap:10px;padding:14px 16px;min-width:0}
+.report-meta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 12px}
+.report-kind{font-weight:700}
+.report-title{font-size:16px;line-height:23px;font-weight:700;overflow-wrap:anywhere}
+.report-tags{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.report-tags:empty{display:none}
+.report-footer{display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--bd);padding-top:8px;min-height:36px}
+.report-link{display:inline-flex;align-items:center;justify-content:flex-end;gap:4px;font-size:13px;line-height:20px;font-weight:700;min-height:36px}
+.report-link .chev{width:16px;height:16px;color:currentColor}
+
+.report-filter-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.report-filter-field label{font-size:12px;line-height:16px;font-weight:700;color:var(--t2)}
+
+.response-instructions{display:flex;align-items:center;min-height:44px;margin-top:4px;padding-top:10px;border-top:1px solid var(--bd);font-size:14px;line-height:20px}
+
+/* Metric history dropdowns use the same centered chevron as report filters. */
+.history-select{appearance:none;-webkit-appearance:none;padding-right:38px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236F6F6F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-size:16px 16px}

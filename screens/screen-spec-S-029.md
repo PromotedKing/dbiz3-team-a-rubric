@@ -122,3 +122,33 @@ The screen has no text input fields; only filter chips / dropdown. (Numbers #4 a
 - [x] All five states are filled in (using the shared D-27 patterns), or marked `[NEEDS CLARIFICATION]` with a reason.
 - [x] Every navigation target is a Screen ID that exists in the Screen List.
 - [x] Every element that displays data names the field it displays, matching the module spec.
+
+## UI review — 11/11/2026
+
+User requested a compact, consistent layout. Replace horizontal status chips with two equal-width dropdowns (status and type) that preserve one another's selection; keep the existing handling count. Each card has the same order: source/type and timestamp, report title, metric classification and case status tags, then a separated footer. All actionable cards use the same "View report" text link and chevron, including resolved and chatbot cases. No-case reports retain "No action needed". Preserve existing targets, statuses and filtering rules. Reuse the explicit centered dropdown chevron from notifications; no native/literal duplicate arrow.
+
+Affected downstream implementation: `app/mb360/templates/my_reports.html`, `app/mb360/static/tci.css`. No FR, data-model, schema or seed changes.
+
+### Filter labels — 11/11/2026
+
+At the user’s request, the unfiltered dropdown labels are "Trạng thái" (left) and "Chỉ số" (right). Selected values still display the chosen status/type. Empty values still mean all; existing options and filtering behavior stay unchanged.
+
+### Filter menu refinement — 11/11/2026
+
+User requested hiding the initial "Trạng thái" placeholder from the opened status menu, and changing the type dropdown’s first option to "Tất cả chỉ số". Keep the placeholder for the initial unfiltered status display; type reset remains available. No data or clinical-rule changes.
+
+### Default options — 11/11/2026
+
+User refined the first dropdown options to "Tất cả" for status and "Tất cả chỉ số" for type. Accessible dropdown names remain "Trạng thái" and "Chỉ số". Empty values still mean all; options and filtering logic stay unchanged.
+
+### Default option wording clarification — 11/11/2026
+
+User clarified the first options inside the selects: left "Tất cả", right "Tất cả chỉ số". These replace the previous default-option wording; accessible names remain Trạng thái / Chỉ số. No option values or filtering behavior change.
+
+### Visible filter labels — 11/11/2026
+
+To distinguish the two fields, add visible labels above the selects: "Trạng thái" on the left and "Chỉ số" on the right. Retain the first options "Tất cả" / "Tất cả chỉ số" and the existing filtering behavior. Labels are associated with their controls via for/id.
+
+### Default option refinement — 11/11/2026
+
+User requested "Tất cả" as the first option in both dropdowns. Visible labels remain "Trạng thái" / "Chỉ số". This supersedes "Tất cả chỉ số" above; filter values and behavior are unchanged.

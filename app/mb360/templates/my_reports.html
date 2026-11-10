@@ -5,40 +5,44 @@
 {% set back_url = "/m/" ~ user.user_id ~ "/notices" %}{% set back_auto = true %}
 {% block main %}
 {% set handling = rows | selectattr("status") | rejectattr("status", "eq", "Resolved") | list | length %}
-<div class="strip">
-  <div class="scroll-x" data-active-status="{{ active_status }}">
-    {% for st in ["All"] + statuses|list %}
-    <a class="chip{% if st == active_status %} on{% endif %}" href="/m/{{ user.user_id }}/my-reports?status={{ '' if st == 'All' else st | urlencode }}&type={{ '' if active_type == 'All' else active_type | urlencode }}">{{ st | t }}</a>
-    {% endfor %}
-  </div>
-  <form class="sec" method="get" action="/m/{{ user.user_id }}/my-reports">
-    <p class="t-cap">{{ _("{n} reports being handled", n=handling) }}</p>
-    <input type="hidden" name="status" value="{{ '' if active_status == 'All' else active_status }}">
-    <select name="type" class="btn so" onchange="this.form.submit()" aria-label="{{ _('Type: All ▾') }}">
-      <option value="" {% if active_type == "All" %}selected{% endif %}>{{ _("Type: All ▾") }}</option>
-      {% for ty in types %}<option value="{{ ty }}" {% if ty == active_type %}selected{% endif %}>{{ ty | t }}</option>{% endfor %}
+<div class="strip report-controls">
+  <form class="report-filters" method="get" action="/m/{{ user.user_id }}/my-reports" data-active-status="{{ active_status }}">
+    <div class="report-filter-field">
+    <label for="report-status">{{ _("Status") }}</label>
+    <select id="report-status" name="status" class="notice-select report-select" onchange="this.form.requestSubmit()" aria-label="{{ _('Status') }}">
+      <option value="" hidden{% if active_status == 'All' %} selected{% endif %}>{{ _("All") }}</option>
+      {% for st in statuses %}<option value="{{ st }}"{% if st == active_status %} selected{% endif %}>{{ st | t }}</option>{% endfor %}
     </select>
+    </div>
+    <div class="report-filter-field">
+    <label for="report-metric">{{ _("Metric") }}</label>
+    <select id="report-metric" name="type" class="notice-select report-select" onchange="this.form.requestSubmit()" aria-label="{{ _('Metric') }}">
+      <option value=""{% if active_type == 'All' %} selected{% endif %}>{{ _("All") }}</option>
+      {% for ty in types %}<option value="{{ ty }}"{% if ty == active_type %} selected{% endif %}>{{ ty | t }}</option>{% endfor %}
+    </select>
+    </div>
+    <noscript><button class="btn s">{{ _("Filter") }}</button></noscript>
   </form>
+  <p class="t-cap">{{ _("{n} reports being handled", n=handling) }}</p>
 </div>
-<div class="body" style="gap:12px">
+<div class="body report-list">
   {% for r in rows %}
-  <div class="card bl8" data-report-row>
-    <div class="sec"><p class="t-cap">{{ ("Chatbot" if r.kind == "chatbot" else "Symptom" if r.title == "Symptom" else "Metric report") | t }} · {{ r.sent_at | show_time }}</p>
-      {% if r.status %}<span class="tag {{ 'ok' if r.status == 'Resolved' else 'inf' }}">{{ r.status | t }}</span>{% endif %}</div>
-    {% if r.kind == "chatbot" %}
-      <p class="t-body b">{{ r.question | truncate(60) }}</p>
-    {% elif r.value %}
-      <p class="t-body b">{{ r.title | t }} {{ r.value | t_known }}</p>
-    {% else %}
-      <p class="t-body b">{{ r.symptoms | t_list }}</p>
-    {% endif %}
-    <div class="sec">
-      {% if r.label %}<span class="tag {{ 'al' if r.label == 'Above threshold' else 'ok' if r.label == 'Normal' else 'un' }}">{{ r.label | t }}</span>{% else %}<span></span>{% endif %}
-      {% if r.kind == "chatbot" %}<a class="btn so" href="/m/{{ user.user_id }}/cases/{{ r.case_id }}">{{ _("View report") }}</a>
-      {% elif r.status %}<a class="btn {{ 'so' if r.status == 'Resolved' else 's' }}" href="/m/{{ user.user_id }}/reports/{{ r.report_id }}">{{ _("View report") }}</a>
+  <article class="card report-card" data-report-row>
+    <div class="report-meta">
+      <span class="t-cap report-kind">{{ ("Chatbot" if r.kind == "chatbot" else "Symptom" if r.title == "Symptom" else "Metric report") | t }}</span>
+      <span class="t-cap">{{ r.sent_at | show_time }}</span>
+    </div>
+    <h2 class="report-title">{% if r.kind == "chatbot" %}{{ r.question | truncate(60) }}{% elif r.value %}{{ r.title | t }} {{ r.value | t_known }}{% else %}{{ r.symptoms | t_list }}{% endif %}</h2>
+    <div class="report-tags">
+      {% if r.label %}<span class="tag {{ 'al' if r.label == 'Above threshold' else 'ok' if r.label == 'Normal' else 'un' }}">{{ r.label | t }}</span>{% endif %}
+      {% if r.status %}<span class="tag {{ 'ok' if r.status == 'Resolved' else 'inf' }}">{{ r.status | t }}</span>{% endif %}
+    </div>
+    <div class="report-footer">
+      {% if r.kind == "chatbot" %}<a class="report-link" href="/m/{{ user.user_id }}/cases/{{ r.case_id }}">{{ _("View report") }} {{ icon.chev() }}</a>
+      {% elif r.status %}<a class="report-link" href="/m/{{ user.user_id }}/reports/{{ r.report_id }}">{{ _("View report") }} {{ icon.chev() }}</a>
       {% else %}<span class="t-cap">{{ _("No action needed") }}</span>{% endif %}
     </div>
-  </div>
+  </article>
   {% else %}
   <div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("You have not submitted any reports.") }}</p></div>
   {% endfor %}

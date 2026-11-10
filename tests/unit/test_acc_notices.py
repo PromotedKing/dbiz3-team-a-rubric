@@ -79,3 +79,12 @@ def test_targets(db, lan):
     assert notices.open_notice(db, lan, _add(db, lan, "d", "Visit result", visit=visit), NOW) == f"{base}/health"
     assert notices.open_notice(db, lan, _add(db, lan, "e", "Instruction reminder", flag=flag), NOW) == f"{base}/instructions"
     assert notices.open_notice(db, lan, _add(db, lan, "f", "Appointment"), NOW) == "/tci/booking"
+
+
+def test_type_and_unread_filters_intersect(db, lan):
+    _add(db, lan, "a", "Report")
+    _add(db, lan, "b", "Report", read="2026-09-27 08:30")
+    _add(db, lan, "c", "Visit result")
+    assert [n["notification_id"][0] for n in notices.list_for(db, lan, "Report", unread_only=True)] == ["a"]
+    assert len(notices.list_for(db, lan, unread_only=True)) == 2
+    assert len(notices.list_for(db, lan, "Report")) == 2

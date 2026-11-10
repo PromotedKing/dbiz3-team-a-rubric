@@ -216,7 +216,7 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | Symptom (D-73) | Severe abdominal pain | Đau bụng dữ dội |
 | Symptom (D-73) | Waters breaking or fluid leakage (UI: Waters breaking / fluid leakage) | Vỡ ối / rỉ ối |
 | Symptom (D-73) | Severe headache, dizziness or blurred vision (UI: Severe headache / dizziness / blurred vision) | Đau đầu dữ dội / chóng mặt / hoa mắt |
-| Symptom (D-73) | Absence of fetal movement | Không thấy thai máy |
+| Symptom (D-73) | Absence of fetal movement | Không cảm nhận được cử động thai |
 | Symptom | Palpitations | Hồi hộp |
 | Symptom | Other | Khác |
 | Diary mood | Happy / Calm / Nervous / Tired / Worried | Vui / Bình yên / Hồi hộp / Mệt / Lo lắng |
@@ -286,7 +286,7 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | Screen text (S-048, D-75) | Indicators this week / No indicators this week. | Chỉ số trong tuần / Tuần này chưa có chỉ số. |
 | CTA (S-105, D-75) | Export PDF album | Xuất album PDF |
 | CTA (S-104, D-74) | Skip / Next / Get started | Bỏ qua / Tiếp / Bắt đầu |
-| Tab | Home / Timeline / Chatbot / From doctor / Profile | Trang chủ / Thai kỳ / Chatbot / Từ bác sĩ / Hồ sơ |
+| Tab | Home / Timeline / Chatbot / From doctor / Profile | Trang chủ / Thai kỳ / Chatbot / Thông báo / Hồ sơ |
 | CTA | Save metrics | Lưu chỉ số |
 | CTA | Submit report | Gửi báo cáo |
 | CTA | View status | Xem trạng thái |
@@ -541,8 +541,8 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | UI package (D-80) | App name | Mẹ & Bé 360 |
 | UI package (D-80) | With you through pregnancy | Đồng hành suốt thai kỳ |
 | UI package (D-80) | Timeline | Thai kỳ |
-| UI package (D-80) | From doctor | Từ bác sĩ |
-| UI package (D-80) | Notices from your doctor | Thông báo từ bác sĩ |
+| UI package (D-80) | From doctor | Thông báo |
+| UI package (D-80) | Notices from your doctor | Thông báo |
 | UI package (D-80) | See the status of each report | Xem trạng thái từng báo cáo |
 | UI package (D-80) | days to go | ngày nữa |
 | UI package (D-80) | Week {n} + {d} days | Tuần {n} + {d} ngày |
@@ -707,7 +707,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Mother app v1.0.0 (D-81) | Tell Mother & Baby 360 your pregnancy date so it can work out your week. | Cho Mẹ & Bé 360 biết mốc thai kỳ để tính tuần thai cho mẹ. |
 | Mother app v1.0.0 (D-81) | The hospital will confirm this number before launch: {hotline}. | Số tổng đài chờ bệnh viện xác nhận trước khi phát hành: {hotline}. |
 | Mother app v1.0.0 (D-81) | The mother's app, embedded in the TCI app. Open this address on a phone for the full-screen version. | App dành cho mẹ, nhúng trong app TCI. Mở địa chỉ này trên điện thoại để dùng toàn màn hình. |
-| Mother app v1.0.0 (D-81) | The nurse will view your question and respond under From doctor. If it gets worse, call the emergency hotline, do not wait. | Y tá sẽ xem câu hỏi và phản hồi ở mục Từ bác sĩ. Nếu nặng hơn, mẹ gọi cấp cứu ngay, đừng chờ. |
+| Mother app v1.0.0 (D-81) | The nurse will view your question and respond under From doctor. If it gets worse, call the emergency hotline, do not wait. | Y tá sẽ xem câu hỏi và phản hồi ở mục Thông báo. Nếu nặng hơn, mẹ gọi cấp cứu ngay, đừng chờ. |
 | Mother app v1.0.0 (D-81) | This needs a medical assessment. Please do not wait. | Dấu hiệu này cần nhân viên y tế đánh giá. Mẹ đừng chờ đợi. |
 | Mother app v1.0.0 (D-81) | Ultrasound image sent by the hospital · tap to enlarge | Ảnh siêu âm do bệnh viện gửi · chạm để phóng to |
 | Mother app v1.0.0 (D-81) | Ultrasound images are attached to the visit day by the hospital. | Ảnh siêu âm do bệnh viện tự gắn vào ngày khám. |
@@ -795,3 +795,19 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Clinical dashboard (D-85) | waiting {h}h {m}m | chờ {h} giờ {m} phút |
 | Clinical dashboard (D-85) | Showing: {group} | Đang lọc: {group} |
 | Clinical dashboard (D-85) | Show all | Bỏ lọc |
+| Notification wording (review 10/11/2026; stored demo title) | Về báo cáo thai máy giảm | Về báo cáo cử động thai giảm |
+
+| Notification filters (review 10/11/2026) | All types | Tất cả loại |
+
+| Notification filter dropdown (10/11/2026) | Notification type | Loại thông báo |
+| Notification filter dropdown (10/11/2026) | Filter | Lọc |
+
+| Notification dropdown review (11/11/2026) | All notifications | Tất cả thông báo |
+
+| My reports filter review (11/11/2026) | All metrics | Tất cả chỉ số |
+
+| My reports filters (11/11/2026) | All metrics | Tất cả chỉ số |
+
+| My reports filter (11/11/2026) | All metrics | Tất cả chỉ số |
+
+| Report response link (11/11/2026) | Detailed instructions from your doctor | Chỉ dẫn cụ thể của bác sĩ |

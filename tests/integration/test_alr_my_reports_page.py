@@ -27,10 +27,10 @@ def test_empty_state(client, user_id):
     assert vi("You have not submitted any reports.") in client.get(f"/m/{user_id('tci-000129')}/my-reports").text
 
 
-def test_links_to_my_reports(client, user_id):
+def test_report_navigation_without_duplicate_instructions_link(client, user_id):
     u09 = user_id("tci-000131")
     target = f'href="/m/{u09}/my-reports"'
-    assert target in client.get(f"/m/{u09}/instructions").text
+    assert target not in client.get(f"/m/{u09}/instructions").text
     alert = client.post(f"/m/{u09}/report", data=bp_form(150, 95, ["No symptoms"])).headers["location"]
     assert target in client.get(alert).text
     status = client.post(f"/m/{u09}/report", data=bp_form(120, 80, ["Palpitations"])).headers["location"]

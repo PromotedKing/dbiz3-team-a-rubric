@@ -117,3 +117,7 @@ Note: the "[Role label] …" and "[Escalate to doctor] …" boxes in the mockup 
 - [x] All states are filled in, or marked `[NEEDS CLARIFICATION]` with a reason.
 - [x] Every navigation target is a Screen ID that exists in the Screen List, or flagged `[NEEDS CLARIFICATION]`.
 - [x] Every element that displays data names the field it displays, matching the module spec.
+
+## Clinical web UI review — 11/11/2026
+
+User requested matching the Overview’s restrained desktop style on Case board and Case list, preserving status-column order and all table fields. Shared desktop margins and source/date filter layout; board uses neutral column borders, consistent headers/counts and card footers. List uses explicit column widths, no-wrap week/action cells, consistent compact status tags and local horizontal scrolling on smaller screens. Existing filters, targets, case ordering and clinical rules are unchanged. Downstream: `templates/staff_base.html`, `_staff_filters.html`, `staff_board.html`, `cases.html`, and `static/staff.css`. No data-model, schema or seed changes.

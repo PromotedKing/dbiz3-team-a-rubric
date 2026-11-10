@@ -56,7 +56,7 @@ def test_notices_list_filter_open_and_badge(client, db, user_id):
     client.post(f"/m/{lan}/report", data=bp_form(150, 95, ["No symptoms"]))     # ALR FR-018 writes one
     page = client.get(f"/m/{lan}/notices").text
     assert page.count("data-notice") == 1 and '<span class="badge" data-unread>1</span>' in page
-    assert vi("{n} unread notifications", n=1) in page and vi("Mark all as read") in page
+    assert vi("{n} unread notifications", n=1) not in page and vi("Mark all as read") in page
     assert client.get(f"/m/{lan}/notices", params={"type": "Visit result"}).text.count("data-notice") == 0
     assert client.get(f"/m/{lan}/notices", params={"type": "Report"}).text.count("data-notice") == 1
     assert vi("Your Blood pressure report has been sent to clinical staff") in page or "Huyết áp" in page
@@ -91,3 +91,20 @@ def test_no_alert_word_on_the_notification_list(client, db, user_id):
     client.post(f"/m/{lan}/report", data=bp_form(150, 95, ["No symptoms"]))
     page = client.get(f"/m/{lan}/notices").text
     assert vi("Alert") not in page and "alert" not in page.lower()         # S-009 SR-002
+
+
+def test_notification_filters_keep_both_selections(client, db, user_id):
+    lan = user_id("tci-000123")
+    db.execute("DELETE FROM NOTIFICATION WHERE user_id = ?", (lan,))
+    client.post(f"/m/{lan}/report", data=bp_form(150, 95, ["No symptoms"]))
+    page = client.get(f"/m/{lan}/notices?type=Report&unread=1").text
+    assert page.count("data-notice") == 1
+    assert '<option value="Report" selected>' in page
+    assert 'unread=1&amp;type=Report' in page
+    assert '<input type="hidden" name="unread" value="1">' in page
+    assert '<span class="tag inf">' + vi("Report") + '</span>' in page
+    assert vi("Above threshold") in page
+    db.execute("UPDATE NOTIFICATION SET read_at = '2026-09-27 12:00' WHERE user_id = ?", (lan,))
+    db.commit()
+    assert client.get(f"/m/{lan}/notices?type=Report&unread=1").text.count("data-notice") == 0
+    assert client.get(f"/m/{lan}/notices?type=Report").text.count("data-notice") == 1

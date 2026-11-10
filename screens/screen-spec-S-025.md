@@ -124,3 +124,7 @@ The empty / loading / error states use the shared components defined on the `00-
 - [x] All five states are filled in, or marked "not applicable"/`[NEEDS CLARIFICATION]` with a reason.
 - [ ] Every navigation target is a Screen ID that exists in the Screen List. (the Appointments tab has no Screen ID in the wireframe set)
 - [x] Every element that displays data names the field it displays, matching the module spec.
+
+## UI review — 11/11/2026
+
+User requested fixing the dropdown arrow alignment. Metric and glucose-context selects use one explicit 16px chevron centered vertically, inset 10px from the right, with space reserved before it. Existing control height and filtering behavior unchanged. Implementation: `templates/history.html`, `static/tci.css`; no data or clinical-rule changes.

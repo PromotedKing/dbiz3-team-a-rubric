@@ -113,3 +113,7 @@ No open questions.
 - [x] All states are filled in, or marked "not applicable"/`[NEEDS CLARIFICATION]` with a reason.
 - [x] Every navigation target is a Screen ID that exists in the Screen List (S-025 = DBIZ2 "Health History", D-38).
 - [x] Every element that displays data names the field it displays, matching the module spec.
+
+## UI review — 11/11/2026
+
+User requested removing the bottom "Báo cáo của tôi ›" link from Doctor’s instructions. Metric history/report actions, symptom report action and header back remain unchanged. Implementation: `app/mb360/templates/instructions.html`; no data or clinical-rule changes.

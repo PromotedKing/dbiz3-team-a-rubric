@@ -10,7 +10,7 @@
 | Mockup image | `img/S-008.png` |
 | Status | Draft (revised 14/10/2026 — week widget opens S-048 (D-75), appointment section Could (D-77); image to redraw) |
 
-> **v1.0.0 app (07/11/2026, D-80 – D-85):** Header "Mẹ & Bé 360" + ✕ (S-083); week card; next-appointment card from the TCI host (spec-APT §7.3); report button; "Bác sĩ vừa gửi n thông báo" card; "Chỉ số của mẹ ›" (opens S-023) and 4 tiles with › (blood pressure, blood glucose, fetal heart rate with threshold labels; weight); "+ Nhập chỉ số tự theo dõi"; diary card. Tab bar Home · Thai kỳ · Chatbot · Từ bác sĩ · Hồ sơ (D-80). No menu rows.
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Header "Mẹ & Bé 360" + ✕ (S-083); week card; next-appointment card from the TCI host (spec-APT §7.3); report button; "Bác sĩ vừa gửi n thông báo" card; "Chỉ số của mẹ ›" (opens S-023) and 4 tiles with › (blood pressure, blood glucose, fetal heart rate with threshold labels; weight); "+ Nhập chỉ số tự theo dõi"; diary card. Tab bar Home · Thai kỳ · Chatbot · Thông báo · Hồ sơ (D-80). No menu rows.
 
 ## 1. Purpose
 
