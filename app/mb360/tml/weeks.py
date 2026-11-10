@@ -46,10 +46,14 @@ def week_days(w: dict, today: date) -> list[dict]:
         day = w["start"] + timedelta(days=i)
         iso = day.isoformat()
         diary = [e for e in w["diary"] if e["entry_date"] == iso]
+        visit = next((v for v in w["visits"] if v["visit_date"] == iso), None)
+        fetal = next((r["value"] for r in rows.get(iso, []) if r.get("metric") == "Fetal heart rate"), None)
         out.append({"iso": iso, "num": day.strftime("%d"), "short": SHORT_DAYS[day.weekday()], "long": LONG_DAYS[day.weekday()],
                     "future": day > today, "is_today": day == today, "has_visit": iso in visits, "has_diary": bool(diary),
                     "has_rows": iso in rows, "row_count": len(rows.get(iso, [])),
-                    "mood": next((e["mood"] for e in diary if e["mood"]), None), "diary_texts": [e["text"] for e in diary]})
+                    "mood": next((e["mood"] for e in diary if e["mood"]), None), "diary_texts": [e["text"] for e in diary],
+                    "thumb": (visit and visit.get("ultrasound_image")) or next((e.get("photo") for e in diary if e.get("photo")), None),
+                    "visit_line": ", ".join(x for x in (visit.get("visit_type"), fetal) if x) if visit else None})
     return out
 
 
@@ -77,9 +81,9 @@ def _build(conn: sqlite3.Connection, user_id: str, edd: date, n: int, current: i
            FROM VISIT WHERE user_id = ? AND visit_date >= ? AND visit_date < ? ORDER BY visit_date""", (user_id, lo, hi))]
     diary = []
     for e in conn.execute("SELECT * FROM DIARY_ENTRY WHERE user_id = ? AND gestational_week = ? ORDER BY entry_date DESC, rowid DESC", (user_id, n)):
-        photo = conn.execute("SELECT file FROM DIARY_IMAGE WHERE diary_id = ? ORDER BY sort_order LIMIT 1", (e["diary_id"],)).fetchone()
+        photos = [r[0] for r in conn.execute("SELECT file FROM DIARY_IMAGE WHERE diary_id = ? ORDER BY sort_order", (e["diary_id"],))]
         diary.append({"diary_id": e["diary_id"], "entry_date": e["entry_date"], "text": e["text"], "mood": e["mood"],
-                      "photo": photo[0] if photo else None})
+                      "photo": photos[0] if photos else None, "photos": photos})
     messages = [dict(m) for m in conn.execute(
         "SELECT author, text, created_at FROM FAMILY_MESSAGE WHERE user_id = ? AND week = ? ORDER BY created_at", (user_id, n))]
     return {"week": n, "current": current, "start": start, "end": end,

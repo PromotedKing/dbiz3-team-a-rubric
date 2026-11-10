@@ -1,21 +1,27 @@
 {
-  "status": "PROVISIONAL — team draft, Pending SME (spec-BOT §10 Q2, Q12, Q14; D-47). Do not use for real patients.",
+  "status": "PROVISIONAL — team draft, Pending SME (spec-BOT §10 Q2, Q12, Q14; D-47). Do not use for real patients. Matching rules: bot/classify.py.",
   "danger_phrases": [
     "bleeding", "haemorrhage", "hemorrhage", "severe abdominal pain", "hard contractions", "blurred vision", "dizziness",
     "dizzy", "fainting", "fainted", "no fetal movement", "baby not kicking", "not moving", "waters breaking", "water broke",
-    "leaking amniotic fluid", "fluid leakage",
+    "leaking amniotic fluid", "fluid leakage", "seizure", "convulsion",
     "chảy máu", "ra máu", "xuất huyết", "đau bụng quằn quại", "đau bụng dữ dội", "co thắt", "hoa mắt", "chóng mặt",
-    "ngất", "không thấy thai máy", "thai không máy", "vỡ ối", "rỉ ối"
+    "ngất", "không thấy thai máy", "thai không máy", "vỡ ối", "rỉ ối",
+    "không đạp", "ít đạp", "đạp yếu", "không thấy đạp", "không thấy con đạp", "co giật", "đau đầu dữ dội", "phù mặt", "phù tay"
   ],
   "personal_health_markers": [
     "i have", "i've had", "i feel", "i am feeling", "i'm feeling", "my baby is", "my blood", "my result", "is that normal",
     "is it normal", "is that okay", "should i worry", "do i need to see",
     "tôi bị", "em bị", "mình bị", "tôi thấy", "em thấy", "có sao không", "có bình thường không", "kết quả của tôi"
   ],
+  "symptom_words": [
+    "fever", "pain", "ache", "swelling", "swollen", "vomiting", "medicine", "medication", "dose", "pill*",
+    "sốt", "đau", "phù", "sưng", "nôn", "buồn nôn", "ngứa", "khó thở", "ho", "thuốc", "liều"
+  ],
   "pregnancy_topics": [
-    "pregnan", "baby", "babies", "fetus", "foetus", "trimester", "prenatal", "antenatal", "postpartum", "birth", "labour",
-    "labor", "breast", "milk", "formula", "nutrition", "eat", "food", "diet", "vitamin", "folic", "mother", "mom", "dad",
-    "week", "ultrasound", "check-up", "kick", "nausea", "sleep", "exercise", "weight",
-    "bầu", "thai", "mang thai", "em bé", "bé", "sữa", "sinh", "mẹ", "bố", "ăn", "dinh dưỡng", "siêu âm", "khám", "ốm nghén", "cho con bú"
+    "pregnan*", "baby", "babies", "fetus", "foetus", "trimester", "prenatal", "antenatal", "postpartum", "birth", "labour",
+    "labor", "breast*", "milk", "formula", "nutrition", "eat", "food", "diet", "vitamin*", "folic", "mother", "mom", "dad",
+    "week", "ultrasound", "check-up", "kick", "nausea", "sleep", "exercise", "weight", "stretch mark",
+    "bầu", "thai", "mang thai", "em bé", "bé", "sữa", "sinh", "mẹ", "bố", "ăn", "dinh dưỡng", "siêu âm", "khám", "ốm nghén", "cho con bú",
+    "mất ngủ", "ngủ", "tập thể dục", "vận động", "chuột rút", "nghén", "rạn da", "kem rạn", "vết rạn"
   ]
 }

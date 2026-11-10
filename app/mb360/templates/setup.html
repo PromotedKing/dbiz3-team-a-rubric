@@ -8,10 +8,10 @@
 {% block main %}
 <form class="fw" method="post" action="/m/{{ user.user_id }}/setup" id="setup">
   <div class="body" style="gap:20px">
-    <p class="t-body" style="color:#6F6F6F">{{ _("So the app knows which gestational week you are in.") }}</p>
+    <p class="t-body" style="color:#6F6F6F">{{ _("Hello, {name}!", name=user.full_name.split()[-1]) }} {{ _("Tell Mother & Baby 360 your pregnancy date so it can work out your week.") }}</p>
     <div class="seg" aria-label="{{ _('Pregnancy information') }}">
-      <label><input type="radio" name="date_type" value="EDD" {% if form.get('date_type', 'EDD') == 'EDD' %}checked{% endif %} onchange="this.form.method='get';this.form.submit()"><span>{{ _("I know my due date") }}</span></label>
-      <label><input type="radio" name="date_type" value="LMP" {% if form.get('date_type') == 'LMP' %}checked{% endif %} onchange="this.form.method='get';this.form.submit()"><span>{{ _("I know the first day of my last period") }}</span></label>
+      <label><input type="radio" name="date_type" value="EDD" {% if form.get('date_type', 'EDD') == 'EDD' %}checked{% endif %} onchange="this.form.date.value='';this.form.method='get';this.form.submit()"><span>{{ _("I know my due date") }}</span></label>
+      <label><input type="radio" name="date_type" value="LMP" {% if form.get('date_type') == 'LMP' %}checked{% endif %} onchange="this.form.date.value='';this.form.method='get';this.form.submit()"><span>{{ _("I know the first day of my last period") }}</span></label>
     </div>
     {{ err("date_type") }}
     <div class="fld">
@@ -25,17 +25,17 @@
       {{ icon.ok(24, "#00A651") }}
       <div>
         <p class="t-cap" style="color:#00873F">{{ _("Calculated by the system") }}</p>
-        <p class="t-body b" style="color:#00873F">{{ _("Week {n} · day {d}", n=card.week, d=card.day) }}</p>
+        <p class="t-body b" style="color:#00873F">{{ _("Week {n} + {d} days", n=card.week, d=card.day) }} · {{ _(trimester_of(card.week)) }}</p>
         <p class="t-cap" style="color:#00873F">{{ _("Today {today} · Due {edd}", today=today | dmy, edd=card.edd | dmy) }}</p>
       </div>
     </div>
     {% endif %}
     <div style="height:1px;background:#E0E0E0"></div>
     <div class="grid2">
-      <div class="fld"><label for="h">{{ _("Height") }} <span class="opt">{{ _("(optional)") }}</span></label><div class="unit"><input id="h" class="inp" name="height_cm" inputmode="decimal" value="{{ form.get('height_cm', '') }}"><span>cm</span></div>{{ err("height_cm") }}</div>
-      <div class="fld"><label for="w">{{ _("Weight") }} <span class="opt">{{ _("(optional)") }}</span></label><div class="unit"><input id="w" class="inp" name="weight_kg" inputmode="decimal" value="{{ form.get('weight_kg', '') }}"><span>kg</span></div>{{ err("weight_kg") }}</div>
+      <div class="fld"><label for="h">{{ _("Height") }} <span class="opt">{{ _("(optional)") }}</span></label><div class="unit"><input id="h" class="inp" name="height_cm" inputmode="decimal" placeholder="{{ _('e.g. {value}', value='158') }}" value="{{ form.get('height_cm', '') }}"><span>cm</span></div>{{ err("height_cm") }}</div>
+      <div class="fld"><label for="w">{{ _("Weight") }} <span class="opt">{{ _("(optional)") }}</span></label><div class="unit"><input id="w" class="inp" name="weight_kg" inputmode="decimal" placeholder="{{ _('e.g. {value}', value='52.0') }}" value="{{ form.get('weight_kg', '') }}"><span>kg</span></div>{{ err("weight_kg") }}</div>
     </div>
-    <div class="fld"><label for="f">{{ _("Date of first antenatal check-up (optional)") }}</label><input id="f" class="inp" type="date" name="first_visit_date" value="{{ form.get('first_visit_date', '') }}">{{ err("first_visit_date") }}</div>
+    <div class="fld"><label for="f">{{ _("Date of first antenatal check-up") }} <span class="opt">{{ _("(optional)") }}</span></label><input id="f" class="inp" type="date" name="first_visit_date" value="{{ form.get('first_visit_date', '') }}">{{ err("first_visit_date") }}</div>
   </div>
   <div class="foot"><button class="btn" onclick="this.form.method='post'">{{ _("Get started") }}</button></div>
 </form>

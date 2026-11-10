@@ -3,11 +3,13 @@ import sqlite3
 from datetime import date, datetime
 
 from ..alr.reports import gestational_week
+from ..alr.validation import GROUP2
 from ..tml.weeks import day_of_week
+from .. import numbers
 from . import setup
 
 DEFAULTS = {"report_response": 1, "new_visit_result": 1, "appointment_reminder": 1, "watch_flag_reminder": 0}  # ACC Q22 (a)
-SWITCHES = ("new_visit_result", "watch_flag_reminder")     # S-010: "Report responses" locked on (Q13), appointments hidden (D-77)
+SWITCHES = ("new_visit_result", "appointment_reminder", "watch_flag_reminder")     # S-010: "Report responses" locked on (Q13)
 
 
 class ProfileError(Exception):
@@ -44,20 +46,19 @@ def load(conn: sqlite3.Connection, user_id: str, now: datetime) -> dict:
     prefs = preferences(conn, user_id)
     return {"phone": mask_phone(user["phone"]), "edd": p["edd"] if p else None, "lmp": p["lmp"] if p else None,
             "edd_source": p["edd_source"] if p else None, "height_cm": p["height_cm"] if p else None,
+            "first_visit_date": p["first_visit_date"] if p else None,
             "week": gestational_week(edd, now.date()) if p else None, "week_day": day_of_week(edd, now.date()) if p else None,
             "link": latest_link(conn, user_id), "linked": is_linked(conn, user_id), "consent": bool(consent and consent["accepted"]),
-            "instructions": [f["metric"] for f in flags], "reminders_on": any(prefs[k] for k in SWITCHES)}
+            "instructions": [m for m in GROUP2 if m in {f["metric"] for f in flags}], "reminders_on": any(prefs[k] for k in SWITCHES)}
 
 
 def save(conn: sqlite3.Connection, user_id: str, form: dict, now: datetime) -> None:
     """S-011 "Save changes": FR-020 validates, FR-022 stores. The due date of a linked mother never changes (BR-003)."""
     errors = {}
-    height = (form.get("height_cm") or "").strip()
-    if height:
-        try:
-            float(height)
-        except ValueError:
-            errors["height_cm"] = "Enter a number."
+    height, error = numbers.read(form.get("height_cm"))
+    height = height or ""
+    if error:
+        errors["height_cm"] = error
     linked = is_linked(conn, user_id)
     current = conn.execute("SELECT edd FROM PREGNANCY_PROFILE WHERE user_id = ?", (user_id,)).fetchone()
     edd = current["edd"]
@@ -88,7 +89,7 @@ def set_switch(conn: sqlite3.Connection, user_id: str, key: str, value: bool, no
     try:
         conn.execute("""INSERT INTO NOTIFICATION_PREFERENCE (user_id, report_response, new_visit_result, appointment_reminder, watch_flag_reminder, updated_at)
                         VALUES (:user_id, :report_response, :new_visit_result, :appointment_reminder, :watch_flag_reminder, :updated_at)
-                        ON CONFLICT (user_id) DO UPDATE SET new_visit_result = :new_visit_result,
+                        ON CONFLICT (user_id) DO UPDATE SET new_visit_result = :new_visit_result, appointment_reminder = :appointment_reminder,
                             watch_flag_reminder = :watch_flag_reminder, updated_at = :updated_at""",
                      {**prefs, "user_id": user_id, "updated_at": stamp})
         conn.commit()

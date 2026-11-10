@@ -13,7 +13,7 @@
     <button name="metric" value="Symptom"{% if metric == "Symptom" %} class="on" aria-pressed="true"{% endif %}>{{ _("Symptom") }}</button>
   </form>
 </div>
-<form class="fw" method="post" action="/m/{{ user.user_id }}/report">
+<form class="fw" method="post" action="/m/{{ user.user_id }}/report" data-live-rules='{{ live_rules | tojson }}'>
   <div class="body" style="gap:20px">
     <input type="hidden" name="metric" value="{{ metric }}">
     {{ err("metric") }}
@@ -30,7 +30,7 @@
     </div>
     {% elif metric == "Blood glucose" %}
     <div class="fld"><label for="ctx">{{ _("Measurement time") }}</label>
-      <select id="ctx" class="inp" name="glucose_context">
+      <select id="ctx" class="inp" name="glucose_context" data-reload-on-change="/m/{{ user.user_id }}/report?metric=Blood%20glucose&glucose_context=">
         <option value="">{{ _("Choose…") }}</option>
         {% for code, text in glucose_labels.items() %}<option value="{{ code }}" {% if form.get('glucose_context') == code %}selected{% endif %}>{{ text | t }}</option>{% endfor %}
       </select>{{ err("glucose_context") }}</div>
@@ -41,7 +41,12 @@
     {% endif %}
 
     {% if metric != "Symptom" %}
-    <div class="warnbox" data-threshold-card>{{ icon.warn() }}<p class="t-cap" style="color:#8A3A07">{{ card | t if card else _("Choose the measurement time to see the threshold.") }}</p></div>
+    <div class="warnbox" data-threshold-card data-state="idle">
+      <span class="w-ok">{{ icon.ok() }}</span><span class="w-al">{{ icon.warn() }}</span>
+      <div><p class="t-body b w-title w-al">{{ _("Above threshold") }}</p><p class="t-body b w-title w-ok">{{ _("Normal") }}</p>
+        <p class="t-cap w-text">{{ card | t if card else _("Choose the measurement time to see the threshold.") }}</p>
+        <p class="t-cap w-text w-al">{{ _("Your report will be sent to clinical staff.") }}</p></div>
+    </div>
     {% endif %}
 
     <div class="fld"><label for="at">{{ _("Measured at") }}</label><input id="at" class="inp" type="datetime-local" name="measured_at" value="{{ form.get('measured_at', '') }}">{{ err("measured_at") }}</div>
@@ -55,7 +60,7 @@
       </div>
       {{ err("symptoms") }}
     </div>
-    <div class="fld"><label for="other">{{ _("Describe other symptom (max 100 characters)") }}</label>
+    <div class="fld" data-other-row><label for="other">{{ _("Describe other symptom (max 100 characters)") }}</label>
       <input id="other" class="inp" name="other_symptom_text" maxlength="100" value="{{ form.get('other_symptom_text', '') }}">{{ err("other_symptom_text") }}</div>
     <div class="fld"><label for="note">{{ _("Note") }} <span class="opt">{{ _("(optional)") }}</span></label>
       <textarea id="note" class="inp" style="height:88px" name="note" placeholder="{{ _('What else should clinical staff know?') }}">{{ form.get('note', '') }}</textarea></div>

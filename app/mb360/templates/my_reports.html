@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
 {% set page_title = "My reports" %}
-{% set back_url = "/m/" ~ user.user_id ~ "/notices" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/notices" %}{% set back_auto = true %}
 {% block main %}
 {% set handling = rows | selectattr("status") | rejectattr("status", "eq", "Resolved") | list | length %}
 <div class="strip">

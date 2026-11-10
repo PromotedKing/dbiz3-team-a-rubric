@@ -59,7 +59,7 @@ CREATE TABLE CONSENT_RECORD (
 CREATE TABLE CONVERSATION (
     conversation_id TEXT NOT NULL CHECK (length(conversation_id) = 36),  -- UUID
     user_id TEXT NOT NULL CHECK (length(user_id) = 36),  -- UUID
-    current_session_data TEXT CHECK (json_valid(current_session_data)),  -- JSON
+    current_session_data TEXT CHECK (current_session_data IS NULL OR json_valid(current_session_data)),  -- JSON
     PRIMARY KEY (conversation_id),
     FOREIGN KEY (user_id) REFERENCES USER_ACCOUNT (user_id)
 );
@@ -183,7 +183,7 @@ CREATE TABLE AI_RESPONSE_LOG (
     log_id TEXT NOT NULL CHECK (length(log_id) = 36),  -- UUID
     conversation_id TEXT NOT NULL CHECK (length(conversation_id) = 36),  -- UUID
     ai_response_data TEXT NOT NULL,  -- TEXT
-    audit_log_entry TEXT CHECK (json_valid(audit_log_entry)),  -- JSON
+    audit_log_entry TEXT CHECK (audit_log_entry IS NULL OR json_valid(audit_log_entry)),  -- JSON
     PRIMARY KEY (log_id),
     FOREIGN KEY (conversation_id) REFERENCES CONVERSATION (conversation_id)
 );
@@ -193,7 +193,7 @@ CREATE TABLE CHAT_MESSAGE (
     conversation_id TEXT NOT NULL CHECK (length(conversation_id) = 36),  -- UUID
     sender TEXT NOT NULL CHECK (sender IN ('Mother', 'Chatbot')),  -- ENUM (Mother / Chatbot)
     text TEXT NOT NULL CHECK (length(text) <= 500),  -- TEXT (the mother's question ≤ 500 characters — D-46)
-    parsed_intent TEXT CHECK (json_valid(parsed_intent)),  -- JSON
+    parsed_intent TEXT CHECK (parsed_intent IS NULL OR json_valid(parsed_intent)),  -- JSON
     is_risk INTEGER NOT NULL CHECK (is_risk IN (0, 1)),  -- BOOLEAN, default false
     handoff_choice TEXT CHECK (handoff_choice IN ('Connect to nurse', 'No thanks')),  -- ENUM (Connect to nurse / No thanks)
     sent_at TEXT NOT NULL CHECK (sent_at GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]'),  -- DATETIME

@@ -17,7 +17,13 @@ _FIELD = re.compile(r"\{(\w+)\}")
 # 5-tab bar (ui-label-reference §11, D-80): key, label, path under /m/{user_id}/
 TABS = (("home", "Home", "home"), ("timeline", "Timeline", "timeline"), ("chatbot", "Chatbot", "chat"),
         ("doctor", "From doctor", "notices"), ("profile", "Profile", "profile"))
+# On-screen symptom wording (docs/ui-label-reference.md, D-73); stored values stay as in the schema.
+SYMPTOM_LABELS = {
+    "Waters breaking or fluid leakage": "Waters breaking / fluid leakage",
+    "Severe headache, dizziness or blurred vision": "Severe headache / dizziness / blurred vision",
+}
 _conn = None
+SHOWCASE = False     # mb360.server: phone frame with the side panel on a desktop browser
 
 
 def use_connection(conn) -> None:
@@ -120,6 +126,12 @@ def t_parts(text: str | None) -> str:
     return " · ".join(t_known(p) for p in text.split(" · ")) if text else ""
 
 
+def _chatbot_engine() -> str:
+    from .bot import llm
+    name = llm.describe()
+    return {"local": "câu trả lời có sẵn (chưa đặt GROQ_API_KEY hay GEMINI_API_KEY)", "fake": "câu trả lời mẫu"}.get(name, name)
+
+
 def initials(full_name: str) -> str:
     parts = full_name.split()
     return (parts[0][0] + parts[-1][0]).upper() if len(parts) > 1 else full_name[:2].upper()
@@ -142,5 +154,5 @@ def show_time(text: str | None) -> str:
 def install(templates) -> None:
     """Give a Jinja2Templates instance the label lookup, the shared formats and the shell helpers."""
     env = templates.env
-    env.globals.update(_=t, TABS=TABS, initials=initials, unread=unread)
-    env.filters.update(t=t, t_list=t_list, t_known=t_known, t_parts=t_parts, dmy=dmy, show_date=dmy, show_time=show_time)
+    env.globals.update(_=t, TABS=TABS, initials=initials, unread=unread, showcase=lambda: SHOWCASE, chatbot_engine=_chatbot_engine)
+    env.filters.update(symptom_label=lambda s: SYMPTOM_LABELS.get(s, s), t=t, t_list=t_list, t_known=t_known, t_parts=t_parts, dmy=dmy, show_date=dmy, show_time=show_time)

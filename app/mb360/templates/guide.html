@@ -1,6 +1,5 @@
-{#- S-104; layout: screens/ui-final Màn 13. The package draws one of 3 pages; the 4 proposed pages stay until ACC Q20 is answered (U17). -#}
+{#- S-104; layout: screens/ui-final Màn 13: 3 pages (U17). Text pending (spec-ACC §10 Q20). -#}
 {% extends "base.html" %}
-{% import "_icons.html" as icon %}
 {% set page_title = "Onboarding guide" %}
 {% set white = true %}
 {% block header %}
@@ -10,18 +9,19 @@
 </div>
 {% endblock %}
 {% block main %}
-<div data-guide-pages="{{ total }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:0 24px;text-align:center">
-  <div style="width:240px;height:240px;border-radius:50%;background:#CCF6D2;display:flex;align-items:center;justify-content:center;color:#00A651">{{ icon.mb(120) }}</div>
+<div class="guide-page" data-guide-pages="{{ total }}">
+  <div class="guide-ill"><svg width="150" height="150" viewBox="0 0 150 150" aria-hidden="true">
+    {%- if n == 1 %}<rect x="35" y="20" width="80" height="112" rx="14" fill="#fff" stroke="#00A651" stroke-width="3"/><rect x="47" y="36" width="56" height="26" rx="8" fill="#00A651"/><rect x="53" y="44" width="28" height="4" rx="2" fill="#fff"/><rect x="53" y="52" width="18" height="4" rx="2" fill="#CCF6D2"/><rect x="47" y="70" width="26" height="22" rx="6" fill="#E6F6EC"/><rect x="77" y="70" width="26" height="22" rx="6" fill="#E6F6EC"/><rect x="47" y="98" width="56" height="12" rx="6" fill="#48D07C"/><circle cx="114" cy="104" r="20" fill="#F66A0B"/><path d="M114 98c-2.4-3.4-7.5-1.6-7.5 2.2 0 4 7.5 8.8 7.5 8.8s7.5-4.8 7.5-8.8c0-3.8-5.1-5.6-7.5-2.2z" fill="#fff"/><circle cx="30" cy="50" r="10" fill="#009788"/>{% elif n == 2 %}<rect x="30" y="34" width="90" height="90" rx="14" fill="#fff" stroke="#00A651" stroke-width="3"/><rect x="30" y="34" width="90" height="24" rx="12" fill="#00A651"/><path d="M52 24v18M98 24v18" stroke="#009788" stroke-width="5" stroke-linecap="round"/><circle cx="55" cy="78" r="6" fill="#F66A0B"/><circle cx="75" cy="78" r="6" fill="#48D07C"/><circle cx="95" cy="78" r="6" fill="#48D07C"/><circle cx="55" cy="102" r="6" fill="#48D07C"/><circle cx="75" cy="102" r="6" fill="#CCF6D2"/><circle cx="95" cy="102" r="6" fill="#CCF6D2"/><circle cx="118" cy="116" r="20" fill="#F66A0B"/><path d="M118 110c-2.4-3.4-7.5-1.6-7.5 2.2 0 4 7.5 8.8 7.5 8.8s7.5-4.8 7.5-8.8c0-3.8-5.1-5.6-7.5-2.2z" fill="#fff"/>{% else %}<path d="M75 28c-30 0-54 20-54 45 0 14 8 26 20 34l-6 22 24-13c5 1 10 2 16 2 30 0 54-20 54-45s-24-45-54-45z" fill="#fff" stroke="#00A651" stroke-width="3"/><circle cx="53" cy="73" r="6" fill="#48D07C"/><circle cx="75" cy="73" r="6" fill="#00A651"/><circle cx="97" cy="73" r="6" fill="#48D07C"/><circle cx="122" cy="112" r="20" fill="#009788"/><path d="M114 112l6 6 11-12" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>{% endif -%}
+  </svg></div>
   <div style="display:flex;flex-direction:column;gap:10px">
     <h1 class="t-title" style="font-size:22px;line-height:28px">{{ title | t }}</h1>
     <p class="t-body" style="color:#6F6F6F">{{ text | t }}</p>
-    <p class="t-cap">{{ _("Guide text to be confirmed (spec-ACC §10 Q20).") }}</p>
   </div>
   <div style="display:flex;gap:6px" aria-hidden="true">
-    {% for i in range(1, total + 1) %}<span style="width:{{ 20 if i == n else 6 }}px;height:6px;border-radius:3px;background:{{ '#00A651' if i == n else '#E0E0E0' }}"></span>{% endfor %}
+    {% for i in range(1, total + 1) %}<span class="dotp{% if i == n %} on{% endif %}"></span>{% endfor %}
   </div>
 </div>
-<div style="flex:none;padding:16px 16px 28px;display:flex;gap:12px">
+<div class="foot-plain">
   <a href="/m/{{ user.user_id }}/guide/done" class="btn o">{{ _("Skip") }}</a>
   {% if n < total %}<a href="/m/{{ user.user_id }}/guide?page={{ n + 1 }}" class="btn">{{ _("Next") }}</a>
   {% else %}<a href="/m/{{ user.user_id }}/guide/done" class="btn">{{ _("Get started") }}</a>{% endif %}

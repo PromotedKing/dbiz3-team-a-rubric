@@ -10,6 +10,8 @@
 | Mockup image | `img/S-023.png` |
 | Status | Draft (revised 29/09/2026 — screen-spec fix #1; fetal heart rate per the latest MVP Scope) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Reached from the S-008 title and tiles and from "New visit results"; protein without a value shows "Chưa đánh giá".
+
 ## 1. Purpose
 
 **Shown when:** the mother taps the "Health" tab, "Health metrics ›" or the new visit result card on `S-008`; or returns from `S-024` (after saving / cancelling), `S-027` (←), S-025 or `S-029`.

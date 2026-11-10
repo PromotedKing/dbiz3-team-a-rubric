@@ -1,0 +1,13 @@
+{
+  "name": "Mother & Baby 360",
+  "short_name": "Mẹ & Bé 360",
+  "description": "Đồng hành suốt thai kỳ cùng Hệ Thống Y Tế Thu Cúc",
+  "lang": "vi",
+  "start_url": "/tci",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#00A651",
+  "icons": [{ "src": "/static/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

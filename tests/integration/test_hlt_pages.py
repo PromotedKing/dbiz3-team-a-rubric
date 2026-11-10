@@ -17,7 +17,7 @@ def test_health_metrics_page(client, user_id):
               "132/84 mmHg", vi("Normal"), "145 bpm", vi("(reference range {range})", range="110–160 bpm"), "56.5 kg", vi("Negative"),
               vi("{n} metrics: {names}", n=2, names=vi("Blood glucose") + ", " + vi("Blood pressure")),
               vi("{n} reports being handled", n=2), vi("Self-entered"),
-              "57.0 kg", "36.8 °C", "82 bpm", "7 h 30 min", "27/09/2026 · 07:30", vi("+ Enter self-tracked metrics")):
+              "57.0 kg", "36.8 °C", "82 bpm", vi("{h} h {m} min", h=7, m=30), "27/09/2026 · 07:30", vi("+ Enter self-tracked metrics")):
         assert t in page, t
     assert f'href="/m/{lan}/instructions"' in page and f'href="/m/{lan}/my-reports"' in page
     assert "<input" not in page                                     # visit values are read-only (BR-001)

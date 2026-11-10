@@ -10,6 +10,8 @@
 | Mockup image | `img/S-025A.png` |
 | Status | Draft (revised 29/09/2026 — screen-spec fix #1, #2; FR links) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Live hint from THRESHOLD_RULE while typing; tabs ordered blood pressure, blood glucose, urine protein, symptom.
+
 ## 1. Purpose
 
 **Shown when:** the mother taps on `S-027`:

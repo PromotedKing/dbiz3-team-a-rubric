@@ -11,15 +11,15 @@ def _new_mother(db):
 def test_card_from_edd(client, db):
     uid = _new_mother(db)
     page = client.get(f"/m/{uid}/setup", params={"date_type": "EDD", "date": "2026-12-20"}).text
-    for text in (vi("Pregnancy setup"), vi("Calculated by the system"), vi("Week {n} · day {d}", n=28, d=0),
-                 vi("Today {today} · Due {edd}", today="27/09/2026", edd="20/12/2026"), vi("Date of first antenatal check-up (optional)")):
+    for text in (vi("Pregnancy setup"), vi("Calculated by the system"), vi("Week {n} + {d} days", n=28, d=0),
+                 vi("Today {today} · Due {edd}", today="27/09/2026", edd="20/12/2026"), vi("Date of first antenatal check-up")):
         assert text in page, text
 
 
 def test_card_from_lmp(client, db):
     uid = _new_mother(db)
     page = client.get(f"/m/{uid}/setup", params={"date_type": "LMP", "date": "2026-04-01"}).text
-    assert vi("Week {n} · day {d}", n=25, d=4) in page and vi("Today {today} · Due {edd}", today="27/09/2026", edd="06/01/2027") in page
+    assert vi("Week {n} + {d} days", n=25, d=4) in page and vi("Today {today} · Due {edd}", today="27/09/2026", edd="06/01/2027") in page
 
 
 def test_invalid_post_saves_nothing(client, db):

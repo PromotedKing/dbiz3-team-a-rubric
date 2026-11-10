@@ -6,6 +6,7 @@ import sqlite3
 import uuid
 from datetime import date, datetime, timedelta
 
+from .. import numbers
 from ..alr.reports import gestational_week
 
 FORM_TIME = "%Y-%m-%dT%H:%M"
@@ -29,13 +30,11 @@ def _time(text: str | None) -> datetime | None:
 def validate(form: dict, now: datetime) -> tuple[dict, list]:
     errors, rows = {}, []
     for key, metric, unit in FIELDS:
-        value = (form.get(key) or "").strip()
-        if not value:
+        value, error = numbers.read(form.get(key))
+        if error:
+            errors[key] = error
             continue
-        try:
-            float(value)
-        except ValueError:
-            errors[key] = "Value outside the valid range"
+        if value is None:
             continue
         at = _time(form.get(f"{key}_at"))
         if at is None:

@@ -1,7 +1,7 @@
 {#- S-025; design: screens/ui-final Màn 18. Read-only (BR-001). Thresholds and the reference range come from THRESHOLD_RULE (FR-012, hard rule 7). -#}
 {% extends "base.html" %}
 {% set page_title = "Metric history" %}
-{% set back_url = "/m/" ~ user.user_id ~ "/health" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/home" %}{% set back_auto = true %}
 {% set colors = ["#00A651", "#009788"] %}
 {% block content %}
 <form class="bl8" method="get" action="/m/{{ user.user_id }}/history">
@@ -10,7 +10,7 @@
   </select>
   {% if h.metric == "Blood glucose" %}
   <select class="inp" name="context" aria-label="{{ _('Measurement time') }}" onchange="this.form.submit()">
-    <option value="">{{ _("All") }}</option>
+    <option value="all"{% if not h.context %} selected{% endif %}>{{ _("All") }}</option>
     {% for code, text in contexts %}<option value="{{ code }}"{% if code == h.context %} selected{% endif %}>{{ text | t }}</option>{% endfor %}
   </select>
   {% endif %}
@@ -34,7 +34,7 @@
   </div>
   <svg viewBox="0 0 320 160" width="100%" role="img" aria-label="{{ _('Metric history') }} · {{ h.metric | t }}">
     <g stroke="#EEEEEE" stroke-width="1">{% for tick in h.chart.ticks %}<line x1="{{ h.chart.left }}" x2="{{ h.chart.right }}" y1="{{ tick.y }}" y2="{{ tick.y }}"/>{% endfor %}</g>
-    <g font-size="10" fill="#6F6F6F" font-family="Roboto, sans-serif">{% for tick in h.chart.ticks %}<text x="0" y="{{ tick.y + 3 }}">{{ tick.text }}</text>{% endfor %}
+    <g font-size="10" fill="#6F6F6F" font-family="Roboto, sans-serif">{% for tick in h.chart.ticks %}<text x="0" y="{{ tick.y + 3 }}">{{ tick.text | t_known }}</text>{% endfor %}
       <text x="{{ h.chart.left }}" y="154">{{ h.rows[-1].at[:10] | dmy }}</text><text x="{{ h.chart.right }}" y="154" text-anchor="end">{{ h.rows[0].at[:10] | dmy }}</text></g>
     {% for line in h.chart.lines %}<line data-line="{{ line.kind }}" x1="{{ h.chart.left }}" x2="{{ h.chart.right }}" y1="{{ line.y }}" y2="{{ line.y }}" stroke="#C4520A" stroke-width="1.2" stroke-dasharray="4 3"/>{% endfor %}
     {% for s in h.chart.series %}
@@ -48,6 +48,7 @@
     <div style="background:#F5F5F5;border-radius:12px;padding:8px 10px"><p class="t-cap">{{ _("Lowest") }}</p><p class="t-body b">{{ h.stats.lowest }}</p></div>
     <div style="background:#F5F5F5;border-radius:12px;padding:8px 10px"><p class="t-cap">{{ _("Highest") }}</p><p class="t-body b">{{ h.stats.highest }}</p></div>
   </div>
+  {% if h.metric == "Blood pressure" %}<p class="t-cap" data-bp-stats-note>{{ _("Lowest and highest are taken for systolic and diastolic separately, so they can come from two different readings.") }}</p>{% endif %}
   {% endif %}
 </div>
 <div class="card np">

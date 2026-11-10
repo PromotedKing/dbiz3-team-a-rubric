@@ -1,4 +1,4 @@
-<!-- DBIZ3-SNAPSHOT source=specs/spec-CLI.md sha256=8d64de2068bd1e471934fda2d62690e9b33b8f8bd576b723bffbb39a525f8252 taken=2026-10-26T08:40Z -->
+<!-- DBIZ3-SNAPSHOT source=specs/spec-CLI.md sha256=cb2f7462b3ba85447967b4ed25bcd25dd52c9bebd79cc97545a6a84363563a3a taken=2026-11-07T13:22Z -->
 <!-- Read-only copy for Spec Kit. Do not edit here. Edit specs/spec-CLI.md, then run:
      uv run tools/start_feature.py --refresh -->
 
@@ -8,9 +8,9 @@
 |---|---|
 | Module ID | `CLI` |
 | Module name | Clinical Escalation — UI: "Cases to handle" / "Mother quick profile" (web, for Nurse and Doctor) |
-| Spec version | v1.7.0 (14/10/2026: chat transcript in the hand-over — FR-003, BR-009, D-78) — v1.6.3 (30/09/2026: data-model review decisions applied — DM-02, DM-05, DM-10; responsible doctor D-68; 29/09/2026: fetal heart rate reference range aligned with the latest MVP Scope; review 29/09/2026: CLI-01 – CLI-06, X-02, X-04, X-07 / DM-25 data types; Doctor permissions per screen-spec fix #4) |
+| Spec version | v1.8.0 (07/11/2026: v1.0.0 app and hosting — Session 11 EARS lines (§5.3), Overview and Case board (D-85), shared password (D-82)) — v1.7.0 (14/10/2026: chat transcript in the hand-over — FR-003, BR-009, D-78) — v1.6.3 (30/09/2026: data-model review decisions applied — DM-02, DM-05, DM-10; responsible doctor D-68; 29/09/2026: fetal heart rate reference range aligned with the latest MVP Scope; review 29/09/2026: CLI-01 – CLI-06, X-02, X-04, X-07 / DM-25 data types; Doctor permissions per screen-spec fix #4) |
 | Author (team member) | Trung (drafted 16/09/2026) — diagrams checked node by node by Tâm, 17/09/2026 (verifier ≠ converter) |
-| Date | 14/10/2026 |
+| Date | 07/11/2026 |
 | Status | Draft |
 | Approved by (Client role) | *pending* |
 | DBIZ2 source | Function List rows `F-055`–`F-071`, `F-098`–`F-099`, `F-128`–`F-130`, `F-138` (23 rows); Screens `S-054`–`S-069` |
@@ -333,6 +333,14 @@ FR-025 is placed in `CLI` because Doctor's instructions are created / edited on 
 | Clear red flag | No | Yes — by using "Close case" on an "Escalated to doctor" case | D-44 |
 | Add / edit Doctor's instructions | No (view only) | Yes | Form labelled "Doctor only" |
 
+### 5.3 Behaviour on the internet (EARS, Session 11)
+
+| ID | Requirement | Kind |
+|---|---|---|
+| E-1 | IF a visitor without the team password opens a clinical-web page (`/staff…`), the reset of the sample data or the account test tool, THEN THE SYSTEM SHALL answer HTTP 401 and show no case data. | permission (D-82) |
+| E-2 | IF the hosting platform has no staff password configured, THEN THE SYSTEM SHALL refuse every clinical-web page instead of opening it. | permission (D-82) |
+| E-3 | WHILE two staff members act at the same time, THE SYSTEM SHALL apply their actions one after the other, so no action is lost or mixed. | failure (found before deploying: one database connection) |
+
 ## 6. Key entities
 
 This module does **not** redefine Case: a case in the queue is the **Case** entity of `spec-ALR.md` §6 (D-41). Entities specific to `CLI`:
@@ -377,6 +385,16 @@ S-061 and S-064 cover the work of "Nurse Alert review" (S-056 – S-058): the nu
 | S-067 | Clinical Decision Screen | Should | the handling decision is in the Report block on S-064 |
 | S-068 | Patient Status Update Screen | Should | the status change is in the Report block on S-064 |
 | S-069 | Care Note Screen | Should | content for the mother: "Send guidance" on S-064 (Quick notes are Won't — CLI-03) |
+
+### 7.3 Differences in the v1.0.0 app (D-79 – D-85)
+
+| Item | v1.0.0 app | Source |
+|---|---|---|
+| Overview (new, no Screen ID yet) | `/staff/{id}/dashboard`: open, not viewed (longest wait), above threshold, escalated (and "assigned to me" for a doctor); bars by status; "Needs attention" groups — above threshold not viewed, PRD M3 alarm symptoms (D-73), no response yet, escalated without a doctor answer, from the chatbot; every number opens the cases behind it; filters by source and received date. Read-only; no time limit or new threshold | D-85 |
+| Case board (new, no Screen ID yet) | `/staff/{id}/board`: one column per status, open cases oldest first, a card opens S-064 | D-85 |
+| S-061 | Unchanged; also filtered from the Overview (`?flag=`) | D-85 |
+| Sign-in (Q11) | One shared team password on the hosted app until staff accounts are decided | D-82 |
+| Staff answer | A hint under the guidance field: "- " lines become the mother's to-dos, a "Hẹn khám:" line the follow-up visit (S-009 detail) | D-81, review (Tâm) |
 
 ## 8. Success criteria (mandatory)
 

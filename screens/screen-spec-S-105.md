@@ -10,6 +10,8 @@
 | Mockup image | not drawn yet (`img/S-105.png` to be added) |
 | Status | Draft (14/10/2026 — PRD alignment) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Highlights grid; week-by-week content folded.
+
 ## 1. Purpose
 
 Let the mother look back over one stage of her pregnancy, or the whole journey, and export it as a PDF keepsake album to her device (PRD M4: "review her entire journey and compile it into a commemorative keepsake album exported directly to her device (PDF format)").

@@ -1,0 +1,18 @@
+{#- D-85 case board: one column per status, a card opens its case -#}
+{% extends "staff_base.html" %}
+{% block content %}
+<div class="dash-head"><div><h1>{{ _("Case board") }}</h1><p class="caption">{{ _("Open cases: oldest on top. Tap a card to open the case.") }}</p></div></div>
+{% include "_staff_filters.html" %}
+{% set notes = {"Not viewed": "A nurse checks the report first", "Viewed": "A nurse is handling it", "Escalated to doctor": "Waiting for the doctor", "Resolved": "Closed by a nurse or a doctor"} %}
+<div class="board">
+  {% for c in columns %}
+  <section class="col st-col-{{ loop.index }}" data-column="{{ c.status }}">
+    <header><span class="caption">{{ _("CASE STATUS") }}</span>
+      <div class="col-title"><h2>{{ c.status | t }}</h2><span class="count">{{ c.count }}</span></div>
+      <p class="caption">{{ _(notes[c.status]) }}</p></header>
+    {% for r in c.cases %}{% include "_case_card.html" %}{% else %}<p class="caption empty-col">{{ _("No cases.") }}</p>{% endfor %}
+    {% if c.more %}<a class="link" href="/staff/{{ me.staff_id }}/cases?status=Resolved">{{ _("{n} more", n=c.more) }} ›</a>{% endif %}
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -31,9 +31,7 @@ def test_welcome_screen(client, user_id):
     page = client.get(f"/m/{user_id('tci-000131')}/chat").text
     for t in map(vi, ("Health chatbot", "Hello, Mom!", "I can answer general questions about pregnancy and baby care.",
                       "The chatbot provides general reference information only and does not replace your doctor's advice.",
-                      "How can I eat beef safely during pregnancy?", "How can I produce more breast milk?",
-                      "What should I look for when choosing formula for my baby?", "How should Dad read to the baby during pregnancy?",
-                      "Type your question…", "Send")):
+                      "Trouble sleeping during pregnancy", "Should I exercise?", "Leg cramps", "Type your question…", "Send")):
         assert t in page, t
     assert "alert" not in text(page).lower()
 
@@ -47,8 +45,8 @@ def test_general_answer_has_the_disclaimer(client, user_id):
 def test_danger_question_and_connect_to_nurse(client, db, user_id, staff_id):
     uid = user_id("tci-000131")
     url, page = ask(client, uid, DANGER)
-    for t in (vi("Signs that need medical attention"), vi("This needs a proper consultation."), vi("Connect to nurse"), vi("No, thanks"),
-              vi("If you have any emergency signs, call {hotline}.", hotline="1900 xxxx")):
+    for t in (vi("Signs that need medical attention"), vi("You need to be checked right away"), vi("Connect to nurse"), vi("No, thanks"),
+              vi("Call the emergency hotline")):
         assert t in page, t
     assert vi("[Sample chatbot answer]") not in page
     form = re.search(r'action="(/m/[^"]+/handoff/[0-9a-f-]{36})"', page).group(1)

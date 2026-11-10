@@ -10,6 +10,8 @@
 | Mockup image | `img/S-061.png` (drawn for the Nurse role) |
 | Status | Draft (revised 29/09/2026 — screen-spec fix #4, #9) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Also opened filtered from the new Overview (`?flag=`); see the Overview and Case board in spec-CLI §7.3 (D-85).
+
 ## 1. Purpose
 
 Web home page for nurses and doctors: one table, at full width, combining every case created by mothers (metric reports, symptoms, chatbot), filtered by status. (The former quick-notes panel is removed — screen-spec fix #9, CLI-03.)

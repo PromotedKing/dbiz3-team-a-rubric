@@ -6,6 +6,8 @@ import sqlite3
 import uuid
 from datetime import date, datetime, timedelta
 
+from .. import numbers
+
 PREGNANCY_DAYS = 280
 
 
@@ -48,10 +50,12 @@ def validate(form: dict, today: date) -> dict:
     elif date_type in ("EDD", "LMP"):
         calc = calculate(date_type, value, today)
         if calc["edd"] < today or not 0 <= calc["week"] <= 42:
-            errors["date"] = "Value outside the valid range: the due date cannot be in the past and the week must be 0 – 42."
+            errors["date"] = ("The first day of the last period cannot be in the future, and the week must be 0 – 42." if date_type == "LMP"
+                              else "Value outside the valid range: the due date cannot be in the past and the week must be 0 – 42.")
     for field in ("height_cm", "weight_kg"):
-        if (form.get(field) or "").strip() and not _number(form.get(field)):
-            errors[field] = "Enter a number."
+        _, error = numbers.read(form.get(field))
+        if error:
+            errors[field] = error
     first = (form.get("first_visit_date") or "").strip()
     if first:
         fv = _date(first)
@@ -66,8 +70,8 @@ def save(conn: sqlite3.Connection, user_id: str, form: dict, now: datetime) -> N
     if errors:
         raise SetupError(errors)
     calc = calculate(form["date_type"], date.fromisoformat(form["date"]), today)
-    height = (form.get("height_cm") or "").strip()
-    weight = (form.get("weight_kg") or "").strip()
+    height = numbers.read(form.get("height_cm"))[0] or ""
+    weight = numbers.read(form.get("weight_kg"))[0] or ""
     stamp = now.strftime("%Y-%m-%d %H:%M")
     try:
         conn.execute("""INSERT INTO PREGNANCY_PROFILE (user_id, edd, lmp, edd_source, height_cm, first_visit_date)

@@ -49,7 +49,7 @@ def line_text(conn: sqlite3.Connection, metric: str, context: str | None) -> tup
     return "threshold", text if unit in (None, "", "—") else f"{text} {unit}"
 
 
-def chart(series: list[tuple[str, list[tuple[float, float]]]], lines: list[dict]) -> dict:
+def chart(series: list[tuple[str, list[tuple[float, float]]]], lines: list[dict], axis: list[str] | None = None) -> dict:
     """Inline-SVG geometry: time goes right, higher values go up, everything inside the box (research R4)."""
     xs = [x for _, pts in series for x, _ in pts]
     ys = [y for _, pts in series for _, y in pts] + [line["value"] for line in lines]
@@ -64,10 +64,15 @@ def chart(series: list[tuple[str, list[tuple[float, float]]]], lines: list[dict]
     def py(y: float) -> float:
         return round(BOTTOM - (y - y_lo) / (y_hi - y_lo) * (BOTTOM - TOP), 1)
 
+    def label(v: float) -> str:          # a narrow range keeps one decimal, so the 3 ticks differ (Ánh 3.B.1)
+        if axis:
+            return axis[min(max(round(v), 0), len(axis) - 1)]
+        return f"{v:.1f}" if y_hi - y_lo < 5 else f"{round(v)}"
+
     return {"series": [{"name": name, "points": [{"x": px(x), "y": py(y)} for x, y in pts],
                         "polyline": " ".join(f"{px(x)},{py(y)}" for x, y in pts)} for name, pts in series],
             "lines": [{**line, "y": py(line["value"])} for line in lines],
-            "ticks": [{"y": py(v), "text": f"{v:g}"} for v in (round(y_hi), round((y_hi + y_lo) / 2), round(y_lo))],
+            "ticks": [{"y": py(v), "text": label(v)} for v in (y_hi, (y_hi + y_lo) / 2, y_lo)],
             "left": LEFT, "right": RIGHT, "bottom": BOTTOM}
 
 
@@ -81,7 +86,7 @@ def _stats(metric: str, rows: list[sqlite3.Row]) -> dict | None:
         return {"average": f"{round(sum(sys_) / len(sys_))}/{round(sum(dia) / len(dia))}", "lowest": f"{min(sys_)}/{min(dia)}", "highest": f"{max(sys_)}/{max(dia)}"}
     values = [float(r["value"]) for r in rows]
     decimals = max((len(r["value"].split(".")[1]) if "." in r["value"] else 0) for r in rows)
-    fmt = f"{{:.{max(decimals, 1) if len(values) > 1 else decimals}f}}"
+    fmt = f"{{:.{decimals}f}}"          # as precise as the readings: 155 bpm, 4.9 mmol/L (Ánh 3.B.2)
     return {"average": fmt.format(sum(values) / len(values)), "lowest": fmt.format(min(values)), "highest": fmt.format(max(values))}
 
 
@@ -125,7 +130,7 @@ def load(conn: sqlite3.Connection, user_id: str, metric: str, start: date | None
         out["rows"].append({"value": value, "at": r["measured_at"], "source": r["source"], "label": label, "context": r["glucose_context"]})
     if records:
         out["stats"] = _stats(metric, records)
-        out["chart"] = chart(_series(metric, records), out["lines"])
+        out["chart"] = chart(_series(metric, records), out["lines"], thresholds.URINE_SCALE if metric == "Urine protein" else None)
     return out
 
 
@@ -140,4 +145,4 @@ def instruction_cards(conn: sqlite3.Connection, user_id: str) -> list[dict]:
                       "latest_value": _with_unit(last["value"], last["unit"]) if last else None,
                       "latest_at": last["measured_at"] if last else None,
                       "latest_label": thresholds.evaluate(conn, last["metric"], last["value"], last["glucose_context"]) if last else None})
-    return cards
+    return sorted(cards, key=lambda c: GROUP2.index(c["metric"]))

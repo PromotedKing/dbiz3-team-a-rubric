@@ -11,6 +11,8 @@
 | Spec for S-046 | `screen-spec-S-046.md` + `img/S-046.png` — own full spec (D-55). S-046 belongs to `TML`: due date / LMP and the gestational-week card (#4 – #9); S-007 belongs to `ACC`: height, weight, saving the Profile (#10 – #12). |
 | Status | Draft (revised 14/10/2026 — optional first visit date, D-72; image to redraw) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Due date prefilled from the hospital record (TCI host, simulated); EDD/LMP switch clears the date; LMP error of its own; height/weight accept a decimal comma and refuse 0 or less (format check, D-16 open); placeholders "VD: 158" / "VD: 52.0".
+
 ## 1. Purpose
 
 **Shown when:** shown **once** after the mother taps "Agree & continue" on `S-001` (state 2 — first opening of the sub-app, permission to use the TCI account information), **when the system has no due date** for the mother. If a due date already exists, `S-001` goes straight to `S-008`. `[PENDING CLIENT: D-01]` — this whole entry context (sub-app inside the TCI app, no separate registration / sign-in) depends on decision D-01, which is pending Client confirmation.

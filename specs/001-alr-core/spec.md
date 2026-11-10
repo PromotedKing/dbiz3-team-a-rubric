@@ -1,4 +1,4 @@
-<!-- DBIZ3-SNAPSHOT source=specs/spec-ALR.md sha256=95fca3d7d8bed00ce46b4216b890ce3dbfc36a0311525336be0d147b65f34375 taken=2026-10-26T08:49Z -->
+<!-- DBIZ3-SNAPSHOT source=specs/spec-ALR.md sha256=56d1b844a6a684b68627ac333d24cd39a2e7e81c408ea3a324761832b7950073 taken=2026-11-07T13:22Z -->
 <!-- Read-only copy for Spec Kit. Do not edit here. Edit specs/spec-ALR.md, then run:
      uv run tools/start_feature.py --refresh -->
 
@@ -8,9 +8,9 @@
 |---|---|
 | Module ID | `ALR` |
 | Module name | Risk Feedback & Health Alerts — UI: "Report" / "My reports" / "Metric alert" |
-| Spec version | v1.8.0 (14/10/2026: PRD alignment — symptom list D-73 replaces D-23; thresholds cite PRD M3; Q21, Q22) — v1.7.3 (30/09/2026: data-model review decisions applied — DM-03, DM-05, DM-32, DM-40; responsible doctor D-68; 29/09/2026: fetal heart rate reference range aligned with the latest MVP Scope; review 29/09/2026: ALR-01 – ALR-05, X-01 – X-03, X-05, X-07 / DM-25 data types) |
+| Spec version | v1.8.1 (07/11/2026: v1.0.0 app — differences §7.3; rules unchanged) — v1.8.0 (14/10/2026: PRD alignment — symptom list D-73 replaces D-23; thresholds cite PRD M3; Q21, Q22) — v1.7.3 (30/09/2026: data-model review decisions applied — DM-03, DM-05, DM-32, DM-40; responsible doctor D-68; 29/09/2026: fetal heart rate reference range aligned with the latest MVP Scope; review 29/09/2026: ALR-01 – ALR-05, X-01 – X-03, X-05, X-07 / DM-25 data types) |
 | Author (team member) | Tâm (drafted 16/09/2026) — diagrams checked node by node by Sang, 17/09/2026 (verifier ≠ converter) |
-| Date | 14/10/2026 |
+| Date | 07/11/2026 |
 | Status | Draft |
 | Approved by (Client role) | *pending* |
 | DBIZ2 source | Function List rows `F-045`–`F-050`, `F-072`–`F-076`, `F-081`, `F-082`, `F-097`, `F-100` (15 rows); Screens `S-025A` (D-38), `S-026`, `S-028`, `S-029`; `S-030` Removed (D-05); `S-024` belongs to `HLT` (D-07) |
@@ -324,6 +324,16 @@ The nurse / doctor side continues in `spec-CLI.md` (§4.1(b), §4.2).
 ### 7.2 Screens this module needs that DBIZ2 never drew
 
 None. The clinical staff web screens (S-061, S-064) belong to `CLI`.
+
+### 7.3 Differences in the v1.0.0 app (D-79 – D-85)
+
+The business rules are unchanged: thresholds only from THRESHOLD_RULE, a symptom always opens a case, the word "Alert" only on S-028.
+
+| Item | v1.0.0 app | Source |
+|---|---|---|
+| S-025A | Metric tabs in the order blood pressure, blood glucose, urine protein, symptom; a hint "Bình thường / Vượt ngưỡng" while typing, from the same THRESHOLD_RULE rows (the server still decides on submit); "Báo cáo sẽ được gửi tới nhân viên y tế" (U5) | D-80, D-81 |
+| S-028 | Bottom sheet over the report; guidance lines from GUIDANCE_TEMPLATE; "View status" → S-026; "Close" → Home | D-81 |
+| S-026 | Kept (U4); safety note text is a placeholder until the hospital supplies it (D-25) | D-80 |
 
 ## 8. Success criteria (mandatory)
 

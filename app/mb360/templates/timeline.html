@@ -1,19 +1,18 @@
-{#- S-048; design: screens/ui-final Màn 6, 19. Week range comes from the due date (gestational week, U11).
-    The week's indicators, visit details and Messages to Baby stay on this screen (D-75, U13). -#}
+{#- S-048; design: screens/ui-final Màn 6, 19. Week range comes from the due date (gestational week, U11). A day opens Màn 7. -#}
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
+{% import "_bits.html" as bits %}
 {% set page_title = "Pregnancy timeline" %}
 {% set active_tab = "timeline" %}
 {% block content %}
-{% if saved %}<div class="toast" role="status">{{ icon.ok(20, "#48D07C") }}<p class="t-body" style="color:#fff;flex:1">{{ _("Diary entry saved") }}</p></div>{% endif %}
-<div class="sec"><p class="t-body" style="color:#6F6F6F">{{ _("Your visits and diary, week by week.") }}</p>
-  <a class="lnk" style="flex:none" href="/m/{{ user.user_id }}/journey">{{ _("My journey") }} ›</a></div>
+{% if saved %}{{ bits.toast(_("Diary entry saved")) }}{% endif %}
+<div class="sec"><p class="t-body" style="color:#6F6F6F">{{ _("Your visits and diary, week by week.") }}</p></div>
 
-<div class="card" style="padding:12px;display:flex;flex-direction:column;gap:10px">
+<div class="card" style="padding:12px;display:flex;flex-direction:column;gap:10px" data-swipe>
   <div style="display:flex;align-items:center;justify-content:space-between">
-    {% if w.prev is not none %}<a href="/m/{{ user.user_id }}/timeline?week={{ w.prev }}" class="ib" aria-label="{{ _('‹ Week {n}', n=w.prev) }}">{{ icon.prev() }}</a>{% else %}<span class="ib"></span>{% endif %}
+    {% if w.prev is not none %}<a href="/m/{{ user.user_id }}/timeline?week={{ w.prev }}" class="ib" data-week-prev aria-label="{{ _('‹ Week {n}', n=w.prev) }}">{{ icon.prev() }}</a>{% else %}<span class="ib"></span>{% endif %}
     <div style="text-align:center"><p class="t-disp">{{ _("Week {n}", n=w.week) }}</p><p class="t-cap">{{ w.start | dmy }} – {{ w.end | dmy }}</p></div>
-    {% if w.next is not none %}<a href="/m/{{ user.user_id }}/timeline?week={{ w.next }}" class="ib" aria-label="{{ _('Week {n} ›', n=w.next) }}">{{ icon.next() }}</a>{% else %}<span class="ib"></span>{% endif %}
+    {% if w.next is not none %}<a href="/m/{{ user.user_id }}/timeline?week={{ w.next }}" class="ib" data-week-next aria-label="{{ _('Week {n} ›', n=w.next) }}">{{ icon.next() }}</a>{% else %}<span class="ib"></span>{% endif %}
   </div>
   <div class="week7">
     {% for d in strip %}
@@ -38,56 +37,58 @@
 {% endif %}
 
 <div class="bl">
-  <p class="t-title">{{ _("This week") }}</p>
+  <div class="sec"><p class="t-title">{{ _("This week") }}</p><a class="lnk" style="flex:none" href="/m/{{ user.user_id }}/journey">{{ _("My journey") }} ›</a></div>
   {% for d in strip | reverse if d.has_visit or d.has_diary or d.has_rows %}
-  <a href="/m/{{ user.user_id }}/timeline/day/{{ d.iso }}" class="card ent" style="padding:12px">
-    <div class="ic40" style="width:56px;height:56px{% if d.has_visit %};background:#FEEDE1;color:#C4520A{% endif %}">{% if d.has_visit %}{{ icon.cal() }}{% else %}{{ icon.pen(24) }}{% endif %}</div>
+  <a href="/m/{{ user.user_id }}/timeline/day/{{ d.iso }}" class="card ent{% if saved and d.is_today %} fresh{% endif %}" style="padding:12px">
+    {% if d.thumb and media_exists(d.thumb) %}<img class="thumb" src="/media/{{ d.thumb }}" alt="">
+    {% else %}<div class="ic40" style="width:56px;height:56px{% if d.has_visit %};background:#FEEDE1;color:#C4520A{% endif %}">{% if d.has_visit %}{{ icon.cal() }}{% elif d.has_diary %}{{ icon.pen(24) }}{% else %}{{ icon.pulse(24) }}{% endif %}</div>{% endif %}
     <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><p class="t-body b">{{ _(d.long) }} {{ d.iso | dmy }}</p>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><p class="t-body b">{% if d.is_today %}{{ _("Today") }}{% else %}{{ _(d.long) }}{% endif %} {{ d.num }}/{{ d.iso[5:7] }}</p>
         {% if d.has_visit %}<span class="tag al">{{ _("Visit day") }}</span>{% elif d.mood %}<span class="tag ok">{{ d.mood | t }}</span>{% endif %}</div>
-      {% for text in d.diary_texts %}<p class="t-cap">{{ text | truncate(60) }}</p>{% endfor %}
-      {% if d.has_rows %}<p class="t-cap">{{ _("{n} indicators", n=d.row_count) }}</p>{% endif %}
+      {% if d.visit_line %}<p class="t-cap clamp2">{{ d.visit_line }}{% if d.has_diary %} · {{ _("has diary") }}{% endif %}</p>
+      {% elif d.diary_texts %}<p class="t-cap clamp2">{{ d.diary_texts | join(" ") }}</p>
+      {% elif d.has_rows %}<p class="t-cap">{{ _("{n} indicators", n=d.row_count) }}</p>{% endif %}
     </div>
     {{ icon.chev() }}
   </a>
   {% else %}
-  <p class="t-cap">{{ _("No diary entry this week.") }}</p>
+  <div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("No diary entry this week.") }}</p></div>
   {% endfor %}
 </div>
 
-<div class="bl8">
+<div class="bl" data-week-visits>
+  <p class="t-title">{{ _("Visits this week") }}</p>
+  {% for v in w.visits %}
+  <a href="/m/{{ user.user_id }}/timeline/day/{{ v.visit_date }}" class="card ent" style="padding:12px">
+    {% if v.ultrasound_image and media_exists(v.ultrasound_image) %}<img class="thumb" src="/media/{{ v.ultrasound_image }}" alt="{{ _('Ultrasound image, {date}', date=v.visit_date | dmy) }}">
+    {% else %}<div class="ic40" style="width:56px;height:56px;background:#FEEDE1;color:#C4520A">{{ icon.cal() }}</div>{% endif %}
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+      <div class="sec"><p class="t-body b">{{ _("Visit {date}", date=v.visit_date | dmy) }}</p><span class="tag src">{{ _("From visit") }}</span></div>
+      <p class="t-cap">{{ v.visit_type | t_known }}{% if v.fetal_length is not none %} · {{ _("Fetal length") }} {{ v.fetal_length }} cm{% endif %}{% if v.estimated_fetal_weight is not none %} · {{ _("Estimated weight") }} {{ v.estimated_fetal_weight }} g{% endif %}</p>
+    </div>
+    {{ icon.chev() }}
+  </a>
+  {% else %}
+  <div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("No visit this week.") }}</p></div>
+  {% endfor %}
+</div>
+
+<div class="bl8" data-week-indicators>
   <p class="t-title">{{ _("Indicators this week") }}</p>
-  <div class="card" style="padding:12px 16px">
+  <div class="card" style="padding:4px 16px 12px">
     {% for d in w.days %}
-      <p class="t-cap b" style="padding-top:8px">{{ d.day | dmy }}</p>
+      <p class="t-cap b" style="padding-top:10px">{{ d.day | dmy }}</p>
       {% for r in d.rows %}<div class="kv"><span class="k">{{ r.metric | t }}</span><span style="display:flex;gap:8px;align-items:center"><span class="b">{{ r.value | t_known }}</span><span class="tag src">{{ r.source | t }}</span></span></div>{% endfor %}
     {% else %}
-      <p class="t-body" style="color:#6F6F6F">{{ _("No indicators this week.") }}</p>
+      <p class="t-body" style="color:#6F6F6F;padding-top:10px">{{ _("No indicators this week.") }}</p>
     {% endfor %}
   </div>
 </div>
-
-{% for v in w.visits %}
-<div class="card bl8">
-  <div class="sec"><p class="t-body b">{{ _("Visit {date}", date=v.visit_date | dmy) }}</p><span class="tag src">{{ _("From visit") }}</span></div>
-  {% if v.ultrasound_image %}
-    {% if media_exists(v.ultrasound_image) %}<img src="/media/{{ v.ultrasound_image }}" alt="{{ _('Ultrasound image, {date}', date=v.visit_date | dmy) }}" style="max-width:100%;border-radius:12px">
-    {% else %}<div style="height:120px;border-radius:12px;background:#1C2427;display:flex;align-items:flex-end;padding:10px" role="img" aria-label="{{ _('Ultrasound image, {date}', date=v.visit_date | dmy) }}"><span class="t-cap" style="color:#B4B4B4">{{ _("Ultrasound image, {date}", date=v.visit_date | dmy) }}</span></div>{% endif %}
-  {% endif %}
-  {% if v.fetal_length is not none %}<div class="kv"><span class="k">{{ _("Fetal length") }}</span><span class="b">{{ v.fetal_length }} cm</span></div>{% endif %}
-  {% if v.estimated_fetal_weight is not none %}<div class="kv"><span class="k">{{ _("Estimated weight") }}</span><span class="b">{{ v.estimated_fetal_weight }} g</span></div>{% endif %}
-  {% if v.ultrasound_report_date %}<p class="t-cap">{{ _("Measurements per ultrasound report dated {date}", date=v.ultrasound_report_date | dmy) }}</p>{% endif %}
-  {% if v.doctor_note %}<p class="t-body">{{ _("Doctor's note") }} — {{ v.doctor_note }}</p>{% endif %}
-</div>
-{% else %}
-<div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("No visit this week.") }}</p></div>
-{% endfor %}
 
 {% if w.messages %}
 <div class="card bl8">
   <div class="sec"><p class="t-body b">{{ _("Messages to Baby") }} · {{ _("Week {n}", n=w.week) }}</p><span class="tag src">{{ _("Family") }}</span></div>
   {% for m in w.messages %}<p class="t-body"><span class="b">{{ _("From Mom") if m.author == "Mother" else _("From Dad") }} · {{ m.created_at | dmy }}</span> — "{{ m.text }}"</p>{% endfor %}
-  <p class="t-cap">{{ _("Writing messages is pending Client approval (D-03).") }}</p>
 </div>
 {% endif %}
 {% endblock %}

@@ -11,6 +11,8 @@
 | Spec version | v1.4 |
 | Status | Draft (revised 29/09/2026 — fetal heart rate per the latest MVP Scope; Self-entered label per D-33 as revised) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Blood pressure, last 30 days by default; blood glucose opens on "fasting"; axis with one decimal on narrow ranges; urine levels by name; no sleep statistics (HLT Q12).
+
 ## 1. Purpose
 
 **Shown when:** the mother taps "View metric history" on `S-023` Health metrics or "View metric history ›" on a metric card on `S-027` Doctor's instructions. `[NEEDS CLARIFICATION: when opened from a card on `S-027`, is that card's metric preselected; when opened from `S-023`, what is the default metric?]`
@@ -105,8 +107,8 @@ The empty / loading / error states use the shared components defined on the `00-
 | # | Question | Blocking? | Status |
 |---|---|---|---|
 | 2 | List of metrics in the selector; is fetal heart rate included, and does it have a threshold line? | No | Resolved — fetal heart rate is in the selector (visit values only) with the 110–160 bpm range as reference lines and **no** threshold label; it never creates a report or case (D-12; latest MVP Scope §5) |
-| 3 | [NEEDS CLARIFICATION: default metric and date range when the screen is opened from `S-023` and from `S-027`.] | No | Open |
-| 4 | [NEEDS CLARIFICATION: for blood pressure, are Lowest / Highest calculated per component or per measurement (SR-006)?] | No | Open |
+| 3 | [NEEDS CLARIFICATION: default metric and date range when the screen is opened from `S-023` and from `S-027`.] | No | Resolved 09/11/2026 (Ánh, HLT owner, PR #20): blood pressure, last 30 days; blood glucose opens on "fasting" (HLT §10 Q12) |
+| 4 | [NEEDS CLARIFICATION: for blood pressure, are Lowest / Highest calculated per component or per measurement (SR-006)?] | No | Open — the v1.0.0 app takes them per component and says so under the cards (review of PR #18, Ánh); to be confirmed by the HLT owner |
 | 5 | [NEEDS CLARIFICATION: the mockup draws only one threshold line at 140 (systolic) while the label reads "140/90" — should a 90 line for diastolic also be drawn?] | No | Open |
 | 10 | [NEEDS CLARIFICATION: how the blood glucose threshold line is shown on the chart when measurements have different measurement contexts (§4) — not drawn in the mockup.] | No | Open |
 | 7 | [NEEDS CLARIFICATION: does tapping a measurement open the report detail / status (`S-026`)?] | No | Open |
