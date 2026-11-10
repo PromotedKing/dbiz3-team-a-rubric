@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Hồ sơ</title>
+<link rel="stylesheet" href="./tci.css">
+</head>
+<body style="background:#E9E9E9;display:flex;justify-content:center;padding:24px 0">
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.lab{font-size:12px;line-height:16px;font-weight:700;color:#6F6F6F}
+a.card.lk{display:flex;flex-direction:column;gap:10px;color:#212121}
+</style>
+</helmet>
+<div class="scr" style="width: 390px; height: 844px">
+  <div class="hdr" style="padding-left: 16px">
+    <h1>Hồ sơ</h1>
+  </div>
+
+  <div class="body">
+    <a href="EditProfile.html" class="hero" style="display: flex; gap: 12px; align-items: center">
+      <div style="width: 56px; height: 56px; border-radius: 28px; background: #009788; color: #fff; font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none">M</div>
+      <div style="flex: 1">
+        <p class="t-title">Nguyễn Thị Mai</p>
+        <p class="t-cap" style="color: #212121">Tài khoản TCI · Mã BN [TCI-000000]</p>
+      </div>
+      <span class="lnk" style="font-size: 12px">Sửa ›</span>
+    </a>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <p class="lab">THAI KỲ</p>
+      <div class="card" style="padding: 0 16px">
+        <div class="kv"><span class="k">Ngày dự sinh</span><span class="b">14/02/2027</span></div>
+        <div class="kv"><span class="k">Kỳ kinh cuối</span><span>10/05/2026</span></div>
+        <div class="kv"><span class="k">Tuổi thai hiện tại</span><span>24 tuần 3 ngày</span></div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <p class="lab">BÁC SĨ DẶN THEO DÕI TẠI NHÀ</p>
+      <a href="Instructions.html" class="card lk">
+        <div class="sec"><div style="display: flex; gap: 8px; flex-wrap: wrap"><span class="tag ok">Huyết áp</span><span class="tag ok">Đường huyết</span><span class="tag ok">Protein niệu</span></div><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></div>
+        <p class="t-cap">BS. Trần Thu Hà · cập nhật 26/10/2026 · xem chỉ dẫn</p>
+      </a>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <p class="lab">DỮ LIỆU &amp; QUYỀN RIÊNG TƯ</p>
+      <div class="card np">
+        <div class="row"><span class="grow">Đồng ý chia sẻ dữ liệu</span><span class="b" style="color: #00873F">Đã đồng ý</span></div>
+        <a href="NotifSettings.html" class="row"><span class="grow">Nhắc nhở &amp; thông báo</span><span class="t-cap">Bật</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
+      </div>
+    </div>
+
+    <a href="Journey.html" class="btn o full"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Xuất album kỷ niệm (PDF)</a>
+  </div>
+
+  <nav class="tabs" aria-label="Điều hướng chính">
+    <a href="Main.html" class="tab"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2.5 11H5v9.5h5.5v-6h3v6H19V11h2.5z"/></svg>Trang chủ</a>
+    <a href="Timeline.html" class="tab"><svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path d="M7 2h2v2h6V2h2v2h2a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2zM5 9v10h14V9z"/></svg>Timeline</a>
+    <a href="Chat.html" class="tab"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.5 1.3 4.8 3.4 6.3L4.5 22l4.4-2.4c1 .3 2 .4 3.1.4 5.5 0 10-3.8 10-8.5S17.5 3 12 3z"/></svg>Chatbot</a>
+    <a href="Notices.html" class="tab"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 22a2.5 2.5 0 0 0 2.5-2.5h-5A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 0 0-5.5-6.8V3.5a1.5 1.5 0 0 0-3 0v.7A7 7 0 0 0 5 11v5l-2 2v1h18v-1z"/></svg><span class="badge">1</span>Từ bác sĩ</a>
+    <a href="Profile.html" class="tab on" aria-current="page"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.5"/><path d="M3 21c0-4.4 4-7.5 9-7.5s9 3.1 9 7.5z"/></svg>Hồ sơ</a>
+  </nav>
+</div>
+</x-dc>
+</body>
+</html>

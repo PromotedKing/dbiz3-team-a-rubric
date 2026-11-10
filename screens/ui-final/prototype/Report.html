@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Báo cáo chỉ số / triệu chứng</title>
+<link rel="stylesheet" href="./tci.css">
+</head>
+<body style="background:#E9E9E9;display:flex;justify-content:center;padding:24px 0">
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="scr w" style="width: 390px; height: 844px">
+  <div class="hdr">
+    <a href="Main.html" class="ib" aria-label="Quay lại"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a>
+    <h1>Báo cáo chỉ số / triệu chứng</h1>
+    <a href="MyReports.html" class="ib" aria-label="Báo cáo mẹ đã gửi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></a>
+  </div>
+
+  <div class="body" style="gap: 20px">
+    <div class="seg" style="grid-template-columns: repeat(4, minmax(0, 1fr))" role="tablist" aria-label="Loại báo cáo">
+      <button class="on" role="tab" aria-selected="true">Huyết áp</button>
+      <button role="tab" aria-selected="false">Đường huyết</button>
+      <button role="tab" aria-selected="false">Protein niệu</button>
+      <button role="tab" aria-selected="false">Triệu chứng</button>
+    </div>
+
+    <div class="card bd" style="display: flex; flex-direction: column; gap: 6px; padding: 12px 14px">
+      <div class="sec"><p class="t-body b">Chỉ dẫn của bác sĩ</p><span class="tag src">Bác sĩ chỉ định</span></div>
+      <p class="t-body" style="color: #6F6F6F">Đo huyết áp sáng và tối, ngồi nghỉ 5 phút trước khi đo. · BS. Trần Thu Hà</p>
+    </div>
+
+    <div class="grid2">
+      <div class="fld"><label for="sys">Tâm thu</label><div class="unit"><input id="sys" class="inp" inputmode="numeric" value="146"><span>mmHg</span></div></div>
+      <div class="fld"><label for="dia">Tâm trương</label><div class="unit"><input id="dia" class="inp" inputmode="numeric" value="94"><span>mmHg</span></div></div>
+    </div>
+
+    <div style="background: #FEEDE1; border-radius: 12px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C4520A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="M12 3 2 21h20z"/><path d="M12 10v5M12 18h.01"/></svg>
+      <div>
+        <p class="t-body b" style="color: #C4520A">Vượt ngưỡng</p>
+        <p class="t-cap" style="color: #8A3A07">Ngưỡng: tâm thu ≥ 140 hoặc tâm trương ≥ 90 mmHg. Báo cáo sẽ được chuyển ngay cho bác sĩ.</p>
+      </div>
+    </div>
+
+    <div class="fld"><label for="at">Thời điểm đo</label><input id="at" class="inp" value="27/10/2026 · 08:40"></div>
+
+    <div class="fld">
+      <p class="lbl">Triệu chứng kèm theo <span class="opt">(chọn nhiều)</span></p>
+      <div class="chips">
+        <button class="chip" aria-pressed="false">Không có triệu chứng</button>
+        <button class="chip" aria-pressed="false">Ra máu âm đạo</button>
+        <button class="chip" aria-pressed="false">Đau bụng dữ dội</button>
+        <button class="chip" aria-pressed="false">Vỡ ối / rỉ ối</button>
+        <button class="chip on" aria-pressed="true">Đau đầu dữ dội / chóng mặt / hoa mắt</button>
+        <button class="chip" aria-pressed="false">Không thấy thai máy</button>
+        <button class="chip" aria-pressed="false">Hồi hộp</button>
+        <button class="chip" aria-pressed="false">Khác</button>
+      </div>
+    </div>
+
+    <div class="fld"><label for="note">Ghi chú <span class="opt">(không bắt buộc)</span></label><textarea id="note" class="inp" style="height: 88px" placeholder="Mẹ muốn nhân viên y tế biết thêm điều gì?"></textarea></div>
+  </div>
+
+  <div class="foot" style="flex-direction: column; gap: 8px">
+    <a href="Alert.html" class="btn full">Gửi báo cáo</a>
+    <p class="t-cap" style="text-align: center">Bác sĩ xem và trả lời ở mục <a href="Notices.html">Từ bác sĩ</a></p>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>
