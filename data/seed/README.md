@@ -23,6 +23,14 @@ python3 tools/check_data_model.py             # diagram check of the data model 
 
 ## Reproducibility
 
+### Appointment demo cases (Part A, 10/11/2026)
+
+U11 (`tci-000133`, Nguyễn Thị An Nhiên) and U12 (`tci-000134`, Trần Ngọc Bình An) are invented accounts generated in the CSVs, with consent, pregnancy profile and notification defaults. `appointment-demo.json` is also generated: U11 has a simulated host appointment at 09:00 on startup day + 1; U12 has none. Both appear in `/tci/accounts`. These fixtures add no MB360 appointment table. The original CSV clock stays fixed; the host fixture resolves relative dates using the Vietnam app clock at first install, just like the existing Mai persona.
+
+The demo creates U11's unread `Appointment` notification at startup, and checks due reminders again on Home / S-009 access. This is request-driven demo behavior, not a background production delivery service. Disabled `appointment_reminder` prevents new reminders; received notices remain visible (demo assumption, S-010 Q4 still open). Reopening a database preserves its dates, switches and read state; a fresh Render deploy recreates tomorrow's case. Details, manual steps and limitations: `docs/build/appointment-part-a.md`.
+
+`generate_seed.py --check` verifies the generated JSON as well as the CSVs and report. Never edit the JSON by hand either.
+
 - No random numbers: the data is written out in the generator, with a fixed clock (2026-09-27 10:00). UUIDs are uuid5 of readable labels (U01, C1, RPT-002 …), so they never change.
 - A re-run writes the same bytes: after `python3 data/seed/generate_seed.py`, `git status` shows no change (Session 6 test T2). The generator writes no database and no cache inside the repository.
 - Before writing, the generator checks the foreign keys, the keys and the business rules listed in §8 of the data model, recomputes the threshold label of every report from THRESHOLD_RULE, then creates the schema in an empty in-memory SQLite database and loads every file in filename order with foreign keys on (gate G3). If anything fails it stops and writes nothing.

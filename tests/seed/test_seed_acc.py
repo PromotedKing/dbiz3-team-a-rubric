@@ -7,7 +7,7 @@ from mb360 import db as dbmod
 def test_accounts_consent_preferences():
     conn = dbmod.build()
     users = conn.execute("SELECT user_id, sex, role FROM USER_ACCOUNT").fetchall()
-    assert len(users) == 10 and {(u["sex"], u["role"]) for u in users} == {("Female", "Mother")}   # BR-007, D-71
+    assert len(users) == 12 and {(u["sex"], u["role"]) for u in users} == {("Female", "Mother")}   # BR-007, D-71; U11/U12 demo cases
     for u in users:
         assert conn.execute("SELECT COUNT(*) FROM CONSENT_RECORD WHERE user_id = ?", (u["user_id"],)).fetchone()[0] >= 1
         assert conn.execute("SELECT COUNT(*) FROM NOTIFICATION_PREFERENCE WHERE user_id = ?", (u["user_id"],)).fetchone()[0] == 1

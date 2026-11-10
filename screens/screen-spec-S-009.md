@@ -117,6 +117,10 @@ Note: no FR in `spec-TML.md`, `spec-HLT.md` or `spec-BOT.md` feeds notifications
 
 ---
 
+## Appointment demo fixture (Part A, 11/11/2026)
+
+`tci-000133` receives one unread `Appointment` notice for tomorrow's 09:00 host appointment when the demo fixture is installed. The "Lịch hẹn" filter selects that type; the tab badge counts all unread types. Opening the reminder marks it read and redirects to `/tci/booking` using the existing flow. In this demo only, disabling reminders prevents NEW notices and keeps received notices visible; S-010 Q4 remains open. See `docs/build/appointment-part-a.md`.
+
 ## Completion checklist
 
 - [x] The mockup is a separate cropped image file, named with the Screen ID.

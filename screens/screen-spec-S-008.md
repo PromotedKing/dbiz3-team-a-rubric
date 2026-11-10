@@ -117,6 +117,10 @@ Note: the lines "No threshold assessment on visit-result notices.", "Opens the T
 
 ---
 
+## Appointment demo fixture (Part A, 11/11/2026)
+
+Demo-only test cases from the generator: `tci-000133` opens Home with a host appointment at 09:00 on initial demo setup day + 1 ("Còn 1 ngày"); `tci-000134` has no host appointment and Home omits the appointment card, as the current UI does. Dates come from the simulated TCI feed, not an MB360 appointment table. Empty-card wording and booking CTA changes are deferred to Part B. See `docs/build/appointment-part-a.md` for limitations and tests. This note does not resolve product questions.
+
 ## Completion checklist
 
 - [x] The mockup is a separate cropped image file, named with the Screen ID.

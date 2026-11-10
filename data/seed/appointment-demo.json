@@ -1,0 +1,16 @@
+[
+  {
+    "user_id": "1caea305-fe98-5397-8772-2e5f7f15cb09",
+    "days_until_appointment": 1,
+    "time": "09:00",
+    "days_until_edd": 109,
+    "place": "Bệnh viện Thu Cúc"
+  },
+  {
+    "user_id": "a2fd0d9e-9827-586c-9330-813b9f614af5",
+    "days_until_appointment": null,
+    "time": "09:00",
+    "days_until_edd": 109,
+    "place": "Bệnh viện Thu Cúc"
+  }
+]

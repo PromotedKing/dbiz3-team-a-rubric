@@ -16,7 +16,7 @@ Reads data/schema/schema-MB360.sql (column order, keys, CHECK constraints). Befo
      foreign keys on — the same test as gate G3. Any failure stops the script and nothing is written.
 Clinical thresholds come only from ALR §5.2 BR-004 (D-14; D-15 = Pending SME). Standard library only.
 """
-import csv, io, os, re, sys, uuid, sqlite3
+import csv, io, os, re, sys, uuid, sqlite3, json
 from datetime import datetime, date, timedelta
 from collections import defaultdict, Counter
 
@@ -540,6 +540,28 @@ for u, kind, note, week, author, text, at in [
     add('FAMILY_MESSAGE', kind, note, user_id=U[u], week=week, author=author, text=text, created_at=at)
 
 
+# Appointment demo fixtures (invented). Calendar offsets are resolved only by the
+# simulated host at startup; the canonical CSV seed remains byte-for-byte stable.
+APPOINTMENT_DEMO = []
+for k, ref, name, phone, offset in [
+    ('U11', 'tci-000133', 'Nguyễn Thị An Nhiên', '0900000111', 1),
+    ('U12', 'tci-000134', 'Trần Ngọc Bình An', '0900000112', None),
+]:
+    U[k] = uid('user-' + k)
+    EDD[k] = NOW.date() + timedelta(days=109)
+    add('USER_ACCOUNT', 'ordinary', 'appointment demo: tomorrow' if offset else 'appointment demo: no appointment',
+        user_id=U[k], tci_account_ref=ref, full_name=name, phone=phone,
+        date_of_birth=date(1997, 5, 16), sex='Female', record_code=None, role='Mother')
+    add('CONSENT_RECORD', 'ordinary', 'invented demo consent', user_id=U[k], accepted_at=NOW,
+        accepted=True, terms_version='v1.0', tci_data_permission=True)
+    add('PREGNANCY_PROFILE', 'ordinary', 'demo EDD rebased by host on first install', user_id=U[k],
+        edd=EDD[k], lmp=None, edd_source='Self-entered', height_cm=None, first_visit_date=None)
+    add('NOTIFICATION_PREFERENCE', 'ordinary', 'appointment demo defaults', user_id=U[k],
+        report_response=True, new_visit_result=True, appointment_reminder=True,
+        watch_flag_reminder=False, updated_at=NOW)
+    APPOINTMENT_DEMO.append(dict(user_id=U[k], days_until_appointment=offset,
+        time='09:00', days_until_edd=109, place='Bệnh viện Thu Cúc'))
+
 # ============================================================================= checks
 # The schema is the source of the column order, keys and CHECK constraints.
 DBX = sqlite3.connect(':memory:')
@@ -800,6 +822,7 @@ lines = ['# Seed report', '',
          '**Seed assumption, not a decided rule:** gestational week = whole weeks counted back from the EDD with a 280-day pregnancy (`spec-ACC.md` §10 Q10 is open).', '',
          'S01 and S02 keep the placeholder names drawn in the wireframes ("Trần Thị B", "Nguyễn Văn A"); every other person is invented. Phone numbers follow the fictitious pattern 0900 000 1xx. Guidance templates and chatbot answers are placeholders, not clinical content; the hand-off offer quotes BOT BR-002. Thresholds come only from ALR BR-004 (D-14; D-15 Pending SME).', '',
          'The rows follow the wireframes: Lan (U01) has 2 reports being handled — C9 (symptom) and C10 (chatbot), both "Not viewed" (S-008, S-023, S-029); her 26/09 report C1 is "Resolved" (S-026, S-061); S-064 shows C1 at 20:18, before the nurse handled it.', '',
+         'Appointment demo: U11 has a next-day host visit, U12 has no visit. The generated `appointment-demo.json` stores relative fixture offsets, not an MB360 entity. The simulated host resolves these at startup and creates an unread Appointment notice only when enabled. One-day timing and retaining received notices when disabled are demo assumptions; S-010 Q3/Q4 remain open. See `docs/build/appointment-part-a.md`.', '',
          '## Load test (gate G3)', '',
          f'The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-memory database (the version is not written, so the report is the same on every machine) and the {len(LOAD_ORDER)} files were loaded in filename order with `PRAGMA foreign_keys = ON`: no constraint error, `PRAGMA foreign_key_check` empty, {sum(LOADED.values())} rows.', '',
          '| File | Table | Rows |', '|---|---|---|']
@@ -867,7 +890,7 @@ RULES = [
     ('ACC BR-003 — hospital EDD takes priority', 'U01 edd_source = Hospital record'),
     ('ACC BR-004 / DM-08 — no consent saved on "Later"; account created at consent', 'U08: first CONSENT_RECORD on 25/09 only; every stored consent accepted = 1'),
     ('ACC BR-006 — setup shown when no due date', 'U07 (no PREGNANCY_PROFILE)'),
-    ('DM-41 — one preference row per account', 'all 10 accounts, U07 and U08 with default values'),
+    ('DM-41 — one preference row per account', 'all 12 accounts, U07, U08, U11 and U12 with default values'),
     ('DM-21 — at most 1 active instruction per metric', 'W08 inactive next to W03 (U05)'),
     ('TML BR-004 / BR-005 / D-60 — messages ≤ 200, diary linked to the current week, read-only', 'FAMILY_MESSAGE of U06; DIA-001 – DIA-008 gestational_week = week at saving'),
 ]
@@ -899,6 +922,7 @@ SCEN = [
 lines += ['', '## Scenario coverage', '', '| Scenario | Rows that make it runnable | Covered? |', '|---|---|---|']
 lines += [f'| {a} | {b} | {c} |' for a, b, c in SCEN]
 FILES[REPORT] = '\n'.join(lines) + '\n'
+FILES[os.path.join(OUT, 'appointment-demo.json')] = json.dumps(APPOINTMENT_DEMO, ensure_ascii=False, indent=2) + '\n'
 n_rows = sum(len(v) for v in T.values())
 
 
@@ -926,4 +950,4 @@ else:
     for p, text in FILES.items():
         with open(p, 'w', encoding='utf-8', newline='') as f:
             f.write(text)
-    print(f'OK — {len(T)} tables, {n_rows} rows; all checks passed; wrote {len(FILES) - 1} CSV files + seed-report.md')
+    print(f'OK — {len(T)} tables, {n_rows} rows; all checks passed; wrote {len(LOAD_ORDER)} CSV files + seed-report.md + appointment-demo.json')

@@ -1,5 +1,11 @@
 # Build Log
 
+## 11/11/2026: appointment demo test cases — Part A (Hải Anh, `haianh/appointment-book-cta`)
+
+- **Scope**: generated U11/U12 accounts, consent, profiles and default preferences; generated relative TCI host fixture, idempotent runtime installation and switch-aware request-driven demo reminders. No booking CTA/API work, schema change or product decision. S-010 Q3/Q4 stay open; received notices remain visible when disabled as a demo assumption explicitly authorized by Hải Anh.
+- **Files / traceability**: `docs/build/appointment-part-a.md`; generator outputs, `data/data-model-MB360.md`, seed README, S-008/S-009/S-010 notes, app hooks and `tests/integration/test_appointment_demo.py`. `.specify/`, snapshots and `REVIEW_appointment_timeline.md` are untouched.
+- **Validation**: focused appointment tests: 8 passed; full `tests/`: 480 passed, 2 xfailed, 1 TestClient dependency deprecation warning (45.30 s). Two old seed expectations were updated from 10 accounts / 272 rows to 12 / 280. Generator `--check` passed (26 tables, 280 rows, 28 generated files), G3 passed (175 columns, 40 relationships); `git diff --check` passed. `uv run` could not write its sandbox interpreter cache; used the existing `.venv/Scripts/python.exe` without dependency changes. HTTP tests stalled in the sandbox, then passed with execution escalation. Show status, diff and diff-stat before the requested Part A commit; no push or Part B work.
+
 Course: DBIZ3 AI-native Product Development, Sessions 8 to 11
 Team: `Group A`    Product: `Mother & Baby 360°`
 

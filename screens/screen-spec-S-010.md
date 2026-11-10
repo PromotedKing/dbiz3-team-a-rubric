@@ -97,6 +97,10 @@ The on / off position of each switch in the drawing is sample data. Default valu
 
 ---
 
+## Appointment demo assumption (Part A, 11/11/2026)
+
+For demo/test only, generated accounts `tci-000133` and `tci-000134` start with `appointment_reminder` on. A reminder is generated one calendar day before the simulated host visit, on startup or Home/S-009 access. Turning the switch off prevents new reminders; previously received notices remain visible. **Q4 cần nhóm trưởng/sản phẩm xác nhận.** The Q3/Q4 markers in §9 above remain unchanged and unresolved; this note records no product decision. See `docs/build/appointment-part-a.md`.
+
 ## Completion checklist
 
 - [x] The mockup is a separate cropped image file, named with the Screen ID.
