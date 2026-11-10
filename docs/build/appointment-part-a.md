@@ -18,7 +18,7 @@ The generator now adds two invented mothers and writes a relative host fixture. 
 - Reminding one calendar day before the visit is a demo assumption only; S-010 Q3 and the corresponding spec-APT marker remain unresolved. No production scheduling or TCI push delivery is claimed.
 - Tomorrow is relative to the first host-fixture installation date, using the existing Vietnam clock. At startup on 10/11/2026 the visit is 11/11/2026 09:00. Reopening an existing DB preserves the visit rather than silently moving it. After that date, use a fresh demo/reset to recreate the tomorrow case. CSVs and generated JSON remain deterministic, independent of today's date.
 - The generator writes 26 CSVs / 280 rows plus the report and host JSON. The app builds SQLite and installs host fixtures at runtime, not during Render build. Render free storage is ephemeral: a new deployment recreates these fixtures; user actions are not durable across fresh deployments. A local existing DB receives just the two new seed cases, without resetting switches or received notices.
-- The no-appointment case currently has no `data-appointment` card, matching existing Home behavior. Empty-card wording and the booking CTA belong to Part B, pending user approval.
+- The no-appointment case currently has no `data-appointment` card, matching existing Home behavior. Part B is cancelled by the user on 11/11/2026 (D-86); no empty-card booking CTA or other booking launcher will be added.
 
 ## Traceability and files
 
@@ -32,7 +32,7 @@ The generator now adds two invented mothers and writes a relative host fixture. 
 
 Supporting files: `data/data-model-MB360.md` updates seed counts and explains the fixture boundary; `data/seed/README.md` documents generation; generated `seed-report.md` records the new rows. Existing `tests/seed/test_seed_acc.py` and `tests/seed/test_seed_load.py` now expect 12 accounts / 280 rows. Screen specs S-008/S-009/S-010 contain demo notes without resolving open questions. `docs/build/build-log.md` records this agent run.
 
-Read-only `.specify/` review: no Appointment / Appointments / appointment_reminder / 272 references were found in Markdown there. Nothing changed in `.specify/`, snapshot specs or generated skills. Full booking/navigation inconsistencies remain for Part C; no new product decision is asserted here.
+Read-only `.specify/` review: no Appointment / Appointments / appointment_reminder / 272 references were found in Markdown there. Nothing changed in `.specify/`, snapshot specs or generated skills. This Part A entry originally deferred navigation alignment; on 11/11/2026 the user cancelled Part B and confirmed D-80 navigation in D-86. The documentation alignment is recorded separately in `docs/build/apt-navigation-alignment.md`.
 
 ## Manual test
 

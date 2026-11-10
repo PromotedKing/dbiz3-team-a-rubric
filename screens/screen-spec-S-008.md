@@ -16,7 +16,7 @@
 
 **Shown when:** the mother opens the sub-app from the "Mother & Baby 360" tile (every launch after the first — `S-001`), after she agrees on `S-001` state 2 and a due date already exists, after pregnancy setup on `S-007`/`S-046`, or when she taps the "Home" tab on any screen. There is no ← button (D-27: only Home and the first-time setup screen have no ←).
 
-**The user leaves this screen when:** she taps "Pregnancy timeline ›" (`S-048`), the visit-result notification card, the "My reports" card (`S-029`), the "Doctor's instructions" card (`S-027`), "Health metrics ›" (`S-023`), "Book a visit ↗" (TCI app booking flow), another tab, or ✕ (`S-083`).
+**The user leaves this screen when:** she taps "Pregnancy timeline ›" (`S-048`), the visit-result notification card, the "My reports" card (`S-029`), the "Doctor's instructions" card (`S-027`), "Health metrics ›" (`S-023`), another tab, or ✕ (`S-083`).
 
 ## 2. Mockup
 
@@ -43,17 +43,17 @@
 | 15 | "Sleep" card — "7 h 30 min" — "27/09/2026 · 06:00" | Text (card) | as #12; duration calculated from the Bedtime / Wake-up time entered on `S-024` | No | — |
 | 16 | "Upcoming appointments" section heading — **Could (D-77)**, hidden if APT is not built | Header (section) | static | No | — |
 | 17 | Appointment card: "Routine antenatal check-up" — "02/10/2026 · 09:00" — "Thu Cuc Hospital · Dr. Nguyễn Văn A" | Text (card) | Appointment Record (`spec-APT.md` §6; the master record is in the TCI app — APT BR-002); `FR-005` (APT) — **Could (D-77)**, read from the TCI app | No | — |
-| 18 | "Book a visit ↗" button (secondary, outlined) | Button | opens the TCI booking portal in a WebView inside the TCI app — `spec-APT.md` BR-001, FR-001 — **Could (D-77)** | No | — |
-| 19 | 5-tab bar: Home (selected) · Health · Appointments · Chatbot · Profile | Toggle (tab) | navigation (D-27) | Yes | — |
+| 18 | Historical booking CTA — not present in the current app | Not rendered | Booking belongs to the TCI host; no Home button, including when no appointment exists (D-80 / D-86) | No | — |
+| 19 | 5-tab bar: Home (selected) · Timeline · Chatbot · From doctor · Profile | Toggle (tab) | D-80; no Appointments tab | Yes | — |
 
-Note: the lines "No threshold assessment on visit-result notices.", "Opens the TCI app booking flow" and the box "[Empty state] No upcoming appointments." are annotations / states on the wireframe — described in §4, §5, §6.
+Note: the wireframe's booking CTA and appointment empty-state annotation are historical, superseded by D-80 / D-86. The current app omits the appointment card when no visit exists and shows no booking CTA.
 
 ## 4. States
 
 | State | What the user sees | Trigger |
 |---|---|---|
-| Default | all sections as drawn: gestational week, new visit-result notification, 2 highlighted cards, 4 self-tracked metric cards, upcoming appointment + "Book a visit ↗" | screen opens with data |
-| Empty (no data) | **Appointments (drawn):** icon + "No upcoming appointments." + CTA "Book a visit ↗" (D-27 template). **Other sections (not drawn):** use the same D-27 empty template (icon + 1 sentence + CTA if needed); the notification card is hidden when there are no new results; the exact wording for the "My reports" card, the "Doctor's instructions" card and the self-tracked metrics section is `[NEEDS CLARIFICATION]` — see §9 Q2 | new mother, no data yet in the section concerned |
+| Default | all sections as drawn: gestational week, new visit-result notification, 2 highlighted cards, 4 self-tracked metric cards, upcoming appointment (read-only; no booking CTA) | screen opens with data |
+| Empty (no data) | **Appointments (current app):** card omitted, no booking CTA (D-80 / D-86). **Other sections (not drawn):** use the same D-27 empty template (icon + 1 sentence + CTA if needed); the notification card is hidden when there are no new results; the exact wording for the "My reports" card, the "Doctor's instructions" card and the self-tracked metrics section is `[NEEDS CLARIFICATION]` — see §9 Q2 | new mother, no data yet in the section concerned |
 | Loading | shared skeleton: grey blocks in place of content, same layout (D-27) | screen opening, data loading |
 | Error | shared banner "⚠ Could not load data. Retry" (D-27); tapping "Retry" reloads | data load fails |
 | Success / confirmation | not applicable — destination screen with no action that needs confirmation | — |
@@ -71,9 +71,9 @@ Note: the lines "No threshold assessment on visit-result notices.", "Opens the T
 | 6 | "Doctor's instructions" card | tap | — | `S-027` |
 | 7 | "Health metrics ›" | tap | — | `S-023` |
 | 8 | Self-tracked metric cards (#12–#15) | tap | `[NEEDS CLARIFICATION: the wireframe does not state whether the cards are tappable]` | — |
-| 9 | "Book a visit ↗" (also in the empty state) | tap | opens the TCI app booking flow (`spec-APT.md` BR-001); opens as a WebView of the TCI booking portal (`spec-APT.md` §10 Q1 resolved, D-77) | TCI app (booking flow) |
-| 10 | "Health" tab | tap | — | `S-023` |
-| 11 | "Appointments" tab | tap | opens the TCI app appointment flow directly, no screen in the sub-app (`spec-APT.md` §1, BR-001; MVP scope backlog item 6) | TCI app |
+| 9 | Historical "Book a visit ↗" control | — | Not rendered in the current app (D-80 / D-86) | — |
+| 10 | "From doctor" tab | tap | opens the notification list | `S-009` |
+| 11 | "Timeline" tab | tap | opens the pregnancy timeline (D-80) | `S-048` |
 | 12 | "Chatbot" tab | tap | — | `S-031` |
 | 13 | "Profile" tab | tap | — | `S-103` |
 
@@ -84,10 +84,10 @@ Note: the lines "No threshold assessment on visit-result notices.", "Opens the T
 | SR-001 | The new visit-result notification is a routine update notification, carries no threshold assessment, and must not be presented as an "Alert". | `spec-ALR.md` BR-003; D-22; wireframe annotation |
 | SR-002 | The "My reports" card leads to `S-029` "My reports"; the number of reports being handled and the latest status come from ALR and are not recalculated on this screen. Only the shared status set is used. No risk summary is shown (ALR-01). | D-26 as revised, D-18; ALR-01 |
 | SR-003 | The "Self-tracked metrics" section contains only group-1 metrics (weight, temperature, heart rate, sleep) with no threshold label; each card shows the measured time `dd/mm/yyyy · HH:mm`. | D-11, D-27 |
-| SR-004 | "Book a visit ↗" does not open a booking screen of the sub-app; `S-012`–`S-018` are reference only. | `spec-APT.md` BR-001, §7 |
-| SR-005 | Header: no ←; ✕ → `S-083`. The tab bar always has 5 tabs, with "Home" highlighted. | D-01, D-27 |
+| SR-004 | Home has no booking CTA. Booking belongs to the TCI host; S-012 – S-022 remain reference only. | D-80 / D-86; `spec-APT.md` BR-001 |
+| SR-005 | Header: no ←; ✕ → S-083. Root tab bar: Home (selected) · Timeline · Chatbot · From doctor · Profile. No Appointments tab. | D-80 / D-86 |
 | SR-006 | No overall "Normal" banner. | No basis in the module specs |
-| SR-007 | The appointment section (#16 – #18) is a Could element (APT); if APT is not built it is hidden and the rest of the screen is unchanged. | D-77 |
+| SR-007 | The appointment section (read-only card) is a Could element (APT); no booking button is included; if APT is not built it is hidden and the rest of the screen is unchanged. | D-77 |
 
 ## 7. Linked requirements
 
@@ -99,7 +99,7 @@ Note: the lines "No threshold assessment on visit-result notices.", "Opens the T
 | FR-002 (`spec-ALR.md`) | Summarizes the mother's report list on the "My reports" card |
 | BR-003 (`spec-ALR.md`) | New visit-result notification card, kept separate from Alerts |
 | FR-005 (`spec-APT.md`) | Shows the upcoming appointment |
-| BR-001 (`spec-APT.md`) | "Book a visit ↗" opens the TCI app booking flow |
+| BR-001 (`spec-APT.md`) | Booking stays in TCI; no booking control on Home (D-80 / D-86) |
 
 ## 8. Responsive and accessibility notes
 
@@ -113,13 +113,13 @@ Note: the lines "No threshold assessment on visit-result notices.", "Opens the T
 |---|---|---|---|
 | 2 | [NEEDS CLARIFICATION: The empty-state wording for the "My reports" card, the "Doctor's instructions" card and the "Self-tracked metrics" section is not drawn.] | No | Open |
 | 3 | [NEEDS CLARIFICATION: Which screen does the "New visit results" card lead to? D-39 does not state it; the inferred target is `S-023` (§5 #4; the same notification type on `S-009` opens `S-023`).] | No | Open |
-| 4 | What does the "Appointments" tab open? **Resolved:** the TCI app appointment flow directly, no separate screen (`spec-APT.md` §1). How it opens technically: still open, `spec-APT.md` §10 Q1. | No | Resolved |
+| 4 | Historical Appointments tab target. **Superseded:** the root bar uses Timeline → S-048; no Home booking CTA (D-80 / D-86, confirmed by Hải Anh on 11/11/2026). | No | Superseded |
 
 ---
 
 ## Appointment demo fixture (Part A, 11/11/2026)
 
-Demo-only test cases from the generator: `tci-000133` opens Home with a host appointment at 09:00 on initial demo setup day + 1 ("Còn 1 ngày"); `tci-000134` has no host appointment and Home omits the appointment card, as the current UI does. Dates come from the simulated TCI feed, not an MB360 appointment table. Empty-card wording and booking CTA changes are deferred to Part B. See `docs/build/appointment-part-a.md` for limitations and tests. This note does not resolve product questions.
+Demo-only test cases from the generator: `tci-000133` opens Home with a host appointment at 09:00 on initial demo setup day + 1 ("Còn 1 ngày"); `tci-000134` has no host appointment and Home omits the appointment card, as the current UI does. Dates come from the simulated TCI feed, not an MB360 appointment table. Part B is cancelled: no new empty-card CTA or booking button will be added (D-86). See `docs/build/appointment-part-a.md` for limitations and tests. This note does not resolve product questions.
 
 ## Completion checklist
 

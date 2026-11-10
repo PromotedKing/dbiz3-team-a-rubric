@@ -70,7 +70,7 @@ flowchart TB
 | One database | Replaces the 8 DBIZ2 hospital databases; visit data and the hospital record link are seed data | D-59, D-61; MVP v8 §5 (Won't: Deep Two-Way HIS/EMR Integration) |
 | File storage (team addition, not DBIZ2) | Holds diary photos (JPG/PNG ≤ 10 MB, up to 5 per entry — D-46, TML-01 pending) and the ultrasound images of the seed visits; the database keeps only the file path | `spec-TML.md` FR-009, §6 Diary Image; `spec-HLT.md` §6 Visit |
 | TCI app identity & notification delivery | Provides the signed-in identity; notifications are sent via the TCI app | D-01; S-010 SR-004 |
-| TCI app booking flow | "Book a visit ↗" and the "Appointments" tab open the host app's booking flow directly; the sub-app only reads the upcoming appointments for the Home card | `spec-APT.md` §1, BR-001 – BR-003; D-62 |
+| TCI app booking flow | The host app owns booking and its entry point. MB360 has no Home booking CTA or Appointments tab; it only reads the next appointment and retains the S-009 Appointment notice redirect (D-80 / D-86) | `spec-APT.md` §1, BR-001 – BR-003; D-62 |
 | Authentication service | Kept only for clinician web sign-in | `spec-CLI.md` §10 Q11 `[NEEDS CLARIFICATION]` |
 | **Hospital EMR — removed from the MVP diagram** | The record-number link is simulated with seed data (no EMR call); an EMR connection is for a later version | `spec-ACC.md` FR-001, FR-002 (ACC-01); D-61; DM-23 |
 | **Removed:** Maps API, Messaging Gateway, Push Notification Gateway | No feature uses them; notifications go through the TCI app | S-010 SR-004 |
