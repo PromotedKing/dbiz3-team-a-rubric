@@ -1,20 +1,21 @@
 """BOT routes — specs/008-bot-chat/contracts/http-routes.md (S-031, S-032 – S-034)."""
 import json
+import logging
 import sqlite3
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+from starlette.concurrency import run_in_threadpool
 
-from .. import ui
-from .. import clock
+from .. import clock, serial, ui
 from . import chat, classify, llm
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
 ui.install(TEMPLATES)
-SUGGESTED = ("How can I eat beef safely during pregnancy?", "How can I produce more breast milk?",
-             "What should I look for when choosing formula for my baby?", "How should Dad read to the baby during pregnancy?")
+SUGGESTED = ("Trouble sleeping during pregnancy", "Should I exercise?", "Leg cramps")   # Màn 11
+LOG = logging.getLogger("mb360.bot")
 HOTLINE = "1900 xxxx"   # placeholder (BOT §10 Q8)
 
 
@@ -46,19 +47,28 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
     async def handle_ask(request: Request, user_id: str, conversation_id: str | None):
         user = mother(user_id)
         text = (await request.form()).get("text") or ""
+        client = llm.get_client()
         try:
-            conversation_id = chat.ask(conn, user_id, conversation_id, text, clock.now(), llm.get_client())
+            async with serial.LOCK:              # the database part only; the LLM service is awaited outside (serial.py)
+                q = chat.prepare(conn, user_id, conversation_id, text, clock.now())
+            answer = await run_in_threadpool(client.answer, q["text"], q["context"]) if q["context"] is not None else None
+            async with serial.LOCK:
+                conversation_id = chat.save(conn, q, answer, client)
         except chat.ChatError as e:
             if e.status == 404:
                 raise HTTPException(404, e.message)
             return page(request, user, conversation_id, 422, e.message, text)
-        except Exception:   # LLM unavailable (BOT §10 Q10): nothing stored, the question is put back for "Retry"
+        except Exception as e:   # LLM unavailable (BOT §10 Q10): nothing stored, the question is put back for "Retry"
+            LOG.error("chatbot answer failed: %s", llm.describe_error(e))   # the platform log shows why; never the question or the key
             return page(request, user, conversation_id, 503, "⚠ Could not get an answer. Retry", text)
         return RedirectResponse(f"/m/{user_id}/chat/{conversation_id}", status_code=303)
 
     @app.get("/m/{user_id}/chat", response_class=HTMLResponse)
     def welcome(request: Request, user_id: str):
-        return page(request, mother(user_id), None)
+        """The tab reopens the mother's latest conversation (Màn 11); the welcome only when she has none."""
+        latest = conn.execute("""SELECT m.conversation_id FROM CHAT_MESSAGE m JOIN CONVERSATION c ON c.conversation_id = m.conversation_id
+                                 WHERE c.user_id = ? ORDER BY m.sent_at DESC, m.rowid DESC LIMIT 1""", (user_id,)).fetchone()
+        return page(request, mother(user_id), latest[0] if latest else None)
 
     @app.post("/m/{user_id}/chat", response_class=HTMLResponse)
     async def first_question(request: Request, user_id: str):

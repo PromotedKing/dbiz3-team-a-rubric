@@ -10,6 +10,8 @@
 | Mockup image | `img/S-043.png` |
 | Status | Draft |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Answers HTTP 401 (ACC §5.3 E-1).
+
 ## 1. Purpose
 
 The sub-app has no sign-in screen (D-01). When the sub-app does not receive a valid TCI identity, this screen explains why and sends the mother back to the TCI app to sign in again.

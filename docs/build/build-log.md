@@ -480,6 +480,45 @@ Copy this block for each run. Keep the newest entry at the bottom.
 | Spec issues found | #6 (below) |
 | Commit | see the commit of this entry |
 
+### Entry 35: 02/11 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `start_feature.py --spec specs/spec-ACC.md ACC --name profile`. Plan, research, contracts and tasks written directly in the Spec Kit layout; the `/speckit-*` skills were not invoked and no separate `/speckit-analyze` was run |
+| Feature and tasks | `specs/009-acc-profile`, T001 – T008 (ACC US-3, S-009, S-010, S-011, S-103) |
+| What the agent produced | `acc/profile.py`, `acc/notices.py`; routes; `profile.html`, `edit_profile.html`, `notif_settings.html`, `notices.html`; `ui.t_known` reads `{field}` rows, most specific first; 51 label rows. Tests first: `test_acc_profile.py`, `test_acc_notices.py`, `test_acc_profile_pages.py` seen failing on import. Agent mistakes: tests picked a "Pending" mother who has a later Linked row (fixed: the latest request decides, with a test); `Report {code}` matched before `Report {code} resolved` (found on the running app; test added) |
+| Human review | Pending (pull request) |
+| Tests | see the pull request; checked on the running app: Profile, From doctor |
+| Spec issues found | none new; open points in `plan.md` Complexity Tracking |
+| Commit | see the commit of this entry |
+
+### Entry 36: 02/11 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `start_feature.py --spec specs/spec-HLT.md HLT --name history`. Plan, research, contracts and tasks written directly in the Spec Kit layout; the `/speckit-*` skills were not invoked and no separate `/speckit-analyze` was run |
+| Feature and tasks | `specs/010-hlt-history`, T001 – T005 (HLT US-3, US-4; S-027, S-025) |
+| What the agent produced | `hlt/history.py` (rows, statistics, chart geometry, S-027 cards), route, `history.html` (inline SVG), richer `instructions.html`, links on S-023 and S-008; 12 label rows. Tests first: `test_hlt_history.py`, `test_hlt_history_page.py` seen failing on import. Agent mistake: the first test wrote a Self-entered fetal heart rate, which the schema refuses (`ck_hmr_fetal_hr_visit`), so that case is enforced by the database, not by the query alone |
+| Human review | Pending (pull request) |
+| Tests | see the pull request |
+| Spec issues found | none new; HLT Q12 stays open: no statistics for urine protein and sleep, default range 30 days (`plan.md`) |
+| Commit | see the commit of this entry |
+
+### Entry 37: 02/11 Sang
+
+| Field | Value |
+|---|---|
+| Path and agent | A (Claude Code, claude-opus-5-5) |
+| Command and argument | `start_feature.py --spec specs/spec-TML.md TML --name journey`. Plan, research, contracts and tasks written directly in the Spec Kit layout; the `/speckit-*` skills were not invoked and no separate `/speckit-analyze` was run |
+| Feature and tasks | `specs/011-tml-journey`, T001 – T005 (TML US-4; S-105) |
+| What the agent produced | `tml/journey.py`, `weeks.week_content`, routes, `journey.html`, `album.html`, `_journey_weeks.html`, links on S-048 and S-103; 15 label rows. Tests first: `test_tml_journey.py`, `test_tml_journey_pages.py` seen failing on import. **FR-014 is met only in part:** the album is a print-ready page and the browser saves it as PDF; no `application/pdf` file is generated (no new dependency without the team) |
+| Human review | Pending (pull request) |
+| Tests | see the pull request |
+| Spec issues found | #7 (below) |
+| Commit | see the commit of this entry |
+
 ## 3. Spec issues found while building
 
 Every gap the build uncovers goes back to `specs/spec-<MODULE>.md` (§10) as an open question or a spec change. It
@@ -493,6 +532,7 @@ is never fixed silently in code.
 | 4 | Step 6, entry 11 | CHAT_MESSAGE.`sent_at` has minute precision; a question and the chatbot reply are stored in the same minute, so the order of the transcript on S-064 (D-78) follows the storage order, not a rule | Proposal for the BOT owner (Sang): state in BOT §6 that the question is shown before its reply when the times are equal, or store seconds | Open |
 | 5 | Entry 33 | Vietnamese screens (D-79): the wireframes show Vietnamese, the app showed English; 213 on-screen texts (form labels, messages, demo pages) are not in the UI label reference | Added to `docs/ui-label-reference.md` as proposed rows; the owners of `screens/` (Chi, Ánh) review the wording | Open |
 | 6 | Entry 34 | D-80 removes the Appointments tab and moves navigation; the app now differs from `spec-APT.md` BR-003, FR-001, S-008 SR-005, S-083 and the tab row of the screen specs | Not edited here: D-80 names them for their owners (Hải Anh for APT; Chi, Ánh for screens). The other differences of the package stay open in `screens/ui-final/README.md` | Open |
+| 7 | Entry 37 | TML FR-014 asks for a PDF file; Vietnamese text in a generated PDF needs a new library and an embedded font | No spec change; `specs/011-tml-journey/plan.md` states the limit. The team decides: keep the browser's Save as PDF, or add a library | Open |
 
 ## 4. Agent mistakes worth remembering
 
@@ -509,3 +549,66 @@ does not happen again.
 | 28 | A cache added for FR-004 was not invalidated by writes from other modules (stale timeline after a report) | Code reading while writing the routes | When a feature adds a cache, write a test that changes the data from another screen before writing the cache |
 | 30 | Second unchecked seed claim ("every conversation has session data"): the counts were queried, the empty optional values were not | The seed test failed | Query NULLs of every optional column a claim depends on, not only row counts |
 | 32 | A new file name (`.env.example`) broke the course T1 check after merge | Fresh-clone check of `main` | Run `uv run tools/check_env.py --repo` before opening every pull request, not only the tests |
+
+## 02/11/2026: mother app v1.0.0 (Sang, branch `sang/mother-app-v1`, on top of PR #15 – #19)
+
+Built without `/speckit-*`, like the three slices before it: the request was one complete app from the UI package, reviewed once it exists (D-81). Checked by the test suite and by a scripted walk of the whole flow in Edge at 390 x 844; not yet tried on a real phone.
+
+## 03/11/2026: ready for hosting (Sang, branch `sang/mother-app-v1`)
+
+Session 11. `render.yaml`, password on the staff and test pages (D-82), Vietnam time in the live clock, one request at a time, Secure cookie on the platform. Checked by the tests and by running the build and start commands locally with `RENDER` set; not yet deployed on Render.
+
+## 03/11/2026: first deploy failed on the seed (Sang, branch `sang/mother-app-v1`)
+
+Render's SQLite refused NULL in `CHECK (json_valid(x))`. Schema: NULL guard on the 3 JSON columns; data model §9 row updated; seed unchanged. Tests pass on SQLite 3.40 and 3.50. Affects `data/schema/schema-MB360.sql` and `data/data-model-MB360.md` (owner: Tâm).
+
+## 06/11/2026: back in line with the Must FRs (Sang, branch `sang/mother-app-v1`)
+
+S-009 type filter and "Mark all as read" back (ACC FR-025, FR-026); the week's visit card and indicators back on S-048 (TML FR-005, FR-012); "Close app" on S-083 ends the sub-app session (ACC FR-019, FR-021, DM-19 default). D-81 updated.
+
+## 06/11/2026: fixes from the v1.0.0 review of Tâm, Ánh and Chi (Sang, branch `sang/mother-app-v1`)
+
+Requested changes: chatbot matches whole words and accent-free typing, and offers a nurse for symptom and medicine questions before declining (`bot/classify.py`, provisional words added, Pending SME D-47); numbers accept a decimal comma and refuse 0, negatives, nan and inf on S-007, S-011 and S-024 (`numbers.py`, not a clinical range: D-16, U18 stay open); switching EDD/LMP clears the date, LMP has its own error. Also: chart axis keeps a decimal on narrow ranges and names urine levels; statistics keep the readings' precision; glucose history opens on fasting; sleep in Vietnamese; S-023 entry from the Home title and tiles, save returns to S-023; Home tiles show the threshold label and "Bác sĩ dặn theo dõi"; ← skips filters of the same screen; chat scrolls to the newest message; staff answers accept more bullet forms; agreed labels (tab "Thai kỳ", "Mẹ & Bé 360", "mẹ" instead of "bạn", "Gọi khẩn cấp"); facility in Vietnamese; S-043 answers 401. Not done: spec and screen-spec updates (owners), consent withdrawal (Client question), one account per tester, the clinical dashboard.
+
+## 07/11/2026: chatbot on the Gemini API (Sang, branch `sang/mother-app-v1`)
+
+`GeminiLLM` follows the current Gemini API docs (checked 07/11/2026): generateContent, then the Interactions API if Google answers 404; output capped, thought parts dropped, empty answer = failure ("Retry"); default model `gemini-3.5-flash-lite`; `render.yaml` sets the model, the key is added on Render. D-83. Tested with a fake network; not yet called with a real key.
+
+## 07/11/2026: chatbot failed on the platform (Sang, branch `sang/mother-app-v1`)
+
+With the key set, every answer showed "Retry" and the log said nothing. Now the log names the cause (HTTP status and Google's message, never the key or the question), and the client calls the Interactions API first, as Google's reference does for new projects, falling back to generateContent on 404. Cause not confirmed yet.
+
+## 07/11/2026: chatbot on Groq's free plan (Sang, branch `sang/mother-app-v1`)
+
+Gemini answered 403: the Google project is not eligible for the free tier. `GroqLLM` calls Groq's OpenAI-style chat completions (model `openai/gpt-oss-120b`), first when `GROQ_API_KEY` is set; Gemini stays second. D-84. Tested with a fake network and a call to Groq with a fake key; not yet with a real key.
+
+## 07/11/2026: long chatbot answers could not be saved (Sang, branch `sang/mother-app-v1`)
+
+Groq answers longer than 500 characters broke the CHAT_MESSAGE length check. Answers are now asked for 450 characters and cut at a sentence end before saving; the schema is unchanged (DM-36 still open for the team).
+
+## 07/11/2026: clinical Overview and Case board (Sang, branch `sang/mother-app-v1`)
+
+From the note and the two reference pictures in the v1.0.0 review: `cli/dashboard.py`, `staff_dashboard.html`, `staff_board.html`, navigation in `staff_base.html`, `?flag=` on the case list. D-85. 7 new tests; checked in Edge at 1366 and 390 px wide (a card opens its case, no horizontal overflow).
+
+## 07/11/2026: Session 11 EARS lines and specs after the v1.0.0 app (Sang, branch `sang/mother-app-v1`)
+
+- **What the agent did**: added §5.3 "Behaviour on the internet (EARS, Session 11)" to spec-BOT (E-1 – E-4: LLM failure, long answer, what is sent, hand-off without the LLM), spec-ACC (E-1 – E-4: session, Close app, UTC+7, decimal comma) and spec-CLI (E-1 – E-3: team password, no password configured, one action at a time); a §7.3 "Differences in the v1.0.0 app" table to all 7 module specs; marked the questions answered by the v1.0.0 review (BOT Q10, Q14; ACC Q20, Q22, DM-19; HLT Q12) and added ACC Q23 (consent withdrawal); a v1.0.0 note under the header of 18 screen specs; refreshed the 11 spec snapshots; updated `specs/008-bot-chat/research.md` and `docs/build/mvp-alpha-checklist.md`.
+- **Checked by**: pytest, `start_feature.py --check` on every folder, `check_data_model.py`, `generate_seed.py --check`.
+- **To review**: each spec owner reads their §5.3 / §7.3 and the answered questions (written from the build and the 06/11 review, not yet agreed by the owner); spec-APT BR-003 / FR-001 still describe an Appointments tab.
+
+## 09/11/2026: fixes from the project review "Session 8 alpha" (Sang, branch `sang/mother-app-v1`)
+
+- **A1 back arrow**: `static/app.js` keeps the screens walked since the last tab screen; "←" goes to the previous one, a screen already in the list cuts the list back to it (S-027 ↔ S-029 no longer loop), a sent form is taken out, and with no earlier screen "←" follows its own link. A screen restored from the browser's cache is loaded again, so the unread badge is not stale (C1). Walked in Edge at phone size: Profile → S-027 → S-029 → ← S-027 → ← Profile; S-027 → report → sent → ← Profile; Từ bác sĩ → S-029 → S-026 → ← S-029 → ← notices. The old script, same walk: ← went back into the sent form and looped between S-029 and S-026.
+- **A2 lock**: `serial.py`; a chatbot question takes the database lock only to read and to save; the LLM service is awaited outside it, in a worker thread (`bot/chat.py` prepare / save, `bot/routes.py`).
+- **C2, C3**: panel text names both keys; `llm.py` header and comments; decision and question numbers removed from three staff / test pages (label rows changed in `docs/ui-label-reference.md`).
+- **Docs**: A3 data loss and the branch of `render.yaml` in `mother-app-v1.md`; who confirms which part of #20 in `merge-guide.md` (B2, B3); the privacy risk of D-83 / D-84 for the team to accept (B1).
+- **Tests**: `tests/integration/test_review_0911.py`; 470 passed, 2 xfailed.
+- **Not changed**: C4 seed staff names (seed owner Hải Anh, generator only), C7 hotline, C9 DM-29 (open), B3 split of #20 (owners confirm by part instead), C11 (done on 07/11, commit 7b31274).
+
+## 09/11/2026: remarks left on PRs #15 – #20 (Sang, branch `sang/mother-app-v1`)
+
+- **Read**: every review, comment and inline comment on #15 – #20 (all six approved by Chi, Ánh and Tâm on 08 – 09/11/2026).
+- **Changed**: S-025 note under the blood pressure statistics (Ánh, #18); internal codes out of the TCI booking stand-in, four unused label rows with codes removed, the "Cá nhân" row marked as the TCI host's tab (Chi, #15, #17); spec-TML §7.3 and S-048 say the week's indicators are in two places (Ánh, #19); S-025 Q3 resolved and Q4 annotated (Ánh, #20); spec-BOT Q15 negated danger phrases recorded for the SME (Chi, #20); spec snapshots refreshed.
+- **Checked, already done**: tab "Thai kỳ", "Mẹ & Bé 360", "mẹ" instead of "bạn" on the sub-app (06/11); screen-spec notes for S-008, S-083, S-103, S-010, S-009, S-023 (07/11); urine protein without a value shows "Chưa đánh giá" on S-023 (test added).
+- **Left open**: S-025 Q8 date range rules; ACC Q23; BOT Q2, Q12, Q15; D-83 / D-84 for the whole team.
+

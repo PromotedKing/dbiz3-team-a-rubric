@@ -1,7 +1,7 @@
 {#- S-024; design: screens/ui-final Màn 17. No valid range is checked: D-16 is pending SME (U18). -#}
 {% extends "base.html" %}
 {% set page_title = "Enter self-tracked metrics" %}
-{% set back_url = "/m/" ~ user.user_id ~ "/health" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/health" %}{% set back_auto = true %}
 {% macro err(field) %}{% if errors.get(field) %}<p class="err" data-error-for="{{ field }}">⚠ {{ errors[field] | t }}</p>{% endif %}{% endmacro %}
 {% block main %}
 <form class="fw" method="post" action="/m/{{ user.user_id }}/self-tracked">
@@ -11,19 +11,20 @@
     {% for key, label, unit in [("weight", "Weight", "kg"), ("temperature", "Temperature", "°C"), ("heart_rate", "Heart rate", "bpm")] %}
     <div class="card bl8">
       <p class="t-body b">{{ _(label) }}</p>
-      <div class="unit"><input class="inp{% if errors.get(key) %} er{% endif %}" name="{{ key }}" inputmode="decimal" placeholder="{{ _('Enter value') }}" value="{{ form.get(key, '') }}" aria-label="{{ _(label) }}"><span>{{ unit }}</span></div>
-      {{ err(key) }}
-      <label class="t-cap" for="{{ key }}_at">{{ _("Measured at") }}</label>
-      <input class="inp" id="{{ key }}_at" type="datetime-local" name="{{ key }}_at" value="{{ form.get(key ~ '_at', '') }}">
-      {{ err(key ~ "_at") }}
+      <div class="grid2">
+        <div class="unit"><input class="inp{% if errors.get(key) %} er{% endif %}" name="{{ key }}" inputmode="decimal" placeholder="{{ _('Enter value') }}" value="{{ form.get(key, '') }}" aria-label="{{ _(label) }}"><span>{{ unit }}</span></div>
+        <input class="inp" id="{{ key }}_at" type="datetime-local" name="{{ key }}_at" value="{{ form.get(key ~ '_at', '') }}" data-short aria-label="{{ _('Measured at') }}">
+      </div>
+      {{ err(key) }}{{ err(key ~ "_at") }}
     </div>
     {% endfor %}
     <div class="card bl8">
       <p class="t-body b">{{ _("Sleep") }}</p>
-      <label class="t-cap" for="bedtime">{{ _("Bedtime") }}</label>
-      <input class="inp" id="bedtime" type="datetime-local" name="bedtime" value="{{ form.get('bedtime', '') }}">{{ err("bedtime") }}
-      <label class="t-cap" for="wakeup">{{ _("Wake-up time") }}</label>
-      <input class="inp" id="wakeup" type="datetime-local" name="wakeup" value="{{ form.get('wakeup', '') }}">{{ err("wakeup") }}
+      <div class="grid2">
+        <div class="fld"><label class="t-cap" style="font-weight:400;font-size:12px;color:#6F6F6F" for="bedtime">{{ _("Bedtime") }}</label><input class="inp" id="bedtime" type="datetime-local" name="bedtime" value="{{ form.get('bedtime', '') }}" data-short></div>
+        <div class="fld"><label class="t-cap" style="font-weight:400;font-size:12px;color:#6F6F6F" for="wakeup">{{ _("Wake-up time") }}</label><input class="inp" id="wakeup" type="datetime-local" name="wakeup" value="{{ form.get('wakeup', '') }}" data-short></div>
+      </div>
+      {{ err("bedtime") }}{{ err("wakeup") }}
     </div>
   </div>
   <div class="foot"><button class="btn">{{ _("Save metrics") }}</button></div>

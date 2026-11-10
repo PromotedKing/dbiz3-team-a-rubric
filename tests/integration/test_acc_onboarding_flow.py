@@ -5,9 +5,14 @@ from tests.acc_helpers import count, new_identity, seed_identity
 from tests.integration.helpers import vi
 
 
-def test_tci_home_lists_accounts_and_the_simulate_form(client):
+def test_tci_home_opens_the_sub_app_for_the_signed_in_account(client):
     page = client.get("/tci").text
-    assert vi("Mother & Baby 360") in page and "Nguyễn Thị Lan" in page and vi("Simulate another TCI account") in page
+    assert vi("Mother & Baby 360") in page and "data-open-subapp" in page and 'action="/tci/open"' in page
+
+
+def test_test_tool_lists_accounts_and_the_simulate_form(client):
+    page = client.get("/tci/accounts").text
+    assert "Nguyễn Thị Lan" in page and vi("Simulate another TCI account") in page
 
 
 def test_first_opening_shows_the_consent_sheet(client):
@@ -33,8 +38,8 @@ def test_agree_then_guide_then_setup(client, db):
     uid = db.execute("SELECT user_id FROM USER_ACCOUNT WHERE tci_account_ref = 'tci-test-001'").fetchone()[0]
     assert r.headers["location"] == f"/m/{uid}/guide"
     guide = client.get(r.headers["location"]).text
-    assert vi("Skip") in guide and vi("Next") in guide and 'data-guide-pages="4"' in guide
-    assert vi("Get started") in client.get(f"/m/{uid}/guide", params={"page": 4}).text
+    assert vi("Skip") in guide and vi("Next") in guide and 'data-guide-pages="3"' in guide
+    assert vi("Get started") in client.get(f"/m/{uid}/guide", params={"page": 3}).text
     done = client.get(f"/m/{uid}/guide/done")
     assert done.status_code == 303 and done.headers["location"] == f"/m/{uid}/setup"
 

@@ -23,6 +23,13 @@
     </span>
     {% endif %}
   </header>
+  {% if me %}
+  <nav class="staff-nav" aria-label="{{ _('Clinical web') }}">
+    <a href="/staff/{{ me.staff_id }}/dashboard"{% if nav == "dashboard" %} class="on" aria-current="page"{% endif %}>{{ _("Overview") }}</a>
+    <a href="/staff/{{ me.staff_id }}/board"{% if nav == "board" %} class="on" aria-current="page"{% endif %}>{{ _("Case board") }}</a>
+    <a href="/staff/{{ me.staff_id }}/cases"{% if nav == "cases" or nav is not defined %} class="on" aria-current="page"{% endif %}>{{ _("Case list") }}</a>
+  </nav>
+  {% endif %}
   <main>{% block content %}{% endblock %}</main>
 </body>
 </html>

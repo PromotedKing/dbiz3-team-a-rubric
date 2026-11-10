@@ -1,0 +1,54 @@
+{#- D-85 clinical dashboard: counts read from the cases as they stand; every number opens the cases behind it -#}
+{% extends "staff_base.html" %}
+{% block content %}
+<div class="dash-head">
+  <div><h1>{{ _("Overview") }}</h1><p class="caption">{{ _("Cases sent by mothers and how far each one has been handled.") }}</p></div>
+  <div class="caption" style="text-align:right">{{ _("Updated {time}", time=updated.strftime("%d/%m/%Y · %H:%M")) }}<br><a class="link" href="">{{ _("Refresh") }} ↻</a></div>
+</div>
+{% include "_staff_filters.html" %}
+<p class="caption">{{ _("{n} cases in this view", n=s.total) }}</p>
+
+<div class="kpis">
+  <a class="kpi" href="/staff/{{ me.staff_id }}/board"><span class="kpi-mark"></span><span class="kpi-name">{{ _("Open cases") }}</span><span class="kpi-num">{{ s.open }}</span><span class="caption">{{ _("From sent to resolved") }}</span></a>
+  <a class="kpi warn" href="/staff/{{ me.staff_id }}/cases?status=Not%20viewed"><span class="kpi-mark"></span><span class="kpi-name">{{ _("Not viewed") }}</span><span class="kpi-num">{{ s.not_viewed }}</span>
+    <span class="caption">{% if s.oldest %}{{ _("Waiting longest: {d}d {h}h", d=s.oldest.days, h=s.oldest.hours) if s.oldest.days else _("Waiting longest: {h}h {m}m", h=s.oldest.hours, m=s.oldest.minutes) }}{% else %}{{ _("Nothing waiting") }}{% endif %}</span></a>
+  <a class="kpi alert" href="/staff/{{ me.staff_id }}/cases?flag=above"><span class="kpi-mark"></span><span class="kpi-name">{{ _("Above threshold, open") }}</span><span class="kpi-num">{{ s.above_open }}</span><span class="caption">{{ _("Thresholds from THRESHOLD_RULE") }}</span></a>
+  <a class="kpi info" href="/staff/{{ me.staff_id }}/cases?status=Escalated%20to%20doctor"><span class="kpi-mark"></span><span class="kpi-name">{{ _("Escalated to doctor") }}</span><span class="kpi-num">{{ s.escalated }}</span>
+    <span class="caption">{% if s.mine is not none %}{{ _("{n} assigned to me", n=s.mine) }}{% else %}{{ _("Waiting for a doctor's decision") }}{% endif %}</span></a>
+</div>
+
+<div class="panels">
+  <section class="card panel">
+    <h2>{{ _("Where cases stand") }}</h2>
+    <p class="caption">{{ _("Current status · same columns as the case board") }}</p>
+    {% for b in s.by_status %}
+    <a class="bar-row" href="/staff/{{ me.staff_id }}/cases?status={{ b.status | urlencode }}" data-status="{{ b.status }}">
+      <span class="bar-name">{{ b.status | t }}</span><span class="bar"><i class="st-{{ loop.index }}" style="width:{{ b.width }}%"></i></span><span class="bar-num">{{ b.count }}</span>
+    </a>
+    {% endfor %}
+  </section>
+  <section class="card panel">
+    <div class="sec-head"><h2>{{ _("Needs attention") }}</h2><a class="btn sm outline" href="/staff/{{ me.staff_id }}/board">{{ _("Open the board") }}</a></div>
+    <p class="caption">{{ _("{n} open cases flagged · a case can be in more than one group", n=s.open_flagged) }}</p>
+    {% for g in s.flags %}
+    <a class="bar-row" href="/staff/{{ me.staff_id }}/cases?flag={{ g.key }}" data-flag="{{ g.key }}">
+      <span class="bar-name">{{ _(g.label) }}</span><span class="bar"><i class="fl-{{ g.key }}" style="width:{{ g.width }}%"></i></span><span class="bar-num">{{ g.count }}</span>
+    </a>
+    {% endfor %}
+  </section>
+</div>
+
+<div class="panels">
+  <section class="card panel wide">
+    <div class="sec-head"><h2>{{ _("Handle next") }}</h2><a class="link" href="/staff/{{ me.staff_id }}/cases">{{ _("See all cases") }} ›</a></div>
+    <p class="caption">{{ _("Not viewed first, above threshold first, then the oldest") }}</p>
+    <div class="next-grid">
+      {% for r in s.latest_open %}{% include "_case_card.html" %}{% else %}<p class="caption">{{ _("No open cases.") }}</p>{% endfor %}
+    </div>
+  </section>
+  <section class="card panel narrow">
+    <h2>{{ _("By source") }}</h2>
+    {% for b in s.by_source %}<div class="kv-row"><span>{{ b.source | t }}</span><b>{{ b.count }}</b></div>{% endfor %}
+  </section>
+</div>
+{% endblock %}

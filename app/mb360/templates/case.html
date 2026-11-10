@@ -62,7 +62,7 @@
   <p>{{ _("Symptoms:") }} {{ symptoms | t_list }}{% if report.other_symptom_text %} ({{ report.other_symptom_text }}){% endif %}{% if report.note %} · {{ _("Mother's note:") }} {{ report.note }}{% endif %}</p>
   {% else %}
   <div class="row"><h2 class="grow" style="margin:0">{{ _("Chatbot question") }}</h2><span class="tag status">{{ case.status | t }}</span></div>
-  <p class="caption">{{ _("Source: Chatbot · whole conversation (D-78)") }}</p>
+  <p class="caption">{{ _("Source: Chatbot · whole conversation") }}</p>
   {% for m in transcript %}
   <div class="msg {% if m.message_id == question_id %}marked{% endif %}" {% if m.message_id == question_id %}data-escalated-question{% endif %}>
     <strong>{{ m.sender | t }}</strong> <span class="caption">{{ m.sent_at | show_time }}</span><br>{{ m.text }}</div>
@@ -88,6 +88,7 @@
     <textarea name="custom_text" maxlength="1000" rows="3" style="margin-top:8px" placeholder="{{ _('Or write / edit the text…') }}"></textarea>
     <div class="actions" style="justify-content:flex-start"><button class="btn sm" style="flex:none">{{ _("Send guidance") }}</button></div>
     <p class="caption">{{ _("The mother sees the guidance on S-026. Sending guidance does not change the status.") }}</p>
+    <p class="caption">{{ _("In the mother's app, lines starting with - become her to-do list, and a line “Hẹn khám: dd/mm/yyyy · HH:mm” shows as the follow-up visit.") }}</p>
   </form>
   {% endif %}
 </div>

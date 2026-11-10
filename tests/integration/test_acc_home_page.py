@@ -10,9 +10,10 @@ def test_lan_home(client, user_id):
     lan = user_id("tci-000123")
     page = client.get(f"/m/{lan}/home").text
     for text in (vi("Hello, {name}!", name="Lan"), vi("Week {n} + {d} days", n=28, d=0), vi("Due date"), "20/12/2026",
-                 vi("Doctor's instructions"), vi("Blood pressure"), vi("Blood glucose"), vi("My reports")):
+                 vi("Blood pressure"), vi("Report metric / symptom")):
         assert text in page, text
-    assert f'href="/m/{lan}/instructions"' in page and f'href="/m/{lan}/my-reports"' in page
+    report = client.get(f"/m/{lan}/report").text        # Màn 4 has no menu: Màn 5 leads to My reports, Màn 12 to the instructions
+    assert f'href="/m/{lan}/my-reports"' in report and f'href="/m/{lan}/instructions"' in client.get(f"/m/{lan}/profile").text
 
 
 def test_home_without_due_date_goes_to_setup(client, user_id):

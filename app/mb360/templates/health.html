@@ -2,9 +2,9 @@
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
 {% set page_title = "Health metrics" %}
-{% set back_url = "/m/" ~ user.user_id ~ "/home" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/home" %}{% set back_auto = true %}
 {% block header_actions %}
-<a class="ib" href="/m/{{ user.user_id }}/health?refreshed=1" aria-label="{{ _('Refresh') }}">{{ icon.clock(24) }}</a>
+<a class="ib" href="/m/{{ user.user_id }}/health?refreshed=1" aria-label="{{ _('Refresh') }}">{{ icon.refresh() }}</a>
 {% endblock %}
 {% block content %}
 {% if refreshed %}<div class="okbox">{{ icon.ok() }}<p class="t-body" style="color:inherit">{{ _("Data updated.") }}</p></div>{% endif %}
@@ -17,8 +17,8 @@
       <p class="t-cap">{{ _("Visit date {date} · not editable", date=d.visit_date | dmy) }}</p>
       {% for r in d.visit_rows %}
       <div class="kv">
-        <span class="k">{{ r.metric | t }}{% if r.reference %}<br><span class="t-cap">{{ _("(reference range {range})", range=r.reference) }}</span>{% endif %}</span>
-        <span style="display:flex;gap:8px;align-items:center"><span class="b">{{ r.value | t_known or "—" }}</span>
+        <span class="k">{{ r.metric | t }}{% if r.reference %} <br><span class="t-cap">{{ _("(reference range {range})", range=r.reference) }}</span>{% endif %}</span>
+        <span style="display:flex;gap:8px;align-items:center">{% if r.value %}<span class="b">{{ r.value | t_known }}</span>{% else %}<span class="tag un">{{ _("Not assessed") }}</span>{% endif %}
           {% if r.label %}<span class="tag {{ 'al' if r.label == 'Above threshold' else 'ok' if r.label == 'Normal' else 'un' }}">{{ r.label | t }}</span>{% endif %}</span>
       </div>
       {% endfor %}
@@ -48,11 +48,12 @@
   <div class="sec"><p class="t-title">{{ _("Self-tracked metrics") }}</p><span class="tag src">{{ _("Self-entered") }}</span></div>
   <div class="card" style="padding:12px 16px">
     {% for r in d.self_tracked %}
-    <div class="kv"><span class="k">{{ r.metric | t }}<br><span class="t-cap">{{ r.at | show_time }}</span></span><span class="b">{{ r.value }}</span></div>
+    <div class="kv"><span class="k">{{ r.metric | t }}<br><span class="t-cap">{{ r.at | show_time }}</span></span><span class="b">{{ r.value | t_known }}</span></div>
     {% else %}
     <p class="t-body" style="color:#6F6F6F">{{ _("No self-tracked metrics yet.") }}</p>
     {% endfor %}
   </div>
   <a class="btn full" href="/m/{{ user.user_id }}/self-tracked">{{ _("+ Enter self-tracked metrics") }}</a>
+  <a class="btn o full" href="/m/{{ user.user_id }}/history">{{ _("View metric history") }}</a>
 </div>
 {% endblock %}

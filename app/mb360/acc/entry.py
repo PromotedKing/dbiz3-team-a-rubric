@@ -10,6 +10,8 @@ DB_TIME = "%Y-%m-%d %H:%M"
 SESSION_HOURS = 12          # provisional: lifetime of the ordinary seed sessions (§10 Q9, Q22)
 PREFERENCE_DEFAULTS = (1, 1, 1, 0)   # DM-41 seed defaults (§10 Q22): report, visit result, appointment, instruction reminder
 COPY = ("full_name", "phone", "date_of_birth", "record_code")
+COOKIE = "mb360_session"
+SECURE_COOKIE = False     # mb360.server: True on the hosting platform (HTTPS)
 
 
 class EntryError(Exception):
@@ -53,6 +55,8 @@ def open_subapp(conn: sqlite3.Connection, identity: dict, now: datetime) -> tupl
     if acc is None:                                 # first opening: S-001 state 2 (BR-004)
         return "consent", None
     user_id = acc["user_id"]
+    if conn.execute("SELECT 1 FROM CONSENT_RECORD WHERE user_id = ? AND accepted = 1", (user_id,)).fetchone() is None:
+        return "consent", None                      # known to the hospital, first opening of the sub-app (BR-004)
 
     def write():
         # DM-18 default: refresh the copy of the TCI identity at every opening
@@ -93,3 +97,26 @@ def agree(conn: sqlite3.Connection, identity: dict, accepted: bool, now: datetim
 
 def next_step(conn: sqlite3.Connection, user_id: str) -> str:
     return _next_step(conn, user_id)
+
+
+def latest_session(conn: sqlite3.Connection, user_id: str) -> str | None:
+    row = conn.execute("SELECT session_token FROM SESSION WHERE user_id = ? ORDER BY created_at DESC, rowid DESC LIMIT 1", (user_id,)).fetchone()
+    return row[0] if row else None
+
+
+def end_session(conn: sqlite3.Connection, token: str | None, user_id: str, now: datetime) -> None:
+    """FR-019, DM-19 default: expires_at = time of closing. A session cannot end in the minute it began (ck_session_period),
+    so it then ends one minute after it began; the cookie is removed at once anyway (FR-021)."""
+    row = conn.execute("SELECT created_at FROM SESSION WHERE session_token = ? AND user_id = ?", (token, user_id)).fetchone() if token else None
+    if row is None:
+        return
+    end = max(now, datetime.strptime(row[0], DB_TIME) + timedelta(minutes=1)).strftime(DB_TIME)
+    _run(conn, lambda: conn.execute("UPDATE SESSION SET expires_at = ? WHERE session_token = ? AND expires_at > ?", (end, token, end)))
+
+
+def valid_session(conn: sqlite3.Connection, token: str | None, user_id: str, now: datetime) -> bool:
+    """The token is this mother's and has not expired."""
+    if not token:
+        return False
+    row = conn.execute("SELECT expires_at FROM SESSION WHERE session_token = ? AND user_id = ?", (token, user_id)).fetchone()
+    return row is not None and row[0] > now.strftime(DB_TIME)

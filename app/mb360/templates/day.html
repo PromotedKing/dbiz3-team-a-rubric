@@ -11,28 +11,34 @@
 </div>
 {% endblock %}
 {% block content %}
-<p class="t-cap">{{ _("Week {n} + {d} days", n=week, d=week_day) }}</p>
-
+{% set visit_rows = rows | selectattr("source", "eq", "From visit") | list %}
+{% set other_rows = rows | rejectattr("source", "eq", "From visit") | list %}
 {% for v in visits %}
 <div class="bl">
-  <div class="sec"><p class="t-title">{{ _("From visit") }}</p><span class="t-cap">{{ v.visit_type | t }}</span></div>
-  <div class="card bl8" style="padding:12px">
+  <div class="sec"><p class="t-title">{{ _("From visit") }}</p><span class="t-cap">{{ _("Week {n} + {d} days", n=week, d=week_day) }}</span></div>
+  <div class="card bl8" style="padding:12px;gap:12px">
     {% if v.ultrasound_image %}
-      {% if media_exists(v.ultrasound_image) %}<img src="/media/{{ v.ultrasound_image }}" alt="{{ _('Ultrasound image, {date}', date=v.visit_date | dmy) }}" style="max-width:100%;border-radius:12px">
+      {% if media_exists(v.ultrasound_image) %}<img class="us" src="/media/{{ v.ultrasound_image }}" data-zoom alt="{{ _('Ultrasound image, {date}', date=v.visit_date | dmy) }}">
+        <p class="t-cap">{{ _("Ultrasound image sent by the hospital · tap to enlarge") }}</p>
       {% else %}<div style="height:180px;border-radius:12px;background:#1C2427;display:flex;align-items:flex-end;padding:10px" role="img" aria-label="{{ _('Ultrasound image, {date}', date=v.visit_date | dmy) }}"><span class="t-cap" style="color:#B4B4B4">{{ _("Ultrasound image, {date}", date=v.visit_date | dmy) }}</span></div>{% endif %}
     {% endif %}
-    {% if v.fetal_length is not none %}<div class="kv"><span class="k">{{ _("Fetal length") }}</span><span class="b">{{ v.fetal_length }} cm</span></div>{% endif %}
-    {% if v.estimated_fetal_weight is not none %}<div class="kv"><span class="k">{{ _("Estimated weight") }}</span><span class="b">{{ v.estimated_fetal_weight }} g</span></div>{% endif %}
-    {% if v.doctor_note %}<p class="t-cap">{{ _("Doctor's note") }}</p><p class="t-body">{{ v.doctor_note }}</p>{% endif %}
+    <div class="grid2">
+      {% for r in visit_rows %}<div class="mini"><p class="t-cap">{{ r.metric | t }}</p><p class="t-body b">{{ r.value | t_known }}</p></div>{% endfor %}
+      {% if v.fetal_length is not none %}<div class="mini"><p class="t-cap">{{ _("Fetal length") }}</p><p class="t-body b">{{ v.fetal_length }} cm</p></div>{% endif %}
+      {% if v.estimated_fetal_weight is not none %}<div class="mini"><p class="t-cap">{{ _("Estimated weight") }}</p><p class="t-body b">{{ v.estimated_fetal_weight }} g</p></div>{% endif %}
+    </div>
+    {% if v.doctor_note %}<div style="border-top:1px solid #E0E0E0;padding-top:12px;display:flex;flex-direction:column;gap:4px"><p class="t-cap">{{ _("Doctor's note") }}</p><p class="t-body">{{ v.doctor_note }}</p></div>{% endif %}
   </div>
 </div>
+{% else %}
+<p class="t-cap">{{ _("Week {n} + {d} days", n=week, d=week_day) }}</p>
 {% endfor %}
 
-{% if rows %}
+{% if other_rows %}
 <div class="bl8">
   <p class="t-title">{{ _("Indicators") }}</p>
-  <div class="card" style="padding:12px 16px">
-    {% for r in rows %}<div class="kv"><span class="k">{{ r.metric | t }}</span><span style="display:flex;gap:8px;align-items:center"><span class="b">{{ r.value | t_known }}</span><span class="tag src">{{ r.source | t }}</span></span></div>{% endfor %}
+  <div class="card" style="padding:4px 16px">
+    {% for r in other_rows %}<div class="kv"><span class="k">{{ r.metric | t }}</span><span style="display:flex;gap:8px;align-items:center"><span class="b">{{ r.value | t_known }}</span><span class="tag src">{{ r.source | t }}</span></span></div>{% endfor %}
   </div>
 </div>
 {% endif %}
@@ -40,13 +46,13 @@
 <div class="bl">
   <p class="t-title">{{ _("Your diary") }}</p>
   {% for e in diary %}
-  <div class="card bl8">
+  <div class="card bl8" style="gap:10px">
     {% if e.mood %}<div class="sec"><span class="tag ok">{{ e.mood | t }}</span></div>{% endif %}
     <p class="t-body">{{ e.text }}</p>
-    {% if e.photo and media_exists(e.photo) %}<img src="/media/{{ e.photo }}" alt="{{ _('Diary photo, {date}', date=e.entry_date | dmy) }}" style="width:96px;height:96px;object-fit:cover;border-radius:12px">{% endif %}
+    {% if e.photos %}<div style="display:flex;gap:8px;flex-wrap:wrap">{% for p in e.photos if media_exists(p) %}<img class="ph" src="/media/{{ p }}" data-zoom alt="{{ _('Diary photo, {date}', date=e.entry_date | dmy) }}">{% endfor %}</div>{% endif %}
   </div>
   {% else %}
-  <p class="t-cap">{{ _("No diary entry this day.") }}</p>
+  <div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("No diary entry this day.") }}</p></div>
   {% endfor %}
 </div>
 {% endblock %}

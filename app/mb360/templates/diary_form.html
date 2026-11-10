@@ -20,13 +20,16 @@
       <textarea id="text" class="inp" style="height:180px" name="text" placeholder="{{ _('When the baby kicked, something tasty, or a note for your baby…') }}">{{ form.get('text', '') }}</textarea>{{ err("text") }}
     </div>
     <div class="fld">
-      <label for="photos">{{ _("Photos") }} <span class="opt">{{ _("(optional)") }}</span></label>
-      <input id="photos" class="inp" type="file" name="photos" accept="image/jpeg,image/png" multiple capture="environment">{{ err("photos") }}
-      <p class="t-cap">{{ _("JPG or PNG, up to 5 photos, 10 MB each.") }}</p>
+      <p class="lbl">{{ _("Photos") }} <span class="opt">{{ _("(optional)") }}</span></p>
+      <div class="ph-row" data-photo-list>
+        <label class="add" for="photos">{{ icon.camera() }}{{ _("Take / choose photo") }}</label>
+      </div>
+      <input id="photos" class="sr" type="file" name="photos" accept="image/jpeg,image/png" multiple data-photos>{{ err("photos") }}
+      <p class="t-cap">{{ _("JPG or PNG, up to 5 photos, 10 MB each.") }} {{ _("Ultrasound images are attached to the visit day by the hospital.") }}</p>
     </div>
   </div>
   <div class="foot">
-    <a class="btn o" href="/m/{{ user.user_id }}/timeline">{{ _("Cancel") }}</a>
+    <a class="btn o" href="/m/{{ user.user_id }}/timeline" data-back>{{ _("Cancel") }}</a>
     <button class="btn">{{ _("Save diary entry") }}</button>
   </div>
 </form>

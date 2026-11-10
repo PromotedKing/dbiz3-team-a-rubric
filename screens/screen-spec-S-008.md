@@ -10,6 +10,8 @@
 | Mockup image | `img/S-008.png` |
 | Status | Draft (revised 14/10/2026 — week widget opens S-048 (D-75), appointment section Could (D-77); image to redraw) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Header "Mẹ & Bé 360" + ✕ (S-083); week card; next-appointment card from the TCI host (spec-APT §7.3); report button; "Bác sĩ vừa gửi n thông báo" card; "Chỉ số của mẹ ›" (opens S-023) and 4 tiles with › (blood pressure, blood glucose, fetal heart rate with threshold labels; weight); "+ Nhập chỉ số tự theo dõi"; diary card. Tab bar Home · Thai kỳ · Chatbot · Từ bác sĩ · Hồ sơ (D-80). No menu rows.
+
 ## 1. Purpose
 
 **Shown when:** the mother opens the sub-app from the "Mother & Baby 360" tile (every launch after the first — `S-001`), after she agrees on `S-001` state 2 and a due date already exists, after pregnancy setup on `S-007`/`S-046`, or when she taps the "Home" tab on any screen. There is no ← button (D-27: only Home and the first-time setup screen have no ←).

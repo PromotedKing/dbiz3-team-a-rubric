@@ -10,6 +10,8 @@
 | Mockup image | `img/S-103.png` (2 states in one image — D-40) |
 | Status | Draft (revised 29/09/2026 — screen-spec fix #8) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Shows height and first antenatal check-up date; facility "Bệnh viện Thu Cúc"; no "Support" row.
+
 ## 1. Purpose
 
 The mother's profile page in the sub-app: basic information taken from the TCI account, entry to profile editing, pregnancy information, hospital record link status, notification settings and support. There is no logout / change password / delete account (D-01) `[PENDING CLIENT: D-01]`.

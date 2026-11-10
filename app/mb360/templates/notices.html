@@ -1,12 +1,36 @@
-{#- "Từ bác sĩ" tab. The notification list (S-009, ACC FR-025) comes with specs/009-acc-profile. -#}
+{#- S-009 behind the "From doctor" tab (D-80); design: screens/ui-final Màn 9. Never the word "Alert" (SR-002). -#}
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
-{% set page_title = "Messages from your care team" %}
+{% set page_title = "Notices from your doctor" %}
 {% set active_tab = "doctor" %}
 {% block content %}
+<p class="t-body" style="color:#6F6F6F">{{ _("Doctors and nurses send these after a visit or after viewing your report.") }}</p>
+<div class="scroll-x" data-active-type="{{ active }}">
+  <a class="chip{% if not active %} on{% endif %}" href="/m/{{ user.user_id }}/notices">{{ _("All") }}</a>
+  <a class="chip{% if active == unread_filter %} on{% endif %}" href="/m/{{ user.user_id }}/notices?type={{ unread_filter }}">{{ _("Unread") }} · {{ unread_count }}</a>
+  {% for ty in types %}<a class="chip{% if active == ty %} on{% endif %}" href="/m/{{ user.user_id }}/notices?type={{ ty | urlencode }}">{{ ty | t }}</a>{% endfor %}
+</div>
+{% if unread_count %}
+<form class="sec" method="post" action="/m/{{ user.user_id }}/notices/read-all">
+  <p class="t-cap">{{ _("{n} unread notifications", n=unread_count) }}</p>
+  <button class="lnk" style="font-size:12px">{{ _("Mark all as read") }}</button>
+</form>
+{% endif %}
+{% for c in rows %}
+<a href="/m/{{ user.user_id }}/notices/{{ c.n.notification_id }}" class="card bl8{% if not c.n.read_at %} unread{% endif %}" style="color:#212121" data-notice>
+  <div class="sec"><span class="tag {{ c.tag[1] }}">{{ c.tag[0] | t }}</span>
+    <span class="t-cap" style="display:flex;align-items:center;gap:6px">{% if not c.n.read_at %}<span class="nd"></span>{{ _("New notice") }} · {% endif %}{{ c.n.created_at | show_time }}</span></div>
+  <p class="t-body b">{{ c.n.title | t_known }}</p>
+  {% if c.preview %}<p class="t-body clamp2" style="color:#6F6F6F">{% if c.translate_preview %}{{ c.preview | t_parts }}{% else %}{{ c.preview }}{% endif %}</p>{% endif %}
+  <p class="t-cap">{% if c.doctor %}{{ _("Dr. {name}", name=c.doctor) if c.role == "Doctor" else _("Nurse {name}", name=c.doctor) }}{% endif %}{% if c.doctor and c.n.read_at %} · {% endif %}{% if c.n.read_at %}{{ _("Read") }}{% endif %}</p>
+</a>
+{% else %}
+<div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("You have no notifications.") }}</p></div>
+{% endfor %}
 <a href="/m/{{ user.user_id }}/my-reports" class="card" style="display:flex;gap:12px;align-items:center;padding:14px 16px;color:#212121">
   <div class="ic40">{{ icon.clock() }}</div>
   <div style="flex:1"><p class="t-body b">{{ _("My reports") }}</p><p class="t-cap">{{ _("See the status of each report") }}</p></div>
   {{ icon.chev() }}
 </a>
+<p class="t-cap" style="text-align:center;padding:4px 12px 0">{{ _("You only receive information here. To report a metric or symptom, go to") }} <a href="/m/{{ user.user_id }}/report">{{ _("Home › Report") }}</a>.</p>
 {% endblock %}

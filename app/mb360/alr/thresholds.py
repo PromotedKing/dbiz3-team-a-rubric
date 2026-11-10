@@ -41,6 +41,18 @@ def _meets(row: sqlite3.Row, metric: str, value: str) -> bool:
     return float(value) >= float(limit)
 
 
+def live_rules(conn: sqlite3.Connection, metric: str) -> dict:
+    """The same THRESHOLD_RULE rows for the live hint while the mother types on S-025A; the server still decides on submit."""
+    if metric == "Blood pressure":
+        return {r["component"]: float(r["threshold_values"]) for r in rules(conn, metric)}
+    if metric == "Blood glucose":
+        return {c: float(r[0]["threshold_values"]) for c in ("fasting", "post_1h", "post_2h") if (r := rules(conn, metric, c))}
+    if metric == "Urine protein":
+        limit = rules(conn, metric)[0]["threshold_values"]
+        return {"above": URINE_SCALE[URINE_SCALE.index(limit):]}
+    return {}
+
+
 def card_text(conn: sqlite3.Connection, metric: str, glucose_context: str | None = None) -> str | None:
     """Text of the threshold card on S-025A, built from the same rows (US-1 scenario 3)."""
     rows = rules(conn, metric, glucose_context)

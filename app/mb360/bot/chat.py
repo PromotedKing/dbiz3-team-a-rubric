@@ -13,6 +13,7 @@ from . import classify
 
 DB_TIME = "%Y-%m-%d %H:%M"
 MAX_LEN = 500   # D-46
+ANSWER_MAX = 500   # the schema holds every CHAT_MESSAGE.text to 500 characters; the limit for answers is open (DM-36)
 HANDOFF_TEXT = "This needs a proper consultation. It will be sent to a nurse if you agree"
 DECLINE_TEXT = ("I can only help with pregnancy, prenatal care, nutrition and postpartum wellness. "
                 "Could you ask me a pregnancy question?")   # wording open (BOT §10 Q13)
@@ -44,6 +45,16 @@ def _earlier(conn, conversation_id: str) -> list[dict]:
     return pairs
 
 
+def fit(answer: str, limit: int = ANSWER_MAX) -> str:
+    """An LLM answer cut to the stored limit at the end of a sentence (or a word), so it can always be saved."""
+    answer = answer.replace("**", "").strip()
+    if len(answer) <= limit:
+        return answer
+    cut = answer[:limit - 1]
+    end = max(cut.rfind(c) for c in ".!?\n")
+    return cut[:end + 1].strip() if end >= limit // 2 else cut[:cut.rfind(" ")].rstrip(",;:") + "…"
+
+
 def _message(conn, conversation_id, sender, text, at, intent=None, is_risk=0) -> str:
     mid = str(uuid.uuid4())
     conn.execute("""INSERT INTO CHAT_MESSAGE (message_id, conversation_id, sender, text, parsed_intent, is_risk, handoff_choice, sent_at)
@@ -52,7 +63,9 @@ def _message(conn, conversation_id, sender, text, at, intent=None, is_risk=0) ->
     return mid
 
 
-def ask(conn: sqlite3.Connection, user_id: str, conversation_id: str | None, text: str, now: datetime, client) -> str:
+def prepare(conn: sqlite3.Connection, user_id: str, conversation_id: str | None, text: str, now: datetime) -> dict:
+    """Checks the question and reads what the answer needs. `context` is set only for a general question (BR-002):
+    it is all that goes to the LLM service (BR-001)."""
     text = (text or "").strip()
     if not text:
         raise ChatError(422, "Type your question.")
@@ -63,11 +76,21 @@ def ask(conn: sqlite3.Connection, user_id: str, conversation_id: str | None, tex
         raise ChatError(404, "Unknown conversation")
     kind = classify.classify(text)
     week = _week(conn, user_id, now)
-    at = now.strftime(DB_TIME)
-    answer = None
-    if kind["category"] == "general":            # only general questions reach the LLM (BR-002)
-        earlier = _earlier(conn, conversation_id) if conversation_id else []
-        answer = client.answer(text, {"gestational_week": week, "earlier": earlier})
+    context = None
+    if kind["category"] == "general":
+        context = {"gestational_week": week, "earlier": _earlier(conn, conversation_id) if conversation_id else []}
+    return {"user_id": user_id, "conversation_id": conversation_id, "text": text, "kind": kind, "week": week,
+            "at": now.strftime(DB_TIME), "context": context}
+
+
+def ask(conn: sqlite3.Connection, user_id: str, conversation_id: str | None, text: str, now: datetime, client) -> str:
+    q = prepare(conn, user_id, conversation_id, text, now)
+    return save(conn, q, client.answer(q["text"], q["context"]) if q["context"] is not None else None, client)
+
+
+def save(conn: sqlite3.Connection, q: dict, answer: str | None, client) -> str:
+    """Stores the question and the chatbot's reply in one transaction; returns the conversation."""
+    user_id, conversation_id, text, kind, week, at = q["user_id"], q["conversation_id"], q["text"], q["kind"], q["week"], q["at"]
     try:
         if conversation_id is None:
             conversation_id = str(uuid.uuid4())
@@ -80,7 +103,7 @@ def ask(conn: sqlite3.Connection, user_id: str, conversation_id: str | None, tex
         elif kind["category"] == "out_of_scope":
             _message(conn, conversation_id, "Chatbot", DECLINE_TEXT, at)          # FR-010
         else:
-            _message(conn, conversation_id, "Chatbot", answer, at)
+            _message(conn, conversation_id, "Chatbot", fit(answer), at)
             conn.execute("INSERT INTO AI_RESPONSE_LOG (log_id, conversation_id, ai_response_data, audit_log_entry) VALUES (?, ?, ?, ?)",
                          (str(uuid.uuid4()), conversation_id, answer, json.dumps({"client": getattr(client, "name", "unknown")})))
         conn.execute("UPDATE CONVERSATION SET current_session_data = ? WHERE conversation_id = ?",

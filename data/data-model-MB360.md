@@ -1222,7 +1222,7 @@ First normal form elsewhere: the multi-valued `symptoms[]` is the child table RE
 | BOOLEAN | INTEGER | `x IN (0, 1)` | boolean |
 | INTEGER a–b | INTEGER | `BETWEEN a AND b` | integer + CHECK |
 | DECIMAL(p,s) | NUMERIC | — | numeric(p,s) |
-| JSON | TEXT | `json_valid(x)` | jsonb |
+| JSON | TEXT | `x IS NULL OR json_valid(x)` | jsonb |
 
 Physical decisions (the ones marked *draft* follow the default of an open question and change if the team decides otherwise):
 

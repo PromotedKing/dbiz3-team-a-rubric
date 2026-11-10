@@ -10,6 +10,8 @@
 | Mockup image | `img/S-028.png` |
 | Status | Draft (revised 29/09/2026 — screen-spec fix #1, #2; FR links) |
 
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Bottom sheet; "Close" returns to Home.
+
 ## 1. Purpose
 
 **Shown when:** the mother taps **Submit report** on `S-025A` and the threshold check returns **Above threshold** (D-19). The screen appears as a popup over `S-025A` (Health tab). "Alert" is used only for this case (D-22). A report that is not above threshold does not show this screen: with symptoms → `S-026` (Not viewed); normal, no symptoms → back to `S-027` (D-19).

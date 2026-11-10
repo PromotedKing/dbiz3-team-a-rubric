@@ -11,17 +11,11 @@ from . import clock, ui
 from . import db as dbmod
 from .alr import cases, my_reports, reports, routing, status, thresholds, validation
 from .alr import status as status_mod
+from .hlt import history
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))
-# On-screen symptom wording (docs/ui-label-reference.md, D-73); stored values stay as in the schema.
-SYMPTOM_LABELS = {
-    "Waters breaking or fluid leakage": "Waters breaking / fluid leakage",
-    "Severe headache, dizziness or blurred vision": "Severe headache / dizziness / blurred vision",
-}
 GLUCOSE_LABELS = {"fasting": "Fasting", "post_1h": "1 h after meal", "post_2h": "2 h after meal"}
 
-
-TEMPLATES.env.filters["symptom_label"] = lambda s: SYMPTOM_LABELS.get(s, s)
 ui.install(TEMPLATES)
 
 
@@ -48,18 +42,17 @@ def create_app(conn: sqlite3.Connection) -> FastAPI:
             metric = "Symptom"
         ctx = form.get("glucose_context") or None
         card = thresholds.card_text(conn, metric, ctx) if metric in ("Blood pressure", "Urine protein") or ctx else None
-        return page(request, "report_form.html", status, user=user, metric=metric, metrics=list(flags), flag=flags.get(metric),
-                    card=card, form=form, errors=errors, symptoms=validation.SYMPTOMS, glucose_labels=GLUCOSE_LABELS,
+        return page(request, "report_form.html", status, user=user, metric=metric, metrics=[m for m in validation.GROUP2 if m in flags], flag=flags.get(metric),
+                    card=card, live_rules=thresholds.live_rules(conn, metric), form=form, errors=errors, symptoms=validation.SYMPTOMS, glucose_labels=GLUCOSE_LABELS,
                     urine_scale=thresholds.URINE_SCALE)
 
-    @app.get("/", response_class=HTMLResponse)
-    def select_mother(request: Request):
-        mothers = conn.execute("SELECT user_id, full_name, record_code FROM USER_ACCOUNT ORDER BY full_name").fetchall()
-        return page(request, "select_mother.html", mothers=mothers)
+    @app.get("/")
+    def start():
+        return RedirectResponse("/tci", status_code=303)
 
     @app.get("/m/{user_id}/instructions", response_class=HTMLResponse)
     def doctor_instructions(request: Request, user_id: str, submitted: int = 0):
-        return page(request, "instructions.html", user=mother(user_id), flags=instructions(user_id), submitted=submitted)
+        return page(request, "instructions.html", user=mother(user_id), flags=history.instruction_cards(conn, user_id), submitted=submitted)
 
     @app.get("/m/{user_id}/report", response_class=HTMLResponse)
     def new_report(request: Request, user_id: str, metric: str = "Symptom", glucose_context: str = ""):
@@ -118,7 +111,8 @@ def create_app(conn: sqlite3.Connection) -> FastAPI:
         if not guidance:   # BR-013: hospital default template
             guidance.append(conn.execute("SELECT content FROM GUIDANCE_TEMPLATE WHERE is_default = 1").fetchone()[0])
         card = thresholds.card_text(conn, hmr["metric"], hmr["glucose_context"])
-        return page(request, "metric_alert.html", user=mother(user_id), rep=rep, hmr=hmr, card=card, guidance=guidance)
+        lines = [line.strip() for g in guidance for line in g.splitlines() if line.strip()]
+        return page(request, "metric_alert.html", user=mother(user_id), rep=rep, hmr=hmr, card=card, guidance=lines, symptoms=syms)
 
     @app.get("/m/{user_id}/reports/{report_id}", response_class=HTMLResponse)
     def report_status(request: Request, user_id: str, report_id: str, submitted: int = 0):

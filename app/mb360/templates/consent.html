@@ -1,16 +1,17 @@
 {#- S-001 state 2; design: screens/ui-final Màn 2. -#}
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
+{% import "_bits.html" as bits %}
 {% block header %}
 <div class="bhdr">
-  <div class="logo">{{ icon.mb() }}</div>
+  {{ bits.logo() }}
   <div class="brand"><p class="n">{{ _("App name") }}</p></div>
   <a href="/tci" class="ib" aria-label="{{ _('Close') }}">{{ icon.close() }}</a>
 </div>
 {% endblock %}
 {% block content %}
-<div style="height:120px;border-radius:16px;background:#EEEEEE"></div>
-<div class="grid2"><div style="height:90px;border-radius:16px;background:#EEEEEE"></div><div style="height:90px;border-radius:16px;background:#EEEEEE"></div></div>
+<div class="hero" style="height:120px"></div>
+<div class="grid2"><div class="tile" style="height:90px"></div><div class="tile" style="height:90px"></div></div>
 {% endblock %}
 {% block overlay %}
 <div class="ovl"></div>
@@ -20,7 +21,7 @@
   <div style="display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
     <div class="fe" style="width:64px;height:64px">{{ icon.link2() }}</div>
     <h2 id="ttl" class="t-title">{{ _("Connect to your TCI account") }}</h2>
-    <p class="t-body" style="color:#6F6F6F">{{ _("Mother & Baby 360 will use the following information from the TCI app:") }}</p>
+    <p class="t-body" style="color:#6F6F6F">{{ _("Mother & Baby 360 will use the following information from the TCI app, with no need to sign in again:") }}</p>
   </div>
   <div class="card bd np" style="padding:0 16px">
     <div class="kv"><span>{{ _("Full name, phone number") }}</span>{{ icon.tick() }}</div>

@@ -16,7 +16,7 @@ def test_wireframe_labels():
 
 def test_split_and_ui_forms():
     assert ui.t("Save metrics") == "Lưu chỉ số"                        # "CTA" row
-    assert ui.t("Profile") == "Hồ sơ" and ui.t("Appointments") == "Lịch hẹn"        # "Home / Health / … / Profile"
+    assert ui.t("Profile") == "Hồ sơ" and ui.t("Appointments") == "Lịch hẹn"        # Tab row; "Appointments" is the TCI home tile
     assert ui.t("Severe headache / dizziness / blurred vision") == "Đau đầu dữ dội / chóng mặt / hoa mắt"   # "(UI: …)" form
     assert ui.t("Mother & Baby 360") == "Mẹ & Bé 360"                 # "(tile)" note dropped
 
@@ -26,6 +26,15 @@ def test_fields_and_patterns():
     assert ui.t("Above threshold when ≥ 140/90 mmHg") == "Vượt ngưỡng khi ≥ 140/90 mmHg"   # text built from THRESHOLD_RULE
     assert ui.t("Response from Nurse Trần Thị B") == "Phản hồi từ y tá Trần Thị B"
     assert ui.t_list("Palpitations, Other") == "Hồi hộp, Khác"
+
+
+def test_stored_notification_titles():
+    assert ui.t_known("Report BC-0926-015 resolved") == "Báo cáo BC-0926-015 đã xử lý"          # not "Report {code}"
+    assert ui.t_known("Your Blood pressure report has been sent to clinical staff") == "Báo cáo Huyết áp của mẹ đã được gửi tới nhân viên y tế"
+    assert ui.t_known("Nurse Trần Thị B responded to your Blood pressure report") == "Y tá Trần Thị B đã phản hồi Báo cáo Huyết áp của mẹ"
+    assert ui.t_known("Your Symptom report is Viewed") == "Báo cáo triệu chứng của mẹ: Đã xem"
+    assert ui.t_parts("150/95 mmHg · Above threshold") == "150/95 mmHg · Vượt ngưỡng"
+    assert ui.t_known("sample text") == "sample text" and ui.MISSING == set()
 
 
 def test_missing_label_is_shown_in_english_and_recorded():
@@ -42,4 +51,4 @@ def test_stored_text_is_translated_only_when_it_is_a_label():
 
 
 def test_every_tab_has_a_label():
-    assert [ui.t(label) for _, label, _ in ui.TABS] == ["Trang chủ", "Timeline", "Chatbot", "Từ bác sĩ", "Hồ sơ"]
+    assert [ui.t(label) for _, label, _ in ui.TABS] == ["Trang chủ", "Thai kỳ", "Chatbot", "Từ bác sĩ", "Hồ sơ"]     # Chi and Ánh, 06/11/2026

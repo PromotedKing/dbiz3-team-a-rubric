@@ -37,12 +37,12 @@ def test_word_alert_only_on_the_metric_alert_page(client, user_id):
         assert "alert" not in client.get(p).text.lower(), p
 
 
-def test_close_returns_to_instructions_and_keeps_the_report(client, db, user_id):
+def test_close_returns_home_and_keeps_the_report(client, db, user_id):
     u09 = user_id("tci-000131")
     r = client.post(f"/m/{u09}/report", data=bp_form(160, 100, ["No symptoms"]))
     page = client.get(r.headers["location"]).text
     close = re.search(r'<a[^>]*href="([^"]+)"[^>]*>\s*' + vi("Close") + r'\s*</a>', page)
-    assert close and close.group(1) == f"/m/{u09}/instructions"
+    assert close and close.group(1) == f"/m/{u09}/home"
     rep = latest_report(db, u09)
     assert client.get(close.group(1)).status_code == 200
     assert case_of(db, rep["report_id"])["status"] == "Not viewed"

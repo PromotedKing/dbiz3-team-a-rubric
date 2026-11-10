@@ -1,0 +1,56 @@
+{#- S-105; design: screens/ui-final Màn 20. Stage boundaries of D-75, Pending SME (TML Q16, U12). -#}
+{% extends "base.html" %}
+{% import "_icons.html" as icon %}
+{% set page_title = "My journey" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/timeline" %}{% set back_auto = true %}
+{% block main %}
+<div class="strip" style="flex-direction:row;overflow-x:auto" data-active-stage="{{ j.stage }}">
+  {% for s in j.stages %}<a class="chip{% if s == j.stage %} on{% endif %}" style="flex:none" href="/m/{{ user.user_id }}/journey?stage={{ s | urlencode }}">{{ s | t }}</a>{% endfor %}
+</div>
+<div class="body">
+  <div class="hero" style="display:flex;flex-direction:column;gap:14px">
+    <div>
+      <p class="t-disp">{{ j.stage | t }}</p>
+      <p class="t-body">{{ _("Weeks {a} – {b}", a=j.first, b=j.last) }} · {{ _("You are in week {n}", n=j.current) }}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:#fff;border-radius:12px;padding:12px 4px;text-align:center">
+      <div><p class="val">{{ j.counts.visits }}</p><p class="t-cap">{{ _("visits") }}</p></div>
+      <div><p class="val">{{ j.counts.diary }}</p><p class="t-cap">{{ _("diary entries") }}</p></div>
+      <div><p class="val">{{ j.counts.photos }}</p><p class="t-cap">{{ _("photos") }}</p></div>
+    </div>
+  </div>
+  {% if j.not_reached %}
+  <div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("Not reached yet") }}</p></div>
+  {% elif not j.weeks %}
+  <div class="card bd" style="text-align:center"><p class="t-body" style="color:#6F6F6F">{{ _("Nothing to show for this stage yet.") }}</p></div>
+  {% else %}
+  {% if j.highlights %}
+  <div class="card bl">
+    <div class="sec"><p class="t-body b">{{ _("Highlights") }}</p><a href="/m/{{ user.user_id }}/timeline" class="lnk" style="font-size:12px">{{ _("See the timeline") }} ›</a></div>
+    <div class="grid3">
+      {% for p in j.highlights[:6] %}{% if loop.last and j.highlights | length > 6 %}<div class="ph-more"><span class="t-cap">+{{ j.highlights | length - 5 }}</span></div>{% elif media_exists(p) %}<img src="/media/{{ p }}" data-zoom alt="{{ _('Diary photo, {date}', date='') }}">{% endif %}{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  <details class="card bd week-list"><summary class="t-body b">{{ _("Week by week") }}</summary>
+  {% include "_journey_weeks.html" %}
+  </details>
+  {% endif %}
+  <div class="card np">
+    {% for r in j.stage_rows %}
+    <div class="row"><span class="tag {{ 'ok' if r.state == 'Past' else 'inf' if r.state == 'Current' else 'un' }}">{{ r.state | t }}</span>
+      <span class="grow">{{ r.name | t }} · {{ _("weeks {a} – {b}", a=r.first, b=r.last) }}</span>
+      {% if r.state != "To come" %}<span class="t-cap">{{ _("{n} visits", n=r.visits) }}</span>{% endif %}</div>
+    {% endfor %}
+  </div>
+</div>
+<div class="foot" style="flex-direction:column;gap:8px">
+  {% if j.can_export %}
+  <a class="btn full" href="/m/{{ user.user_id }}/journey/album?stage={{ j.stage | urlencode }}&print=1" target="_blank" rel="noopener">{{ icon.download() }}{{ _("Export PDF album") }}</a>
+  <p class="t-cap" style="text-align:center">{{ _("The print sheet opens: choose Save as PDF. Nothing is stored.") }}</p>
+  {% else %}
+  <span class="btn dis full">{{ _("Export PDF album") }}</span>
+  <p class="t-cap" style="text-align:center">{{ _("Nothing to export yet.") }}</p>
+  {% endif %}
+</div>
+{% endblock %}

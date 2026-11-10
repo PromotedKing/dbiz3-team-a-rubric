@@ -17,7 +17,13 @@ _FIELD = re.compile(r"\{(\w+)\}")
 # 5-tab bar (ui-label-reference §11, D-80): key, label, path under /m/{user_id}/
 TABS = (("home", "Home", "home"), ("timeline", "Timeline", "timeline"), ("chatbot", "Chatbot", "chat"),
         ("doctor", "From doctor", "notices"), ("profile", "Profile", "profile"))
+# On-screen symptom wording (docs/ui-label-reference.md, D-73); stored values stay as in the schema.
+SYMPTOM_LABELS = {
+    "Waters breaking or fluid leakage": "Waters breaking / fluid leakage",
+    "Severe headache, dizziness or blurred vision": "Severe headache / dizziness / blurred vision",
+}
 _conn = None
+SHOWCASE = False     # mb360.server: phone frame with the side panel on a desktop browser
 
 
 def use_connection(conn) -> None:
@@ -69,8 +75,9 @@ def load(path: Path = REF) -> tuple[dict[str, str], list[tuple[re.Pattern, str]]
     for en, vi in labels.items():
         if _FIELD.search(en):
             rx = "".join(f"(?P<{p}>.+?)" if i % 2 else re.escape(p) for i, p in enumerate(_FIELD.split(en)))
-            patterns.append((re.compile(rx + r"\Z"), vi))
-    return labels, patterns, conflicts
+            patterns.append((re.compile(rx + r"\Z"), vi, len(_FIELD.sub("", en))))
+    patterns.sort(key=lambda p: -p[2])               # most specific row first: "Report {code} resolved" before "Report {code}"
+    return labels, [p[:2] for p in patterns], conflicts
 
 
 LABELS, PATTERNS, CONFLICTS = load()
@@ -101,8 +108,28 @@ def t_list(text: str | None) -> str:
 
 
 def t_known(text: str | None) -> str:
-    """Stored text that may be a fixed system message (chatbot decline, sample answer): translated only if it is a label."""
-    return LABELS.get(text, text) if text else ""
+    """Stored text that may be a fixed system message (chatbot decline, notification title): translated only if it is a label.
+    Values inside a {field} row are translated too; anything else is shown as stored and is not a missing label."""
+    if not text:
+        return ""
+    if text in LABELS:
+        return LABELS[text]
+    for rx, vi in PATTERNS:
+        m = rx.match(text)
+        if m:
+            return vi.format(**{k: t_known(v) for k, v in m.groupdict().items()})
+    return text
+
+
+def t_parts(text: str | None) -> str:
+    """A stored " · "-joined line (notification subtitle), each part through t_known."""
+    return " · ".join(t_known(p) for p in text.split(" · ")) if text else ""
+
+
+def _chatbot_engine() -> str:
+    from .bot import llm
+    name = llm.describe()
+    return {"local": "câu trả lời có sẵn (chưa đặt GROQ_API_KEY hay GEMINI_API_KEY)", "fake": "câu trả lời mẫu"}.get(name, name)
 
 
 def initials(full_name: str) -> str:
@@ -127,5 +154,5 @@ def show_time(text: str | None) -> str:
 def install(templates) -> None:
     """Give a Jinja2Templates instance the label lookup, the shared formats and the shell helpers."""
     env = templates.env
-    env.globals.update(_=t, TABS=TABS, initials=initials, unread=unread)
-    env.filters.update(t=t, t_list=t_list, t_known=t_known, dmy=dmy, show_date=dmy, show_time=show_time)
+    env.globals.update(_=t, TABS=TABS, initials=initials, unread=unread, showcase=lambda: SHOWCASE, chatbot_engine=_chatbot_engine)
+    env.filters.update(symptom_label=lambda s: SYMPTOM_LABELS.get(s, s), t=t, t_list=t_list, t_known=t_known, t_parts=t_parts, dmy=dmy, show_date=dmy, show_time=show_time)

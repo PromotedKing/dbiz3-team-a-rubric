@@ -1,0 +1,30 @@
+{#- S-011: ACC US-3 #2, FR-020, FR-022, FR-024, BR-003; design: screens/ui-final Màn 24. -#}
+{% extends "base.html" %}
+{% set page_title = "Edit profile" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/profile" %}
+{% set white = true %}
+{% macro err(field) %}{% if errors.get(field) %}<p class="err" data-error-for="{{ field }}">⚠ {{ errors[field] | t }}</p>{% endif %}{% endmacro %}
+{% block main %}
+<form class="fw" method="post" action="/m/{{ user.user_id }}/profile/edit">
+  <div class="body" style="gap:18px">
+    <div class="fld"><label for="n">{{ _("Full name") }}</label><input id="n" class="inp ro" value="{{ user.full_name }}" readonly>
+      <p class="t-cap">{{ _("From your TCI account – edit in the TCI app") }}</p></div>
+    <div class="fld"><label for="ph">{{ _("Phone number") }}</label><input id="ph" class="inp ro" value="{{ p.phone }}" readonly>
+      <p class="t-cap">{{ _("From your TCI account – edit in the TCI app") }}</p></div>
+    <div class="fld"><label for="ed">{{ _("Due date") }}</label>
+      {% if p.linked %}
+        <input id="ed" class="inp ro" value="{{ p.edd | dmy }}" readonly>
+        <p class="t-cap" style="display:flex;gap:6px;align-items:center"><span class="tag src">{{ _("Hospital record") }}</span>{{ _("Locked because the hospital record is linked") }}</p>
+      {% else %}
+        <input id="ed" class="inp{% if errors.get('edd') %} er{% endif %}" type="date" name="edd" value="{{ form.get('edd', '') }}">{{ err("edd") }}
+      {% endif %}
+    </div>
+    <div class="fld"><label for="hh">{{ _("Height") }}</label>
+      <div class="unit"><input id="hh" class="inp{% if errors.get('height_cm') %} er{% endif %}" name="height_cm" inputmode="decimal" value="{{ form.get('height_cm', '') }}"><span>cm</span></div>{{ err("height_cm") }}</div>
+  </div>
+  <div class="foot">
+    <a class="btn o" href="/m/{{ user.user_id }}/profile" data-back>{{ _("Cancel") }}</a>
+    <button class="btn">{{ _("Save changes") }}</button>
+  </div>
+</form>
+{% endblock %}
