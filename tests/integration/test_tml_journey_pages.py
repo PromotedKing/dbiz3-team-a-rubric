@@ -81,6 +81,7 @@ def test_album_page_is_print_ready_and_stores_nothing(client, db, user_id):     
     weeks = [int(n) for n in re.findall(r'data-week="(\d+)"', r.text)]
     assert len(weeks) > 1 and weeks == sorted(weeks)
     assert "data-current-week" not in r.text
+    assert "data-zoom" not in r.text
     assert 'addEventListener("load"' not in client.get(f"/m/{lan}/journey/album", params={"stage": "Full journey"}).text
 
 

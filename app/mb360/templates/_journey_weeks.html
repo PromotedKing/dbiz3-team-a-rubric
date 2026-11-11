@@ -8,7 +8,7 @@
   <div class="bl8" style="border-top:1px solid #E0E0E0;padding-top:8px">
     <div class="sec"><p class="t-body b">{{ _("Visit {date}", date=v.visit_date | dmy) }}</p><span class="tag src">{{ _("From visit") }}</span></div>
     {% if v.ultrasound_image %}
-      {% if media_exists(v.ultrasound_image) %}<img src="/media/{{ v.ultrasound_image }}" alt="{{ _('Ultrasound image, {date}', date=v.visit_date | dmy) }}" style="max-width:100%;border-radius:12px"{% if journey_screen %} onerror="this.replaceWith(document.createTextNode(this.alt))"{% endif %}>
+      {% if media_exists(v.ultrasound_image) %}<img src="/media/{{ v.ultrasound_image }}" alt="{{ _('Ultrasound image, {date}', date=v.visit_date | dmy) }}" style="max-width:100%;border-radius:12px"{% if journey_screen %} data-zoom onerror="this.replaceWith(document.createTextNode(this.alt))"{% endif %}>
       {% else %}<div style="height:96px;border-radius:12px;background:#1C2427;display:flex;align-items:flex-end;padding:10px" role="img" aria-label="{{ _('Ultrasound image, {date}', date=v.visit_date | dmy) }}"><span class="t-cap" style="color:#B4B4B4">{{ _("Ultrasound image, {date}", date=v.visit_date | dmy) }}</span></div>{% endif %}
     {% endif %}
     {% if v.fetal_length is not none %}<div class="kv"><span class="k">{{ _("Fetal length") }}</span><span class="b">{{ v.fetal_length }} cm</span></div>{% endif %}
@@ -21,7 +21,7 @@
   <div class="bl8" style="border-top:1px solid #E0E0E0;padding-top:8px">
     <div class="sec"><span class="t-cap">{{ e.entry_date | dmy }}</span>{% if e.mood %}<span class="tag ok">{{ e.mood | t }}</span>{% endif %}</div>
     <p class="t-body">{{ e.text }}</p>
-    {% for ph in e.photos if media_exists(ph) %}<img src="/media/{{ ph }}" alt="{{ _('Diary photo, {date}', date=e.entry_date | dmy) }}" style="width:96px;height:96px;object-fit:cover;border-radius:12px"{% if journey_screen %} onerror="this.replaceWith(document.createTextNode(this.alt))"{% endif %}>{% endfor %}
+    {% for ph in e.photos if media_exists(ph) %}<img src="/media/{{ ph }}" alt="{{ _('Diary photo, {date}', date=e.entry_date | dmy) }}" style="width:96px;height:96px;object-fit:cover;border-radius:12px"{% if journey_screen %} data-zoom onerror="this.replaceWith(document.createTextNode(this.alt))"{% endif %}>{% endfor %}
   </div>
   {% endfor %}
   {% if w.messages %}

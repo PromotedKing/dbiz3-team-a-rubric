@@ -10,8 +10,6 @@
 | Mockup image | not drawn yet (`img/S-105.png` to be added) |
 | Status | Draft (14/10/2026 — PRD alignment) |
 
-> **v1.0.0 app (07/11/2026, D-80 – D-85):** Highlights grid; week-by-week content folded.
-
 > **S-105 layout (D-87, proposed):** The stage selector and statistics precede the visible week cards, newest first. The current week's card carries "Hiện tại" when present in the selected stage. The Highlights grid, its timeline link and the week disclosure are removed. The bottom PDF control stays available according to the selected stage's content. The album presents weeks oldest first.
 
 ## 1. Purpose
