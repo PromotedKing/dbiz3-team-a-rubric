@@ -1,5 +1,13 @@
 # Build Log
 
+## 11/11/2026: S-105 journey week layout (Hải Anh)
+
+- **Scope**: review the selected stage's weeks directly, newest first, with a current-week label when that card exists. Remove the D-81 Highlights grid, its timeline link and the week disclosure. Keep FR-013 / D-75, the existing statistics, PDF export and chronological album. Proposed D-87 reserves D-86 for the separate Appointment PR #23.
+- **Files**: S-105 template, shared week template, Journey view data and its former grid styles, integration tests, S-105 screen spec, TML source spec and decision log. No schema, seed, S-048 or day-screen changes. Original mockups and existing labels remain available as references.
+- **Spec Kit**: used the repository script to select Journey and check its existing snapshot. After changing the source, refreshed and checked both `007-tml-timeline` and `011-tml-journey` using `--use`, `--refresh`, `--check`. Reviewed existing plans and tasks in place for this layout-only change. Restored Journey as the selected feature. Only the ignored `.specify/feature.json` was written under `.specify/`. No pending markers were resolved.
+- **Validation**: new layout test failed against the old Highlights grid before implementation. Full `python -m pytest tests -q -rx` passed with 475 passed, 0 failed, 2 existing xfails (HLT and ALR valid ranges under D-16), and one existing TestClient dependency warning. Tests cover visible week order, the current-week label, oldest-first album, future and empty stages, a visit without diary content and a missing ultrasound file. Browser image-request failure uses alternative text and was not exercised in a live browser.
+- **Follow-up (Sang, 11/11/2026, after review)**: photos and ultrasound images of the week cards can be tapped to zoom again, as they could in the removed Highlights grid (screen only, not the album); removed the old v1.0.0 note of S-105.
+
 ## 11/11/2026: publish APT navigation documentation for review (Hải Anh)
 
 - **Authorization**: Hải Anh requested adding the D-80 alignment documents to `haianh/appointment-book-cta` for the team lead to review with Part A. Only the 26 identified documentation files are included; the user's review file and accidental untracked filename remain excluded.
@@ -17,6 +25,7 @@
 - **Scope**: generated U11/U12 accounts, consent, profiles and default preferences; generated relative TCI host fixture, idempotent runtime installation and switch-aware request-driven demo reminders. No booking CTA/API work, schema change or product decision. S-010 Q3/Q4 stay open; received notices remain visible when disabled as a demo assumption explicitly authorized by Hải Anh.
 - **Files / traceability**: `docs/build/appointment-part-a.md`; generator outputs, `data/data-model-MB360.md`, seed README, S-008/S-009/S-010 notes, app hooks and `tests/integration/test_appointment_demo.py`. `.specify/`, snapshots and `REVIEW_appointment_timeline.md` are untouched.
 - **Validation**: focused appointment tests: 8 passed; full `tests/`: 480 passed, 2 xfailed, 1 TestClient dependency deprecation warning (45.30 s). Two old seed expectations were updated from 10 accounts / 272 rows to 12 / 280. Generator `--check` passed (26 tables, 280 rows, 28 generated files), G3 passed (175 columns, 40 relationships); `git diff --check` passed. `uv run` could not write its sandbox interpreter cache; used the existing `.venv/Scripts/python.exe` without dependency changes. HTTP tests stalled in the sandbox, then passed with execution escalation. Show status, diff and diff-stat before the requested Part A commit; no push or Part B work.
+
 
 Course: DBIZ3 AI-native Product Development, Sessions 8 to 11
 Team: `Group A`    Product: `Mother & Baby 360°`

@@ -10,7 +10,7 @@
 | Mockup image | not drawn yet (`img/S-105.png` to be added) |
 | Status | Draft (14/10/2026 — PRD alignment) |
 
-> **v1.0.0 app (07/11/2026, D-80 – D-85):** Highlights grid; week-by-week content folded.
+> **S-105 layout (D-87, proposed):** The stage selector and statistics precede the visible week cards, newest first. The current week's card carries "Hiện tại" when present in the selected stage. The Highlights grid, its timeline link and the week disclosure are removed. The bottom PDF control stays available according to the selected stage's content. The album presents weeks oldest first.
 
 ## 1. Purpose
 
@@ -32,7 +32,7 @@ Not drawn yet. Until the image exists, this element inventory is the reference.
 | 2 | Title "My journey" | Header | static | No | — |
 | 3 | ✕ button | Button | closes the sub-app (D-01) | Yes | — |
 | 4 | Stage selector: "First trimester (weeks 0 – 13)", "Second trimester (14 – 27)", "Third trimester (28 – 42)", "Full journey" | Toggle (segmented) | stage (`spec-TML.md` FR-013); boundaries Pending SME (`spec-TML.md` Q16); a stage after the current week is shown as "Not reached yet" | Yes | exactly 1 selected; default = the current stage |
-| 5 | Week block header "Week N · dd/mm/yyyy – dd/mm/yyyy" | Header (list group) | derived from the EDD (`spec-ACC.md` Profile) | No | weeks without content are not listed |
+| 5 | Week block header "Week N · dd/mm/yyyy – dd/mm/yyyy", with "Hiện tại" on the current week's card | Header (list group) | derived from the EDD (`spec-ACC.md` Profile) | No | visible without expanding a control, newest first. Weeks without content are not listed |
 | 6 | Visit card "Visit dd/mm/yyyy" + label "From visit" + ultrasound image | Card | Visit — visit_date, ultrasound_image (`spec-HLT.md` §6) | No | — |
 | 7 | Diary entry "dd/mm/yyyy · text" + mood + photos | List item | Diary Entry, Diary Image (`spec-TML.md` §6) | No | read-only (D-60) |
 | 8 | Messages to Baby "From Mom / From Dad · dd/mm/yyyy — text" | Text | Family Message (`spec-TML.md` §6) `[PENDING CLIENT: D-03]` | No | — |
@@ -45,6 +45,7 @@ Not drawn yet. Until the image exists, this element inventory is the reference.
 | State | What the user sees | Trigger |
 |---|---|---|
 | Default | current stage selected; its weeks with visits, diary entries and messages | screen opened from `S-048` |
+| Week without diary or unavailable image | visit and message content stays visible. Missing ultrasound images use the existing labeled placeholder and unavailable diary photos are omitted. If a displayed image fails to load, its alternative text remains visible | week with partial content |
 | Stage not reached | "Not reached yet" in place of the week list; "Export PDF album" disabled | a stage after the current week is selected |
 | Empty (no data) | #9; "Export PDF album" disabled | the selected stage has no content |
 | Loading | shared skeleton (D-27) while the stage loads; progress indicator while the PDF is built `[NEEDS CLARIFICATION: not drawn]` | stage selected / export tapped |
