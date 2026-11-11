@@ -2,12 +2,12 @@
 from mb360 import db as dbmod
 
 
-def test_seed_loads_26_tables_and_272_rows():
+def test_seed_loads_26_tables_and_280_rows():
     conn = dbmod.build()
     tables = [r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'")]
     assert len(tables) == 26
     total = sum(conn.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0] for t in tables)
-    assert total == 272
+    assert total == 280
 
 
 def test_foreign_keys_are_on():

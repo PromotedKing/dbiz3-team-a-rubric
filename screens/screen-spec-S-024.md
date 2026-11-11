@@ -1,5 +1,7 @@
 # Screen Spec: S-024 Enter self-tracked metrics
 
+**Current navigation — D-80 / D-86 (confirmed 11/11/2026):** any Appointments/Health tab row below describes the historical wireframe, not the current shell. The five root screens use Home · Timeline · Chatbot · From doctor · Profile; child screens have back navigation and no root tab bar. No Home booking CTA is present. Historical navigation rows and images are retained as reference only; unrelated open questions remain open.
+
 | Field | Value |
 |---|---|
 | Screen ID | `S-024` |

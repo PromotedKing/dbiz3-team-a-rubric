@@ -61,7 +61,7 @@ Each item has an ID so that it can be followed into the specs (section 7).
 | M5 | Must | AI Chatbot L1 Support (Google AI Studio) | Consult AI Chatbot | BOT | First-line maternal assistant powered by Google AI Studio API (Gemini models via AI Studio), called from a Python backend (D-76). Employs a strict system prompt context restriction: queries must revolve strictly around pregnancy, prenatal care, nutrition, and postpartum wellness; out-of-domain queries are politely declined. Medical disclaimer is always visible. The medical record is never sent to the chatbot. Includes strict risk detection: recognizing danger phrases (e.g., "chảy máu", "đau bụng quằn quại", "không thấy thai máy", "vỡ ối", "hoa mắt chóng mặt"; list pending SME, D-47) to immediately halt automated general advice, issue an urgent advisory notice ("Dấu hiệu cần chú ý y tế" — "Signs that need medical attention"), and offer instant handover to the Nurse triage queue ("Connect to nurse") or display the emergency hospital hotline (real number pending Client). |
 | S1 | Should | Nurse Triage & Alert Verification | Process Medical Alerts, Triage Patient | CLI (+ ALR) | Supporting workflow: Nurse receives cases triggered by over-threshold metrics, ticked alarm symptoms, or chatbot escalations (with the chat transcript, D-78). Nurse reviews context, assesses severity, provides written home care guidance, or escalates to the Doctor. |
 | S2 | Should | Doctor Escalation & Follow-up | Review Escalated Cases, Provide Consultation, Update Patient Status | CLI | Completes clinical escalation for high-risk red-flag cases routed by the Nurse. |
-| C1 | Could | Basic Appointment Booking (Host App WebView) | Surface appointment booking / visit reminders | APT | Delivered as a WebView embedded in the TCI app that directly opens Thu Cuc Hospital's existing antenatal booking portal. Shows the upcoming-appointment card (data read from TCI) and sends appointment reminder notifications (D-77). |
+| C1 | Could | Basic Appointment Booking (Host App WebView) | Read-only upcoming appointment / visit reminders; booking in host | APT | Booking belongs to the TCI host app and its existing antenatal portal. **Current release alignment (D-80 / D-86):** no Home booking CTA, no Appointments tab, and no booking-session API in MB360; the root bar uses Timeline. Shows the upcoming-appointment card (data read from TCI) and sends appointment reminder notifications (D-77). |
 | W1 | Won't | Knowledge Base Search & Filtering | Access Knowledge Library | — | Out of scope for MVP; curated content embedded in core experiences and AI chatbot is sufficient. |
 | W2 | Won't | In-App Payment Processing | N/A | — | Excluded due to conflicts with hospital HIS payment workflows. |
 | W3 | Won't | Hardware Device Auto-Sync | N/A | — | Excluded to eliminate hardware driver compatibility overhead. |
@@ -77,7 +77,7 @@ Each item has an ID so that it can be followed into the specs (section 7).
 | 4 | Pregnancy Timeline & Baby Memory Journal (Dashboard & Detail) | Build Timeline widget on Home Dashboard (gestational week progress); tap opens detail screen with daily clinical indicators and baby's ultrasound images, integrated daily diary entry section below, full journey review across stages, and PDF commemorative album export. | TML |
 | 5 | AI Chatbot L1 Support (Google AI Studio) | Integrate Google AI Studio API with strict maternity prompt context guardrails, out-of-domain decline, danger phrase detection (notice to mom), and "Connect to nurse" triage handoff. | BOT |
 | 6 | Clinical Escalation Support (Nurse Triage + Doctor Follow-up) | Implement Nurse queue for escalated cases (metrics, symptoms, chatbot with its transcript) and doctor review workflow. | CLI |
-| 7 | Basic Appointment Booking (WebView) | Implement Could-tier appointment card and WebView container launching TCI host booking flow. | APT |
+| 7 | Basic Appointment Booking (WebView) | Implement the Could-tier read-only appointment card and reminder touchpoints. Booking stays in TCI; no sub-app booking launcher (D-80 / D-86). | APT |
 
 ## 7. Must items → spec modules
 
@@ -89,7 +89,7 @@ Each item has an ID so that it can be followed into the specs (section 7).
 | M4 | Pregnancy Timeline & Baby Memory Journal | `specs/spec-TML.md` | FR-002 – FR-006, FR-008 – FR-014 (FR-011 pending Client, D-03) | S-008 (week widget), S-048, S-051, S-052, S-105 |
 | M5 | AI Chatbot L1 Support | `specs/spec-BOT.md` | FR-001 – FR-011 | S-031, S-032, S-033, S-034 |
 
-Should items: S1 Nurse Triage & Alert Verification and S2 Doctor Escalation & Follow-up → `specs/spec-CLI.md` (with `spec-ALR.md` FR-004, FR-008, FR-009). Could item: C1 Basic Appointment Booking → `specs/spec-APT.md` (FR-001, FR-005, FR-009); its card on S-008 and its switch on S-010 are Could elements inside Must screens. Won't items are kept as Won't rows in `docs/function-list.md`.
+Should items: S1 Nurse Triage & Alert Verification and S2 Doctor Escalation & Follow-up → `specs/spec-CLI.md` (with `spec-ALR.md` FR-004, FR-008, FR-009). Could item: C1 Basic Appointment Booking → `specs/spec-APT.md` (FR-005, FR-009; FR-001 host-only under D-80 / D-86); its card on S-008 and its switch on S-010 are Could elements inside Must screens. Won't items are kept as Won't rows in `docs/function-list.md`.
 
 ## 8. Scope changes and their reasons
 
@@ -117,3 +117,7 @@ The decisions below changed or sharpened the scope while the specs were written;
 | D-76 | Chatbot on Google AI Studio; pregnancy-only scope with polite decline; danger-phrase notice | PRD M5 | Decided (team, 14/10/2026) |
 | D-77 | Appointments become Could; WebView of the TCI booking portal; upcoming card read from TCI | PRD C1 | Decided (team, 14/10/2026) |
 | D-78 | Chatbot case shows the whole conversation to the nurse / doctor | PRD §4 "Seamless Handover" | Decided (team, 14/10/2026) |
+
+### Navigation alignment confirmed 11/11/2026
+
+Hải Anh confirms the current release follows D-80 (recorded as D-86): Home · Timeline · Chatbot · From doctor · Profile, with no Appointments tab or booking CTA on Home. This removes the old sub-app launcher from C1; the read-only next-appointment card, Appointment notices and S-010 switch remain (D-77 / D-81). D-77 / DM-04 still prohibit MB360 appointment storage. The proposed booking-session Part B is cancelled; no API contract is adopted. Host-integration and Client/SME markers remain open.

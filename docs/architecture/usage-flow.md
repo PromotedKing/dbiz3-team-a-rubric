@@ -169,7 +169,9 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    S(["Start"]) --> H["Home (S-008): 'Upcoming appointments' card"] -->|"Book a visit ↗ / Appointments tab"| TCI["TCI app booking flow (outside the sub-app)"] --> E(["End"])
+    S(["Start"]) --> TCI["TCI host app: own booking entry"] --> B["TCI booking flow (outside MB360)"] --> E(["End"])
+    H["MB360 Home: read-only next appointment; no booking CTA"]
+    N["S-009: open Appointment notice"] --> B
 ```
 
 ### Notifications and profile (MVP only — no DBIZ2 flow)
@@ -277,3 +279,5 @@ flowchart TD
 ## ADMIN
 
 Not transcribed: Admin is not an MVP actor (D-49). DBIZ2 sub-flows: Manage accounts, Manage Medical Content, Manage Schedule, View statistics.
+
+Current APT navigation follows D-80 / D-86: Home has no booking launcher and the sub-app root bar uses Timeline. The original DBIZ2 appointment diagrams above remain historical reference only.

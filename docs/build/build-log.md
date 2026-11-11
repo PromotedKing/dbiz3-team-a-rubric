@@ -1,5 +1,23 @@
 # Build Log
 
+## 11/11/2026: publish APT navigation documentation for review (Hải Anh)
+
+- **Authorization**: Hải Anh requested adding the D-80 alignment documents to `haianh/appointment-book-cta` for the team lead to review with Part A. Only the 26 identified documentation files are included; the user's review file and accidental untracked filename remain excluded.
+- **Validation**: full `python -m pytest tests -q` rerun: 480 passed, 2 xfailed, one existing TestClient dependency warning (46.90 s). No application/test/data changes. Show status, diff and diff-stat before commit/push; use an ordinary push to the feature branch only, no merge.
+
+## 11/11/2026: APT navigation aligned to D-80 (Hải Anh, `haianh/appointment-book-cta`)
+
+- **Human decision**: cancel Part B; follow the current app and D-80: Timeline root tab, no Appointments tab, no booking CTA on Home. Recorded as D-86; no API contract adopted.
+- **Changed**: PRD C1/backlog → source `specs/spec-APT.md` v1.7.0 (FR-001 host-only; BR-001/BR-003 and current touchpoints) → function/screen lists, S-008, precedence notes for historical navigation rows in other screen specs, architecture and review/checklist notes. Full scope and unchanged downstream artifacts: `docs/build/apt-navigation-alignment.md`.
+- **Preserved**: Part A behavior/data; all code/tests/schema/seed; `.specify/` and generated snapshots; original DBIZ2 diagrams/images. Client/SME markers and S-010 Q3/Q4 remain unresolved. No Spec Kit implementation workflow is run for this documentation alignment.
+- **Validation**: existing app-shell tests 18 passed, one existing TestClient deprecation warning. Diff checks, table shape and Q3/Q4 preservation verified before reporting. No commit/push; `REVIEW_appointment_timeline.md` remains untracked.
+
+## 11/11/2026: appointment demo test cases — Part A (Hải Anh, `haianh/appointment-book-cta`)
+
+- **Scope**: generated U11/U12 accounts, consent, profiles and default preferences; generated relative TCI host fixture, idempotent runtime installation and switch-aware request-driven demo reminders. No booking CTA/API work, schema change or product decision. S-010 Q3/Q4 stay open; received notices remain visible when disabled as a demo assumption explicitly authorized by Hải Anh.
+- **Files / traceability**: `docs/build/appointment-part-a.md`; generator outputs, `data/data-model-MB360.md`, seed README, S-008/S-009/S-010 notes, app hooks and `tests/integration/test_appointment_demo.py`. `.specify/`, snapshots and `REVIEW_appointment_timeline.md` are untouched.
+- **Validation**: focused appointment tests: 8 passed; full `tests/`: 480 passed, 2 xfailed, 1 TestClient dependency deprecation warning (45.30 s). Two old seed expectations were updated from 10 accounts / 272 rows to 12 / 280. Generator `--check` passed (26 tables, 280 rows, 28 generated files), G3 passed (175 columns, 40 relationships); `git diff --check` passed. `uv run` could not write its sandbox interpreter cache; used the existing `.venv/Scripts/python.exe` without dependency changes. HTTP tests stalled in the sandbox, then passed with execution escalation. Show status, diff and diff-stat before the requested Part A commit; no push or Part B work.
+
 Course: DBIZ3 AI-native Product Development, Sessions 8 to 11
 Team: `Group A`    Product: `Mother & Baby 360°`
 
