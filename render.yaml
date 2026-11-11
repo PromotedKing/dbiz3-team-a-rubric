@@ -5,7 +5,7 @@ services:
     runtime: python
     plan: free
     region: singapore
-    branch: sang/mother-app-v1          # change to main once the pull requests are merged
+    branch: main                        # every merge into main deploys again (and brings back the sample data)
     buildCommand: pip install uv && uv sync --frozen --no-dev
     startCommand: uv run --no-sync python -m uvicorn mb360.server:app --app-dir app --host 0.0.0.0 --port $PORT
     healthCheckPath: /tci
