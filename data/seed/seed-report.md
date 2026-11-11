@@ -8,25 +8,27 @@ S01 and S02 keep the placeholder names drawn in the wireframes ("Trần Thị B"
 
 The rows follow the wireframes: Lan (U01) has 2 reports being handled — C9 (symptom) and C10 (chatbot), both "Not viewed" (S-008, S-023, S-029); her 26/09 report C1 is "Resolved" (S-026, S-061); S-064 shows C1 at 20:18, before the nurse handled it.
 
+Appointment demo: U11 has a next-day host visit, U12 has no visit. The generated `appointment-demo.json` stores relative fixture offsets, not an MB360 entity. The simulated host resolves these at startup and creates an unread Appointment notice only when enabled. One-day timing and retaining received notices when disabled are demo assumptions; S-010 Q3/Q4 remain open. See `docs/build/appointment-part-a.md`.
+
 ## Load test (gate G3)
 
-The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-memory database (the version is not written, so the report is the same on every machine) and the 26 files were loaded in filename order with `PRAGMA foreign_keys = ON`: no constraint error, `PRAGMA foreign_key_check` empty, 272 rows.
+The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-memory database (the version is not written, so the report is the same on every machine) and the 26 files were loaded in filename order with `PRAGMA foreign_keys = ON`: no constraint error, `PRAGMA foreign_key_check` empty, 280 rows.
 
 | File | Table | Rows |
 |---|---|---|
 | `01_STAFF.csv` | STAFF | 7 |
 | `02_THRESHOLD_RULE.csv` | THRESHOLD_RULE | 7 |
-| `03_USER_ACCOUNT.csv` | USER_ACCOUNT | 10 |
-| `04_CONSENT_RECORD.csv` | CONSENT_RECORD | 11 |
+| `03_USER_ACCOUNT.csv` | USER_ACCOUNT | 12 |
+| `04_CONSENT_RECORD.csv` | CONSENT_RECORD | 13 |
 | `05_CONVERSATION.csv` | CONVERSATION | 9 |
 | `06_DIARY_ENTRY.csv` | DIARY_ENTRY | 8 |
 | `07_EMR_LINKAGE_REQUEST.csv` | EMR_LINKAGE_REQUEST | 10 |
 | `08_FAMILY_MESSAGE.csv` | FAMILY_MESSAGE | 7 |
 | `09_GUIDANCE_TEMPLATE.csv` | GUIDANCE_TEMPLATE | 8 |
-| `10_NOTIFICATION_PREFERENCE.csv` | NOTIFICATION_PREFERENCE | 10 |
+| `10_NOTIFICATION_PREFERENCE.csv` | NOTIFICATION_PREFERENCE | 12 |
 | `11_PATIENT_ASSIGNMENT.csv` | PATIENT_ASSIGNMENT | 9 |
 | `12_PATIENT_CLINICAL_PROFILE.csv` | PATIENT_CLINICAL_PROFILE | 10 |
-| `13_PREGNANCY_PROFILE.csv` | PREGNANCY_PROFILE | 9 |
+| `13_PREGNANCY_PROFILE.csv` | PREGNANCY_PROFILE | 11 |
 | `14_SESSION.csv` | SESSION | 10 |
 | `15_VISIT.csv` | VISIT | 8 |
 | `16_AI_RESPONSE_LOG.csv` | AI_RESPONSE_LOG | 8 |
@@ -47,17 +49,17 @@ The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-me
 |---|---|---|---|---|---|---|
 | STAFF | 7 | 5 | 1 | 0 | 1 | empty: every column is required (CLI §6) |
 | THRESHOLD_RULE | 7 | 5 | 0 | 1 | 1 | boundary: the configuration holds only the 7 rows of ALR BR-004; boundary values are exercised in HEALTH_METRIC_RECORD (140/90, 6.7) |
-| USER_ACCOUNT | 10 | 7 | 1 | 1 | 1 | — |
-| CONSENT_RECORD | 11 | 8 | 1 | 1 | 1 | — |
+| USER_ACCOUNT | 12 | 9 | 1 | 1 | 1 | — |
+| CONSENT_RECORD | 13 | 10 | 1 | 1 | 1 | — |
 | CONVERSATION | 9 | 6 | 1 | 1 | 1 | — |
 | DIARY_ENTRY | 8 | 5 | 1 | 1 | 1 | — |
 | EMR_LINKAGE_REQUEST | 10 | 7 | 1 | 1 | 1 | — |
 | FAMILY_MESSAGE | 7 | 5 | 1 | 0 | 1 | empty: every column is required (TML §6) |
 | GUIDANCE_TEMPLATE | 8 | 5 | 1 | 1 | 1 | — |
-| NOTIFICATION_PREFERENCE | 10 | 7 | 1 | 1 | 1 | — |
+| NOTIFICATION_PREFERENCE | 12 | 9 | 1 | 1 | 1 | — |
 | PATIENT_ASSIGNMENT | 9 | 6 | 1 | 1 | 1 | — |
 | PATIENT_CLINICAL_PROFILE | 10 | 7 | 1 | 1 | 1 | — |
-| PREGNANCY_PROFILE | 9 | 6 | 1 | 1 | 1 | — |
+| PREGNANCY_PROFILE | 11 | 8 | 1 | 1 | 1 | — |
 | SESSION | 10 | 7 | 1 | 1 | 1 | — |
 | VISIT | 8 | 5 | 1 | 1 | 1 | — |
 | AI_RESPONSE_LOG | 8 | 5 | 1 | 1 | 1 | — |
@@ -71,7 +73,7 @@ The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-me
 | CASE_STATUS_HISTORY | 22 | 19 | 1 | 1 | 1 | — |
 | NOTIFICATION | 9 | 6 | 1 | 1 | 1 | — |
 | STAFF_RESPONSE | 8 | 5 | 1 | 1 | 1 | — |
-| **Total** | 272 | | | | | |
+| **Total** | 280 | | | | | |
 
 ## Non-ordinary rows
 
@@ -328,7 +330,7 @@ Parents with zero children: U07 has no pregnancy profile, visit, report, case or
 | ACC BR-003 — hospital EDD takes priority | U01 edd_source = Hospital record |
 | ACC BR-004 / DM-08 — no consent saved on "Later"; account created at consent | U08: first CONSENT_RECORD on 25/09 only; every stored consent accepted = 1 |
 | ACC BR-006 — setup shown when no due date | U07 (no PREGNANCY_PROFILE) |
-| DM-41 — one preference row per account | all 10 accounts, U07 and U08 with default values |
+| DM-41 — one preference row per account | all 12 accounts, U07, U08, U11 and U12 with default values |
 | DM-21 — at most 1 active instruction per metric | W08 inactive next to W03 (U05) |
 | TML BR-004 / BR-005 / D-60 — messages ≤ 200, diary linked to the current week, read-only | FAMILY_MESSAGE of U06; DIA-001 – DIA-008 gestational_week = week at saving |
 

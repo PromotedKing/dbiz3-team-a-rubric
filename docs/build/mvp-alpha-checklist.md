@@ -63,7 +63,7 @@ limitation discovered by the instructor that is not written here is.
 | 17 | "Export PDF album" opens a print-ready page and the browser saves it as PDF; the server generates no PDF file | TML FR-014; build log spec issue #7 | When the team decides |
 | 18 | Chatbot answers are cut at 500 characters (last whole sentence), because the schema limits every CHAT_MESSAGE.text to 500 although DM-36 says answers have no limit | BOT §5.3 E-2, §7.3; DM-36 | When Tâm settles DM-36 |
 | 19 | The Overview and the Case board have no Screen ID and no screen spec yet; they only count and group existing cases (no new threshold, no time limit) | CLI §7.3; D-85 | When Chi adds the screens and Trung accepts D-85 |
-| 16 | No booking in the sub-app (D-80). The next-appointment card and the due-date prefill read a simulated TCI host table; the real TCI interface is not known. spec-APT BR-003 / FR-001 still describe an "Appointments" tab | D-80; spec-APT §7.3; `screens/ui-final/README.md` U2 | When the APT owner and the hospital decide |
+| 16 | No booking in the sub-app (D-80). The next-appointment card and the due-date prefill read a simulated TCI host table; the real TCI interface is not known. APT navigation documentation is aligned by D-86 (11/11/2026): no Appointments tab or Home booking CTA; the real TCI integration remains unconfirmed | D-80; spec-APT §7.3; `screens/ui-final/README.md` U2 | When the APT owner and the hospital decide |
 
 ## 4. Sign-off
 

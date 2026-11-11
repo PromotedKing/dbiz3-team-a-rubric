@@ -433,7 +433,7 @@ Checked by `tools/check_data_model.py` (run from the repository root). The numbe
 | Relationships / foreign keys | 40 (foreign-key columns) | 40 | 40 | Yes |
 | Relationships read both ways (§4.1) | — | 40 of 40 | — | Yes |
 | Marker agrees with its forward and reverse sentence | — | 40 of 40 | — | Yes |
-| Seed files / tables | — | — | 26 tables, 26 files, 272 rows | Yes |
+| Seed files / tables | — | — | 26 tables, 26 files, 280 rows | Yes |
 
 ## 6. Logical data model
 
@@ -1266,7 +1266,9 @@ Access control (who may read which rows) is not in the schema: the mother reads 
 
 ## 10. Mockup data
 
-`data/seed/` holds 26 CSV files, one per table, named `NN_{TABLE}.csv` in foreign-key order, so they load in filename order. 272 rows in total. Details, the edge-case register and the scenario coverage are in `data/seed/seed-report.md`; how to run is in `data/seed/README.md`.
+`data/seed/` holds 26 CSV files, one per table, named `NN_{TABLE}.csv` in foreign-key order, so they load in filename order. 280 rows in total. Details, the edge-case register and the scenario coverage are in `data/seed/seed-report.md`; how to run is in `data/seed/README.md`.
+
+Appointment demo cases U11/U12 add only accounts, consent, pregnancy profiles and notification preferences to these CSVs. The generator also writes `appointment-demo.json`, a simulated TCI host fixture with relative dates, not a stored MB360 entity or an appointment CSV. The demo host resolves it at startup and creates an ordinary `NOTIFICATION` of type `Appointment` only when its switch is on. D-77 / DM-04 and the 26-table schema stay unchanged. Timing and S-010 Q4 assumptions are demo-only; see `docs/build/appointment-part-a.md`.
 
 | Item | Value |
 |---|---|

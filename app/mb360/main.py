@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import clock, ui
+from . import appointment_demo, clock, ui
 from . import db as dbmod
 from .alr import cases, my_reports, reports, routing, status, thresholds, validation
 from .alr import status as status_mod
@@ -20,6 +20,7 @@ ui.install(TEMPLATES)
 
 
 def create_app(conn: sqlite3.Connection) -> FastAPI:
+    appointment_demo.install(conn, clock.now())
     app = FastAPI(title="Mother & Baby 360")
     app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")   # TCI theme (D-79, D-80)
     ui.use_connection(conn)

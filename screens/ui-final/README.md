@@ -71,3 +71,7 @@ No design in this package: S-023 Health metrics, S-026 Report status, S-033 typi
 | U18 | Heart rate 8 bpm rejected as out of range | Valid ranges are not set (D-16, Pending SME); no range may be invented | SME |
 
 Not contradicted: tokens, type, buttons, cards and labels match `UX_UI_finallllize.txt`; "Cảnh báo" appears only on the Alert screen; the chatbot notice uses "Dấu hiệu cần chú ý y tế"; "Phản hồi báo cáo" locked on matches the team proposal in S-010 SR-001.
+
+## APT navigation follow-up — 11/11/2026
+
+The U1/U2 comparison above describes the historical mismatch. Hải Anh has now confirmed the team follows D-80 (D-86): Timeline replaces the old Appointments tab and no booking button is shown on Home. The next-appointment card and reminders remain as implemented in D-81 / Part A. The booking-session Part B is cancelled. Original package files and mockup images are retained as reference, not rewritten.

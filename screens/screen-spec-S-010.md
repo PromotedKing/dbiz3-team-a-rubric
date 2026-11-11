@@ -1,5 +1,7 @@
 # Screen Spec: S-010 Notification settings
 
+**Current navigation — D-80 / D-86 (confirmed 11/11/2026):** any Appointments/Health tab row below describes the historical wireframe, not the current shell. The five root screens use Home · Timeline · Chatbot · From doctor · Profile; child screens have back navigation and no root tab bar. No Home booking CTA is present. Historical navigation rows and images are retained as reference only; unrelated open questions remain open.
+
 | Field | Value |
 |---|---|
 | Screen ID | `S-010` |
@@ -96,6 +98,10 @@ The on / off position of each switch in the drawing is sample data. Default valu
 | 4 | [NEEDS CLARIFICATION: does turning a type off only stop push notifications via the TCI app, or also hide it from `S-009`?] | No | Open |
 
 ---
+
+## Appointment demo assumption (Part A, 11/11/2026)
+
+For demo/test only, generated accounts `tci-000133` and `tci-000134` start with `appointment_reminder` on. A reminder is generated one calendar day before the simulated host visit, on startup or Home/S-009 access. Turning the switch off prevents new reminders; previously received notices remain visible. **Q4 cần nhóm trưởng/sản phẩm xác nhận.** The Q3/Q4 markers in §9 above remain unchanged and unresolved; this note records no product decision. See `docs/build/appointment-part-a.md`.
 
 ## Completion checklist
 

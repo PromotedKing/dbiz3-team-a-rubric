@@ -1,5 +1,7 @@
 # Screen Spec: S-009 Notifications
 
+**Current navigation — D-80 / D-86 (confirmed 11/11/2026):** any Appointments/Health tab row below describes the historical wireframe, not the current shell. The five root screens use Home · Timeline · Chatbot · From doctor · Profile; child screens have back navigation and no root tab bar. No Home booking CTA is present. Historical navigation rows and images are retained as reference only; unrelated open questions remain open.
+
 | Field | Value |
 |---|---|
 | Screen ID | `S-009` |
@@ -116,6 +118,10 @@ Note: no FR in `spec-TML.md`, `spec-HLT.md` or `spec-BOT.md` feeds notifications
 | 6 | [NEEDS CLARIFICATION: "Notifications are sent via the TCI app" (S-010) — does this list come from the sub-app or from the TCI app's notification inbox?] `[PENDING CLIENT: D-01]` | No | Open |
 
 ---
+
+## Appointment demo fixture (Part A, 11/11/2026)
+
+`tci-000133` receives one unread `Appointment` notice for tomorrow's 09:00 host appointment when the demo fixture is installed. The "Lịch hẹn" filter selects that type; the tab badge counts all unread types. Opening the reminder marks it read and redirects to `/tci/booking` using the existing flow. In this demo only, disabling reminders prevents NEW notices and keeps received notices visible; S-010 Q4 remains open. See `docs/build/appointment-part-a.md`.
 
 ## Completion checklist
 

@@ -30,7 +30,7 @@ Every push to the branch named in `render.yaml` deploys again and returns the da
 
 **Tell the people who try it:** on Render's free plan the data is not kept. A deploy, a restart, or the service waking up after 15 minutes without visits brings back the sample data, so reports, diary entries and photos made during a test can disappear (`adr-hosting.md`). The first page after a pause takes about a minute.
 
-`render.yaml` deploys `branch: sang/mother-app-v1`. After PRs #15 – #20 are merged, change it to `branch: main` in a pull request (`merge-guide.md` §4), then check on Render that the service follows `main`.
+`render.yaml` deploys `branch: main` (since 10/11/2026; before, `sang/mother-app-v1`). Every merge into `main` deploys again. If the Blueprint on Render was created from another branch, set it to `main` once: **Blueprints → mother-baby-360 → Settings → Branch**, and check **Settings → Build & Deploy → Branch** of the web service.
 
 ## The flow
 

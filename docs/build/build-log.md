@@ -1,5 +1,32 @@
 # Build Log
 
+## 11/11/2026: S-105 journey week layout (Hải Anh)
+
+- **Scope**: review the selected stage's weeks directly, newest first, with a current-week label when that card exists. Remove the D-81 Highlights grid, its timeline link and the week disclosure. Keep FR-013 / D-75, the existing statistics, PDF export and chronological album. Proposed D-87 reserves D-86 for the separate Appointment PR #23.
+- **Files**: S-105 template, shared week template, Journey view data and its former grid styles, integration tests, S-105 screen spec, TML source spec and decision log. No schema, seed, S-048 or day-screen changes. Original mockups and existing labels remain available as references.
+- **Spec Kit**: used the repository script to select Journey and check its existing snapshot. After changing the source, refreshed and checked both `007-tml-timeline` and `011-tml-journey` using `--use`, `--refresh`, `--check`. Reviewed existing plans and tasks in place for this layout-only change. Restored Journey as the selected feature. Only the ignored `.specify/feature.json` was written under `.specify/`. No pending markers were resolved.
+- **Validation**: new layout test failed against the old Highlights grid before implementation. Full `python -m pytest tests -q -rx` passed with 475 passed, 0 failed, 2 existing xfails (HLT and ALR valid ranges under D-16), and one existing TestClient dependency warning. Tests cover visible week order, the current-week label, oldest-first album, future and empty stages, a visit without diary content and a missing ultrasound file. Browser image-request failure uses alternative text and was not exercised in a live browser.
+- **Follow-up (Sang, 11/11/2026, after review)**: photos and ultrasound images of the week cards can be tapped to zoom again, as they could in the removed Highlights grid (screen only, not the album); removed the old v1.0.0 note of S-105.
+
+## 11/11/2026: publish APT navigation documentation for review (Hải Anh)
+
+- **Authorization**: Hải Anh requested adding the D-80 alignment documents to `haianh/appointment-book-cta` for the team lead to review with Part A. Only the 26 identified documentation files are included; the user's review file and accidental untracked filename remain excluded.
+- **Validation**: full `python -m pytest tests -q` rerun: 480 passed, 2 xfailed, one existing TestClient dependency warning (46.90 s). No application/test/data changes. Show status, diff and diff-stat before commit/push; use an ordinary push to the feature branch only, no merge.
+
+## 11/11/2026: APT navigation aligned to D-80 (Hải Anh, `haianh/appointment-book-cta`)
+
+- **Human decision**: cancel Part B; follow the current app and D-80: Timeline root tab, no Appointments tab, no booking CTA on Home. Recorded as D-86; no API contract adopted.
+- **Changed**: PRD C1/backlog → source `specs/spec-APT.md` v1.7.0 (FR-001 host-only; BR-001/BR-003 and current touchpoints) → function/screen lists, S-008, precedence notes for historical navigation rows in other screen specs, architecture and review/checklist notes. Full scope and unchanged downstream artifacts: `docs/build/apt-navigation-alignment.md`.
+- **Preserved**: Part A behavior/data; all code/tests/schema/seed; `.specify/` and generated snapshots; original DBIZ2 diagrams/images. Client/SME markers and S-010 Q3/Q4 remain unresolved. No Spec Kit implementation workflow is run for this documentation alignment.
+- **Validation**: existing app-shell tests 18 passed, one existing TestClient deprecation warning. Diff checks, table shape and Q3/Q4 preservation verified before reporting. No commit/push; `REVIEW_appointment_timeline.md` remains untracked.
+
+## 11/11/2026: appointment demo test cases — Part A (Hải Anh, `haianh/appointment-book-cta`)
+
+- **Scope**: generated U11/U12 accounts, consent, profiles and default preferences; generated relative TCI host fixture, idempotent runtime installation and switch-aware request-driven demo reminders. No booking CTA/API work, schema change or product decision. S-010 Q3/Q4 stay open; received notices remain visible when disabled as a demo assumption explicitly authorized by Hải Anh.
+- **Files / traceability**: `docs/build/appointment-part-a.md`; generator outputs, `data/data-model-MB360.md`, seed README, S-008/S-009/S-010 notes, app hooks and `tests/integration/test_appointment_demo.py`. `.specify/`, snapshots and `REVIEW_appointment_timeline.md` are untouched.
+- **Validation**: focused appointment tests: 8 passed; full `tests/`: 480 passed, 2 xfailed, 1 TestClient dependency deprecation warning (45.30 s). Two old seed expectations were updated from 10 accounts / 272 rows to 12 / 280. Generator `--check` passed (26 tables, 280 rows, 28 generated files), G3 passed (175 columns, 40 relationships); `git diff --check` passed. `uv run` could not write its sandbox interpreter cache; used the existing `.venv/Scripts/python.exe` without dependency changes. HTTP tests stalled in the sandbox, then passed with execution escalation. Show status, diff and diff-stat before the requested Part A commit; no push or Part B work.
+
+
 Course: DBIZ3 AI-native Product Development, Sessions 8 to 11
 Team: `Group A`    Product: `Mother & Baby 360°`
 
@@ -757,3 +784,9 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Labels**: removed the unused rows "All types" and "All metrics" (three times) and the blank lines inside the table of `docs/ui-label-reference.md`.
 - **To confirm**: the tab "Thông báo" replaces "Từ bác sĩ" agreed on 06/11/2026 (Chi, label owner).
 - **Tests**: two added in `tests/integration/test_alr_my_reports_page.py`.
+
+## 11/11/2026: sync notification UI PR with latest main (Tâm, branch `tam/notification-ui`)
+
+- **Request**: update the branch and resolve conflicts for owner merge in PR #24. Fast-forwarded the remote review fix, then merged `origin/main` at `3164d6d` without rewriting history.
+- **Resolution**: `app/mb360/acc/routes.py` retains mother validation and appointment reminder creation from main alongside the notification type/unread filters from this branch. All other upstream changes merged automatically. Downstream templates, seed and clinical rules require no additional edits.
+- **Validation**: full pytest suite: 487 passed, 2 existing xfailed; one Starlette/httpx deprecation warning. `git diff --check` passed.

@@ -1,4 +1,4 @@
-<!-- DBIZ3-SNAPSHOT source=specs/spec-TML.md sha256=b61f9bfd7864d822fbaa58c497bc039140d6c31dfb79f805af61e516999c672d taken=2026-11-09T08:39Z -->
+<!-- DBIZ3-SNAPSHOT source=specs/spec-TML.md sha256=a8802b5b22095bee3a3b836fe697f75ee5c50b0a8534cb3349f4751f778952a9 taken=2026-11-11T04:20Z -->
 <!-- Read-only copy for Spec Kit. Do not edit here. Edit specs/spec-TML.md, then run:
      uv run tools/start_feature.py --refresh -->
 
@@ -371,7 +371,7 @@ sequenceDiagram
 |---|---|---|
 | S-048 top | Week strip (7 days, visit and diary dots), "Today" card, "This week" list (Màn 6) | D-80 |
 | FR-005, FR-012 | The week's visit card ("No visit this week." when none) stays on S-048, **below** the blocks of Màn 6. The week's indicators are shown in two places, as D-75 says: the block "Indicators this week" ("Chỉ số trong tuần") on S-048, grouped by day with the source label ("No indicators this week." when none), and the count "{n} indicators" on each day of the "This week" list. A day opens the day screen (Màn 7) with the visit, its ultrasound image, the indicators and the diary of that day | D-75, D-81, review (Tâm; Ánh on PR #19) |
-| S-105 | "Highlights" grid of photos and ultrasound images; week-by-week content folded under "Xem theo từng tuần" | D-81 |
+| S-105 | The D-81 app showed a Highlights grid and a collapsed week list. The S-105 layout in D-87 shows the selected stage's weeks expanded, newest first, with a "Current" label on the current week's card when present. The Highlights grid and its timeline link are removed. The album keeps chronological order. | D-81, D-87 (proposed) |
 | FR-014 | Unchanged: print page saved as PDF by the browser (partly met) | D-80 |
 
 ## 8. Success criteria (mandatory)
