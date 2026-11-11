@@ -1,5 +1,12 @@
 # Build Log
 
+## 11/11/2026: S-105 journey week layout (Hải Anh)
+
+- **Scope**: review the selected stage's weeks directly, newest first, with a current-week label when that card exists. Remove the D-81 Highlights grid, its timeline link and the week disclosure. Keep FR-013 / D-75, the existing statistics, PDF export and chronological album. Proposed D-87 reserves D-86 for the separate Appointment PR #23.
+- **Files**: S-105 template, shared week template, Journey view data and its former grid styles, integration tests, S-105 screen spec, TML source spec and decision log. No schema, seed, S-048 or day-screen changes. Original mockups and existing labels remain available as references.
+- **Spec Kit**: used the repository script to select Journey and check its existing snapshot. After changing the source, refreshed and checked both `007-tml-timeline` and `011-tml-journey` using `--use`, `--refresh`, `--check`. Reviewed existing plans and tasks in place for this layout-only change. Restored Journey as the selected feature. Only the ignored `.specify/feature.json` was written under `.specify/`. No pending markers were resolved.
+- **Validation**: new layout test failed against the old Highlights grid before implementation. Full `python -m pytest tests -q -rx` passed with 475 passed, 0 failed, 2 existing xfails (HLT and ALR valid ranges under D-16), and one existing TestClient dependency warning. Tests cover visible week order, the current-week label, oldest-first album, future and empty stages, a visit without diary content and a missing ultrasound file. Browser image-request failure uses alternative text and was not exercised in a live browser.
+
 Course: DBIZ3 AI-native Product Development, Sessions 8 to 11
 Team: `Group A`    Product: `Mother & Baby 360°`
 

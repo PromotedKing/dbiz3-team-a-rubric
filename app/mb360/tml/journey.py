@@ -48,6 +48,5 @@ def load(conn: sqlite3.Connection, user_id: str, stage_name: str | None, now: da
         rows.append({**s, "state": state, "visits": _visit_count(conn, user_id, edd, s, current)})
     return {"stage": stage["name"], "first": stage["first"], "last": stage["last"], "current": current, "not_reached": not_reached,
             "weeks": blocks, "can_export": bool(blocks), "stages": [s["name"] for s in STAGES], "stage_rows": rows,
-            "highlights": [p for w in reversed(blocks) for p in [v["ultrasound_image"] for v in w["visits"] if v["ultrasound_image"]] + [f for e in w["diary"] for f in e["photos"]]],
             "counts": {"visits": sum(len(w["visits"]) for w in blocks), "diary": sum(len(w["diary"]) for w in blocks),
                        "photos": sum(len(e["photos"]) for w in blocks for e in w["diary"])}}

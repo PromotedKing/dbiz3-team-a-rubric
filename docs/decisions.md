@@ -196,6 +196,12 @@ The PRD in `docs/prd.md` was refined on 14/10/2026 (product context, M1 – M5, 
 | D-84 | **Chatbot answers from Groq's free plan (proposed by Sang, 07/11/2026; replaces D-83 while the Google project cannot use Gemini's free tier).** OpenAI-style API at `api.groq.com`, model `openai/gpt-oss-120b`, key in `GROQ_API_KEY` on the platform only; no card needed. Groq says it does not keep inference data by default (logs up to 30 days for abuse or errors). Same limits as D-83: only general questions, nothing from the record. Gemini stays as the second choice; without a key the local answers stay. Free-plan limits to be read in the Groq console; Vietnamese quality to be checked. **For the team to accept (review 09/11/2026, B1):** only general questions leave the app, but a mother can still type personal details into one, and they would then reach the provider; Google's free tier may use what it receives to improve its products (D-83). Until the team accepts D-83 / D-84, the hosted demo can run without `GROQ_API_KEY` and `GEMINI_API_KEY` (local answers). |  |  |
 | D-85 | **Clinical web: Overview and Case board (proposed by Sang, 07/11/2026, after the reference pictures in the v1.0.0 review).** `/staff/{id}/dashboard`: open cases, not viewed (with the longest wait), above threshold and escalated, bars by status and a "Needs attention" list (above threshold not viewed, PRD M3 alarm symptoms, no response yet, escalated with no doctor answer, from the chatbot), each opening the cases behind it. `/staff/{id}/board`: one column per status, a card opens its case. Filters by source and received date. Read-only, nothing stored, no new threshold or time limit; the case list and case page are unchanged. The staff picker now opens the Overview. |  |  |
 
+### S-105 journey layout
+
+| ID | Decision | Status | Affects |
+|---|---|---|---|
+| D-87 | **Show the selected stage's weeks directly on S-105.** Supersedes the D-81 Highlights grid, its link to S-048 and the collapsed week list. Order week cards newest first and mark the current week's card when present. Retain stage review and weekly content under FR-013 / D-75. The PDF album remains oldest first under FR-014 and BR-007. | Proposed by Hải Anh for team review | TML §7.3, S-105, journey presentation and integration tests |
+
 ### References for D-15
 
 - ADA, *Glucose Monitoring During Pregnancy* (2024): targets fasting < 95 mg/dL, 1 h after a meal < 140 mg/dL, 2 h after a meal < 120 mg/dL — https://diabetes.org/sites/default/files/2024-10/Glucose-Monitoring-During-Pregnancy-patient-FINAL.pdf
