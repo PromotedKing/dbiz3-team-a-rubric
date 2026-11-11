@@ -1,5 +1,6 @@
 {% extends "staff_base.html" %}
 {% block content %}
+<div class="clinical-overview">
 <h1>{{ _("Cases to handle") }}</h1>
 {% if flag %}<p class="filter-note" data-flag="{{ flag }}">{{ _("Showing: {group}", group=_(flag_label)) }} · <a class="link" href="/staff/{{ me.staff_id }}/cases">{{ _("Show all") }}</a></p>{% endif %}
 <div class="chips" style="margin:8px 0">
@@ -29,4 +30,5 @@
 {% else %}
 <div class="empty" data-active-filter="{{ active }}"><p>{{ _("No cases to handle.") }}</p></div>
 {% endif %}
+</div>
 {% endblock %}

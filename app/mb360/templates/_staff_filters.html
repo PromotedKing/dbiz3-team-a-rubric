@@ -1,9 +1,11 @@
 {#- Filters shared by the dashboard and the board -#}
 <form class="card filters" method="get">
+  {% if nav | default('') in ['dashboard', 'board'] %}<label class="inline-label">{{ _("Case source") }}{% endif %}
   <select name="source" aria-label="{{ _('Case source') }}">
     <option value="">{{ _("All sources") }}</option>
     {% for src in sources %}<option value="{{ src }}"{% if f.source == src %} selected{% endif %}>{{ src | t }}</option>{% endfor %}
   </select>
+  {% if nav | default('') in ['dashboard', 'board'] %}</label>{% endif %}
   <label class="inline-label">{{ _("Received from") }} <input type="date" name="from" value="{{ f.start.isoformat() if f.start else '' }}"></label>
   <label class="inline-label">{{ _("to") }} <input type="date" name="to" value="{{ f.end.isoformat() if f.end else '' }}"></label>
   <button class="btn sm">{{ _("Apply") }}</button>

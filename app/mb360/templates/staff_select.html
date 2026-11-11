@@ -5,8 +5,10 @@
 <div class="card">
   <table>
     {% for s in staff_rows %}
-    <tr><td><span class="row"><span class="avatar" style="width:32px;height:32px;font-size:12px">{{ initials(s.full_name) }}</span>
-      <a href="/staff/{{ s.staff_id }}/dashboard">{{ s.full_name }}</a></span></td><td>{{ s.role | t }}</td></tr>
+    {# Hide generated length-test padding in the demo picker. #}
+    {% set display_name = s.full_name.split(" sample text", 1)[0] %}
+    <tr><td><span class="row"><span class="avatar" style="width:32px;height:32px;font-size:12px">{{ initials(display_name) }}</span>
+      <a href="/staff/{{ s.staff_id }}/dashboard">{{ display_name }}</a></span></td><td>{{ s.role | t }}</td></tr>
     {% endfor %}
   </table>
 </div>

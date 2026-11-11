@@ -9,13 +9,13 @@ TYPES = ("Report", "Visit result", "Appointment", "Instruction reminder")
 UNREAD = "Unread"
 
 
-def list_for(conn: sqlite3.Connection, user_id: str, type_: str | None = None) -> list[sqlite3.Row]:
+def list_for(conn: sqlite3.Connection, user_id: str, type_: str | None = None, *, unread_only: bool = False) -> list[sqlite3.Row]:
     sql = "SELECT * FROM NOTIFICATION WHERE user_id = ?"
     args: list = [user_id]
     if type_ in TYPES:
         sql += " AND type = ?"
         args.append(type_)
-    elif type_ == UNREAD:
+    if unread_only or type_ == UNREAD:
         sql += " AND read_at IS NULL"
     return conn.execute(sql + " ORDER BY created_at DESC, rowid DESC", args).fetchall()
 
@@ -122,8 +122,8 @@ def card(conn: sqlite3.Connection, n: sqlite3.Row) -> dict:
             "doctor": resp["full_name"] if resp else None, "role": resp["responder_role"] if resp else None}
 
 
-def cards_for(conn: sqlite3.Connection, user_id: str, type_: str | None = None) -> list[dict]:
-    return [card(conn, n) for n in list_for(conn, user_id, type_)]
+def cards_for(conn: sqlite3.Connection, user_id: str, type_: str | None = None, *, unread_only: bool = False) -> list[dict]:
+    return [card(conn, n) for n in list_for(conn, user_id, type_, unread_only=unread_only)]
 
 
 def detail(conn: sqlite3.Connection, user_id: str, notification_id: str) -> dict | None:

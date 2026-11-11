@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
   <link rel="stylesheet" href="/static/staff.css">
 </head>
-<body class="staff">
+<body class="staff{% if nav | default('') in ['dashboard', 'board', 'cases'] %} overview-page{% endif %}{% if nav | default('') == 'board' %} board-page{% elif nav | default('') == 'cases' %} cases-page{% endif %}">
   <header class="staff-top">
     <span class="logo">{{ icon.mb(24) }}</span>
     <span class="tci-name">{{ _("Mother & Baby 360") }} · {{ _("Clinical web") }}</span>

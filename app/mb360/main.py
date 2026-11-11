@@ -126,7 +126,8 @@ def create_app(conn: sqlite3.Connection) -> FastAPI:
         cid = case["case_id"] if case else None
         return page(request, "report_status.html", user=mother(user_id), case=case, submitted=submitted,
                     steps=status.progress(conn, cid) if cid else [], responses=status.responses(conn, cid) if cid else [],
-                    safety_note=status.show_safety_note(conn, cid) if cid else False, **ctx)
+                    safety_note=status.show_safety_note(conn, cid) if cid else False,
+                    has_instructions=conn.execute("SELECT 1 FROM WATCH_FLAG WHERE user_id = ? AND active = 1", (user_id,)).fetchone() is not None, **ctx)
 
     @app.get("/m/{user_id}/cases/{case_id}", response_class=HTMLResponse)
     def chatbot_case(request: Request, user_id: str, case_id: str):

@@ -639,3 +639,154 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Checked, already done**: tab "Thai kỳ", "Mẹ & Bé 360", "mẹ" instead of "bạn" on the sub-app (06/11); screen-spec notes for S-008, S-083, S-103, S-010, S-009, S-023 (07/11); urine protein without a value shows "Chưa đánh giá" on S-023 (test added).
 - **Left open**: S-025 Q8 date range rules; ACC Q23; BOT Q2, Q12, Q15; D-83 / D-84 for the whole team.
 
+
+## 10/11/2026: notification wording and layout review (Tâm, branch `tam/notification-ui`)
+
+- **User-approved scope**: list/detail headings and bottom tab display "Thông báo"; replace "thai máy giảm" with "cử động thai giảm" and "Không thấy thai máy" with "Không cảm nhận được cử động thai".
+- **Changed**: shared UI label reference (including the chatbot hand-off destination); notification list wraps filters, separates status/time, title, preview and sender; detail uses semantic section headings, stacked reported fields, aligned sender metadata, and equal-width wrapping footer actions. The stored demo title is translated when displayed, including existing databases.
+- **Downstream**: updated S-008 and S-009 screen notes and the tab label test. No FR, clinical rule, data model, schema, seed or spec snapshot changes.
+- **Validation**: full pytest run: 472 passed, 2 xfailed (existing), one Starlette/httpx deprecation warning; git diff --check passed. Inspected both pages in the browser with the sample mother, including the new title and symptom wording. Screenshots saved locally in `/tmp/mb360-notices.jpg` and `/tmp/mb360-notice-detail.jpg`.
+- **Delivery**: local changes only; no commit, push or deployment. Screen/label owner review: Chi (reviewer Ánh).
+
+## 10/11/2026: reports entry at top of notifications (Tâm, branch `tam/notification-ui`)
+
+- **User request**: move "Báo cáo của tôi" to the first position below the notification header and remove the "Báo cáo" filter chip to avoid duplication.
+- **Changed**: `templates/notices.html` and S-009 screen notes. Report notices still appear in All/Unread, existing filtered links and report-detail targets remain supported. No spec, data-model, schema or seed changes.
+- **Validation**: notification/profile page integration tests, mother-app integration tests and notification unit tests: 31 passed; git diff --check passed. No commit, push or deployment.
+
+## 10/11/2026: independent read-state and type filters (Tâm, branch `tam/notification-ui`)
+
+- **User-approved scope**: two top-level views All / Unread; within both views filter by Report / Visit result / Appointment / Instruction reminder, with All types to clear the selection. User confirmed "Lịch khám" = "Lịch hẹn"; keep existing Appointment type.
+- **Changed**: notification query and route support intersecting read-state/type filters, preserving existing `?type=Unread` links. Links retain the other selection. Every list card now shows its type tag alongside any distinct status/threshold tag. Updated S-009 screen notes and shared labels; reports entry stays first. No schema, data-model, seed, clinical-rule or spec-snapshot changes; existing global unread count retained, ACC Q16 remains open.
+- **Validation**: full suite 474 passed, 2 xfailed, one existing Starlette/httpx deprecation warning. Added coverage for combined filtering, preserving both selections, type/status tags and read notifications excluded from Unread. git diff --check passed.
+- **Delivery**: local changes only; no commit, push or deployment.
+
+## 11/11/2026: compact notification type dropdown (Tâm, branch `tam/notification-ui`)
+
+- **User request**: replace wrapping type chips with a compact dropdown. Added a labelled native select that submits on change and preserves the unread view, with a no-JavaScript submit fallback. Updated S-009 notes, label reference and existing filter integration assertions. No data-model, schema, seed or clinical-rule changes.
+- **Validation**: notification/profile page and label tests: 18 passed; git diff --check passed. Browser selection of Visit result showed only that type; choosing All types restored the list. Screenshot: `/tmp/mb360-notification-dropdown.jpg`. Local preview updated; no commit, push or deployment.
+
+## 11/11/2026: dropdown alignment and default wording (Tâm, branch `tam/notification-ui`)
+
+- **User request**: remove the visible "Loại thông báo" label, compact the dropdown and change its first option to "Tất cả thông báo". Kept an accessible name via aria-label; dropdown now aligns left. Updated S-009 notes and shared labels. No data or clinical-rule changes.
+- **Validation**: 18 notification/profile integration and UI label tests passed; git diff --check passed. Visually checked updated local preview; screenshot `/tmp/mb360-notification-compact.jpg`. No commit, push or deployment.
+
+## 11/11/2026: one-row notification toolbar (Tâm, branch `tam/notification-ui`)
+
+- **User request**: remove the separate unread-count text and place read-all on the left, aligned with the dropdown on the right. Updated notification template, scoped toolbar styles, S-009 notes and the existing page test. Tab unread badge retained; no data or clinical-rule changes.
+- **Validation**: 10 profile/notification integration tests passed; git diff --check passed; browser screenshot confirms one centered row: `/tmp/mb360-notification-toolbar.jpg`. Local preview updated; no commit, push or deployment.
+
+## 11/11/2026: balanced notification controls (Tâm, branch `tam/notification-ui`)
+
+- **User request**: fix dropdown arrow alignment and make read-all feel anchored. Added an explicit SVG chevron centered via CSS, reserved right padding, matching 40px control heights, balanced widths and 12px gap. Read-all is now a subtle green button. Updated S-009 screen notes. No behavior, data or clinical-rule changes.
+- **Validation**: git diff --check passed; visually inspected local browser at phone width, with no clipped default text and centered chevron. Screenshot `/tmp/mb360-notification-toolbar-balanced.jpg`. CSS-only change; no additional tests. No commit, push or deployment.
+
+## 11/11/2026: read-all button contrast (Tâm, branch `tam/notification-ui`)
+
+- **User request**: button blended into the background. Increased fill saturation, added a visible green border and darkened text in the scoped notification read-all style; updated S-009 notes. No behavior or data changes.
+- **Validation**: git diff --check passed; CSS-only adjustment. No commit, push or deployment.
+
+## 11/11/2026: read-all button border (Tâm, branch `tam/notification-ui`)
+
+- **User request**: the pale green read-all button blends into the page; add a border. Changed its 1px border from the fill color to green `#8BCFA8` in `static/tci.css`. No behavior or data changes.
+- **Validation**: git diff --check passed. CSS-only adjustment; no additional tests. No commit, push or deployment.
+
+## 11/11/2026: consistent My reports layout (Tâm, branch `tam/notification-ui`)
+
+- **User request**: redesign S-029 to be compact and consistent. Replaced scrolling status chips with two equal dropdowns preserving status/type selection. Cards now follow source/time → title → classification/status tags → separated footer, with one View report link style for active, resolved and chatbot cases. No-case reports retain No action needed. Shared explicit dropdown chevron prevents duplicate arrows.
+- **Downstream**: `templates/my_reports.html`, `static/tci.css`, S-029 screen notes. No FR, data-model, schema, seed or clinical-rule changes.
+- **Validation**: 22 My reports / app-shell integration tests passed; git diff --check passed. Browser verified Resolved filtering and returning to All; screenshot `/tmp/mb360-my-reports-redesign.jpg`. No commit, push or deployment.
+
+## 11/11/2026: My reports filter labels (Tâm, branch `tam/notification-ui`)
+
+- **User request**: rename the default left dropdown to Trạng thái and right dropdown to Chỉ số. Reused shared Status/Metric labels in `templates/my_reports.html`, including accessible names. Updated S-029 notes. No filtering or data changes.
+- **Validation**: git diff --check passed. Label-only change; no additional tests. Local preview picks up the updated template; no commit, push or deployment.
+
+## 11/11/2026: report dropdown menu wording (Tâm, branch `tam/notification-ui`)
+
+- **User request**: hide the Trạng thái placeholder in the opened status menu; rename the first type option to Tất cả chỉ số. Updated template, shared labels and S-029 notes. No data or clinical-rule changes.
+- **Validation**: My reports page tests passed (4 tests); git diff --check passed. No commit, push or deployment.
+
+## 11/11/2026: My reports default options (Tâm, branch `tam/notification-ui`)
+
+- **User request**: first status option = Tất cả; first type option = Tất cả chỉ số. Updated `templates/my_reports.html`, shared label reference and S-029 notes. Accessible names and filtering behavior retained.
+- **Validation**: git diff --check passed. Label-only change; no additional tests. No commit, push or deployment.
+
+## 11/11/2026: clarified default report filter options (Tâm, branch `tam/notification-ui`)
+
+- **User request**: first status option = Tất cả; first metric option = Tất cả chỉ số. Updated `templates/my_reports.html`, shared UI labels and S-029 notes. Accessible names and filtering values unchanged.
+- **Validation**: git diff --check passed. Text-only change; no additional tests. No commit, push or deployment.
+
+## 11/11/2026: visible report filter labels (Tâm, branch `tam/notification-ui`)
+
+- **User request**: distinguish the status and metric controls. Added associated visible labels Trạng thái / Chỉ số above the two dropdowns, keeping Tất cả / Tất cả chỉ số as their first options. Updated S-029 notes; no filtering or data changes.
+- **Validation**: git diff --check passed. Reused shared labels; no additional tests for this label/layout change. No commit, push or deployment.
+
+## 11/11/2026: both report defaults read Tất cả (Tâm, branch `tam/notification-ui`)
+
+- **User request**: shorten the metric dropdown default to Tất cả. Updated `templates/my_reports.html` and S-029 notes; visible labels stay Trạng thái / Chỉ số. No behavior or data changes.
+- **Validation**: git diff --check passed; reused existing All label. Text-only change, no additional tests. No commit, push or deployment.
+
+## 11/11/2026: remove duplicate reports link on status page (Tâm, branch `tam/notification-ui`)
+
+- **User request**: remove bottom Báo cáo của tôi link from report status. Updated `templates/report_status.html` and S-026 screen notes; header back and instructions link retained. No data or clinical-rule changes.
+- **Validation**: git diff --check passed; confirmed the bottom link was removed. Simple navigation removal; no additional tests. No commit, push or deployment.
+
+## 11/11/2026: instructions link within report response (Tâm, branch `tam/notification-ui`)
+
+- **User request**: move instructions below the response and rename it Chỉ dẫn cụ thể của bác sĩ. Updated `report_status.html` to show the link once in the last response card, added a subtle divider, removed standalone bottom link, and updated shared labels and S-026 notes. Destination and clinical text unchanged.
+- **Validation**: 3 report-status integration tests passed; git diff --check passed. No commit, push or deployment.
+
+## 11/11/2026: history dropdown arrow alignment (Tâm, branch `tam/notification-ui`)
+
+- **User request**: fix the arrow in the metric-history select. Applied a centered explicit chevron with right inset to metric and glucose-context selects, retaining existing heights. Updated S-025 screen notes. No behavior or data changes.
+- **Validation**: git diff --check passed. Presentation-only change; no additional tests. No commit, push or deployment.
+
+## 11/11/2026: remove reports link from instructions (Tâm, branch `tam/notification-ui`)
+
+- **User request**: remove Báo cáo của tôi link from the bottom of Doctor’s instructions. Updated `templates/instructions.html` and S-027 notes; other actions unchanged.
+- **Validation**: git diff --check passed; confirmed link removed. Simple navigation removal; no additional tests. No commit, push or deployment.
+
+## 11/11/2026: hide sample padding in staff picker (Tâm, branch `tam/notification-ui`)
+
+- **User request**: remove sample text suffix from the staff selection UI. `templates/staff_select.html` displays the name before generated sample-text padding, including avatar initials. The S06 100-character boundary fixture remains intact in seed/database; no CSV, generator or clinical-rule changes.
+- **Validation**: git diff --check passed; inspected that only display name/initials use the trimmed text and staff links retain their original IDs. Simple display change; no additional tests. No commit, push or deployment.
+
+## 11/11/2026: restrained clinical overview design (Tâm, branch `tam/notification-ui`)
+
+- **User request**: reduce excessive color and improve dashboard hierarchy. Scoped the overview design: neutral KPI cards, orange retained for above-threshold KPI, muted chart bars, consistent borders/type/spacing, explicit filter chevron, compact case cards. Handle next now precedes analytics; By source is a content-height sidebar instead of a stretched panel. Removed internal THRESHOLD_RULE text from the KPI while retaining actual threshold calculations. Case links/counts/filter behavior unchanged; board styling unchanged.
+- **Affected**: `templates/staff_dashboard.html`, `static/staff.css`; no FR, data-model, schema or seed changes. Validation: 7 dashboard integration tests passed; git diff --check passed. Visually checked mobile and 1366px desktop; screenshot `/tmp/mb360-clinical-overview.jpg`. No commit, push or deployment.
+
+- **Final regression check for this review**: full suite 474 passed, 2 existing xfailed; updated the obsolete instructions→My reports link assertion to reflect the user-requested removal earlier in this chat. One existing Starlette/httpx warning.
+
+## 11/11/2026: desktop overview hierarchy and layout (Tâm, branch `tam/notification-ui`)
+
+- **User request**: restrained color, complete information hierarchy, even desktop alignment, preserve section structure/order in screenshots. Used ui-ux-pro-max guidance while retaining repository typography/theme. Preserved KPI → status/attention → next cases/source order; completed existing overview-only styling with matching filter heights, labelled source, four consistent KPI cards, two-column panels, neutral green charts and restrained threshold emphasis. Header/navigation/content share desktop margins; source panel sizes to content instead of stretching beside case cards.
+- **Files**: `templates/staff_dashboard.html`, `templates/staff_base.html`, `templates/_staff_filters.html`, `static/staff.css`. Existing overview styling was retained and refined. No data-model, schema, seed, clinical-rule or count/query changes. Shared base/filter adjustments activate only on dashboard. Downstream: visual review of clinical Overview by screen owners; case-board and list routes unchanged.
+- **Validation**: 12 dashboard/queue integration tests passed; git diff --check passed. Browser at 1280px: document width 1280px (no horizontal overflow), verified section order and full-page screenshot `/tmp/mb360-clinical-overview-desktop.jpg`.
+- **Delivery**: local preview only; no commit, push or deployment.
+
+## 11/11/2026: consistent case board and queue desktop UI (Tâm, branch `tam/notification-ui`)
+
+- **User request**: apply the Overview redesign to Case board and Case list. Extended shared desktop margins and restrained theme, kept status columns/table fields in their original order, aligned filters and board headers, normalized card footers, and assigned table widths to avoid fragmented names/actions. Narrow screens scroll inside board/table rather than compressing content. Updated S-061 screen notes. No query, filter, clinical-rule or data changes.
+- **Validation**: 12 dashboard/queue integration tests passed; git diff --check passed. Browser inspected both screens at 1440px and narrow layout. Screenshots `/tmp/mb360-case-board-desktop.jpg`, `/tmp/mb360-case-list-desktop.jpg`.
+- **Delivery**: local preview only; no commit, push or deployment.
+
+## 11/11/2026: prepare Tâm’s UI review PR (Tâm, branch `tam/notification-ui`)
+
+- **User request**: publish these reviewed UI changes on Tâm’s branch for owner merge into main. Consolidated current UI changes and corrected the overview guide to reflect the final section order.
+- **Validation**: final full regression suite: 474 passed, 2 existing xfailed, one existing Starlette/httpx warning; git diff --check passed. No seed, schema, dependency or generated-file changes.
+- **Review scope**: UI and screen/label notes for Chi/Ánh; notification filtering and downstream consistency for module owners. Main will not be pushed or merged by this agent.
+
+## 11/11/2026: fixes after the review of this pull request (Sang, branch `tam/notification-ui`)
+
+- **Fixed**: "Tất cả" in the status dropdown of S-029 was `hidden`, so a status filter could not be cleared. The "Chỉ dẫn cụ thể của bác sĩ" link on S-026 shows only when the mother has an active instruction, instead of leading to an empty S-027.
+- **Labels**: removed the unused rows "All types" and "All metrics" (three times) and the blank lines inside the table of `docs/ui-label-reference.md`.
+- **To confirm**: the tab "Thông báo" replaces "Từ bác sĩ" agreed on 06/11/2026 (Chi, label owner).
+- **Tests**: two added in `tests/integration/test_alr_my_reports_page.py`.
+
+## 11/11/2026: sync notification UI PR with latest main (Tâm, branch `tam/notification-ui`)
+
+- **Request**: update the branch and resolve conflicts for owner merge in PR #24. Fast-forwarded the remote review fix, then merged `origin/main` at `3164d6d` without rewriting history.
+- **Resolution**: `app/mb360/acc/routes.py` retains mother validation and appointment reminder creation from main alongside the notification type/unread filters from this branch. All other upstream changes merged automatically. Downstream templates, seed and clinical rules require no additional edits.
+- **Validation**: full pytest suite: 487 passed, 2 existing xfailed; one Starlette/httpx deprecation warning. `git diff --check` passed.

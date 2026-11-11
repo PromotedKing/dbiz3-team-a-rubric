@@ -147,13 +147,15 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
                     d=dashboard.load(conn, user_id, clock.now()))    # self-tracked cards and latest status (S-008 #8, #12 – #15)
 
     @app.get("/m/{user_id}/notices", response_class=HTMLResponse)
-    def notices_page(request: Request, user_id: str, type: str = ""):
+    def notices_page(request: Request, user_id: str, type: str = "", unread: bool = False):
         """S-009 behind the "From doctor" tab (D-80): FR-025."""
         mother(user_id)
         appointment_demo.create_reminders(conn, clock.now(), user_id)
-        active = type if type in notices.TYPES or type == notices.UNREAD else ""
-        return page(request, "notices.html", user=mother(user_id), rows=notices.cards_for(conn, user_id, active), active=active,
-                    types=notices.TYPES, unread_count=notices.unread_count(conn, user_id), unread_filter=notices.UNREAD)
+        active = type if type in notices.TYPES else ""
+        unread_only = unread or type == notices.UNREAD
+        return page(request, "notices.html", user=mother(user_id),
+                    rows=notices.cards_for(conn, user_id, active, unread_only=unread_only), active=active,
+                    types=notices.TYPES, unread_count=notices.unread_count(conn, user_id), unread_only=unread_only)
 
     @app.post("/m/{user_id}/notices/read-all")
     def notices_read_all(user_id: str):

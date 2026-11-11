@@ -122,3 +122,11 @@ Note: the "[No response yet] …" box is an annotation describing a state in §4
 - [x] All states are filled in (including the no-response state and the skipped step), or marked "not applicable"/`[NEEDS CLARIFICATION]` with a reason.
 - [x] Every navigation target is a Screen ID that exists in the Screen List, or explicitly flagged `[NEEDS CLARIFICATION]`.
 - [x] Every element that displays data names the field it displays, matching the module spec.
+
+## UI review — 11/11/2026
+
+User requested removing the bottom "Báo cáo của tôi ›" link from the report-status page. Keep the header back navigation and the "Chỉ dẫn của bác sĩ ›" link. Affected implementation: `app/mb360/templates/report_status.html`. No data or clinical-rule changes.
+
+### Instructions link placement — 11/11/2026
+
+User requested moving the instructions link directly below the response text, inside the response card, renamed "Chỉ dẫn cụ thể của bác sĩ". Show once, in the last response card, with a subtle divider; remove the standalone bottom link. Target remains S-027. No changes to clinical content or data.

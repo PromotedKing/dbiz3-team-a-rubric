@@ -50,3 +50,7 @@ TCI home → tile Mẹ & Bé 360 → consent → guide (3 pages) → pregnancy s
 - Hotline number: `1900 xxxx` until the hospital gives one (BOT Q8).
 - The TCI identity is simulated (spec-ACC §10 Q9); `mb360/tci_feed.py` stands in for the host app.
 - The album is a print page; the browser saves the PDF (FR-014 partly met).
+
+## Clinical overview UI review — 11/11/2026
+
+User-approved visual update: neutral bordered KPI cards, orange reserved for above-threshold cases, muted chart bars with explicit labels/counts, consistent typography/spacing and dropdown chevron. Section order stays: KPIs → status/attention → Handle next/By source; By source has content-driven height. Counts, filters, case priority order and destinations are unchanged. Internal THRESHOLD_RULE implementation text is removed from the displayed KPI; threshold evaluation still uses the rule table. Downstream files: `templates/staff_dashboard.html`, `static/staff.css`. No schema, seed or clinical-rule changes.

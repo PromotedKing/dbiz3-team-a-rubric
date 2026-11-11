@@ -12,7 +12,7 @@
 | Mockup image | `img/S-009.png` |
 | Status | Draft (revised 29/09/2026 — screen-spec fix #5) |
 
-> **v1.0.0 app (07/11/2026, D-80 – D-85):** Behind the "Từ bác sĩ" tab; chips All · Unread · 4 types; "Mark all as read"; an answer from clinical staff opens a detail screen (Màn 10, no Screen ID yet).
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Behind the "Thông báo" tab; chips All · Unread · 4 types; "Mark all as read"; an answer from clinical staff opens a detail screen (Màn 10, no Screen ID yet).
 
 ## 1. Purpose
 
@@ -131,3 +131,41 @@ Note: no FR in `spec-TML.md`, `spec-HLT.md` or `spec-BOT.md` feeds notifications
 - [x] All five states are filled in, or marked `[NEEDS CLARIFICATION]` with a reason.
 - [x] Every navigation target is a Screen ID that exists in the Screen List, or is a hand-off to the TCI app ("Appointment").
 - [x] Every element that displays data names the field it displays, matching the module spec (Notification — `spec-ACC.md` §6).
+
+## UI review — 10/11/2026
+
+User-approved labels: list and detail title, and bottom tab: "Thông báo". "Thai máy giảm" displays as "Cử động thai giảm"; "Không thấy thai máy" displays as "Không cảm nhận được cử động thai". Stored symptom enum and clinical rules stay unchanged.
+
+List: wrapping filter chips; separate status/time row, bold title, muted preview and sender/read metadata. Detail: status, title and sender; stacked label/value pairs in the reported-information card; distinct comment and action sections; equal-width footer actions that wrap on narrow screens.
+
+Affected implementation: `docs/ui-label-reference.md`, `app/mb360/templates/notices.html`, `app/mb360/templates/notice_detail.html`, `app/mb360/static/tci.css`. No data-model, schema or seed changes.
+
+### Follow-up — reports entry placement (10/11/2026)
+
+At the user’s request, "Báo cáo của tôi" is the first card below the header, above the introduction and filters. Remove the "Báo cáo" filter chip; report notifications remain visible in All and Unread. The report list and notification targets are unchanged. This updates the filter presentation described above; existing `?type=Report` links remain supported. Affected downstream file: `app/mb360/templates/notices.html`; no data-model, schema or seed changes.
+
+### Follow-up — two-level filters (10/11/2026)
+
+Supersedes the filter presentation above, at the user's request: top level contains only All / Unread. Within either view, single-select type chips offer All types / Report / Visit result / Appointment / Instruction reminder. The user confirmed "Lịch khám" and "Lịch hẹn" are one category, displayed as "Lịch hẹn". Changing the type keeps the read-state view; changing the view keeps the selected type. All types clears the type selection. Unread counts retain existing global-count behavior (ACC §10 Q16 remains open).
+
+Each card displays its notification type tag and, when different, its existing clinical/status tag (e.g. Report + Above threshold). "Báo cáo của tôi" stays at the top. No new notification enum or clinical rule. Affected files: `acc/notices.py`, `acc/routes.py`, `templates/notices.html`, `static/tci.css`, `docs/ui-label-reference.md`; no data-model, schema or seed changes.
+
+### Follow-up — compact dropdown (10/11/2026)
+
+At the user’s request, replace the type chips with one labelled native dropdown ("Loại thông báo", default "Tất cả loại"). Selecting a type submits the GET filter while retaining All/Unread. The two top-level views and notification tags stay as described above. Dropdown options use the same four existing types. A submit button is available without JavaScript.
+
+### Dropdown refinement — 11/11/2026
+
+User requested a smaller, left-aligned dropdown with no visible "Loại thông báo" label. Keep that label for accessibility only (`aria-label`). The first option now reads "Tất cả thông báo". Filtering behavior and notification tags are unchanged.
+
+### Toolbar alignment — 11/11/2026
+
+User requested removing the separate unread-count sentence (the Unread tab retains its badge). Place "Đánh dấu đã đọc tất cả" on the left and the type dropdown on the right of one vertically centered toolbar row. The read-all action remains shown only when unread notifications exist.
+
+### Toolbar polish — 11/11/2026
+
+User requested resolving arrow misalignment and the floating read-all appearance. Use an explicit 16px dropdown chevron centered vertically with right padding reserved for it. Render read-all as a subtle green button; both controls are 40px high with matching corner radii and 12px separation. Preserve left read-all/right filter order.
+
+### Read-all contrast — 11/11/2026
+
+User requested stronger separation from the page background. Read-all uses a more saturated pale green fill (#D6F1E1), visible green border (#91D7AE) and dark green text (#006E35), retaining the balanced toolbar geometry.
