@@ -750,3 +750,10 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **User request**: publish these reviewed UI changes on Tâm’s branch for owner merge into main. Consolidated current UI changes and corrected the overview guide to reflect the final section order.
 - **Validation**: final full regression suite: 474 passed, 2 existing xfailed, one existing Starlette/httpx warning; git diff --check passed. No seed, schema, dependency or generated-file changes.
 - **Review scope**: UI and screen/label notes for Chi/Ánh; notification filtering and downstream consistency for module owners. Main will not be pushed or merged by this agent.
+
+## 11/11/2026: fixes after the review of this pull request (Sang, branch `tam/notification-ui`)
+
+- **Fixed**: "Tất cả" in the status dropdown of S-029 was `hidden`, so a status filter could not be cleared. The "Chỉ dẫn cụ thể của bác sĩ" link on S-026 shows only when the mother has an active instruction, instead of leading to an empty S-027.
+- **Labels**: removed the unused rows "All types" and "All metrics" (three times) and the blank lines inside the table of `docs/ui-label-reference.md`.
+- **To confirm**: the tab "Thông báo" replaces "Từ bác sĩ" agreed on 06/11/2026 (Chi, label owner).
+- **Tests**: two added in `tests/integration/test_alr_my_reports_page.py`.

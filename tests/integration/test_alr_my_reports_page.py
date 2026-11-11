@@ -1,4 +1,6 @@
 """T006 — US-2 #1; FR-001 – FR-003, FR-006, BR-009 (S-029 page)."""
+import re
+
 from tests.alr_status_helpers import RPT001, RPT002, RPT010, chatbot_case, report_id
 from tests.integration.helpers import bp_form
 from tests.integration.helpers import vi
@@ -35,3 +37,23 @@ def test_report_navigation_without_duplicate_instructions_link(client, user_id):
     assert target in client.get(alert).text
     status = client.post(f"/m/{u09}/report", data=bp_form(120, 80, ["Palpitations"])).headers["location"]
     assert target in client.get(status).text
+
+
+def test_status_filter_can_return_to_all(client, user_id):
+    """The first option stays in the menu, so a status filter can be cleared."""
+    page = client.get(f"/m/{user_id('tci-000123')}/my-reports", params={"status": "Resolved"}).text
+    option = re.search(r'<select id="report-status".*?(<option value=""[^>]*>)', page, re.S).group(1)
+    assert "hidden" not in option
+
+
+def test_instructions_link_only_when_there_are_instructions(client, db):
+    """No link to an empty S-027 under a response."""
+    row = db.execute("""SELECT r.user_id, r.report_id FROM METRIC_REPORT r JOIN CARE_CASE c ON c.metric_report_id = r.report_id
+                        JOIN STAFF_RESPONSE s ON s.case_id = c.case_id LIMIT 1""").fetchone()
+    path = f"/m/{row['user_id']}/reports/{row['report_id']}"
+    db.execute("UPDATE WATCH_FLAG SET active = 0 WHERE user_id = ?", (row["user_id"],))
+    page = client.get(path).text
+    assert "data-response" in page and "response-instructions" not in page
+    db.execute("""INSERT INTO WATCH_FLAG (flag_id, user_id, visit_id, metric, flagged_by, flagged_at, note, template_id, custom_text, active)
+                  SELECT '00000000-0000-0000-0000-000000000099', ?, NULL, metric, flagged_by, flagged_at, note, template_id, custom_text, 1 FROM WATCH_FLAG LIMIT 1""", (row["user_id"],))
+    assert "response-instructions" in client.get(path).text

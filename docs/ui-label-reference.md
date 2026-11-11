@@ -796,18 +796,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Clinical dashboard (D-85) | Showing: {group} | Đang lọc: {group} |
 | Clinical dashboard (D-85) | Show all | Bỏ lọc |
 | Notification wording (review 10/11/2026; stored demo title) | Về báo cáo thai máy giảm | Về báo cáo cử động thai giảm |
-
-| Notification filters (review 10/11/2026) | All types | Tất cả loại |
-
 | Notification filter dropdown (10/11/2026) | Notification type | Loại thông báo |
 | Notification filter dropdown (10/11/2026) | Filter | Lọc |
-
 | Notification dropdown review (11/11/2026) | All notifications | Tất cả thông báo |
-
-| My reports filter review (11/11/2026) | All metrics | Tất cả chỉ số |
-
-| My reports filters (11/11/2026) | All metrics | Tất cả chỉ số |
-
-| My reports filter (11/11/2026) | All metrics | Tất cả chỉ số |
-
 | Report response link (11/11/2026) | Detailed instructions from your doctor | Chỉ dẫn cụ thể của bác sĩ |

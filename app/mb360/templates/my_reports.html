@@ -10,7 +10,7 @@
     <div class="report-filter-field">
     <label for="report-status">{{ _("Status") }}</label>
     <select id="report-status" name="status" class="notice-select report-select" onchange="this.form.requestSubmit()" aria-label="{{ _('Status') }}">
-      <option value="" hidden{% if active_status == 'All' %} selected{% endif %}>{{ _("All") }}</option>
+      <option value=""{% if active_status == 'All' %} selected{% endif %}>{{ _("All") }}</option>
       {% for st in statuses %}<option value="{{ st }}"{% if st == active_status %} selected{% endif %}>{{ st | t }}</option>{% endfor %}
     </select>
     </div>

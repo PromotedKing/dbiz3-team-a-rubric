@@ -51,4 +51,4 @@ def test_stored_text_is_translated_only_when_it_is_a_label():
 
 
 def test_every_tab_has_a_label():
-    assert [ui.t(label) for _, label, _ in ui.TABS] == ["Trang chủ", "Thai kỳ", "Chatbot", "Thông báo", "Hồ sơ"]     # Chi and Ánh, 06/11/2026
+    assert [ui.t(label) for _, label, _ in ui.TABS] == ["Trang chủ", "Thai kỳ", "Chatbot", "Thông báo", "Hồ sơ"]     # Thai kỳ, Hồ sơ: Chi and Ánh, 06/11/2026; Thông báo: Tâm, 10/11/2026 (Chi to confirm)

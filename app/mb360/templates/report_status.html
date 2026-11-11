@@ -47,7 +47,7 @@
   <p class="t-body b">{{ r.heading | t }}</p>
   <p class="t-cap">{{ r.at }}</p>
   <p class="t-body" style="white-space:pre-line">{{ r.text }}</p>
-  {% if loop.last %}<a class="lnk response-instructions" href="/m/{{ user.user_id }}/instructions">{{ _("Detailed instructions from your doctor") }} ›</a>{% endif %}
+  {% if loop.last and has_instructions %}<a class="lnk response-instructions" href="/m/{{ user.user_id }}/instructions">{{ _("Detailed instructions from your doctor") }} ›</a>{% endif %}
 </div>
 {% endfor %}
 
