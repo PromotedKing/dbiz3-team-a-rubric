@@ -8,7 +8,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from .. import clock, tci_feed, ui
+from .. import appointment_demo, clock, tci_feed, ui
 from ..alr.reports import gestational_week
 from ..alr.validation import GROUP2
 from ..hlt import dashboard
@@ -129,6 +129,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
     @app.get("/m/{user_id}/home", response_class=HTMLResponse)
     def home(request: Request, user_id: str, saved: int = 0):
         user = mother(user_id)
+        appointment_demo.create_reminders(conn, clock.now(), user_id)
         profile = conn.execute("SELECT * FROM PREGNANCY_PROFILE WHERE user_id = ?", (user_id,)).fetchone()
         if profile is None:                          # BR-006
             return go(user_id, "setup")
@@ -148,6 +149,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
     @app.get("/m/{user_id}/notices", response_class=HTMLResponse)
     def notices_page(request: Request, user_id: str, type: str = ""):
         """S-009 behind the "From doctor" tab (D-80): FR-025."""
+        mother(user_id)
+        appointment_demo.create_reminders(conn, clock.now(), user_id)
         active = type if type in notices.TYPES or type == notices.UNREAD else ""
         return page(request, "notices.html", user=mother(user_id), rows=notices.cards_for(conn, user_id, active), active=active,
                     types=notices.TYPES, unread_count=notices.unread_count(conn, user_id), unread_filter=notices.UNREAD)

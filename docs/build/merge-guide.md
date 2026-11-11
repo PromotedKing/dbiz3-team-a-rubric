@@ -107,3 +107,5 @@ PRs #2 and #3 (Chi's and Ánh's spec clarifications) are not part of this chain;
 2. Sang ticks G1 and G6 in `docs/build/mvp-alpha-checklist.md` with the commit of `main` and the reviewers' names, in a new PR (reviewed by someone else).
 3. Optional: point Render at `main` by changing `branch: sang/mother-app-v1` to `branch: main` in `render.yaml`, in a PR. Until then the hosted app keeps following `sang/mother-app-v1`.
 4. The `mvp-alpha` tag is put on `main` only when every gate is ticked. A tag is never moved afterwards (AGENTS.md rule 5).
+
+**What happened (10/11/2026):** #17 – #20 were merged while their base was still the previous branch, so none of them reached `main`. PR #21 (`sang/mother-app-v1` → `main`) brought them in; `main` now has everything of #15 – #20. `render.yaml` points at `main` from `sang/render-main`.

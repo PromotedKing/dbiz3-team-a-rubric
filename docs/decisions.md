@@ -202,6 +202,12 @@ The PRD in `docs/prd.md` was refined on 14/10/2026 (product context, M1 – M5, 
 |---|---|---|---|
 | D-87 | **Show the selected stage's weeks directly on S-105.** Supersedes the D-81 Highlights grid, its link to S-048 and the collapsed week list. Order week cards newest first and mark the current week's card when present. Retain stage review and weekly content under FR-013 / D-75. The PDF album remains oldest first under FR-014 and BR-007. | Proposed by Hải Anh for team review | TML §7.3, S-105, journey presentation and integration tests |
 
+### J. APT owner confirmation of D-80 navigation (11/11/2026)
+
+| ID | Decision | Status | Affects |
+|---|---|---|---|
+| D-86 | **Keep the current D-80 navigation.** Hải Anh confirms the team's choice: sub-app root tabs are Home · Timeline · Chatbot · From doctor · Profile; no Appointments tab and no booking CTA on S-008 (including the no-appointment case). Booking entry stays in the TCI host app. The read-only next-appointment card, Appointment notices on S-009 and switch on S-010 remain under D-77 / D-81. FR-001 is retained as host-only / N/A in MB360. The proposed Part B booking-session API/adapter/CTA is cancelled, not adopted. D-77 / DM-04 still prohibit storing appointments in MB360. This confirms D-80's navigation without changing unrelated decisions or resolving Client/SME markers (including S-010 Q3/Q4). | **Confirmed by Hải Anh on behalf of the team, 11/11/2026**; shared documents remain subject to owner review | PRD C1/backlog; spec-APT FR-001, FR-005, BR-001/BR-003; S-008 and historical tab rows; function/screen lists; architecture; no code/schema/seed change |
+
 ### References for D-15
 
 - ADA, *Glucose Monitoring During Pregnancy* (2024): targets fasting < 95 mg/dL, 1 h after a meal < 140 mg/dL, 2 h after a meal < 120 mg/dL — https://diabetes.org/sites/default/files/2024-10/Glucose-Monitoring-During-Pregnancy-patient-FINAL.pdf
