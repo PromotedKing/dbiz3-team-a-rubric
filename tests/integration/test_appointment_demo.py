@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import pytest
 from fastapi.testclient import TestClient
 
-from mb360 import appointment_demo, clock, db as dbmod, tci_feed
+from mb360 import appointment_demo, clock, db as dbmod, persona, tci_feed
 from mb360.acc import notices
 from mb360.main import create_app
 
@@ -14,16 +14,21 @@ NOW = datetime(2026, 11, 10, 10, 0)
 @pytest.fixture
 def demo(db, user_id):
     clock.set(NOW)
-    db.execute(tci_feed.DDL)
+    persona.install(db, NOW)
     app = create_app(db)
-    return TestClient(app, follow_redirects=False), user_id('tci-000133'), user_id('tci-000134')
+    return TestClient(app, follow_redirects=False), user_id('tci-000133'), user_id('tci-000126')
 
 
 def test_accounts_open_home_with_tomorrow_card_and_no_appointment_case(demo, db):
     client, mother, empty = demo
     accounts = client.get('/tci/accounts')
     assert accounts.status_code == 200
-    for user, ref in ((mother, 'tci-000133'), (empty, 'tci-000134')):
+    expected = {'tci-000123', 'tci-000126', 'tci-000128', 'tci-000133', 'tci-000200'}
+    assert {r[0] for r in db.execute('SELECT tci_account_ref FROM USER_ACCOUNT')} == expected
+    assert all(ref in accounts.text for ref in expected)
+    for suffix in (124, 125, 127, 129, 130, 131, 132, 134):
+        assert f'tci-{suffix:06d}' not in accounts.text
+    for user, ref in ((mother, 'tci-000133'), (empty, 'tci-000126')):
         assert ref in accounts.text
         identity = dict(db.execute('SELECT * FROM USER_ACCOUNT WHERE user_id=?', (user,)).fetchone())
         opened = client.post('/tci/open', data={k: v for k, v in identity.items() if v is not None})
@@ -86,13 +91,17 @@ def test_fresh_deploy_uses_relative_dates_and_never_creates_appointment_table(db
 
 
 def test_existing_demo_database_upgrade_and_reopen_are_idempotent(db, user_id, tmp_path):
-    ids = (user_id('tci-000133'), user_id('tci-000134'))
+    ids = (user_id('tci-000133'), user_id('tci-000126'))
+    db.execute("UPDATE PREGNANCY_PROFILE SET edd='2026-12-01' WHERE user_id=?", (ids[1],))
+    control_profile = tuple(db.execute('SELECT * FROM PREGNANCY_PROFILE WHERE user_id=?', (ids[1],)).fetchone())
     for table in ('CONSENT_RECORD', 'PREGNANCY_PROFILE', 'NOTIFICATION_PREFERENCE', 'USER_ACCOUNT'):
-        db.execute(f'DELETE FROM {table} WHERE user_id IN (?, ?)', ids)
+        db.execute(f'DELETE FROM {table} WHERE user_id=?', (ids[0],))
     db.execute(tci_feed.DDL)
     appointment_demo.install(db, NOW)
     original = [tuple(r) for r in db.execute(f'SELECT * FROM {tci_feed.TABLE} ORDER BY user_id')]
     assert len(original) == 2
+    assert tci_feed.hospital_edd(db, ids[1]) == '2026-12-01'
+    assert tuple(db.execute('SELECT * FROM PREGNANCY_PROFILE WHERE user_id=?', (ids[1],)).fetchone()) == control_profile
     file = tmp_path / 'demo.sqlite'
     target = dbmod.open_file(str(file))
     db.backup(target)
@@ -102,6 +111,7 @@ def test_existing_demo_database_upgrade_and_reopen_are_idempotent(db, user_id, t
         appointment_demo.install(reopened, NOW + timedelta(hours=1))
         assert [tuple(r) for r in reopened.execute(f'SELECT * FROM {tci_feed.TABLE} ORDER BY user_id')] == original
         assert len(notices.list_for(reopened, ids[0], 'Appointment')) == 1
+        assert tuple(reopened.execute('SELECT * FROM PREGNANCY_PROFILE WHERE user_id=?', (ids[1],)).fetchone()) == control_profile
         assert not reopened.execute('PRAGMA foreign_key_check').fetchall()
     finally:
         reopened.close()

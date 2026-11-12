@@ -545,7 +545,6 @@ for u, kind, note, week, author, text, at in [
 APPOINTMENT_DEMO = []
 for k, ref, name, phone, offset in [
     ('U11', 'tci-000133', 'Nguyễn Thị An Nhiên', '0900000111', 1),
-    ('U12', 'tci-000134', 'Trần Ngọc Bình An', '0900000112', None),
 ]:
     U[k] = uid('user-' + k)
     EDD[k] = NOW.date() + timedelta(days=109)
@@ -562,6 +561,9 @@ for k, ref, name, phone, offset in [
     APPOINTMENT_DEMO.append(dict(user_id=U[k], days_until_appointment=offset,
         time='09:00', days_until_edd=109, place='Bệnh viện Thu Cúc'))
 
+APPOINTMENT_DEMO.append(dict(user_id=U['U04'], days_until_appointment=None,
+    time=None, days_until_edd=None, place=None))
+
 # ============================================================================= checks
 # The schema is the source of the column order, keys and CHECK constraints.
 DBX = sqlite3.connect(':memory:')
@@ -570,6 +572,24 @@ LOAD_ORDER = [r[0] for r in DBX.execute("SELECT name FROM sqlite_master WHERE ty
 COLS = {t: [r[1] for r in DBX.execute(f'PRAGMA table_info({t})')] for t in LOAD_ORDER}
 PKS = {t: [r[1] for r in sorted(DBX.execute(f'PRAGMA table_info({t})'), key=lambda r: r[5]) if r[5]] for t in LOAD_ORDER}
 FKS = {t: {r[3]: r[2] for r in DBX.execute(f'PRAGMA foreign_key_list({t})')} for t in LOAD_ORDER}
+# Keep the fixture labels stable, including IDs derived from loop positions.
+# Select the show accounts and remove their excluded peers' dependent rows
+# before validating and serializing the seed.
+kept_accounts = {U[k] for k in ('U01', 'U04', 'U06', 'U11')}
+excluded = defaultdict(set)
+excluded['USER_ACCOUNT'] = {row['user_id'] for row in T['USER_ACCOUNT']} - kept_accounts
+while True:
+    before = sum(map(len, excluded.values()))
+    for table in LOAD_ORDER:
+        for column, parent in FKS[table].items():
+            excluded[table].update(row[PKS[table][0]] for row in T[table]
+                                   if row[column] in excluded[parent])
+    if sum(map(len, excluded.values())) == before:
+        break
+for table in LOAD_ORDER:
+    KIND[table] = [entry for entry in KIND[table] if entry[0][PKS[table][0]] not in excluded[table]]
+    T[table] = [row for row, _, _ in KIND[table]]
+
 assert set(COLS) == set(T), f'tables differ: {set(COLS) ^ set(T)}'
 for t, rows in T.items():
     for r in rows:
@@ -767,6 +787,33 @@ NA = {
     'STAFF': {'empty': 'every column is required (CLI §6)'},
     'THRESHOLD_RULE': {'boundary': 'the configuration holds only the 7 rows of ALR BR-004; boundary values are exercised in HEALTH_METRIC_RECORD (140/90, 6.7)'},
 }
+# Explicit per-table exceptions for the reduced show dataset.
+SHOW_ROW_EXCEPTIONS = {
+    'USER_ACCOUNT': (('ordinary', 'empty', 'exceptional'), 'four show accounts; the no-profile and late-consent accounts were retired'),
+    'CONSENT_RECORD': (('ordinary', 'empty', 'exceptional'), 'one consent per show account; multiple terms versions and blank terms were retired'),
+    'CONVERSATION': (('ordinary', 'empty', 'exceptional'), 'kept the show conversations; empty sessions and retired handoff examples are outside the show'),
+    'DIARY_ENTRY': (('ordinary', 'empty'), 'kept the show diaries; the empty mood example belonged to a retired account'),
+    'EMR_LINKAGE_REQUEST': (('ordinary', 'empty', 'exceptional'), 'kept linked show records; Pending and repeated requests are exercised in ACC test fixtures'),
+    'FAMILY_MESSAGE': (('ordinary', 'exceptional'), 'kept the show messages and the length boundary; the off-week example was retired'),
+    'NOTIFICATION_PREFERENCE': (('ordinary', 'empty', 'exceptional'), 'one row per show account; retired preference combinations are outside the show'),
+    'PATIENT_ASSIGNMENT': (('ordinary', 'empty', 'exceptional'), 'kept current show assignments; assignment changes are tested with a CLI fixture'),
+    'PATIENT_CLINICAL_PROFILE': (('ordinary', 'empty', 'exceptional'), 'kept the show clinical profiles; other profile combinations are outside the show'),
+    'PREGNANCY_PROFILE': (('ordinary', 'empty'), 'kept the four show profiles; the unconfigured account is simulated in ACC tests'),
+    'SESSION': (('ordinary', 'empty', 'exceptional'), 'kept show sessions; expired and short-lived examples were retired'),
+    'VISIT': (('ordinary', 'empty'), 'kept visits of show accounts; the retired visit without measurements is outside the show'),
+    'AI_RESPONSE_LOG': (('ordinary', 'empty'), 'only logs for retained conversations are included'),
+    'CHAT_MESSAGE': (('empty', 'exceptional'), 'retired conversations held these examples; declining handoff is tested separately'),
+    'HEALTH_METRIC_RECORD': (('boundary',), 'exact report thresholds are checked by test_thresholds.py and the CLI boundary fixture'),
+    'WATCH_FLAG': (('ordinary', 'boundary', 'exceptional'), 'kept show instructions; protein and inactive instructions are exercised in report form tests'),
+    'METRIC_REPORT': (('boundary', 'empty', 'exceptional'), 'kept show reports; boundary and symptom submission are covered by ALR and CLI tests'),
+    'CARE_CASE': (('boundary', 'empty', 'exceptional'), 'kept show cases; edge and status transitions are exercised by CLI fixtures'),
+    'CASE_STATUS_HISTORY': (('boundary', 'empty'), 'kept history of show cases; automatic Viewed and doctor closure are exercised by CLI fixtures'),
+    'NOTIFICATION': (('ordinary', 'boundary', 'empty'), 'kept notices linked to show accounts; retired notice variants are outside the show'),
+    'STAFF_RESPONSE': (('ordinary', 'boundary', 'empty', 'exceptional'), 'kept only responses linked to show cases'),
+}
+for table, (kinds, reason) in SHOW_ROW_EXCEPTIONS.items():
+    NA.setdefault(table, {}).update(dict.fromkeys(kinds, 'Reduced show demo: ' + reason))
+NA['THRESHOLD_RULE']['boundary'] = 'configuration only; test_thresholds.py checks the exact thresholds'
 summary, gaps = [], []
 for t in COLS:
     cnt = Counter(k for _, k, _ in KIND[t])
@@ -822,7 +869,7 @@ lines = ['# Seed report', '',
          '**Seed assumption, not a decided rule:** gestational week = whole weeks counted back from the EDD with a 280-day pregnancy (`spec-ACC.md` §10 Q10 is open).', '',
          'S01 and S02 keep the placeholder names drawn in the wireframes ("Trần Thị B", "Nguyễn Văn A"); every other person is invented. Phone numbers follow the fictitious pattern 0900 000 1xx. Guidance templates and chatbot answers are placeholders, not clinical content; the hand-off offer quotes BOT BR-002. Thresholds come only from ALR BR-004 (D-14; D-15 Pending SME).', '',
          'The rows follow the wireframes: Lan (U01) has 2 reports being handled — C9 (symptom) and C10 (chatbot), both "Not viewed" (S-008, S-023, S-029); her 26/09 report C1 is "Resolved" (S-026, S-061); S-064 shows C1 at 20:18, before the nurse handled it.', '',
-         'Appointment demo: U11 has a next-day host visit, U12 has no visit. The generated `appointment-demo.json` stores relative fixture offsets, not an MB360 entity. The simulated host resolves these at startup and creates an unread Appointment notice only when enabled. One-day timing and retaining received notices when disabled are demo assumptions; S-010 Q3/Q4 remain open. See `docs/build/appointment-part-a.md`.', '',
+         'Appointment demo: U11 (An Nhiên) has a next-day host appointment; U04 (Phạm Ngọc Mai) has no appointment and keeps her stored due date. The generated `appointment-demo.json` stores relative fixture offsets, not an MB360 entity. The simulated host resolves these at startup and creates an unread Appointment notice only when enabled. One-day timing and retaining received notices when disabled are demo assumptions; S-010 Q3/Q4 remain open. See `docs/build/appointment-part-a.md`.', '',
          '## Load test (gate G3)', '',
          f'The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-memory database (the version is not written, so the report is the same on every machine) and the {len(LOAD_ORDER)} files were loaded in filename order with `PRAGMA foreign_keys = ON`: no constraint error, `PRAGMA foreign_key_check` empty, {sum(LOADED.values())} rows.', '',
          '| File | Table | Rows |', '|---|---|---|']
@@ -838,10 +885,35 @@ for t in COLS:
         if kind != 'ordinary':
             lines.append(f'| {t} | {kind} | {pk_text(t, r)} | {note} |')
 # ---- edge-case register (C4): enumerated values, empty states, boundaries, business rules
-ENUM_NA = {('THRESHOLD_RULE', 'combine', 'all'): 'no rule in ALR BR-004 combines rows with "all"; a threshold is never invented to fill the value'}
+ENUM_NA = {
+    ('THRESHOLD_RULE', 'combine', 'all'): 'no rule in ALR BR-004 combines rows with "all"; a threshold is never invented to fill the value',
+}
+SHOW_ENUM_EXCEPTIONS = {
+    ('EMR_LINKAGE_REQUEST', 'status', 'Pending'): 'covered by tests/unit/test_acc_profile.py::test_pending_due_date_can_be_changed_and_clears_the_lmp',
+    ('PATIENT_CLINICAL_PROFILE', 'blood_type', 'A+'): 'valid schema/display value with no dedicated branch or per-value test; common rendering covered by tests/integration/test_cli_case_page.py::test_report_block_and_profile',
+    ('PATIENT_CLINICAL_PROFILE', 'blood_type', 'B+'): 'valid schema/display value with no dedicated branch or per-value test; common rendering covered by tests/integration/test_cli_case_page.py::test_report_block_and_profile',
+    ('PATIENT_CLINICAL_PROFILE', 'blood_type', 'B−'): 'valid schema/display value with no dedicated branch or per-value test; common rendering covered by tests/integration/test_cli_case_page.py::test_report_block_and_profile',
+    ('PATIENT_CLINICAL_PROFILE', 'blood_type', 'AB+'): 'valid schema/display value with no dedicated branch or per-value test; common rendering covered by tests/integration/test_cli_case_page.py::test_report_block_and_profile',
+    ('PATIENT_CLINICAL_PROFILE', 'blood_type', 'AB−'): 'valid schema/display value with no dedicated branch or per-value test; common rendering covered by tests/integration/test_cli_case_page.py::test_report_block_and_profile',
+    ('PATIENT_CLINICAL_PROFILE', 'blood_type', 'O−'): 'covered by tests/integration/test_cli_case_page.py::test_report_block_and_profile',
+    ('CHAT_MESSAGE', 'handoff_choice', 'No thanks'): 'covered by tests/unit/test_bot_chat.py::test_no_thanks_creates_no_case',
+    ('HEALTH_METRIC_RECORD', 'metric', 'Blood glucose'): 'covered by tests/integration/test_cli_instructions_page.py::test_doctor_adds_an_instruction_and_the_mother_sees_it',
+    ('HEALTH_METRIC_RECORD', 'glucose_context', 'fasting'): 'covered by tests/integration/test_cli_instructions_page.py::test_doctor_adds_an_instruction_and_the_mother_sees_it',
+    ('METRIC_REPORT', 'metric', 'Blood glucose'): 'covered by tests/integration/test_cli_instructions_page.py::test_doctor_adds_an_instruction_and_the_mother_sees_it',
+    ('HEALTH_METRIC_RECORD', 'glucose_context', 'post_1h'): 'covered by tests/unit/test_hlt_history.py::test_glucose_line_only_for_one_context_and_rows_labelled_by_their_own',
+    ('HEALTH_METRIC_RECORD', 'glucose_context', 'post_2h'): 'valid schema/display value with no dedicated branch or per-value persistence test; common history covered by tests/unit/test_hlt_history.py::test_glucose_line_only_for_one_context_and_rows_labelled_by_their_own and the exact threshold by tests/unit/test_thresholds.py::test_blood_glucose_by_timing',
+    ('WATCH_FLAG', 'metric', 'Urine protein'): 'covered by tests/integration/test_report_form.py::test_inactive_instruction_does_not_count',
+    ('METRIC_REPORT', 'metric', 'Urine protein'): 'covered by tests/integration/test_cli_instructions_page.py::test_instruction_without_guidance_uses_the_default_template',
+    ('CARE_CASE', 'status', 'Viewed'): 'covered by tests/unit/test_cli_queue.py::test_filter_by_status',
+    ('REPORT_SYMPTOM', 'symptom', 'Severe abdominal pain'): 'covered by tests/integration/test_report_symptoms.py::test_every_symptom_creates_a_case',
+    ('REPORT_SYMPTOM', 'symptom', 'Waters breaking or fluid leakage'): 'covered by tests/integration/test_report_symptoms.py::test_every_symptom_creates_a_case',
+    ('REPORT_SYMPTOM', 'symptom', 'Palpitations'): 'covered by tests/integration/test_report_symptoms.py::test_every_symptom_creates_a_case',
+    ('CASE_STATUS_HISTORY', 'role', 'Doctor'): 'covered by tests/unit/test_alr_status.py::test_escalated_then_closed_by_a_doctor',
+}
+ENUM_NA.update({key: 'Reduced demo for the show; ' + reason for key, reason in SHOW_ENUM_EXCEPTIONS.items()})
 lines += ['', '## Edge-case register', '', '### Every enumerated value', '',
           'One row per value of every ENUM column (parsed from the CHECK constraints of the schema).', '',
-          '| Table | Column | Value | First row with it |', '|---|---|---|---|']
+          '| Table | Column | Value | First row with it | Not applicable (reason) |', '|---|---|---|---|---|']
 for t in LOAD_ORDER:
     ddl = DBX.execute("SELECT sql FROM sqlite_master WHERE name = ?", (t,)).fetchone()[0]
     for col, vals in re.findall(r"\n    (\w+) TEXT[^\n]*?CHECK \(\1 IN \(([^)]*)\)\)", ddl):
@@ -851,76 +923,20 @@ for t in LOAD_ORDER:
             if hit is None:
                 why = ENUM_NA.get((t, col, v))
                 assert why, f'enum value not seeded: {t}.{col} = {v}'
-                lines.append(f'| {t} | `{col}` | {v} | not seeded — {why} |')
+                lines.append(f'| {t} | `{col}` | {v} | — | {why} |')
             else:
-                lines.append(f'| {t} | `{col}` | {v} | {pk_text(t, hit)} |')
+                lines.append(f'| {t} | `{col}` | {v} | {pk_text(t, hit)} | — |')
 lines += ['', '### Empty states', '', '| Table | Row (primary key) | Empty state |', '|---|---|---|']
 lines += [f'| {t} | {pk_text(t, r)} | {note} |' for t in LOAD_ORDER for r, kind, note in KIND[t] if kind == 'empty']
-lines += ['', 'Parents with zero children: U07 has no pregnancy profile, visit, report, case or diary (new mother, S-007 shown next); CV-007 has no message; VIS-008 has no health metric record; DIA-007 has no photo; S07 has no assignment and no case.', '']
-BOUNDS = [
-    ('Blood pressure threshold ≥ 140 / ≥ 90 (D-14)', 'H14 = 140/90 → Above threshold → C6; control: H10 = 128/82 → Normal'),
-    ('Glucose thresholds 5.3 / 7.8 / 6.7 mmol/L (D-15, Pending SME)', 'H16 = 6.7 two hours after a meal → Above threshold → C7; H15 = 4.9 fasting and H19 = 7.2 one hour after a meal → Normal'),
-    ('Urine protein ≥ 1+ (D-15)', 'H13 = 2+ → C5; H04 = Negative (visit value, no check)'),
-    ('Fetal heart rate 110–160 bpm, display only (D-12, HLT BR-005)', 'H05 = 172 → no report, no case'),
-    ('Gestational week 0–42', 'U06 at week 42: VIS-007, DIA-006, FAMILY_MESSAGE week 42'),
-    ('D-46 text limits 1000 / 500 / 200', 'W06 and SR6 custom_text = 1000; G07 content = 1000; MSG-007 = 500; FAMILY_MESSAGE of U06 = 200'),
-    ('VARCHAR limits', 'U06 phone = 20; S06 full_name and login_account = 100; G07 title = 100; N08 title = 100; RPT-006 other_symptom_text = 100; U06 terms_version = 20; U06 obstetric_history = 10'),
-    ('At most 5 photos per diary entry (D-46)', 'DIA-006 with sort_order 1 – 5'),
-    ('Equal timestamps allowed', 'U06 consent and first session in the same minute; U06 EMR linked_at = requested_at; N08 read_at = created_at; C7 Viewed and Escalated in the same minute'),
-    ('Date ranges', 'U06 assignment valid_to = today; U06 session expires_at = NOW; U05 change of responsible doctor (old row ended 31/08, new row from 01/09)'),
-    ('DECIMAL(5,1)', 'VIS-007 fetal_length = 9999.9'),
-]
-lines += ['### Boundaries (numeric and date rules)', '', '| Rule | Rows |', '|---|---|'] + [f'| {a} | {b} |' for a, b in BOUNDS]
-RULES = [
-    ('ALR BR-008 branch 1 — above threshold → Metric report case', 'RPT-002 → C1, RPT-004 → C4, RPT-005 → C5, RPT-006 → C6, RPT-008 → C7'),
-    ('ALR BR-008 branch 2 / BR-007 — symptoms only → Symptom case', 'RPT-003 → C2, RPT-009 → C8, RPT-010 → C9'),
-    ('ALR BR-008 branch 3 / BR-009 — Normal, no symptoms → no case', 'RPT-001, RPT-007, RPT-011'),
-    ('ALR BR-017 / D-45 — ≥ 1 symptom, "No symptoms" alone', 'RPT-002 (3 items), RPT-004 ("No symptoms" on an above-threshold report)'),
-    ('ALR BR-012 — "Escalated to doctor" is optional', 'C1, C5, C8 (Viewed → Resolved)'),
-    ('ALR BR-016 / D-43 — forward only; "Viewed" recorded automatically', 'C7 (Viewed and Escalated at 13:15 by the same nurse)'),
-    ('ALR BR-015 / D-37 / CLI BR-001, BR-004 — who may close / send guidance', 'C7 closed by a doctor after escalation; C1, C5, C8 closed by a nurse; SR3, SR4 doctor guidance on escalated cases only'),
-    ('ALR FR-021 — first history row written by the System', 'every CASE_STATUS_HISTORY "Not viewed" row (role System, changed_by empty)'),
-    ('D-68 — escalated case goes to the active responsible doctor', 'C4 and C7 → S02 = active PATIENT_ASSIGNMENT of U04 / U10'),
-    ('ALR BR-013 — default template when the instruction has no guidance', 'W07 (no template, no text) → G01 is_default'),
-    ('ALR FR-022 — Instruction reminder only for an active instruction with the switch on', 'N06 → W01 (U01 watch_flag_reminder = 1)'),
-    ('ALR FR-018 / FR-019 / APT FR-009 — notifications respect the switches', 'N01 – N09; U06 and U10 with switches off receive none of those types'),
-    ('BOT BR-002 / D-34 — case only after "Connect to nurse"', 'MSG-003 → C3, MSG-015 → C10; MSG-008 "No thanks" → no case'),
-    ('HLT BR-001 / BR-005 — visit values, fetal heart rate from visits only', 'H01 – H05 (source From visit, visit_id set)'),
-    ('HLT BR-003 — Group 1 never checked, no report', 'H07, H08, H09, H17, H18 (no METRIC_REPORT)'),
-    ('ACC BR-003 — hospital EDD takes priority', 'U01 edd_source = Hospital record'),
-    ('ACC BR-004 / DM-08 — no consent saved on "Later"; account created at consent', 'U08: first CONSENT_RECORD on 25/09 only; every stored consent accepted = 1'),
-    ('ACC BR-006 — setup shown when no due date', 'U07 (no PREGNANCY_PROFILE)'),
-    ('DM-41 — one preference row per account', 'all 12 accounts, U07, U08, U11 and U12 with default values'),
-    ('DM-21 — at most 1 active instruction per metric', 'W08 inactive next to W03 (U05)'),
-    ('TML BR-004 / BR-005 / D-60 — messages ≤ 200, diary linked to the current week, read-only', 'FAMILY_MESSAGE of U06; DIA-001 – DIA-008 gestational_week = week at saving'),
-]
-lines += ['', '### Business rules', '', '| Rule | Rows that exercise it |', '|---|---|'] + [f'| {a} | {b} |' for a, b in RULES]
-SCEN = [
-    ('ACC US-1', 'First open and consent: U07 (CONSENT_RECORD, SESSION, no PREGNANCY_PROFILE); "Later" first (nothing saved), agreed later: U08', 'Yes'),
-    ('ACC US-2', 'Pregnancy set-up; setup weight stored as HEALTH_METRIC_RECORD (D-42): U01 PREGNANCY_PROFILE, H06; week 42: U06', 'Yes'),
-    ('ACC US-3', 'Profile and hospital record link (Linked / Pending): EMR_LINKAGE_REQUEST U01, U09, U08 × 2', 'Yes — Linked is seed data (DM-23)'),
-    ('ACC FR-025 – FR-027', 'Notification list with 4 types, read / unread, settings: NOTIFICATION N01 – N09; NOTIFICATION_PREFERENCE U06, U10', 'Yes'),
-    ('HLT US-1', 'Health metrics screen: latest visit, instructions, self-tracked metrics: U01 VIS-001, H01 – H04, W01 – W02, H07, H08, H17, H18', 'Yes'),
-    ('HLT US-2', 'Enter Group 1 metrics: H07, H08, H09, H17, H18', 'Yes'),
-    ('HLT US-3 / US-4', 'Doctor\'s instructions and one metric\'s history (U01 blood pressure): W01; H01, H10, H11', 'Yes'),
-    ('ALR US-1 branch 3', 'Normal, no symptoms → no case (BR-008): RPT-001, RPT-007', 'Yes'),
-    ('ALR US-1 branch 1', 'Above threshold → Metric report case: RPT-002 → C1; RPT-004 → C4; RPT-005 → C5; RPT-008 → C7', 'Yes'),
-    ('ALR US-1 branch 2', 'Symptoms only → Symptom case: RPT-003 → C2; RPT-009 → C8; RPT-010 → C9', 'Yes'),
-    ('ALR US-1 edge', 'Exactly on the threshold (≥): 140/90 RPT-006 → C6; 6.7 mmol/L RPT-008 → C7', 'Yes — D-15 values are Pending SME'),
-    ('ALR US-2', 'Report status with a skipped "Escalated to doctor" and a response: C1 + history + SR1 + N01', 'Yes'),
-    ('ALR FR-022', 'Instruction reminder for an active instruction with the switch on: N06 → W01', 'Yes — trigger / frequency open (ALR §10 Q20)'),
-    ('BOT US-1', 'General question and answer: CV-001, MSG-001, MSG-002', 'Yes'),
-    ('BOT US-2', 'Risk question → hand-off offer → Connect to nurse → Chatbot case: MSG-003 → C3; MSG-015 → C10', 'Yes'),
-    ('BOT US-2 edge', 'Risk question, "No thanks" → no case: MSG-008, MSG-011', 'Yes'),
-    ('CLI US-1', 'Nurse queue, mark Viewed, send guidance, close: C2, C6, C9, C10 (Not viewed); C3 (Viewed); C1, C5 (Resolved)', 'Yes'),
-    ('CLI US-1 edge', 'Escalate while still Not viewed → Viewed recorded automatically (BR-016): C7', 'Yes'),
-    ('CLI US-2', 'Doctor handles an escalated case and closes it: C4 (SR3, still escalated); C7 (SR4, closed by S02); a nurse closes a case that was not escalated: C1, C5, C8', 'Yes — the notification to the doctor is not stored by decision (DM-32); the doctor sees C4 / C7 through CARE_CASE.assigned_doctor_id'),
-    ('CLI US-3', 'Doctor adds / edits instructions; no guidance → default template: W01 – W08; W07 → G01', 'Yes'),
-    ('TML US-1 – US-3', 'Week view, diary with photos (max 5), Messages to Baby: DIA-001 – DIA-008, DIARY_IMAGE, FAMILY_MESSAGE; VIS-002 (week 22)', 'Yes'),
-    ('APT', 'Upcoming appointment and reminder: N03 (`appointment_ref` only)', 'Partly — APPOINTMENT_RECORD is external (DM-04)'),
-]
-lines += ['', '## Scenario coverage', '', '| Scenario | Rows that make it runnable | Covered? |', '|---|---|---|']
-lines += [f'| {a} | {b} | {c} |' for a, b, c in SCEN]
+lines += ['', '### Scenario coverage', '', '| Area | Retained seed or host examples | Coverage moved to tests |',
+          '|---|---|---|',
+          '| ACC | U01 linked hospital EDD, U06 week 42, four consent and preference rows | Pending and missing-profile fixtures in test_acc_profile.py |',
+          '| HLT | U01 visit results, self-tracked metrics and instructions | Glucose timing in test_thresholds.py and test_hlt_history.py |',
+          '| ALR | RPT-001 normal with no case, RPT-002 → C1, RPT-004 → C4, RPT-010 → C9 | Exact 140/90 and doctor closure via tests/conftest.py case fixtures |',
+          '| BOT | CV-001 general answer, MSG-015 → C10 accepted handoff | Declined handoff in test_bot_chat.py |',
+          '| CLI | C1 resolved, C4 escalated, C9 and C10 not viewed | Viewed and assignment changes in test_cli_queue.py and test_cli_assignment.py |',
+          '| TML | Show diaries, images and family messages | Journey empty states in test_tml_journey_pages.py |',
+          '| APT | U11 tomorrow at 09:00, U04 no appointment, in the simulated host | test_appointment_demo.py |']
 FILES[REPORT] = '\n'.join(lines) + '\n'
 FILES[os.path.join(OUT, 'appointment-demo.json')] = json.dumps(APPOINTMENT_DEMO, ensure_ascii=False, indent=2) + '\n'
 n_rows = sum(len(v) for v in T.values())

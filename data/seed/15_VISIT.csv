@@ -1,8 +1,4 @@
 visit_id,user_id,visit_date,facility,visit_type,conclusion,doctor_note,ultrasound_image,fetal_length,estimated_fetal_weight,ultrasound_report_date,gestational_week
-0871b22f-3f67-5fb4-8b6b-c6bab1e11f8a,83a221ae-966d-5739-8ae0-954d4335eca1,2026-09-08,Thu Cuc Hospital,Routine antenatal check-up,Fetal growth consistent with gestational age,Sample doctor note,,,,,27
-228588c2-1f99-560a-b71d-3ac706da4bff,059acf66-1a42-5609-a34a-d961725f4067,2026-09-10,Thu Cuc Hospital,Routine antenatal check-up,Fetal growth consistent with gestational age,Sample doctor note,,,,,30
-7c9cd4eb-d7c3-57dd-a5b8-3e5f75044177,3ca395ff-4294-5d35-82ea-3eafa76844c7,2026-09-20,Thu Cuc Hospital,Routine antenatal check-up,,,,,,,35
-9433d96a-e57a-53cd-83a3-2885f0daa4d3,4333c4cf-b0ff-50ec-9ff1-39da60d2e7b8,2026-09-05,Thu Cuc Hospital,Routine antenatal check-up,Fetal growth consistent with gestational age,Sample doctor note,,,,,21
 95256782-c0a3-5b1d-9b8e-66ffb218b9ea,a7354260-026f-5459-bc86-fdb7192e9b9c,2026-09-12,Thu Cuc Hospital,Routine antenatal check-up,Further monitoring,Sample doctor note,,,,,28
 b19835a8-948e-5434-b1b8-487a0bc9dc0f,5922a028-7ad1-5bb1-8034-1077cbdf6a1d,2026-08-18,Thu Cuc Hospital,Anomaly scan,Fetal anatomy within normal limits,Sample doctor note,us/VIS-002.jpg,27.0,480.0,2026-08-18,22
 e8a6117e-9b07-54f6-b06a-c200fd6990cc,d732d88d-8724-52dc-bcda-2cdaef98a917,2026-09-27,Thu Cuc Hospital,Routine antenatal check-up,As prescribed by the doctor,Sample doctor note,us/VIS-007.jpg,9999.9,3400.0,2026-09-27,42

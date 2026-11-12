@@ -8,72 +8,72 @@ S01 and S02 keep the placeholder names drawn in the wireframes ("Trần Thị B"
 
 The rows follow the wireframes: Lan (U01) has 2 reports being handled — C9 (symptom) and C10 (chatbot), both "Not viewed" (S-008, S-023, S-029); her 26/09 report C1 is "Resolved" (S-026, S-061); S-064 shows C1 at 20:18, before the nurse handled it.
 
-Appointment demo: U11 has a next-day host visit, U12 has no visit. The generated `appointment-demo.json` stores relative fixture offsets, not an MB360 entity. The simulated host resolves these at startup and creates an unread Appointment notice only when enabled. One-day timing and retaining received notices when disabled are demo assumptions; S-010 Q3/Q4 remain open. See `docs/build/appointment-part-a.md`.
+Appointment demo: U11 (An Nhiên) has a next-day host appointment; U04 (Phạm Ngọc Mai) has no appointment and keeps her stored due date. The generated `appointment-demo.json` stores relative fixture offsets, not an MB360 entity. The simulated host resolves these at startup and creates an unread Appointment notice only when enabled. One-day timing and retaining received notices when disabled are demo assumptions; S-010 Q3/Q4 remain open. See `docs/build/appointment-part-a.md`.
 
 ## Load test (gate G3)
 
-The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-memory database (the version is not written, so the report is the same on every machine) and the 26 files were loaded in filename order with `PRAGMA foreign_keys = ON`: no constraint error, `PRAGMA foreign_key_check` empty, 280 rows.
+The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-memory database (the version is not written, so the report is the same on every machine) and the 26 files were loaded in filename order with `PRAGMA foreign_keys = ON`: no constraint error, `PRAGMA foreign_key_check` empty, 141 rows.
 
 | File | Table | Rows |
 |---|---|---|
 | `01_STAFF.csv` | STAFF | 7 |
 | `02_THRESHOLD_RULE.csv` | THRESHOLD_RULE | 7 |
-| `03_USER_ACCOUNT.csv` | USER_ACCOUNT | 12 |
-| `04_CONSENT_RECORD.csv` | CONSENT_RECORD | 13 |
-| `05_CONVERSATION.csv` | CONVERSATION | 9 |
-| `06_DIARY_ENTRY.csv` | DIARY_ENTRY | 8 |
-| `07_EMR_LINKAGE_REQUEST.csv` | EMR_LINKAGE_REQUEST | 10 |
-| `08_FAMILY_MESSAGE.csv` | FAMILY_MESSAGE | 7 |
+| `03_USER_ACCOUNT.csv` | USER_ACCOUNT | 4 |
+| `04_CONSENT_RECORD.csv` | CONSENT_RECORD | 4 |
+| `05_CONVERSATION.csv` | CONVERSATION | 4 |
+| `06_DIARY_ENTRY.csv` | DIARY_ENTRY | 5 |
+| `07_EMR_LINKAGE_REQUEST.csv` | EMR_LINKAGE_REQUEST | 3 |
+| `08_FAMILY_MESSAGE.csv` | FAMILY_MESSAGE | 4 |
 | `09_GUIDANCE_TEMPLATE.csv` | GUIDANCE_TEMPLATE | 8 |
-| `10_NOTIFICATION_PREFERENCE.csv` | NOTIFICATION_PREFERENCE | 12 |
-| `11_PATIENT_ASSIGNMENT.csv` | PATIENT_ASSIGNMENT | 9 |
-| `12_PATIENT_CLINICAL_PROFILE.csv` | PATIENT_CLINICAL_PROFILE | 10 |
-| `13_PREGNANCY_PROFILE.csv` | PREGNANCY_PROFILE | 11 |
-| `14_SESSION.csv` | SESSION | 10 |
-| `15_VISIT.csv` | VISIT | 8 |
-| `16_AI_RESPONSE_LOG.csv` | AI_RESPONSE_LOG | 8 |
-| `17_CHAT_MESSAGE.csv` | CHAT_MESSAGE | 16 |
-| `18_DIARY_IMAGE.csv` | DIARY_IMAGE | 12 |
-| `19_HEALTH_METRIC_RECORD.csv` | HEALTH_METRIC_RECORD | 19 |
-| `20_WATCH_FLAG.csv` | WATCH_FLAG | 9 |
-| `21_METRIC_REPORT.csv` | METRIC_REPORT | 11 |
-| `22_CARE_CASE.csv` | CARE_CASE | 10 |
-| `23_REPORT_SYMPTOM.csv` | REPORT_SYMPTOM | 15 |
-| `24_CASE_STATUS_HISTORY.csv` | CASE_STATUS_HISTORY | 22 |
-| `25_NOTIFICATION.csv` | NOTIFICATION | 9 |
-| `26_STAFF_RESPONSE.csv` | STAFF_RESPONSE | 8 |
+| `10_NOTIFICATION_PREFERENCE.csv` | NOTIFICATION_PREFERENCE | 4 |
+| `11_PATIENT_ASSIGNMENT.csv` | PATIENT_ASSIGNMENT | 3 |
+| `12_PATIENT_CLINICAL_PROFILE.csv` | PATIENT_CLINICAL_PROFILE | 3 |
+| `13_PREGNANCY_PROFILE.csv` | PREGNANCY_PROFILE | 4 |
+| `14_SESSION.csv` | SESSION | 3 |
+| `15_VISIT.csv` | VISIT | 4 |
+| `16_AI_RESPONSE_LOG.csv` | AI_RESPONSE_LOG | 4 |
+| `17_CHAT_MESSAGE.csv` | CHAT_MESSAGE | 8 |
+| `18_DIARY_IMAGE.csv` | DIARY_IMAGE | 9 |
+| `19_HEALTH_METRIC_RECORD.csv` | HEALTH_METRIC_RECORD | 14 |
+| `20_WATCH_FLAG.csv` | WATCH_FLAG | 3 |
+| `21_METRIC_REPORT.csv` | METRIC_REPORT | 5 |
+| `22_CARE_CASE.csv` | CARE_CASE | 5 |
+| `23_REPORT_SYMPTOM.csv` | REPORT_SYMPTOM | 7 |
+| `24_CASE_STATUS_HISTORY.csv` | CASE_STATUS_HISTORY | 11 |
+| `25_NOTIFICATION.csv` | NOTIFICATION | 5 |
+| `26_STAFF_RESPONSE.csv` | STAFF_RESPONSE | 3 |
 
 ## Row kinds per table
 
 | Table | Rows | ordinary | boundary | empty | exceptional | Not applicable (reason) |
 |---|---|---|---|---|---|---|
 | STAFF | 7 | 5 | 1 | 0 | 1 | empty: every column is required (CLI §6) |
-| THRESHOLD_RULE | 7 | 5 | 0 | 1 | 1 | boundary: the configuration holds only the 7 rows of ALR BR-004; boundary values are exercised in HEALTH_METRIC_RECORD (140/90, 6.7) |
-| USER_ACCOUNT | 12 | 9 | 1 | 1 | 1 | — |
-| CONSENT_RECORD | 13 | 10 | 1 | 1 | 1 | — |
-| CONVERSATION | 9 | 6 | 1 | 1 | 1 | — |
-| DIARY_ENTRY | 8 | 5 | 1 | 1 | 1 | — |
-| EMR_LINKAGE_REQUEST | 10 | 7 | 1 | 1 | 1 | — |
-| FAMILY_MESSAGE | 7 | 5 | 1 | 0 | 1 | empty: every column is required (TML §6) |
+| THRESHOLD_RULE | 7 | 5 | 0 | 1 | 1 | boundary: configuration only; test_thresholds.py checks the exact thresholds |
+| USER_ACCOUNT | 4 | 3 | 1 | 0 | 0 | ordinary: Reduced show demo: four show accounts; the no-profile and late-consent accounts were retired; empty: Reduced show demo: four show accounts; the no-profile and late-consent accounts were retired; exceptional: Reduced show demo: four show accounts; the no-profile and late-consent accounts were retired |
+| CONSENT_RECORD | 4 | 3 | 1 | 0 | 0 | ordinary: Reduced show demo: one consent per show account; multiple terms versions and blank terms were retired; empty: Reduced show demo: one consent per show account; multiple terms versions and blank terms were retired; exceptional: Reduced show demo: one consent per show account; multiple terms versions and blank terms were retired |
+| CONVERSATION | 4 | 3 | 1 | 0 | 0 | ordinary: Reduced show demo: kept the show conversations; empty sessions and retired handoff examples are outside the show; empty: Reduced show demo: kept the show conversations; empty sessions and retired handoff examples are outside the show; exceptional: Reduced show demo: kept the show conversations; empty sessions and retired handoff examples are outside the show |
+| DIARY_ENTRY | 5 | 3 | 1 | 0 | 1 | ordinary: Reduced show demo: kept the show diaries; the empty mood example belonged to a retired account; empty: Reduced show demo: kept the show diaries; the empty mood example belonged to a retired account |
+| EMR_LINKAGE_REQUEST | 3 | 2 | 1 | 0 | 0 | ordinary: Reduced show demo: kept linked show records; Pending and repeated requests are exercised in ACC test fixtures; empty: Reduced show demo: kept linked show records; Pending and repeated requests are exercised in ACC test fixtures; exceptional: Reduced show demo: kept linked show records; Pending and repeated requests are exercised in ACC test fixtures |
+| FAMILY_MESSAGE | 4 | 3 | 1 | 0 | 0 | empty: every column is required (TML §6); ordinary: Reduced show demo: kept the show messages and the length boundary; the off-week example was retired; exceptional: Reduced show demo: kept the show messages and the length boundary; the off-week example was retired |
 | GUIDANCE_TEMPLATE | 8 | 5 | 1 | 1 | 1 | — |
-| NOTIFICATION_PREFERENCE | 12 | 9 | 1 | 1 | 1 | — |
-| PATIENT_ASSIGNMENT | 9 | 6 | 1 | 1 | 1 | — |
-| PATIENT_CLINICAL_PROFILE | 10 | 7 | 1 | 1 | 1 | — |
-| PREGNANCY_PROFILE | 11 | 8 | 1 | 1 | 1 | — |
-| SESSION | 10 | 7 | 1 | 1 | 1 | — |
-| VISIT | 8 | 5 | 1 | 1 | 1 | — |
-| AI_RESPONSE_LOG | 8 | 5 | 1 | 1 | 1 | — |
-| CHAT_MESSAGE | 16 | 13 | 1 | 1 | 1 | — |
-| DIARY_IMAGE | 12 | 10 | 1 | 0 | 1 | empty: every column is required |
-| HEALTH_METRIC_RECORD | 19 | 15 | 2 | 1 | 1 | — |
-| WATCH_FLAG | 9 | 6 | 1 | 1 | 1 | — |
-| METRIC_REPORT | 11 | 8 | 1 | 1 | 1 | — |
-| CARE_CASE | 10 | 7 | 1 | 1 | 1 | — |
-| REPORT_SYMPTOM | 15 | 13 | 1 | 0 | 1 | empty: both columns are part of the primary key; BR-017 needs at least 1 item per report |
-| CASE_STATUS_HISTORY | 22 | 19 | 1 | 1 | 1 | — |
-| NOTIFICATION | 9 | 6 | 1 | 1 | 1 | — |
-| STAFF_RESPONSE | 8 | 5 | 1 | 1 | 1 | — |
-| **Total** | 280 | | | | | |
+| NOTIFICATION_PREFERENCE | 4 | 3 | 1 | 0 | 0 | ordinary: Reduced show demo: one row per show account; retired preference combinations are outside the show; empty: Reduced show demo: one row per show account; retired preference combinations are outside the show; exceptional: Reduced show demo: one row per show account; retired preference combinations are outside the show |
+| PATIENT_ASSIGNMENT | 3 | 2 | 1 | 0 | 0 | ordinary: Reduced show demo: kept current show assignments; assignment changes are tested with a CLI fixture; empty: Reduced show demo: kept current show assignments; assignment changes are tested with a CLI fixture; exceptional: Reduced show demo: kept current show assignments; assignment changes are tested with a CLI fixture |
+| PATIENT_CLINICAL_PROFILE | 3 | 2 | 1 | 0 | 0 | ordinary: Reduced show demo: kept the show clinical profiles; other profile combinations are outside the show; empty: Reduced show demo: kept the show clinical profiles; other profile combinations are outside the show; exceptional: Reduced show demo: kept the show clinical profiles; other profile combinations are outside the show |
+| PREGNANCY_PROFILE | 4 | 2 | 1 | 0 | 1 | ordinary: Reduced show demo: kept the four show profiles; the unconfigured account is simulated in ACC tests; empty: Reduced show demo: kept the four show profiles; the unconfigured account is simulated in ACC tests |
+| SESSION | 3 | 2 | 1 | 0 | 0 | ordinary: Reduced show demo: kept show sessions; expired and short-lived examples were retired; empty: Reduced show demo: kept show sessions; expired and short-lived examples were retired; exceptional: Reduced show demo: kept show sessions; expired and short-lived examples were retired |
+| VISIT | 4 | 2 | 1 | 0 | 1 | ordinary: Reduced show demo: kept visits of show accounts; the retired visit without measurements is outside the show; empty: Reduced show demo: kept visits of show accounts; the retired visit without measurements is outside the show |
+| AI_RESPONSE_LOG | 4 | 2 | 1 | 0 | 1 | ordinary: Reduced show demo: only logs for retained conversations are included; empty: Reduced show demo: only logs for retained conversations are included |
+| CHAT_MESSAGE | 8 | 7 | 1 | 0 | 0 | empty: Reduced show demo: retired conversations held these examples; declining handoff is tested separately; exceptional: Reduced show demo: retired conversations held these examples; declining handoff is tested separately |
+| DIARY_IMAGE | 9 | 7 | 1 | 0 | 1 | empty: every column is required |
+| HEALTH_METRIC_RECORD | 14 | 12 | 0 | 1 | 1 | boundary: Reduced show demo: exact report thresholds are checked by test_thresholds.py and the CLI boundary fixture |
+| WATCH_FLAG | 3 | 2 | 0 | 1 | 0 | ordinary: Reduced show demo: kept show instructions; protein and inactive instructions are exercised in report form tests; boundary: Reduced show demo: kept show instructions; protein and inactive instructions are exercised in report form tests; exceptional: Reduced show demo: kept show instructions; protein and inactive instructions are exercised in report form tests |
+| METRIC_REPORT | 5 | 5 | 0 | 0 | 0 | boundary: Reduced show demo: kept show reports; boundary and symptom submission are covered by ALR and CLI tests; empty: Reduced show demo: kept show reports; boundary and symptom submission are covered by ALR and CLI tests; exceptional: Reduced show demo: kept show reports; boundary and symptom submission are covered by ALR and CLI tests |
+| CARE_CASE | 5 | 5 | 0 | 0 | 0 | boundary: Reduced show demo: kept show cases; edge and status transitions are exercised by CLI fixtures; empty: Reduced show demo: kept show cases; edge and status transitions are exercised by CLI fixtures; exceptional: Reduced show demo: kept show cases; edge and status transitions are exercised by CLI fixtures |
+| REPORT_SYMPTOM | 7 | 5 | 1 | 0 | 1 | empty: both columns are part of the primary key; BR-017 needs at least 1 item per report |
+| CASE_STATUS_HISTORY | 11 | 10 | 0 | 0 | 1 | boundary: Reduced show demo: kept history of show cases; automatic Viewed and doctor closure are exercised by CLI fixtures; empty: Reduced show demo: kept history of show cases; automatic Viewed and doctor closure are exercised by CLI fixtures |
+| NOTIFICATION | 5 | 4 | 0 | 0 | 1 | ordinary: Reduced show demo: kept notices linked to show accounts; retired notice variants are outside the show; boundary: Reduced show demo: kept notices linked to show accounts; retired notice variants are outside the show; empty: Reduced show demo: kept notices linked to show accounts; retired notice variants are outside the show |
+| STAFF_RESPONSE | 3 | 3 | 0 | 0 | 0 | ordinary: Reduced show demo: kept only responses linked to show cases; boundary: Reduced show demo: kept only responses linked to show cases; empty: Reduced show demo: kept only responses linked to show cases; exceptional: Reduced show demo: kept only responses linked to show cases |
+| **Total** | 141 | | | | | |
 
 ## Non-ordinary rows
 
@@ -84,75 +84,35 @@ The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-me
 | THRESHOLD_RULE | empty | rule-TR-06 | D-15 Pending SME; glucose_context, component, combine empty (single row, not glucose) |
 | THRESHOLD_RULE | exceptional | rule-TR-07 | fetal heart rate: display-only reference range, never checked (D-12, HLT BR-005) |
 | USER_ACCOUNT | boundary | user-U06 | phone exactly 20 characters (VARCHAR(20)); gestational week 42 |
-| USER_ACCOUNT | empty | user-U07 | new mother: consented, no pregnancy set up, no record code |
-| USER_ACCOUNT | exceptional | user-U08 | tapped "Later" first (nothing saved — ACC BR-004), agreed on 25/09/2026; session expired (S-043) |
 | CONSENT_RECORD | boundary | user-U06 / 2026-02-01 09:00 | consent in the same minute as the first session; terms_version exactly 20 characters |
-| CONSENT_RECORD | exceptional | user-U02 / 2026-09-01 07:00 | second consent row for the same mother, after a new terms version — only if terms versions are managed (ACC §10 Q17) |
-| CONSENT_RECORD | empty | user-U10 / 2026-03-01 06:30 | terms_version empty (ACC §10 Q17) |
 | CONVERSATION | boundary | conv-CV-006 | question of exactly 500 characters |
-| CONVERSATION | empty | conv-CV-007 | chatbot opened, no question sent; context empty |
-| CONVERSATION | exceptional | conv-CV-008 | risk question but the mother chose "No thanks" |
 | DIARY_ENTRY | boundary | diary-DIA-006 | week 42 and the full 5 photos (D-46) |
-| DIARY_ENTRY | empty | diary-DIA-007 | no mood, no photos |
 | DIARY_ENTRY | exceptional | diary-DIA-008 | second entry on the same day (entry_date is a DATE) |
 | EMR_LINKAGE_REQUEST | boundary | user-U06 / 2026-02-01 09:05 | linked_at = requested_at |
-| EMR_LINKAGE_REQUEST | exceptional | user-U08 / 2026-09-10 11:00 | two requests for one mother; the older one stays Pending (no error state — ACC §6) |
-| EMR_LINKAGE_REQUEST | empty | user-U09 / 2026-09-24 20:00 | Pending link: linked_at empty |
 | FAMILY_MESSAGE | boundary | user-U06 / 2026-09-27 07:05 | exactly 200 characters (D-03, BR-004) |
-| FAMILY_MESSAGE | exceptional | user-U10 / 2026-09-24 21:10 | message for a week other than the current one |
 | GUIDANCE_TEMPLATE | exceptional | tpl-G08 | written by a nurse — who may write templates is not stated (DM-10) |
 | GUIDANCE_TEMPLATE | empty | tpl-G06 | no metric, no author |
 | GUIDANCE_TEMPLATE | boundary | tpl-G07 | content exactly 1000 characters (D-46); title exactly 100 |
 | NOTIFICATION_PREFERENCE | boundary | user-U06 | every type off except "Report responses" (always on — proposal, ACC §10 Q13) |
-| NOTIFICATION_PREFERENCE | empty | user-U09 | no optional column; S-010 never opened — defaults written with the account (DM-41) |
-| NOTIFICATION_PREFERENCE | exceptional | user-U10 | appointment reminders off; instruction reminders on |
-| PATIENT_ASSIGNMENT | exceptional | user-U05 / 2026-06-02 | change of responsible doctor: old row ended |
 | PATIENT_ASSIGNMENT | boundary | user-U06 / 2026-02-01 | valid_to = today |
-| PATIENT_ASSIGNMENT | empty | user-U10 / 2026-03-02 | valid_to empty = still active |
 | PATIENT_CLINICAL_PROFILE | boundary | user-U06 | obstetric_history exactly 10 characters (VARCHAR(10)) |
-| PATIENT_CLINICAL_PROFILE | exceptional | user-U09 | rare blood type with the non-ASCII sign declared in §6 (DM-40); no visit yet |
-| PATIENT_CLINICAL_PROFILE | empty | user-U10 | blood type and allergies empty |
 | PREGNANCY_PROFILE | exceptional | user-U01 | edd_source = Hospital record, set only in seed (ACC BR-003, DM-23) |
 | PREGNANCY_PROFILE | boundary | user-U06 | gestational week 42 at NOW — upper bound of 0–42 |
-| PREGNANCY_PROFILE | empty | user-U08 | no LMP, no height, no first visit date |
 | SESSION | boundary | sess-u06-02010900 | expires_at = NOW |
-| SESSION | empty | sess-u07-09270931 | no optional column in SESSION; shortest possible lifetime not decided (ACC §10 Q9) — 1 minute used |
-| SESSION | exceptional | sess-u08-09250801 | session expired → S-043; closing the sub-app sets expires_at (DM-19) |
 | VISIT | exceptional | visit-VIS-005 | fetal heart rate 172 bpm outside 110–160: display only, no case (D-12) |
 | VISIT | boundary | visit-VIS-007 | visit at week 42 (upper bound of INTEGER 0–42); fetal length 9999.9 = largest DECIMAL(5,1) |
-| VISIT | empty | visit-VIS-008 | all optional columns empty |
 | AI_RESPONSE_LOG | boundary | log-LOG-006 | answer to the 500-character question |
-| AI_RESPONSE_LOG | empty | log-LOG-007 | audit_log_entry empty (no schema — DM-06) |
 | AI_RESPONSE_LOG | exceptional | log-LOG-008 | log of a hand-off offer that became a case; no link to the message (DM-37) |
-| CHAT_MESSAGE | empty | msg-MSG-006 | parsed_intent and handoff_choice empty |
 | CHAT_MESSAGE | boundary | msg-MSG-007 | exactly 500 characters (D-46) |
-| CHAT_MESSAGE | exceptional | msg-MSG-008 | is_risk but handoff = No thanks → no case (BOT FR-009) |
 | DIARY_IMAGE | boundary | img-007 | 5 photos — maximum (D-46); sort_order 1–5 |
 | DIARY_IMAGE | exceptional | img-012 | PNG photo (JPG / PNG allowed) |
 | HEALTH_METRIC_RECORD | exceptional | hmr-H05 | fetal heart rate 172 outside 110–160: display only, no case (D-12) |
 | HEALTH_METRIC_RECORD | empty | hmr-H09 | glucose_context and visit_id empty |
-| HEALTH_METRIC_RECORD | boundary | hmr-H14 | exactly 140/90 → Above threshold (≥, D-14); reported under instruction W09 → source Doctor-assigned |
-| HEALTH_METRIC_RECORD | boundary | hmr-H16 | exactly 6.7 two hours after a meal → Above threshold (D-15, Pending SME) |
-| WATCH_FLAG | boundary | flag-W06 | custom_text exactly 1000 characters (D-46) |
 | WATCH_FLAG | empty | flag-W07 | no visit, no note, no template, no custom text → S-028 uses the default template (BR-013) |
-| WATCH_FLAG | exceptional | flag-W08 | active = false: an earlier instruction the doctor switched off (DM-21) |
-| METRIC_REPORT | boundary | report-RPT-006 | exactly 140/90; other_symptom_text exactly 100 characters |
-| METRIC_REPORT | empty | report-RPT-007 | optional columns empty; Normal → no case |
-| METRIC_REPORT | exceptional | report-RPT-008 | above threshold + 2 symptoms; the case skips a manual "Viewed" (recorded automatically — BR-016) |
-| CARE_CASE | empty | case-C2 | Not viewed; optional columns empty (S-061 row 2) |
-| CARE_CASE | boundary | case-C6 | opened by exactly 140/90 |
-| CARE_CASE | exceptional | case-C7 | nurse taps "Escalate to doctor" while Not viewed → Viewed recorded automatically, same person and time (BR-016); doctor closes (D-37) |
 | REPORT_SYMPTOM | boundary | report-RPT-002 / Other | largest symptom set in the seed: 2 items including "Other" (RPT-002; the D-73 list merges headache and dizziness) |
 | REPORT_SYMPTOM | exceptional | report-RPT-004 / No symptoms | "No symptoms" on an above-threshold report — the case is still opened (BR-008 branch 1, RPT-004) |
 | CASE_STATUS_HISTORY | exceptional | case-C1 / Resolved | Resolved straight after Viewed: the optional "Escalated to doctor" step is skipped (BR-012; C1) |
-| CASE_STATUS_HISTORY | empty | case-C2 / Not viewed | first row: written by the System, changed_by empty (ALR FR-021) |
-| CASE_STATUS_HISTORY | boundary | case-C7 / Escalated to doctor | "Viewed" and "Escalated to doctor" in the same minute — Viewed recorded automatically (BR-016, C7) |
 | NOTIFICATION | exceptional | notif-N06 | ALR FR-022 Instruction reminder — Should until ALR §10 Q20; S-009 #11a "Reminder: measure and report Blood pressure" |
-| NOTIFICATION | boundary | notif-N08 | read_at = created_at; title exactly 100 characters |
-| NOTIFICATION | empty | notif-N09 | subtitle, read_at and every target empty |
-| STAFF_RESPONSE | boundary | resp-SR6 | custom_text exactly 1000 characters (D-46) |
-| STAFF_RESPONSE | empty | resp-SR7 | template only, custom_text empty |
-| STAFF_RESPONSE | exceptional | resp-SR8 | default template plus custom text, sent by the nurse after escalation |
 
 ## Edge-case register
 
@@ -160,203 +120,126 @@ The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-me
 
 One row per value of every ENUM column (parsed from the CHECK constraints of the schema).
 
-| Table | Column | Value | First row with it |
-|---|---|---|---|
-| STAFF | `role` | Nurse | staff-S01 |
-| STAFF | `role` | Doctor | staff-S02 |
-| THRESHOLD_RULE | `metric` | Blood pressure | rule-TR-01 |
-| THRESHOLD_RULE | `metric` | Blood glucose | rule-TR-03 |
-| THRESHOLD_RULE | `metric` | Urine protein | rule-TR-06 |
-| THRESHOLD_RULE | `metric` | Fetal heart rate | rule-TR-07 |
-| THRESHOLD_RULE | `glucose_context` | fasting | rule-TR-03 |
-| THRESHOLD_RULE | `glucose_context` | post_1h | rule-TR-04 |
-| THRESHOLD_RULE | `glucose_context` | post_2h | rule-TR-05 |
-| THRESHOLD_RULE | `component` | systolic | rule-TR-01 |
-| THRESHOLD_RULE | `component` | diastolic | rule-TR-02 |
-| THRESHOLD_RULE | `combine` | any | rule-TR-01 |
-| THRESHOLD_RULE | `combine` | all | not seeded — no rule in ALR BR-004 combines rows with "all"; a threshold is never invented to fill the value |
-| THRESHOLD_RULE | `operator` | ≥ | rule-TR-01 |
-| THRESHOLD_RULE | `operator` | outside range | rule-TR-07 |
-| THRESHOLD_RULE | `purpose` | Report check | rule-TR-01 |
-| THRESHOLD_RULE | `purpose` | Display only | rule-TR-07 |
-| THRESHOLD_RULE | `confirmation_status` | Confirmed | rule-TR-01 |
-| THRESHOLD_RULE | `confirmation_status` | Pending SME | rule-TR-03 |
-| USER_ACCOUNT | `sex` | Female | user-U01 |
-| USER_ACCOUNT | `role` | Mother | user-U01 |
-| DIARY_ENTRY | `mood` | Happy | diary-DIA-001 |
-| DIARY_ENTRY | `mood` | Calm | diary-DIA-003 |
-| DIARY_ENTRY | `mood` | Nervous | diary-DIA-002 |
-| DIARY_ENTRY | `mood` | Tired | diary-DIA-005 |
-| DIARY_ENTRY | `mood` | Worried | diary-DIA-006 |
-| EMR_LINKAGE_REQUEST | `status` | Pending | user-U08 / 2026-09-10 11:00 |
-| EMR_LINKAGE_REQUEST | `status` | Linked | user-U01 / 2026-09-19 10:00 |
-| FAMILY_MESSAGE | `author` | Mother | user-U01 / 2026-09-27 08:05 |
-| FAMILY_MESSAGE | `author` | Father | user-U01 / 2026-09-27 08:06 |
-| GUIDANCE_TEMPLATE | `metric` | Blood pressure | tpl-G02 |
-| GUIDANCE_TEMPLATE | `metric` | Blood glucose | tpl-G03 |
-| GUIDANCE_TEMPLATE | `metric` | Urine protein | tpl-G04 |
-| PATIENT_CLINICAL_PROFILE | `blood_type` | A+ | user-U02 |
-| PATIENT_CLINICAL_PROFILE | `blood_type` | A− | user-U06 |
-| PATIENT_CLINICAL_PROFILE | `blood_type` | B+ | user-U03 |
-| PATIENT_CLINICAL_PROFILE | `blood_type` | B− | user-U07 |
-| PATIENT_CLINICAL_PROFILE | `blood_type` | AB+ | user-U05 |
-| PATIENT_CLINICAL_PROFILE | `blood_type` | AB− | user-U08 |
-| PATIENT_CLINICAL_PROFILE | `blood_type` | O+ | user-U01 |
-| PATIENT_CLINICAL_PROFILE | `blood_type` | O− | user-U09 |
-| PREGNANCY_PROFILE | `edd_source` | Self-entered | user-U02 |
-| PREGNANCY_PROFILE | `edd_source` | Hospital record | user-U01 |
-| SESSION | `role` | Mother | sess-u01-09270800 |
-| CHAT_MESSAGE | `sender` | Mother | msg-MSG-001 |
-| CHAT_MESSAGE | `sender` | Chatbot | msg-MSG-002 |
-| CHAT_MESSAGE | `handoff_choice` | Connect to nurse | msg-MSG-003 |
-| CHAT_MESSAGE | `handoff_choice` | No thanks | msg-MSG-008 |
-| HEALTH_METRIC_RECORD | `metric` | Weight | hmr-H03 |
-| HEALTH_METRIC_RECORD | `metric` | Temperature | hmr-H07 |
-| HEALTH_METRIC_RECORD | `metric` | Heart rate | hmr-H09 |
-| HEALTH_METRIC_RECORD | `metric` | Sleep | hmr-H08 |
-| HEALTH_METRIC_RECORD | `metric` | Blood pressure | hmr-H01 |
-| HEALTH_METRIC_RECORD | `metric` | Blood glucose | hmr-H15 |
-| HEALTH_METRIC_RECORD | `metric` | Urine protein | hmr-H04 |
-| HEALTH_METRIC_RECORD | `metric` | Fetal heart rate | hmr-H02 |
-| HEALTH_METRIC_RECORD | `metric_group` | Group 1 | hmr-H03 |
-| HEALTH_METRIC_RECORD | `metric_group` | Group 2 | hmr-H01 |
-| HEALTH_METRIC_RECORD | `metric_group` | Visit | hmr-H02 |
-| HEALTH_METRIC_RECORD | `glucose_context` | fasting | hmr-H15 |
-| HEALTH_METRIC_RECORD | `glucose_context` | post_1h | hmr-H19 |
-| HEALTH_METRIC_RECORD | `glucose_context` | post_2h | hmr-H16 |
-| HEALTH_METRIC_RECORD | `source` | From visit | hmr-H01 |
-| HEALTH_METRIC_RECORD | `source` | Self-entered | hmr-H06 |
-| HEALTH_METRIC_RECORD | `source` | Doctor-assigned | hmr-H10 |
-| WATCH_FLAG | `metric` | Blood pressure | flag-W01 |
-| WATCH_FLAG | `metric` | Blood glucose | flag-W02 |
-| WATCH_FLAG | `metric` | Urine protein | flag-W03 |
-| METRIC_REPORT | `metric` | Blood pressure | report-RPT-001 |
-| METRIC_REPORT | `metric` | Blood glucose | report-RPT-007 |
-| METRIC_REPORT | `metric` | Urine protein | report-RPT-005 |
-| METRIC_REPORT | `metric` | Symptom | report-RPT-003 |
-| CARE_CASE | `case_source` | Metric report | case-C1 |
-| CARE_CASE | `case_source` | Symptom | case-C2 |
-| CARE_CASE | `case_source` | Chatbot | case-C3 |
-| CARE_CASE | `status` | Not viewed | case-C2 |
-| CARE_CASE | `status` | Viewed | case-C3 |
-| CARE_CASE | `status` | Escalated to doctor | case-C4 |
-| CARE_CASE | `status` | Resolved | case-C1 |
-| REPORT_SYMPTOM | `symptom` | No symptoms | report-RPT-001 / No symptoms |
-| REPORT_SYMPTOM | `symptom` | Vaginal bleeding | report-RPT-009 / Vaginal bleeding |
-| REPORT_SYMPTOM | `symptom` | Severe abdominal pain | report-RPT-008 / Severe abdominal pain |
-| REPORT_SYMPTOM | `symptom` | Waters breaking or fluid leakage | report-RPT-008 / Waters breaking or fluid leakage |
-| REPORT_SYMPTOM | `symptom` | Severe headache, dizziness or blurred vision | report-RPT-002 / Severe headache, dizziness or blurred vi |
-| REPORT_SYMPTOM | `symptom` | Absence of fetal movement | report-RPT-009 / Absence of fetal movement |
-| REPORT_SYMPTOM | `symptom` | Palpitations | report-RPT-003 / Palpitations |
-| REPORT_SYMPTOM | `symptom` | Other | report-RPT-002 / Other |
-| CASE_STATUS_HISTORY | `status` | Not viewed | case-C1 / Not viewed |
-| CASE_STATUS_HISTORY | `status` | Viewed | case-C1 / Viewed |
-| CASE_STATUS_HISTORY | `status` | Escalated to doctor | case-C4 / Escalated to doctor |
-| CASE_STATUS_HISTORY | `status` | Resolved | case-C1 / Resolved |
-| CASE_STATUS_HISTORY | `role` | System | case-C1 / Not viewed |
-| CASE_STATUS_HISTORY | `role` | Nurse | case-C1 / Viewed |
-| CASE_STATUS_HISTORY | `role` | Doctor | case-C7 / Resolved |
-| NOTIFICATION | `type` | Report | notif-N01 |
-| NOTIFICATION | `type` | Visit result | notif-N02 |
-| NOTIFICATION | `type` | Appointment | notif-N03 |
-| NOTIFICATION | `type` | Instruction reminder | notif-N06 |
-| STAFF_RESPONSE | `responder_role` | Nurse | resp-SR1 |
-| STAFF_RESPONSE | `responder_role` | Doctor | resp-SR3 |
+| Table | Column | Value | First row with it | Not applicable (reason) |
+|---|---|---|---|---|
+| STAFF | `role` | Nurse | staff-S01 | — |
+| STAFF | `role` | Doctor | staff-S02 | — |
+| THRESHOLD_RULE | `metric` | Blood pressure | rule-TR-01 | — |
+| THRESHOLD_RULE | `metric` | Blood glucose | rule-TR-03 | — |
+| THRESHOLD_RULE | `metric` | Urine protein | rule-TR-06 | — |
+| THRESHOLD_RULE | `metric` | Fetal heart rate | rule-TR-07 | — |
+| THRESHOLD_RULE | `glucose_context` | fasting | rule-TR-03 | — |
+| THRESHOLD_RULE | `glucose_context` | post_1h | rule-TR-04 | — |
+| THRESHOLD_RULE | `glucose_context` | post_2h | rule-TR-05 | — |
+| THRESHOLD_RULE | `component` | systolic | rule-TR-01 | — |
+| THRESHOLD_RULE | `component` | diastolic | rule-TR-02 | — |
+| THRESHOLD_RULE | `combine` | any | rule-TR-01 | — |
+| THRESHOLD_RULE | `combine` | all | — | no rule in ALR BR-004 combines rows with "all"; a threshold is never invented to fill the value |
+| THRESHOLD_RULE | `operator` | ≥ | rule-TR-01 | — |
+| THRESHOLD_RULE | `operator` | outside range | rule-TR-07 | — |
+| THRESHOLD_RULE | `purpose` | Report check | rule-TR-01 | — |
+| THRESHOLD_RULE | `purpose` | Display only | rule-TR-07 | — |
+| THRESHOLD_RULE | `confirmation_status` | Confirmed | rule-TR-01 | — |
+| THRESHOLD_RULE | `confirmation_status` | Pending SME | rule-TR-03 | — |
+| USER_ACCOUNT | `sex` | Female | user-U01 | — |
+| USER_ACCOUNT | `role` | Mother | user-U01 | — |
+| DIARY_ENTRY | `mood` | Happy | diary-DIA-001 | — |
+| DIARY_ENTRY | `mood` | Calm | diary-DIA-008 | — |
+| DIARY_ENTRY | `mood` | Nervous | diary-DIA-002 | — |
+| DIARY_ENTRY | `mood` | Tired | diary-DIA-005 | — |
+| DIARY_ENTRY | `mood` | Worried | diary-DIA-006 | — |
+| EMR_LINKAGE_REQUEST | `status` | Pending | — | Reduced demo for the show; covered by tests/unit/test_acc_profile.py::test_pending_due_date_can_be_changed_and_clears_the_lmp |
+| EMR_LINKAGE_REQUEST | `status` | Linked | user-U01 / 2026-09-19 10:00 | — |
+| FAMILY_MESSAGE | `author` | Mother | user-U01 / 2026-09-27 08:05 | — |
+| FAMILY_MESSAGE | `author` | Father | user-U01 / 2026-09-27 08:06 | — |
+| GUIDANCE_TEMPLATE | `metric` | Blood pressure | tpl-G02 | — |
+| GUIDANCE_TEMPLATE | `metric` | Blood glucose | tpl-G03 | — |
+| GUIDANCE_TEMPLATE | `metric` | Urine protein | tpl-G04 | — |
+| PATIENT_CLINICAL_PROFILE | `blood_type` | A+ | — | Reduced demo for the show; valid schema/display value with no dedicated branch or per-value test; common rendering covered by tests/integration/test_cli_case_page.py::test_report_block_and_profile |
+| PATIENT_CLINICAL_PROFILE | `blood_type` | A− | user-U06 | — |
+| PATIENT_CLINICAL_PROFILE | `blood_type` | B+ | — | Reduced demo for the show; valid schema/display value with no dedicated branch or per-value test; common rendering covered by tests/integration/test_cli_case_page.py::test_report_block_and_profile |
+| PATIENT_CLINICAL_PROFILE | `blood_type` | B− | — | Reduced demo for the show; valid schema/display value with no dedicated branch or per-value test; common rendering covered by tests/integration/test_cli_case_page.py::test_report_block_and_profile |
+| PATIENT_CLINICAL_PROFILE | `blood_type` | AB+ | — | Reduced demo for the show; valid schema/display value with no dedicated branch or per-value test; common rendering covered by tests/integration/test_cli_case_page.py::test_report_block_and_profile |
+| PATIENT_CLINICAL_PROFILE | `blood_type` | AB− | — | Reduced demo for the show; valid schema/display value with no dedicated branch or per-value test; common rendering covered by tests/integration/test_cli_case_page.py::test_report_block_and_profile |
+| PATIENT_CLINICAL_PROFILE | `blood_type` | O+ | user-U01 | — |
+| PATIENT_CLINICAL_PROFILE | `blood_type` | O− | — | Reduced demo for the show; covered by tests/integration/test_cli_case_page.py::test_report_block_and_profile |
+| PREGNANCY_PROFILE | `edd_source` | Self-entered | user-U04 | — |
+| PREGNANCY_PROFILE | `edd_source` | Hospital record | user-U01 | — |
+| SESSION | `role` | Mother | sess-u01-09270800 | — |
+| CHAT_MESSAGE | `sender` | Mother | msg-MSG-001 | — |
+| CHAT_MESSAGE | `sender` | Chatbot | msg-MSG-002 | — |
+| CHAT_MESSAGE | `handoff_choice` | Connect to nurse | msg-MSG-015 | — |
+| CHAT_MESSAGE | `handoff_choice` | No thanks | — | Reduced demo for the show; covered by tests/unit/test_bot_chat.py::test_no_thanks_creates_no_case |
+| HEALTH_METRIC_RECORD | `metric` | Weight | hmr-H03 | — |
+| HEALTH_METRIC_RECORD | `metric` | Temperature | hmr-H07 | — |
+| HEALTH_METRIC_RECORD | `metric` | Heart rate | hmr-H09 | — |
+| HEALTH_METRIC_RECORD | `metric` | Sleep | hmr-H08 | — |
+| HEALTH_METRIC_RECORD | `metric` | Blood pressure | hmr-H01 | — |
+| HEALTH_METRIC_RECORD | `metric` | Blood glucose | — | Reduced demo for the show; covered by tests/integration/test_cli_instructions_page.py::test_doctor_adds_an_instruction_and_the_mother_sees_it |
+| HEALTH_METRIC_RECORD | `metric` | Urine protein | hmr-H04 | — |
+| HEALTH_METRIC_RECORD | `metric` | Fetal heart rate | hmr-H02 | — |
+| HEALTH_METRIC_RECORD | `metric_group` | Group 1 | hmr-H03 | — |
+| HEALTH_METRIC_RECORD | `metric_group` | Group 2 | hmr-H01 | — |
+| HEALTH_METRIC_RECORD | `metric_group` | Visit | hmr-H02 | — |
+| HEALTH_METRIC_RECORD | `glucose_context` | fasting | — | Reduced demo for the show; covered by tests/integration/test_cli_instructions_page.py::test_doctor_adds_an_instruction_and_the_mother_sees_it |
+| HEALTH_METRIC_RECORD | `glucose_context` | post_1h | — | Reduced demo for the show; covered by tests/unit/test_hlt_history.py::test_glucose_line_only_for_one_context_and_rows_labelled_by_their_own |
+| HEALTH_METRIC_RECORD | `glucose_context` | post_2h | — | Reduced demo for the show; valid schema/display value with no dedicated branch or per-value persistence test; common history covered by tests/unit/test_hlt_history.py::test_glucose_line_only_for_one_context_and_rows_labelled_by_their_own and the exact threshold by tests/unit/test_thresholds.py::test_blood_glucose_by_timing |
+| HEALTH_METRIC_RECORD | `source` | From visit | hmr-H01 | — |
+| HEALTH_METRIC_RECORD | `source` | Self-entered | hmr-H06 | — |
+| HEALTH_METRIC_RECORD | `source` | Doctor-assigned | hmr-H10 | — |
+| WATCH_FLAG | `metric` | Blood pressure | flag-W01 | — |
+| WATCH_FLAG | `metric` | Blood glucose | flag-W02 | — |
+| WATCH_FLAG | `metric` | Urine protein | — | Reduced demo for the show; covered by tests/integration/test_report_form.py::test_inactive_instruction_does_not_count |
+| METRIC_REPORT | `metric` | Blood pressure | report-RPT-001 | — |
+| METRIC_REPORT | `metric` | Blood glucose | — | Reduced demo for the show; covered by tests/integration/test_cli_instructions_page.py::test_doctor_adds_an_instruction_and_the_mother_sees_it |
+| METRIC_REPORT | `metric` | Urine protein | — | Reduced demo for the show; covered by tests/integration/test_cli_instructions_page.py::test_instruction_without_guidance_uses_the_default_template |
+| METRIC_REPORT | `metric` | Symptom | report-RPT-009 | — |
+| CARE_CASE | `case_source` | Metric report | case-C1 | — |
+| CARE_CASE | `case_source` | Symptom | case-C8 | — |
+| CARE_CASE | `case_source` | Chatbot | case-C10 | — |
+| CARE_CASE | `status` | Not viewed | case-C9 | — |
+| CARE_CASE | `status` | Viewed | — | Reduced demo for the show; covered by tests/unit/test_cli_queue.py::test_filter_by_status |
+| CARE_CASE | `status` | Escalated to doctor | case-C4 | — |
+| CARE_CASE | `status` | Resolved | case-C1 | — |
+| REPORT_SYMPTOM | `symptom` | No symptoms | report-RPT-001 / No symptoms | — |
+| REPORT_SYMPTOM | `symptom` | Vaginal bleeding | report-RPT-009 / Vaginal bleeding | — |
+| REPORT_SYMPTOM | `symptom` | Severe abdominal pain | — | Reduced demo for the show; covered by tests/integration/test_report_symptoms.py::test_every_symptom_creates_a_case |
+| REPORT_SYMPTOM | `symptom` | Waters breaking or fluid leakage | — | Reduced demo for the show; covered by tests/integration/test_report_symptoms.py::test_every_symptom_creates_a_case |
+| REPORT_SYMPTOM | `symptom` | Severe headache, dizziness or blurred vision | report-RPT-002 / Severe headache, dizziness or blurred vi | — |
+| REPORT_SYMPTOM | `symptom` | Absence of fetal movement | report-RPT-009 / Absence of fetal movement | — |
+| REPORT_SYMPTOM | `symptom` | Palpitations | — | Reduced demo for the show; covered by tests/integration/test_report_symptoms.py::test_every_symptom_creates_a_case |
+| REPORT_SYMPTOM | `symptom` | Other | report-RPT-002 / Other | — |
+| CASE_STATUS_HISTORY | `status` | Not viewed | case-C1 / Not viewed | — |
+| CASE_STATUS_HISTORY | `status` | Viewed | case-C1 / Viewed | — |
+| CASE_STATUS_HISTORY | `status` | Escalated to doctor | case-C4 / Escalated to doctor | — |
+| CASE_STATUS_HISTORY | `status` | Resolved | case-C1 / Resolved | — |
+| CASE_STATUS_HISTORY | `role` | System | case-C1 / Not viewed | — |
+| CASE_STATUS_HISTORY | `role` | Nurse | case-C1 / Viewed | — |
+| CASE_STATUS_HISTORY | `role` | Doctor | — | Reduced demo for the show; covered by tests/unit/test_alr_status.py::test_escalated_then_closed_by_a_doctor |
+| NOTIFICATION | `type` | Report | notif-N01 | — |
+| NOTIFICATION | `type` | Visit result | notif-N02 | — |
+| NOTIFICATION | `type` | Appointment | notif-N03 | — |
+| NOTIFICATION | `type` | Instruction reminder | notif-N06 | — |
+| STAFF_RESPONSE | `responder_role` | Nurse | resp-SR1 | — |
+| STAFF_RESPONSE | `responder_role` | Doctor | resp-SR3 | — |
 
 ### Empty states
 
 | Table | Row (primary key) | Empty state |
 |---|---|---|
 | THRESHOLD_RULE | rule-TR-06 | D-15 Pending SME; glucose_context, component, combine empty (single row, not glucose) |
-| USER_ACCOUNT | user-U07 | new mother: consented, no pregnancy set up, no record code |
-| CONSENT_RECORD | user-U10 / 2026-03-01 06:30 | terms_version empty (ACC §10 Q17) |
-| CONVERSATION | conv-CV-007 | chatbot opened, no question sent; context empty |
-| DIARY_ENTRY | diary-DIA-007 | no mood, no photos |
-| EMR_LINKAGE_REQUEST | user-U09 / 2026-09-24 20:00 | Pending link: linked_at empty |
 | GUIDANCE_TEMPLATE | tpl-G06 | no metric, no author |
-| NOTIFICATION_PREFERENCE | user-U09 | no optional column; S-010 never opened — defaults written with the account (DM-41) |
-| PATIENT_ASSIGNMENT | user-U10 / 2026-03-02 | valid_to empty = still active |
-| PATIENT_CLINICAL_PROFILE | user-U10 | blood type and allergies empty |
-| PREGNANCY_PROFILE | user-U08 | no LMP, no height, no first visit date |
-| SESSION | sess-u07-09270931 | no optional column in SESSION; shortest possible lifetime not decided (ACC §10 Q9) — 1 minute used |
-| VISIT | visit-VIS-008 | all optional columns empty |
-| AI_RESPONSE_LOG | log-LOG-007 | audit_log_entry empty (no schema — DM-06) |
-| CHAT_MESSAGE | msg-MSG-006 | parsed_intent and handoff_choice empty |
 | HEALTH_METRIC_RECORD | hmr-H09 | glucose_context and visit_id empty |
 | WATCH_FLAG | flag-W07 | no visit, no note, no template, no custom text → S-028 uses the default template (BR-013) |
-| METRIC_REPORT | report-RPT-007 | optional columns empty; Normal → no case |
-| CARE_CASE | case-C2 | Not viewed; optional columns empty (S-061 row 2) |
-| CASE_STATUS_HISTORY | case-C2 / Not viewed | first row: written by the System, changed_by empty (ALR FR-021) |
-| NOTIFICATION | notif-N09 | subtitle, read_at and every target empty |
-| STAFF_RESPONSE | resp-SR7 | template only, custom_text empty |
 
-Parents with zero children: U07 has no pregnancy profile, visit, report, case or diary (new mother, S-007 shown next); CV-007 has no message; VIS-008 has no health metric record; DIA-007 has no photo; S07 has no assignment and no case.
+### Scenario coverage
 
-### Boundaries (numeric and date rules)
-
-| Rule | Rows |
-|---|---|
-| Blood pressure threshold ≥ 140 / ≥ 90 (D-14) | H14 = 140/90 → Above threshold → C6; control: H10 = 128/82 → Normal |
-| Glucose thresholds 5.3 / 7.8 / 6.7 mmol/L (D-15, Pending SME) | H16 = 6.7 two hours after a meal → Above threshold → C7; H15 = 4.9 fasting and H19 = 7.2 one hour after a meal → Normal |
-| Urine protein ≥ 1+ (D-15) | H13 = 2+ → C5; H04 = Negative (visit value, no check) |
-| Fetal heart rate 110–160 bpm, display only (D-12, HLT BR-005) | H05 = 172 → no report, no case |
-| Gestational week 0–42 | U06 at week 42: VIS-007, DIA-006, FAMILY_MESSAGE week 42 |
-| D-46 text limits 1000 / 500 / 200 | W06 and SR6 custom_text = 1000; G07 content = 1000; MSG-007 = 500; FAMILY_MESSAGE of U06 = 200 |
-| VARCHAR limits | U06 phone = 20; S06 full_name and login_account = 100; G07 title = 100; N08 title = 100; RPT-006 other_symptom_text = 100; U06 terms_version = 20; U06 obstetric_history = 10 |
-| At most 5 photos per diary entry (D-46) | DIA-006 with sort_order 1 – 5 |
-| Equal timestamps allowed | U06 consent and first session in the same minute; U06 EMR linked_at = requested_at; N08 read_at = created_at; C7 Viewed and Escalated in the same minute |
-| Date ranges | U06 assignment valid_to = today; U06 session expires_at = NOW; U05 change of responsible doctor (old row ended 31/08, new row from 01/09) |
-| DECIMAL(5,1) | VIS-007 fetal_length = 9999.9 |
-
-### Business rules
-
-| Rule | Rows that exercise it |
-|---|---|
-| ALR BR-008 branch 1 — above threshold → Metric report case | RPT-002 → C1, RPT-004 → C4, RPT-005 → C5, RPT-006 → C6, RPT-008 → C7 |
-| ALR BR-008 branch 2 / BR-007 — symptoms only → Symptom case | RPT-003 → C2, RPT-009 → C8, RPT-010 → C9 |
-| ALR BR-008 branch 3 / BR-009 — Normal, no symptoms → no case | RPT-001, RPT-007, RPT-011 |
-| ALR BR-017 / D-45 — ≥ 1 symptom, "No symptoms" alone | RPT-002 (3 items), RPT-004 ("No symptoms" on an above-threshold report) |
-| ALR BR-012 — "Escalated to doctor" is optional | C1, C5, C8 (Viewed → Resolved) |
-| ALR BR-016 / D-43 — forward only; "Viewed" recorded automatically | C7 (Viewed and Escalated at 13:15 by the same nurse) |
-| ALR BR-015 / D-37 / CLI BR-001, BR-004 — who may close / send guidance | C7 closed by a doctor after escalation; C1, C5, C8 closed by a nurse; SR3, SR4 doctor guidance on escalated cases only |
-| ALR FR-021 — first history row written by the System | every CASE_STATUS_HISTORY "Not viewed" row (role System, changed_by empty) |
-| D-68 — escalated case goes to the active responsible doctor | C4 and C7 → S02 = active PATIENT_ASSIGNMENT of U04 / U10 |
-| ALR BR-013 — default template when the instruction has no guidance | W07 (no template, no text) → G01 is_default |
-| ALR FR-022 — Instruction reminder only for an active instruction with the switch on | N06 → W01 (U01 watch_flag_reminder = 1) |
-| ALR FR-018 / FR-019 / APT FR-009 — notifications respect the switches | N01 – N09; U06 and U10 with switches off receive none of those types |
-| BOT BR-002 / D-34 — case only after "Connect to nurse" | MSG-003 → C3, MSG-015 → C10; MSG-008 "No thanks" → no case |
-| HLT BR-001 / BR-005 — visit values, fetal heart rate from visits only | H01 – H05 (source From visit, visit_id set) |
-| HLT BR-003 — Group 1 never checked, no report | H07, H08, H09, H17, H18 (no METRIC_REPORT) |
-| ACC BR-003 — hospital EDD takes priority | U01 edd_source = Hospital record |
-| ACC BR-004 / DM-08 — no consent saved on "Later"; account created at consent | U08: first CONSENT_RECORD on 25/09 only; every stored consent accepted = 1 |
-| ACC BR-006 — setup shown when no due date | U07 (no PREGNANCY_PROFILE) |
-| DM-41 — one preference row per account | all 12 accounts, U07, U08, U11 and U12 with default values |
-| DM-21 — at most 1 active instruction per metric | W08 inactive next to W03 (U05) |
-| TML BR-004 / BR-005 / D-60 — messages ≤ 200, diary linked to the current week, read-only | FAMILY_MESSAGE of U06; DIA-001 – DIA-008 gestational_week = week at saving |
-
-## Scenario coverage
-
-| Scenario | Rows that make it runnable | Covered? |
+| Area | Retained seed or host examples | Coverage moved to tests |
 |---|---|---|
-| ACC US-1 | First open and consent: U07 (CONSENT_RECORD, SESSION, no PREGNANCY_PROFILE); "Later" first (nothing saved), agreed later: U08 | Yes |
-| ACC US-2 | Pregnancy set-up; setup weight stored as HEALTH_METRIC_RECORD (D-42): U01 PREGNANCY_PROFILE, H06; week 42: U06 | Yes |
-| ACC US-3 | Profile and hospital record link (Linked / Pending): EMR_LINKAGE_REQUEST U01, U09, U08 × 2 | Yes — Linked is seed data (DM-23) |
-| ACC FR-025 – FR-027 | Notification list with 4 types, read / unread, settings: NOTIFICATION N01 – N09; NOTIFICATION_PREFERENCE U06, U10 | Yes |
-| HLT US-1 | Health metrics screen: latest visit, instructions, self-tracked metrics: U01 VIS-001, H01 – H04, W01 – W02, H07, H08, H17, H18 | Yes |
-| HLT US-2 | Enter Group 1 metrics: H07, H08, H09, H17, H18 | Yes |
-| HLT US-3 / US-4 | Doctor's instructions and one metric's history (U01 blood pressure): W01; H01, H10, H11 | Yes |
-| ALR US-1 branch 3 | Normal, no symptoms → no case (BR-008): RPT-001, RPT-007 | Yes |
-| ALR US-1 branch 1 | Above threshold → Metric report case: RPT-002 → C1; RPT-004 → C4; RPT-005 → C5; RPT-008 → C7 | Yes |
-| ALR US-1 branch 2 | Symptoms only → Symptom case: RPT-003 → C2; RPT-009 → C8; RPT-010 → C9 | Yes |
-| ALR US-1 edge | Exactly on the threshold (≥): 140/90 RPT-006 → C6; 6.7 mmol/L RPT-008 → C7 | Yes — D-15 values are Pending SME |
-| ALR US-2 | Report status with a skipped "Escalated to doctor" and a response: C1 + history + SR1 + N01 | Yes |
-| ALR FR-022 | Instruction reminder for an active instruction with the switch on: N06 → W01 | Yes — trigger / frequency open (ALR §10 Q20) |
-| BOT US-1 | General question and answer: CV-001, MSG-001, MSG-002 | Yes |
-| BOT US-2 | Risk question → hand-off offer → Connect to nurse → Chatbot case: MSG-003 → C3; MSG-015 → C10 | Yes |
-| BOT US-2 edge | Risk question, "No thanks" → no case: MSG-008, MSG-011 | Yes |
-| CLI US-1 | Nurse queue, mark Viewed, send guidance, close: C2, C6, C9, C10 (Not viewed); C3 (Viewed); C1, C5 (Resolved) | Yes |
-| CLI US-1 edge | Escalate while still Not viewed → Viewed recorded automatically (BR-016): C7 | Yes |
-| CLI US-2 | Doctor handles an escalated case and closes it: C4 (SR3, still escalated); C7 (SR4, closed by S02); a nurse closes a case that was not escalated: C1, C5, C8 | Yes — the notification to the doctor is not stored by decision (DM-32); the doctor sees C4 / C7 through CARE_CASE.assigned_doctor_id |
-| CLI US-3 | Doctor adds / edits instructions; no guidance → default template: W01 – W08; W07 → G01 | Yes |
-| TML US-1 – US-3 | Week view, diary with photos (max 5), Messages to Baby: DIA-001 – DIA-008, DIARY_IMAGE, FAMILY_MESSAGE; VIS-002 (week 22) | Yes |
-| APT | Upcoming appointment and reminder: N03 (`appointment_ref` only) | Partly — APPOINTMENT_RECORD is external (DM-04) |
+| ACC | U01 linked hospital EDD, U06 week 42, four consent and preference rows | Pending and missing-profile fixtures in test_acc_profile.py |
+| HLT | U01 visit results, self-tracked metrics and instructions | Glucose timing in test_thresholds.py and test_hlt_history.py |
+| ALR | RPT-001 normal with no case, RPT-002 → C1, RPT-004 → C4, RPT-010 → C9 | Exact 140/90 and doctor closure via tests/conftest.py case fixtures |
+| BOT | CV-001 general answer, MSG-015 → C10 accepted handoff | Declined handoff in test_bot_chat.py |
+| CLI | C1 resolved, C4 escalated, C9 and C10 not viewed | Viewed and assignment changes in test_cli_queue.py and test_cli_assignment.py |
+| TML | Show diaries, images and family messages | Journey empty states in test_tml_journey_pages.py |
+| APT | U11 tomorrow at 09:00, U04 no appointment, in the simulated host | test_appointment_demo.py |

@@ -7,8 +7,8 @@ from mb360 import db as dbmod
 def test_watch_flags():
     conn = dbmod.build()
     rows = conn.execute("SELECT user_id, metric, active, template_id, custom_text FROM WATCH_FLAG").fetchall()
-    assert len(rows) == 9
-    assert sum(r["active"] for r in rows) == 8
+    assert len(rows) == 3
+    assert sum(r["active"] for r in rows) == 3
     active = Counter((r["user_id"], r["metric"]) for r in rows if r["active"])
     assert max(active.values()) == 1                                        # DM-21 default
     u04 = conn.execute("SELECT user_id FROM USER_ACCOUNT WHERE tci_account_ref = 'tci-000126'").fetchone()[0]
