@@ -1,11 +1,13 @@
 """T012 — CLI FR-003, FR-007, FR-008, FR-010, BR-009, CLI-01 (S-064 content)."""
-from tests.cli_helpers import RPT002, RPT006, case_by_code
+from tests.cli_helpers import RPT002, case_by_code
 from tests.integration.helpers import vi
 
 
-def test_report_block_and_profile(client, db, staff_id):
-    page = client.get(f"/staff/{staff_id('Trần Thị B')}/cases/{case_by_code(db, RPT006)}").text
-    for text in ("Ngô Thị Thảo", "TC-00131", vi("Week {n}", n=20), "14/02/2027", "O−", "Seafood",
+def test_report_block_and_profile(client, db, staff_id, boundary_case, user_id):
+    db.execute("UPDATE PATIENT_CLINICAL_PROFILE SET blood_type = ?, allergies = ? WHERE user_id = ?",
+               ("O−", "Seafood", user_id("tci-000126")))
+    page = client.get(f"/staff/{staff_id('Trần Thị B')}/cases/{boundary_case}").text
+    for text in ("Phạm Ngọc Mai", "TC-00126", vi("Week {n}", n=31), "29/11/2026", "O−", "Seafood",
                  "140/90 mmHg", vi("Above threshold"), "27/09/2026 · 07:00", vi("Doctor-assigned"), vi("Not viewed")):
         assert text in page, text
 
@@ -28,7 +30,7 @@ def test_chatbot_case_shows_the_whole_conversation(client, db, staff_id):
     assert "data-escalated-question" in page
 
 
-def test_no_alert_word_on_the_clinical_web(client, db, staff_id):
+def test_no_alert_word_on_the_clinical_web(client, db, staff_id, boundary_case):
     nurse = staff_id("Trần Thị B")
-    for url in (f"/staff/{nurse}/cases", f"/staff/{nurse}/cases/{case_by_code(db, RPT006)}"):
+    for url in (f"/staff/{nurse}/cases", f"/staff/{nurse}/cases/{boundary_case}"):
         assert "alert" not in client.get(url).text.lower(), url

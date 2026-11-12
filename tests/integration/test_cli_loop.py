@@ -3,7 +3,7 @@ import re
 
 
 def test_mother_to_nurse_to_doctor(client, db, user_id, staff_id):
-    u02 = user_id("tci-000124")   # responsible doctor: Nguyễn Văn A
+    u02 = user_id("tci-000126")   # responsible doctor: Nguyễn Văn A
     r = client.post(f"/m/{u02}/report", data={"metric": "Symptom", "measured_at": "2026-09-27T09:30",
                                                "symptoms": ["Palpitations"]})
     assert r.status_code == 303

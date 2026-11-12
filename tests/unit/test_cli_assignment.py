@@ -6,12 +6,12 @@ from mb360.cli import actions
 TODAY = date(2026, 9, 27)
 
 
-def test_u09_responsible_doctor(db, user_id, staff_id):
-    assert actions.responsible_doctor(db, user_id("tci-000131"), TODAY) == staff_id("Phạm Quốc Dũng")
+def test_active_responsible_doctor(db, user_id, staff_id, assigned_mother):
+    assert actions.responsible_doctor(db, user_id("tci-000126"), TODAY) == staff_id("Phạm Quốc Dũng")
 
 
-def test_u05_uses_the_current_assignment_not_the_ended_one(db, user_id, staff_id):
-    assert actions.responsible_doctor(db, user_id("tci-000127"), TODAY) == staff_id("Phạm Quốc Dũng")
+def test_mother_uses_the_current_assignment_not_the_ended_one(db, user_id, staff_id, assigned_mother, ended_assignment):
+    assert actions.responsible_doctor(db, user_id("tci-000126"), TODAY) == staff_id("Phạm Quốc Dũng")
 
 
 def test_assignment_is_active_on_its_valid_to_day(db, user_id, staff_id):
@@ -21,4 +21,4 @@ def test_assignment_is_active_on_its_valid_to_day(db, user_id, staff_id):
 
 
 def test_mother_without_assignment(db, user_id):
-    assert actions.responsible_doctor(db, user_id("tci-000129"), TODAY) is None
+    assert actions.responsible_doctor(db, user_id("tci-000133"), TODAY) is None
