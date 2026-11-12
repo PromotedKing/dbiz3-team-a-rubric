@@ -1,5 +1,11 @@
 # Build Log
 
+## 12/11/2026: reduce the show seed to four CSV mothers (Hải Anh)
+
+- **Scope**: exclude eight mothers and their dependent rows before validation. Retain the original IDs, seven staff, threshold rules and guidance templates. Record 20 explicit ENUM exceptions and the row-kind exceptions in the generated seed report.
+- **Appointment**: retain An Nhiên's next-day case and use Phạm Ngọc Mai as the no-appointment control with her stored EDD. A fresh demo lists five mothers including the runtime persona. The account simulation form remains available.
+- **Validation**: generator and generator check passed with 26 tables, 141 rows and 28 generated files. Data-model and active Spec Kit snapshot checks passed. Full pytest had 487 passes, no failures and two existing D-16 xfails. The integration test also verifies fixture restoration, reopening without duplicates and an unchanged control profile.
+
 ## 12/11/2026: decouple application tests from seven demo mothers (Hải Anh)
 
 - **Scope**: move ACC, ALR, CLI, BOT, TML and HLT scenarios onto retained accounts or per-test SQLite fixtures. Preserve the threshold boundary, case progression, assignment history, access checks and empty states. Appointment host and seed contract tests stay for PR 2.
