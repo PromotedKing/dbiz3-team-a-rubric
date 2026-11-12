@@ -23,12 +23,12 @@ def ask(client, uid, q):
 
 
 def test_home_links_to_the_chatbot(client, user_id):
-    uid = user_id("tci-000131")
+    uid = user_id("tci-000133")
     assert f'href="/m/{uid}/chat"' in client.get(f"/m/{uid}/home").text
 
 
 def test_welcome_screen(client, user_id):
-    page = client.get(f"/m/{user_id('tci-000131')}/chat").text
+    page = client.get(f"/m/{user_id('tci-000133')}/chat").text
     for t in map(vi, ("Health chatbot", "Hello, Mom!", "I can answer general questions about pregnancy and baby care.",
                       "The chatbot provides general reference information only and does not replace your doctor's advice.",
                       "Trouble sleeping during pregnancy", "Should I exercise?", "Leg cramps", "Type your question…", "Send")):
@@ -37,13 +37,13 @@ def test_welcome_screen(client, user_id):
 
 
 def test_general_answer_has_the_disclaimer(client, user_id):
-    _, page = ask(client, user_id("tci-000131"), "How can I eat beef safely during pregnancy?")
+    _, page = ask(client, user_id("tci-000133"), "How can I eat beef safely during pregnancy?")
     assert vi("[Sample chatbot answer]") in page
     assert vi("For reference only; does not replace your doctor's advice.") in page
 
 
 def test_danger_question_and_connect_to_nurse(client, db, user_id, staff_id):
-    uid = user_id("tci-000131")
+    uid = user_id("tci-000133")
     url, page = ask(client, uid, DANGER)
     for t in (vi("Signs that need medical attention"), vi("You need to be checked right away"), vi("Connect to nurse"), vi("No, thanks"),
               vi("Call the emergency hotline")):
@@ -61,7 +61,7 @@ def test_danger_question_and_connect_to_nurse(client, db, user_id, staff_id):
 
 
 def test_personal_question_without_notice_and_decline(client, db, user_id):
-    uid = user_id("tci-000131")
+    uid = user_id("tci-000133")
     url, page = ask(client, uid, "I feel tired, is that normal?")
     assert vi("Connect to nurse") in page and vi("Signs that need medical attention") not in page
     form = re.search(r'action="(/m/[^"]+/handoff/[0-9a-f-]{36})"', page).group(1)
@@ -73,11 +73,11 @@ def test_personal_question_without_notice_and_decline(client, db, user_id):
 
 
 def test_out_of_scope_is_declined_without_buttons(client, user_id):
-    _, page = ask(client, user_id("tci-000131"), "How do I change a car tyre?")
+    _, page = ask(client, user_id("tci-000133"), "How do I change a car tyre?")
     assert vi("I can only help with pregnancy, prenatal care, nutrition and postpartum wellness. "
               "Could you ask me a pregnancy question?") in page
     assert vi("Connect to nurse") not in page
 
 
 def test_empty_question_is_refused(client, user_id):
-    assert client.post(f"/m/{user_id('tci-000131')}/chat", data={"text": ""}).status_code == 422
+    assert client.post(f"/m/{user_id('tci-000133')}/chat", data={"text": ""}).status_code == 422

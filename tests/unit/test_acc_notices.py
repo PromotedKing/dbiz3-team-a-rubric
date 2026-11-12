@@ -19,7 +19,7 @@ def lan(db, user_id):
 
 
 def test_list_is_hers_and_newest_first(db, lan, user_id):
-    other = user_id("tci-000131")
+    other = user_id("tci-000133")
     _add(db, lan, "a", created="2026-09-26 08:00")
     _add(db, lan, "b", created="2026-09-27 08:00")
     _add(db, other, "c")
@@ -51,13 +51,13 @@ def test_opening_marks_read_once(db, lan):
 
 
 def test_another_mothers_notification_is_refused(db, lan, user_id):
-    nid = _add(db, user_id("tci-000131"), "a")
+    nid = _add(db, user_id("tci-000133"), "a")
     assert notices.open_notice(db, lan, nid, NOW) is None
     assert db.execute("SELECT read_at FROM NOTIFICATION WHERE notification_id = ?", (nid,)).fetchone()[0] is None
 
 
 def test_mark_all_read_only_hers(db, lan, user_id):
-    other = user_id("tci-000131")
+    other = user_id("tci-000133")
     _add(db, lan, "a")
     keep = _add(db, lan, "b", read="2026-09-27 09:00")
     theirs = _add(db, other, "c")

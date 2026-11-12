@@ -5,7 +5,7 @@ from tests.integration.helpers import vi
 
 
 def test_report_and_nurse_actions_notify_the_mother(client, db, user_id, staff_id):
-    u09, nurse = user_id("tci-000131"), staff_id("Trần Thị B")
+    u09, nurse = user_id("tci-000126"), staff_id("Trần Thị B")
     n0 = len(notifications(db, u09))
     client.post(f"/m/{u09}/report", data=bp_form(150, 95, ["No symptoms"]))
     assert len(notifications(db, u09)) == n0 + 1

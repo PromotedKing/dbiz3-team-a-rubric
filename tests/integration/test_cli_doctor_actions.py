@@ -1,5 +1,5 @@
 """T011 — US-2 #2 - #5, BR-001 (doctor on S-064)."""
-from tests.cli_helpers import RPT004, RPT006, a_template, case_by_code, case_row, written
+from tests.cli_helpers import RPT004, a_template, case_by_code, case_row, written
 from tests.integration.helpers import vi
 
 
@@ -19,8 +19,8 @@ def test_doctor_sends_guidance_then_closes_the_escalated_case(client, db, staff_
     assert (row["status"], row["closed_by"]) == ("Resolved", doctor)
 
 
-def test_doctor_cannot_act_on_a_case_not_escalated(client, db, staff_id):
-    doctor, case = staff_id("Nguyễn Văn A"), case_by_code(db, RPT006)
+def test_doctor_cannot_act_on_a_case_not_escalated(client, db, staff_id, boundary_case):
+    doctor, case = staff_id("Nguyễn Văn A"), boundary_case
     base = f"/staff/{doctor}/cases/{case}"
     page = client.get(base).text
     assert "Send guidance</button>" not in page and "Close case" not in page

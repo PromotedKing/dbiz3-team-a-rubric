@@ -65,7 +65,7 @@ def test_measurements_come_with_their_report_date(client, user_id):             
 
 
 def test_not_reached_stage_disables_the_export(client, user_id):
-    lan = user_id("tci-000125")
+    lan = user_id("tci-000133")
     page = client.get(f"/m/{lan}/journey", params={"stage": "Third trimester"}).text
     assert vi("Not reached yet") in page and f'/m/{lan}/journey/album' not in page and vi("Nothing to export yet.") in page
 
@@ -86,12 +86,12 @@ def test_album_page_is_print_ready_and_stores_nothing(client, db, user_id):     
 
 
 def test_album_without_content_goes_back(client, user_id):
-    lan = user_id("tci-000125")
+    lan = user_id("tci-000133")
     r = client.get(f"/m/{lan}/journey/album", params={"stage": "Third trimester"})
     assert r.status_code == 303 and r.headers["location"].startswith(f"/m/{lan}/journey")
 
 
-def test_no_due_date_goes_to_setup(client, user_id):
-    u07 = user_id("tci-000129")
+def test_no_due_date_goes_to_setup(client, user_id, mother_without_profile):
+    u07 = user_id("tci-000133")
     r = client.get(f"/m/{u07}/journey")
     assert r.status_code == 303 and r.headers["location"] == f"/m/{u07}/setup"

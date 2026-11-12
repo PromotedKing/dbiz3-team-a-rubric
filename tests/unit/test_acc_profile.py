@@ -5,12 +5,6 @@ from mb360.acc import profile
 from tests.acc_helpers import NOW
 
 
-def _user_with_link(db, status):
-    """Seed: tci-000123 is linked, tci-000131 is pending."""
-    ref = {"Linked": "tci-000123", "Pending": "tci-000131"}[status]
-    return db.execute("SELECT user_id FROM USER_ACCOUNT WHERE tci_account_ref = ?", (ref,)).fetchone()[0]
-
-
 def _pp(db, uid):
     return db.execute("SELECT * FROM PREGNANCY_PROFILE WHERE user_id = ?", (uid,)).fetchone()
 
@@ -25,16 +19,13 @@ def test_load_returns_the_read_only_profile(db, user_id):
     assert d["height_cm"] is not None
 
 
-def test_mother_without_profile_has_no_week(db):
-    d = profile.load(db, db.execute("""SELECT user_id FROM USER_ACCOUNT WHERE user_id NOT IN (SELECT user_id FROM PREGNANCY_PROFILE)""").fetchone()[0], NOW)
+def test_mother_without_profile_has_no_week(db, mother_without_profile):
+    d = profile.load(db, mother_without_profile, NOW)
     assert d["week"] is None and d["edd"] is None
 
 
-def test_the_latest_link_request_decides(db):
-    # Seed: a Pending request, then a later Linked one for the same mother
-    uid = db.execute("SELECT user_id FROM EMR_LINKAGE_REQUEST WHERE status = 'Pending' AND user_id IN "
-                     "(SELECT user_id FROM EMR_LINKAGE_REQUEST WHERE status = 'Linked')").fetchone()[0]
-    assert profile.is_linked(db, uid)
+def test_the_latest_link_request_decides(db, older_pending_link):
+    assert profile.is_linked(db, older_pending_link)
 
 
 def test_mask_phone():
@@ -43,23 +34,23 @@ def test_mask_phone():
 
 
 def test_br003_linked_due_date_cannot_be_changed(db):
-    uid = _user_with_link(db, "Linked")
+    uid = db.execute("SELECT user_id FROM USER_ACCOUNT WHERE tci_account_ref = ?", ("tci-000123",)).fetchone()[0]
     before = _pp(db, uid)["edd"]
     profile.save(db, uid, {"edd": "2027-01-15", "height_cm": "170"}, NOW)
     after = _pp(db, uid)
     assert after["edd"] == before and float(after["height_cm"]) == 170
 
 
-def test_pending_due_date_can_be_changed_and_clears_the_lmp(db):
-    uid = _user_with_link(db, "Pending")
+def test_pending_due_date_can_be_changed_and_clears_the_lmp(db, pending_mother):
+    uid = pending_mother
     db.execute("UPDATE PREGNANCY_PROFILE SET lmp = '2026-03-01' WHERE user_id = ?", (uid,))
     profile.save(db, uid, {"edd": "2027-01-15", "height_cm": ""}, NOW)
     after = _pp(db, uid)
     assert after["edd"] == "2027-01-15" and after["lmp"] is None and after["height_cm"] is None and after["edd_source"] == "Self-entered"
 
 
-def test_unchanged_due_date_keeps_the_lmp(db):
-    uid = _user_with_link(db, "Pending")
+def test_unchanged_due_date_keeps_the_lmp(db, pending_mother):
+    uid = pending_mother
     edd = _pp(db, uid)["edd"]
     db.execute("UPDATE PREGNANCY_PROFILE SET lmp = '2026-03-01' WHERE user_id = ?", (uid,))
     profile.save(db, uid, {"edd": edd, "height_cm": "160"}, NOW)
@@ -72,8 +63,8 @@ def test_unchanged_due_date_keeps_the_lmp(db):
     ({"edd": "", "height_cm": ""}, "edd"),
     ({"edd": "2027-01-15", "height_cm": "abc"}, "height_cm"),
 ])
-def test_invalid_values_write_nothing(db, form, field):
-    uid = _user_with_link(db, "Pending")
+def test_invalid_values_write_nothing(db, form, field, pending_mother):
+    uid = pending_mother
     before = dict(_pp(db, uid))
     with pytest.raises(profile.ProfileError) as e:
         profile.save(db, uid, form, NOW)
@@ -82,7 +73,7 @@ def test_invalid_values_write_nothing(db, form, field):
 
 
 def test_linked_height_error_writes_nothing(db):
-    uid = _user_with_link(db, "Linked")
+    uid = db.execute("SELECT user_id FROM USER_ACCOUNT WHERE tci_account_ref = ?", ("tci-000123",)).fetchone()[0]
     before = dict(_pp(db, uid))
     with pytest.raises(profile.ProfileError):
         profile.save(db, uid, {"height_cm": "tall"}, NOW)

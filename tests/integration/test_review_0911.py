@@ -24,7 +24,7 @@ def test_the_llm_is_asked_outside_the_database_lock(client, db, user_id, monkeyp
     """A2: while one mother waits for the LLM service, the others are not kept waiting."""
     fake = WaitingLLM()
     monkeypatch.setattr(llm, "get_client", lambda: fake)
-    uid = user_id("tci-000131")
+    uid = user_id("tci-000133")
     r = client.post(f"/m/{uid}/chat", data={"text": "How can I eat beef safely during pregnancy?"})
     assert r.status_code == 303
     assert fake.lock_held is False
@@ -40,7 +40,7 @@ def test_a_failing_llm_stores_nothing_and_frees_the_lock(client, db, user_id, mo
             raise TimeoutError("no answer in 15 s")
     monkeypatch.setattr(llm, "get_client", lambda: Broken())
     before = db.execute("SELECT COUNT(*) FROM CHAT_MESSAGE").fetchone()[0]
-    r = client.post(f"/m/{user_id('tci-000131')}/chat", data={"text": "How can I eat beef safely during pregnancy?"})
+    r = client.post(f"/m/{user_id('tci-000133')}/chat", data={"text": "How can I eat beef safely during pregnancy?"})
     assert r.status_code == 503 and not serial.LOCK.locked()
     assert db.execute("SELECT COUNT(*) FROM CHAT_MESSAGE").fetchone()[0] == before
 

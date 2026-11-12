@@ -37,8 +37,8 @@ def test_returning_mother_goes_home_with_a_session_and_a_refreshed_copy(db):
     assert datetime.strptime(s["expires_at"], fmt) - datetime.strptime(s["created_at"], fmt) == timedelta(hours=12)
 
 
-def test_returning_mother_without_due_date_goes_to_setup(db):
-    assert entry.open_subapp(db, seed_identity(db, "tci-000129"), NOW)[0] == "setup"
+def test_returning_mother_without_due_date_goes_to_setup(db, mother_without_profile):
+    assert entry.open_subapp(db, seed_identity(db, "tci-000133"), NOW) == ("setup", mother_without_profile)
 
 
 def test_unticked_consent_is_refused(db):

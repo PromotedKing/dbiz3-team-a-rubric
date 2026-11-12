@@ -27,11 +27,11 @@ def test_dashboard_counts_match_the_cases(client, db, staff_id):
 
 
 def test_a_new_above_threshold_report_shows_up(client, user_id, staff_id):
-    nurse, u09 = staff_id("Trần Thị B"), user_id("tci-000131")
-    before = client.get(f"/staff/{nurse}/cases?flag=above").text.count("<tr") - 1
+    nurse, u09 = staff_id("Trần Thị B"), user_id("tci-000126")
+    before = client.get(f"/staff/{nurse}/cases?flag=above").text.count(vi("View report") + " ›")
     client.post(f"/m/{u09}/report", data=bp_form(160, 100, ["No symptoms"]))
     after = client.get(f"/staff/{nurse}/cases?flag=above").text
-    assert after.count("<tr") - 1 == before + 1 and 'data-flag="above"' in after
+    assert after.count(vi("View report") + " ›") == before + 1
 
 
 def test_board_columns_and_cards_open_cases(client, db, staff_id):

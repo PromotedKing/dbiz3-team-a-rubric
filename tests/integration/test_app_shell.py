@@ -69,7 +69,7 @@ def test_unread_badge_counts_the_mothers_notifications(client, db, user_id):
 
 def test_word_alert_only_on_s028(client, db, user_id):
     """ALR BR-010 / D-22 on the Vietnamese screens: "Cảnh báo" (Alert) only on the Metric alert screen."""
-    u09 = user_id("tci-000131")
+    u09 = user_id("tci-000126")
     alert_word = vi("Alert")
     alert_page = client.get(client.post(f"/m/{u09}/report", data=bp_form(150, 95, ["No symptoms"])).headers["location"]).text
     assert alert_word in alert_page
@@ -100,7 +100,7 @@ def test_a_report_is_not_described_as_going_straight_to_the_doctor(client, user_
 
 
 def test_handoff_keeps_the_decline_button_and_promises_no_call_back(client, user_id):
-    uid = user_id("tci-000131")
+    uid = user_id("tci-000133")
     page = client.get(client.post(f"/m/{uid}/chat", data={"text": "I have had a little bleeding since this morning, is that okay?"}).headers["location"]).text
     assert vi("Connect to nurse") in page and vi("No, thanks") in page
     assert "gọi lại" not in page

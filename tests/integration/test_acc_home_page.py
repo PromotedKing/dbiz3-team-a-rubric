@@ -16,8 +16,8 @@ def test_lan_home(client, user_id):
     assert f'href="/m/{lan}/my-reports"' in report and f'href="/m/{lan}/instructions"' in client.get(f"/m/{lan}/profile").text
 
 
-def test_home_without_due_date_goes_to_setup(client, user_id):
-    u07 = user_id("tci-000129")
+def test_home_without_due_date_goes_to_setup(client, user_id, mother_without_profile):
+    u07 = user_id("tci-000133")
     r = client.get(f"/m/{u07}/home")
     assert r.status_code == 303 and r.headers["location"] == f"/m/{u07}/setup"
 

@@ -1,5 +1,10 @@
 # Build Log
 
+## 12/11/2026: decouple application tests from seven demo mothers (Hải Anh)
+
+- **Scope**: move ACC, ALR, CLI, BOT, TML and HLT scenarios onto retained accounts or per-test SQLite fixtures. Preserve the threshold boundary, case progression, assignment history, access checks and empty states. Appointment host and seed contract tests stay for PR 2.
+- **Validation**: full suite 487 passed and 2 existing xfails for pending D-16 valid ranges. All 212 tests in the changed test files passed against in-memory copies with seven accounts and their dependent rows removed. SQLite foreign key checks, the active Spec Kit snapshot check and seed generator check passed.
+
 ## 11/11/2026: S-105 journey week layout (Hải Anh)
 
 - **Scope**: review the selected stage's weeks directly, newest first, with a current-week label when that card exists. Remove the D-81 Highlights grid, its timeline link and the week disclosure. Keep FR-013 / D-75, the existing statistics, PDF export and chronological album. Proposed D-87 reserves D-86 for the separate Appointment PR #23.

@@ -29,7 +29,7 @@ def test_default_template_when_instruction_has_no_guidance(client, db, user_id):
 
 
 def test_word_alert_only_on_the_metric_alert_page(client, user_id):
-    u09 = user_id("tci-000131")
+    u09 = user_id("tci-000126")
     pages = [f"/m/{u09}/instructions", f"/m/{u09}/report?metric=Blood%20pressure", f"/m/{u09}/report?metric=Symptom", "/"]
     r = client.post(f"/m/{u09}/report", data=bp_form(120, 80, ["Palpitations"]))
     pages.append(r.headers["location"])                                  # S-026
@@ -38,7 +38,7 @@ def test_word_alert_only_on_the_metric_alert_page(client, user_id):
 
 
 def test_close_returns_home_and_keeps_the_report(client, db, user_id):
-    u09 = user_id("tci-000131")
+    u09 = user_id("tci-000126")
     r = client.post(f"/m/{u09}/report", data=bp_form(160, 100, ["No symptoms"]))
     page = client.get(r.headers["location"]).text
     close = re.search(r'<a[^>]*href="([^"]+)"[^>]*>\s*' + vi("Close") + r'\s*</a>', page)

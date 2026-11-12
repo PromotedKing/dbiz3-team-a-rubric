@@ -9,7 +9,7 @@ D73 = ["Vaginal bleeding", "Severe abdominal pain", "Waters breaking or fluid le
 
 
 def test_normal_value_with_symptom_opens_a_symptom_case_and_shows_status(client, db, user_id):
-    u09 = user_id("tci-000131")
+    u09 = user_id("tci-000126")
     r = client.post(f"/m/{u09}/report", data=bp_form(120, 80, ["Palpitations"]))
     assert r.status_code == 303
     rep = latest_report(db, u09)
@@ -21,7 +21,7 @@ def test_normal_value_with_symptom_opens_a_symptom_case_and_shows_status(client,
 
 @pytest.mark.parametrize("symptom", D73)
 def test_every_symptom_creates_a_case(client, db, user_id, symptom):
-    u09 = user_id("tci-000131")
+    u09 = user_id("tci-000126")
     other = "Back ache" if symptom == "Other" else ""
     client.post(f"/m/{u09}/report", data=bp_form(120, 80, [symptom], other))
     case = case_of(db, latest_report(db, u09)["report_id"])

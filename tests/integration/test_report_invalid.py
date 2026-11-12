@@ -3,7 +3,7 @@ from .helpers import bp_form, counts
 
 
 def test_no_symptom_selected_is_rejected_and_nothing_is_stored(client, db, user_id):
-    u09 = user_id("tci-000131")
+    u09 = user_id("tci-000126")
     before = counts(db)
     r = client.post(f"/m/{u09}/report", data=bp_form(150, 95, []))
     assert r.status_code == 422

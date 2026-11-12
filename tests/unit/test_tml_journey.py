@@ -36,7 +36,7 @@ def test_counts(db, user_id):
 
 
 def test_stage_after_the_current_week_is_not_reached(db, user_id):
-    j = journey.load(db, user_id("tci-000125"), "Third trimester", NOW)      # week 25
+    j = journey.load(db, user_id("tci-000133"), "Third trimester", NOW)      # week 24
     assert j["not_reached"] and j["weeks"] == [] and not j["can_export"]
 
 
@@ -47,7 +47,7 @@ def test_empty_stage_cannot_be_exported(db, user_id):
 
 
 def test_only_her_own_content_and_nothing_written(db, user_id):              # BR-007
-    lan, other = user_id("tci-000123"), user_id("tci-000131")
+    lan, other = user_id("tci-000123"), user_id("tci-000133")
     before = db.total_changes
     mine = journey.load(db, lan, "Full journey", NOW)
     theirs = journey.load(db, other, "Full journey", NOW)
@@ -69,7 +69,7 @@ def test_all_photos_of_an_entry(db, user_id):
 
 
 def test_stage_rows_say_past_current_or_to_come(db, user_id):
-    rows = {r["name"]: r for r in journey.load(db, user_id("tci-000125"), None, NOW)["stage_rows"]}     # week 25
+    rows = {r["name"]: r for r in journey.load(db, user_id("tci-000133"), None, NOW)["stage_rows"]}     # week 24
     assert rows["First trimester"]["state"] == "Past"
     assert rows["Second trimester"]["state"] == "Current"
     assert rows["Third trimester"]["state"] == "To come"

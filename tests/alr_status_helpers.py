@@ -2,7 +2,7 @@
 from datetime import datetime
 
 NOW = datetime(2026, 9, 27, 10, 0)
-RPT001, RPT002, RPT010, RPT008 = "BC-0925-008", "BC-0926-015", "BC-0927-022", "BC-0926-012"
+RPT001, RPT002, RPT010 = "BC-0925-008", "BC-0926-015", "BC-0927-022"
 
 
 def report_id(db, code):

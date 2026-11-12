@@ -32,8 +32,8 @@ def test_edit_errors_stay_on_the_form(client, user_id):
     assert r.status_code == 422 and 'data-error-for="height_cm"' in r.text and 'value="tall"' in r.text
 
 
-def test_linked_due_date_is_read_only_and_pending_is_editable(client, user_id):
-    linked, pending = user_id("tci-000123"), user_id("tci-000131")
+def test_linked_due_date_is_read_only_and_pending_is_editable(client, user_id, pending_mother):
+    linked, pending = user_id("tci-000123"), user_id("tci-000133")
     assert 'name="edd"' not in client.get(f"/m/{linked}/profile/edit").text
     assert 'name="edd"' in client.get(f"/m/{pending}/profile/edit").text
 
@@ -79,7 +79,7 @@ def test_mark_all_and_empty_state(client, db, user_id):
 
 
 def test_notice_of_another_mother_is_404(client, db, user_id):
-    lan, other = user_id("tci-000123"), user_id("tci-000131")
+    lan, other = user_id("tci-000123"), user_id("tci-000126")
     db.execute("DELETE FROM NOTIFICATION WHERE user_id = ?", (other,))
     client.post(f"/m/{other}/report", data=bp_form(150, 95, ["No symptoms"]))
     nid = db.execute("SELECT notification_id FROM NOTIFICATION WHERE user_id = ?", (other,)).fetchone()[0]

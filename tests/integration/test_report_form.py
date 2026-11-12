@@ -17,8 +17,8 @@ def test_change_metric_lists_only_active_instructions_plus_symptom_mode(client, 
     assert 'value="Urine protein"' not in page
 
 
-def test_inactive_instruction_does_not_count(client, user_id):
-    u05 = user_id("tci-000127")  # W03 Urine protein active, W08 Blood pressure inactive
+def test_inactive_instruction_does_not_count(client, user_id, protein_instruction_mother):
+    u05 = user_id("tci-000126")
     page = client.get(f"/m/{u05}/report", params={"metric": "Urine protein"}).text
     assert 'value="Urine protein"' in page and 'value="Blood pressure"' not in page
 
@@ -30,8 +30,8 @@ def test_instruction_box_shown_for_a_metric_hidden_in_symptom_mode(client, user_
     assert note not in client.get(f"/m/{u01}/report", params={"metric": "Symptom"}).text
 
 
-def test_threshold_card_comes_from_threshold_rule(client, db, user_id):
-    u01, u05 = user_id("tci-000123"), user_id("tci-000127")
+def test_threshold_card_comes_from_threshold_rule(client, db, user_id, protein_instruction_mother):
+    u01, u05 = user_id("tci-000123"), user_id("tci-000126")
     assert "140/90 mmHg" in client.get(f"/m/{u01}/report", params={"metric": "Blood pressure"}).text
     assert "7.8 mmol/L" in client.get(f"/m/{u01}/report", params={"metric": "Blood glucose", "glucose_context": "post_1h"}).text
     assert "1+" in client.get(f"/m/{u05}/report", params={"metric": "Urine protein"}).text
