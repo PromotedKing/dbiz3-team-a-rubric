@@ -37,11 +37,16 @@ def install(conn: sqlite3.Connection, now: datetime) -> None:
         user = fixture["user_id"]
         if conn.execute(f"SELECT 1 FROM {tci_feed.TABLE} WHERE user_id=?", (user,)).fetchone():
             continue
-        edd = (now.date() + timedelta(days=fixture["days_until_edd"])).isoformat()
+        edd_offset = fixture["days_until_edd"]
+        if edd_offset is None:
+            edd = conn.execute("SELECT edd FROM PREGNANCY_PROFILE WHERE user_id=?", (user,)).fetchone()[0]
+        else:
+            edd = (now.date() + timedelta(days=edd_offset)).isoformat()
         offset = fixture["days_until_appointment"]
         when = f"{now.date() + timedelta(days=offset)} {fixture['time']}" if offset is not None else None
         conn.execute(f"INSERT INTO {tci_feed.TABLE} VALUES (?, ?, ?, ?)", (user, edd, when, fixture["place"]))
-        conn.execute("UPDATE PREGNANCY_PROFILE SET edd=? WHERE user_id=?", (edd, user))
+        if edd_offset is not None:
+            conn.execute("UPDATE PREGNANCY_PROFILE SET edd=? WHERE user_id=?", (edd, user))
     create_reminders(conn, now)
     conn.commit()
 

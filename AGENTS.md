@@ -61,7 +61,7 @@ The Spec Documents are split per module (Session 4 layout), not in one `docs/spe
 | BOT | `specs/spec-BOT.md` | CONVERSATION, CHAT_MESSAGE, AI_RESPONSE_LOG |
 | APT | `specs/spec-APT.md` | none stored (appointments stay in the TCI app) |
 
-In every spec, §5.1 is the Input/Output contract of each FR (field, type, required flag), §5.2 the business rules and §6 the key entities. The one data model for all modules is `data/data-model-MB360.md` (MODULE-ID MB360): 26 stored entities (§2), Mermaid ERD with 40 relationships (§4), logical model (§6), business rules and where they are enforced (§8). Schema: `data/schema/schema-MB360.sql`. Seed: 26 files `data/seed/NN_TABLE.csv`, 280 rows, loaded in filename order.
+In every spec, §5.1 is the Input/Output contract of each FR (field, type, required flag), §5.2 the business rules and §6 the key entities. The one data model for all modules is `data/data-model-MB360.md` (MODULE-ID MB360): 26 stored entities (§2), Mermaid ERD with 40 relationships (§4), logical model (§6), business rules and where they are enforced (§8). Schema: `data/schema/schema-MB360.sql`. Seed: 26 files `data/seed/NN_TABLE.csv`, 141 rows, loaded in filename order.
 
 ## 6. Business rules
 

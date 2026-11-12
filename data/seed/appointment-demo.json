@@ -7,10 +7,10 @@
     "place": "Bệnh viện Thu Cúc"
   },
   {
-    "user_id": "a2fd0d9e-9827-586c-9330-813b9f614af5",
+    "user_id": "a7354260-026f-5459-bc86-fdb7192e9b9c",
     "days_until_appointment": null,
-    "time": "09:00",
-    "days_until_edd": 109,
-    "place": "Bệnh viện Thu Cúc"
+    "time": null,
+    "days_until_edd": null,
+    "place": null
   }
 ]

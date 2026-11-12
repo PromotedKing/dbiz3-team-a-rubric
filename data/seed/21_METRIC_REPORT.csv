@@ -1,12 +1,6 @@
 report_id,report_code,user_id,metric,health_metric_record_id,other_symptom_text,note,submitted_at,watch_flag_id
 017ee854-70a1-5acc-990f-0fcd7df02bea,BC-0926-015,5922a028-7ad1-5bb1-8034-1077cbdf6a1d,Blood pressure,bb1f6a04-3630-58ee-a6e7-486205e2f658,Back ache worse in the afternoon,"Measured a second time, still high",2026-09-26 20:17,178deee4-6f0f-5716-b94e-26e722762b0f
-33b3573e-af01-5f19-b401-6a2bba3f0ecd,BC-0927-023,4333c4cf-b0ff-50ec-9ff1-39da60d2e7b8,Blood glucose,e19c7eda-b950-5c03-a58c-c08923dc9a6b,,,2026-09-27 08:12,e1f664b5-45b5-5239-b0c9-3c60fda56d68
-3b489fb7-adf6-5ebe-9b18-a8a242953ad3,BC-0926-004,83a221ae-966d-5739-8ae0-954d4335eca1,Urine protein,aa5dbcae-3d99-5512-91f3-4e9affb30cab,,,2026-09-26 07:32,6ffe6ce8-37d4-5075-aef1-118d395ab103
 4145b12b-9aa8-5b3e-a430-aa1a3cb10c80,BC-0927-022,5922a028-7ad1-5bb1-8034-1077cbdf6a1d,Symptom,,,,2026-09-27 09:05,
 7c8966d9-2971-585d-bf39-9f4927b0757b,BC-0926-011,a7354260-026f-5459-bc86-fdb7192e9b9c,Blood pressure,48b7bbdb-06f1-51e4-a490-d2dffed9792f,,,2026-09-26 18:05,d6f48c00-90a1-59d7-8779-f37535884869
 7d639c29-8516-5187-921d-22f055cbe7ba,BC-0925-008,5922a028-7ad1-5bb1-8034-1077cbdf6a1d,Blood pressure,011fc5e5-6af7-5da7-84c1-bb8ffd9df451,,,2026-09-25 07:12,178deee4-6f0f-5716-b94e-26e722762b0f
 981252d3-2e8b-5c0b-9fa0-09cc9a9c6570,BC-0927-003,d732d88d-8724-52dc-bcda-2cdaef98a917,Symptom,,,,2026-09-27 06:30,
-a6fe1a4c-b73d-5bde-b11c-19f61c38e093,BC-0927-021,059acf66-1a42-5609-a34a-d961725f4067,Symptom,,,,2026-09-27 09:05,
-c87d79a2-a0c7-5f44-8a1d-a0987f8181a8,BC-0926-009,4333c4cf-b0ff-50ec-9ff1-39da60d2e7b8,Blood glucose,988d9cf8-5a02-5d6f-9e0f-ff7aefa188c8,,,2026-09-26 06:47,e1f664b5-45b5-5239-b0c9-3c60fda56d68
-fa34072e-47de-566d-8ad5-9c214ea01c79,BC-0927-020,5d431414-f24b-5468-b2b8-7efbf6666eec,Blood pressure,d52b2e36-5b81-5046-9a9b-57f2e6999d44,Other: sample text sample text sample text sample text sample text sample text sample text sample te,,2026-09-27 07:02,b2a6dd72-4fea-5c1d-9613-944e568c848c
-fdd5a56b-6f8e-5eab-b8c0-cc1abb4dae7f,BC-0926-012,3ca395ff-4294-5d35-82ea-3eafa76844c7,Blood glucose,1b41ed20-084f-57d7-96bb-be79608aa3ab,,Abdominal pain since noon,2026-09-26 13:05,1989db3a-52dd-5abb-8fdc-05103c70dc39

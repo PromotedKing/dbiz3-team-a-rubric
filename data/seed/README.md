@@ -25,7 +25,9 @@ python3 tools/check_data_model.py             # diagram check of the data model 
 
 ### Appointment demo cases (Part A, 10/11/2026)
 
-U11 (`tci-000133`, Nguyễn Thị An Nhiên) and U12 (`tci-000134`, Trần Ngọc Bình An) are invented accounts generated in the CSVs, with consent, pregnancy profile and notification defaults. `appointment-demo.json` is also generated: U11 has a simulated host appointment at 09:00 on startup day + 1; U12 has none. Both appear in `/tci/accounts`. These fixtures add no MB360 appointment table. The original CSV clock stays fixed; the host fixture resolves relative dates using the Vietnam app clock at first install, just like the existing Mai persona.
+U11 (`tci-000133`, Nguyễn Thị An Nhiên) has a simulated appointment at 09:00 on startup day + 1. U04 (`tci-000126`, Phạm Ngọc Mai) is the no-appointment control and keeps her stored EDD. Both are in the four CSV mothers. The server adds the Nguyễn Thị Mai persona, for five mothers on a fresh demo. The generator writes the fixture to `appointment-demo.json`; the host resolves relative dates with the Vietnam app clock at first install.
+
+The 26 CSVs contain 141 rows. `seed-report.md` lists each reduced-demo row-kind and ENUM exception and the tests that cover the corresponding behavior where available.
 
 The demo creates U11's unread `Appointment` notification at startup, and checks due reminders again on Home / S-009 access. This is request-driven demo behavior, not a background production delivery service. Disabled `appointment_reminder` prevents new reminders; received notices remain visible (demo assumption, S-010 Q4 still open). Reopening a database preserves its dates, switches and read state; a fresh Render deploy recreates tomorrow's case. Details, manual steps and limitations: `docs/build/appointment-part-a.md`.
 
