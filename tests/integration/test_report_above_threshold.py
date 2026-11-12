@@ -3,7 +3,7 @@ from .helpers import bp_form, case_of, counts, latest_report
 
 
 def test_above_threshold_report_is_stored_and_opens_a_metric_report_case(client, db, user_id):
-    u09 = user_id("tci-000131")
+    u09 = user_id("tci-000126")
     before = counts(db)
     r = client.post(f"/m/{u09}/report", data=bp_form(141, 88, ["No symptoms"]))
     assert r.status_code == 303
@@ -16,7 +16,7 @@ def test_above_threshold_report_is_stored_and_opens_a_metric_report_case(client,
     hmr = db.execute("SELECT * FROM HEALTH_METRIC_RECORD WHERE record_id = ?", (rep["health_metric_record_id"],)).fetchone()
     assert (hmr["metric"], hmr["metric_group"], hmr["value"], hmr["unit"], hmr["source"]) == \
         ("Blood pressure", "Group 2", "141/88", "mmHg", "Doctor-assigned")
-    assert hmr["gestational_week"] == 20
+    assert hmr["gestational_week"] == 31
     assert hmr["measured_at"] == "2026-09-27 09:00"
     assert hmr["created_at"] == rep["submitted_at"]
 

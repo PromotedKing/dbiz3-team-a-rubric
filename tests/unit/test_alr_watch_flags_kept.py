@@ -4,8 +4,8 @@ from tests.cli_helpers import NOW
 from tests.integration.helpers import bp_form, latest_report
 
 
-def test_report_case_cycle_keeps_the_instructions(client, db, user_id, staff_id):
-    u09 = user_id("tci-000131")
+def test_report_case_cycle_keeps_the_instructions(client, db, user_id, staff_id, assigned_mother):
+    u09 = user_id("tci-000126")
     before = [tuple(r) for r in db.execute("SELECT * FROM WATCH_FLAG WHERE user_id = ? ORDER BY flag_id", (u09,))]
     client.post(f"/m/{u09}/report", data=bp_form(160, 100, ["No symptoms"]))
     case = db.execute("SELECT case_id FROM CARE_CASE WHERE metric_report_id = ?", (latest_report(db, u09)["report_id"],)).fetchone()[0]

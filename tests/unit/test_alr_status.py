@@ -1,6 +1,6 @@
 """T004 — ALR BR-012 (progress), BR-011 (Safety note), FR-007 (response) on S-026."""
 from mb360.alr import status
-from tests.alr_status_helpers import RPT002, RPT008, RPT010, case_of_code
+from tests.alr_status_helpers import RPT002, RPT010, case_of_code
 
 
 def steps(db, code):
@@ -22,8 +22,8 @@ def test_not_viewed_case_has_pending_steps(db):
     assert [s[k]["state"] for k in ("Viewed", "Escalated to doctor", "Resolved")] == ["pending"] * 3
 
 
-def test_escalated_then_closed_by_a_doctor(db):
-    s = steps(db, RPT008)
+def test_escalated_then_closed_by_a_doctor(db, resolved_escalated_case):
+    s = {step["status"]: step for step in status.progress(db, resolved_escalated_case)}
     assert all(v["state"] == "done" for v in s.values())
     assert s["Resolved"]["actor"] == "Dr. Nguyễn Văn A"
 

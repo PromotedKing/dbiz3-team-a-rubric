@@ -4,7 +4,7 @@ from .helpers import vi
 
 
 def test_normal_without_symptoms_stores_report_but_no_case(client, db, user_id):
-    u09 = user_id("tci-000131")
+    u09 = user_id("tci-000126")
     before = counts(db)
     r = client.post(f"/m/{u09}/report", data=bp_form(120, 80, ["No symptoms"]))
     assert r.status_code == 303

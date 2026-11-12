@@ -30,7 +30,7 @@ def test_self_tracked_latest_values(db, user_id):
 
 
 def test_no_visit(db, user_id):
-    d = dashboard.load(db, user_id("tci-000129"), NOW)                         # Hoàng Thu Trang: no visit
+    d = dashboard.load(db, user_id("tci-000133"), NOW)                         # An Nhiên: no visit
     assert d["visit_date"] is None and d["visit_rows"] == []
 
 
