@@ -6,7 +6,10 @@
     "days_until_edd": 109,
     "place": "Bệnh viện Thu Cúc",
     "gestational_days": 46,
-    "use_lmp": true
+    "use_lmp": true,
+    "visits": [],
+    "tci_ref": "tci-000133",
+    "clinical_case": "chatbot"
   },
   {
     "user_id": "a7354260-026f-5459-bc86-fdb7192e9b9c",
@@ -14,7 +17,53 @@
     "time": null,
     "days_until_edd": null,
     "place": null,
-    "gestational_days": 95
+    "gestational_days": 95,
+    "visits": [
+      {
+        "week": 7,
+        "image": "demo/us-8.svg",
+        "metrics": [
+          [
+            "Blood pressure",
+            "108/68",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "52.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "145",
+            "bpm"
+          ]
+        ]
+      },
+      {
+        "week": 12,
+        "image": "demo/us-12.svg",
+        "metrics": [
+          [
+            "Blood pressure",
+            "112/70",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "53.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "155",
+            "bpm"
+          ]
+        ]
+      }
+    ],
+    "tci_ref": "tci-000126",
+    "clinical_case": null
   },
   {
     "user_id": "5922a028-7ad1-5bb1-8034-1077cbdf6a1d",
@@ -24,7 +73,162 @@
     "place": "Bệnh viện Thu Cúc",
     "gestational_days": 228,
     "appointment_at_last_visit": true,
-    "fresh_only": true
+    "fresh_only": true,
+    "visits": [
+      {
+        "week": 8,
+        "image": "demo/us-8.svg",
+        "metrics": [
+          [
+            "Blood pressure",
+            "108/68",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "51.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "146",
+            "bpm"
+          ]
+        ]
+      },
+      {
+        "week": 12,
+        "image": "demo/us-12.svg",
+        "metrics": [
+          [
+            "Blood pressure",
+            "110/70",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "52.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "153",
+            "bpm"
+          ]
+        ]
+      },
+      {
+        "week": 16,
+        "image": null,
+        "metrics": [
+          [
+            "Blood pressure",
+            "112/70",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "53.5",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "150",
+            "bpm"
+          ],
+          [
+            "Urine protein",
+            "Negative",
+            null
+          ]
+        ]
+      },
+      {
+        "week": 21,
+        "image": "demo/us-20.svg",
+        "metrics": [
+          [
+            "Blood pressure",
+            "114/72",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "55.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "148",
+            "bpm"
+          ],
+          [
+            "Urine protein",
+            "Negative",
+            null
+          ]
+        ]
+      },
+      {
+        "week": 27,
+        "image": null,
+        "metrics": [
+          [
+            "Blood pressure",
+            "116/74",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "57.5",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "146",
+            "bpm"
+          ],
+          [
+            "Urine protein",
+            "Negative",
+            null
+          ],
+          [
+            "Blood glucose",
+            "4.8",
+            "mmol/L"
+          ]
+        ]
+      },
+      {
+        "week": 31,
+        "image": "demo/us-31.svg",
+        "metrics": [
+          [
+            "Blood pressure",
+            "118/76",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "59.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "144",
+            "bpm"
+          ],
+          [
+            "Urine protein",
+            "Negative",
+            null
+          ]
+        ]
+      }
+    ],
+    "tci_ref": "tci-000123",
+    "clinical_case": null
   },
   {
     "user_id": "d732d88d-8724-52dc-bcda-2cdaef98a917",
@@ -33,6 +237,239 @@
     "days_until_edd": null,
     "place": "Bệnh viện Thu Cúc",
     "gestational_days": 277,
-    "fresh_only": true
+    "fresh_only": true,
+    "visits": [
+      {
+        "week": 8,
+        "image": null,
+        "metrics": [
+          [
+            "Blood pressure",
+            "110/70",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "54.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "146",
+            "bpm"
+          ]
+        ]
+      },
+      {
+        "week": 12,
+        "image": "demo/us-12.svg",
+        "metrics": [
+          [
+            "Blood pressure",
+            "112/72",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "55.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "154",
+            "bpm"
+          ]
+        ]
+      },
+      {
+        "week": 16,
+        "image": null,
+        "metrics": [
+          [
+            "Blood pressure",
+            "114/72",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "56.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "150",
+            "bpm"
+          ],
+          [
+            "Urine protein",
+            "Negative",
+            null
+          ]
+        ]
+      },
+      {
+        "week": 21,
+        "image": "demo/us-20.svg",
+        "metrics": [
+          [
+            "Blood pressure",
+            "116/74",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "58.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "148",
+            "bpm"
+          ],
+          [
+            "Urine protein",
+            "Negative",
+            null
+          ]
+        ]
+      },
+      {
+        "week": 27,
+        "image": null,
+        "metrics": [
+          [
+            "Blood pressure",
+            "118/76",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "60.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "146",
+            "bpm"
+          ],
+          [
+            "Urine protein",
+            "Negative",
+            null
+          ],
+          [
+            "Blood glucose",
+            "4.9",
+            "mmol/L"
+          ]
+        ]
+      },
+      {
+        "week": 31,
+        "image": "demo/us-31.svg",
+        "metrics": [
+          [
+            "Blood pressure",
+            "120/78",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "62.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "144",
+            "bpm"
+          ],
+          [
+            "Urine protein",
+            "Negative",
+            null
+          ]
+        ]
+      },
+      {
+        "week": 36,
+        "image": "demo/us-36.svg",
+        "metrics": [
+          [
+            "Blood pressure",
+            "122/78",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "64.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "142",
+            "bpm"
+          ],
+          [
+            "Urine protein",
+            "Negative",
+            null
+          ]
+        ]
+      },
+      {
+        "week": 38,
+        "image": null,
+        "metrics": [
+          [
+            "Blood pressure",
+            "140/90",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "64.8",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "140",
+            "bpm"
+          ],
+          [
+            "Urine protein",
+            "Negative",
+            null
+          ]
+        ]
+      },
+      {
+        "week": 39,
+        "image": null,
+        "metrics": [
+          [
+            "Blood pressure",
+            "124/80",
+            "mmHg"
+          ],
+          [
+            "Weight",
+            "65.0",
+            "kg"
+          ],
+          [
+            "Fetal heart rate",
+            "142",
+            "bpm"
+          ],
+          [
+            "Urine protein",
+            "Negative",
+            null
+          ]
+        ]
+      }
+    ],
+    "tci_ref": "tci-000128",
+    "clinical_case": "escalated_bp"
   }
 ]

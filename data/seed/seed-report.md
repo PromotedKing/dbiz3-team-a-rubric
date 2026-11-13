@@ -10,6 +10,8 @@ The rows follow the wireframes: Lan (U01) has 2 reports being handled — C9 (sy
 
 Appointment demo: U11 (An Nhiên) has a next-day host appointment; U04 (Phạm Ngọc Mai) has no appointment. A fresh hosted demo sets relative pregnancy dates, with an earlier visit for U01 and a same-day appointment for U06. Reopening an existing demo preserves its profile and host dates. The generated `appointment-demo.json` stores relative fixture offsets, not an MB360 entity. The simulated host resolves these at startup and creates an unread Appointment notice only when enabled. One-day timing and retaining received notices when disabled are demo assumptions; S-010 Q3/Q4 remain open. See `docs/build/appointment-part-a.md`.
 
+The generated host fixture also contains week-indexed visits for fresh demos. The row-kind and ENUM registers below describe the fixed CSV baseline.
+
 ## Load test (gate G3)
 
 The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-memory database (the version is not written, so the report is the same on every machine) and the 26 files were loaded in filename order with `PRAGMA foreign_keys = ON`: no constraint error, `PRAGMA foreign_key_check` empty, 141 rows.

@@ -61,7 +61,8 @@ def flowers(bg: str = "#F6DCE3") -> str:
                   f'{f(200, 170, "#F66A0B")}{f(116, 226, "#fff")}{f(284, 214, "#E86A92")}')
 
 
-FILES = {"us-24.svg": lambda: ultrasound(24), "us-20.svg": lambda: ultrasound(20, -8), "us-16.svg": lambda: ultrasound(16, 6),
+# Synthetic illustrations for the demo, not diagnostic ultrasound images.
+FILES = {"us-31.svg": lambda: ultrasound(31, 8), "us-36.svg": lambda: ultrasound(36, -6),"us-24.svg": lambda: ultrasound(24), "us-20.svg": lambda: ultrasound(20, -8), "us-16.svg": lambda: ultrasound(16, 6),
          "us-12.svg": lambda: ultrasound(12, -14), "us-8.svg": lambda: ultrasound(8, 10),
          "bump-1.svg": lambda: bump(), "bump-2.svg": lambda: bump("#E2EFE3", "#F7B38A"), "bump-3.svg": lambda: bump("#F6EBC9", "#8CC9D8"),
          "hands.svg": hands, "park.svg": park, "clothes.svg": clothes, "flowers.svg": flowers}
