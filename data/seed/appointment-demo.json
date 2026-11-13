@@ -4,13 +4,35 @@
     "days_until_appointment": 1,
     "time": "09:00",
     "days_until_edd": 109,
-    "place": "Bệnh viện Thu Cúc"
+    "place": "Bệnh viện Thu Cúc",
+    "gestational_days": 46,
+    "use_lmp": true
   },
   {
     "user_id": "a7354260-026f-5459-bc86-fdb7192e9b9c",
     "days_until_appointment": null,
     "time": null,
     "days_until_edd": null,
-    "place": null
+    "place": null,
+    "gestational_days": 95
+  },
+  {
+    "user_id": "5922a028-7ad1-5bb1-8034-1077cbdf6a1d",
+    "days_until_appointment": null,
+    "time": "09:00",
+    "days_until_edd": null,
+    "place": "Bệnh viện Thu Cúc",
+    "gestational_days": 228,
+    "appointment_at_last_visit": true,
+    "fresh_only": true
+  },
+  {
+    "user_id": "d732d88d-8724-52dc-bcda-2cdaef98a917",
+    "days_until_appointment": 0,
+    "time": "16:00",
+    "days_until_edd": null,
+    "place": "Bệnh viện Thu Cúc",
+    "gestational_days": 277,
+    "fresh_only": true
   }
 ]

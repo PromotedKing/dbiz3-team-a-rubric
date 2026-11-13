@@ -1,5 +1,11 @@
 # Build Log
 
+## 13/11/2026: relative pregnancy and appointment dates for the hosted demo (Hải Anh)
+
+- **Scope**: on a fresh demo DB, install the show pregnancy dates and host appointments from the creation date. Keep the plain seed clock and CSVs fixed. Mai's setup suggests the first recorded visit and accepts edits. Reopening a DB with installed host fixtures preserves its dates.
+- **Staging**: existing CSV visit dates, week tags, metrics, diaries and cases are retained for the later data PRs. For Lan, Phạm Ngọc Mai and Hương the first-visit field uses the earliest available visit even where the older history no longer matches the new EDD. ACC Q10 and S-010 Q3/Q4 remain open.
+- **Validation**: simulated a fresh SQLite demo in a temporary directory at 13/11/2026 10:00; all five EDDs and appointment roles matched and the foreign key check was clean. Generator, data-model and active Spec Kit checks passed. Pytest had 488 passes and two existing D-16 xfails.
+
 ## 12/11/2026: reduce the show seed to four CSV mothers (Hải Anh)
 
 - **Scope**: exclude eight mothers and their dependent rows before validation. Retain the original IDs, seven staff, threshold rules and guidance templates. Record 20 explicit ENUM exceptions and the row-kind exceptions in the generated seed report.
