@@ -9,7 +9,7 @@ import sqlite3
 import uuid
 from datetime import datetime, timedelta
 
-from . import db as dbmod, demo_clinical, tci_feed
+from . import db as dbmod, demo_clinical, demo_diary, tci_feed
 
 
 def install(conn: sqlite3.Connection, now: datetime, *, fresh_demo: bool = False) -> None:
@@ -46,6 +46,8 @@ def install(conn: sqlite3.Connection, now: datetime, *, fresh_demo: bool = False
             lmp = now.date() - timedelta(days=fixture["gestational_days"])
             edd = (lmp + timedelta(days=280)).isoformat()
             demo_clinical.install_visits(conn, user, lmp, fixture["visits"])
+            diary = fixture["diary"]
+            demo_diary.install(conn, user, lmp, now.date(), diary["counts"], diary["photo_phase"])
             first, last = conn.execute(
                 "SELECT MIN(visit_date), MAX(visit_date) FROM VISIT WHERE user_id=?", (user,)
             ).fetchone()

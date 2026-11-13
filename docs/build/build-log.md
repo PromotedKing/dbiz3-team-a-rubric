@@ -1,5 +1,10 @@
 # Build Log
 
+## 13/11/2026: relative diary history for fresh demos (Hải Anh)
+
+- **Scope**: generate weekly diary plans and install them against the visit calendar. Replace the old diary rows only on fresh demos, reuse the seven existing illustration assets and align retained family messages with the current pregnancy week. Keep CSV fixtures and the seed clock fixed.
+- **Validation**: temporary demo at 13/11/2026 had 286 entries, 96 images and four family messages. An Nhiên's timeline, journey and health pages rendered their empty states. Generator, data-model and Spec Kit checks passed. Full pytest had 489 passes and two existing D-16 xfails. The final family-message assertions also passed in the targeted integration test.
+
 ## 13/11/2026: clinical visits and cases for fresh demos (Hải Anh)
 
 - **Scope**: generate week-indexed visits for fresh demos, install them against the PR 1 pregnancy dates, and preserve retained visit and case identities. Add synthetic week 31 and 36 illustrations, Hương's escalated BP report and An Nhiên's chatbot handoff. The fixed CSV baseline and its coverage exceptions remain reproducible. Diary data stays for the next PR.

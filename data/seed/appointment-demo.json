@@ -9,7 +9,11 @@
     "use_lmp": true,
     "visits": [],
     "tci_ref": "tci-000133",
-    "clinical_case": "chatbot"
+    "clinical_case": "chatbot",
+    "diary": {
+      "photo_phase": 0,
+      "counts": []
+    }
   },
   {
     "user_id": "a7354260-026f-5459-bc86-fdb7192e9b9c",
@@ -63,7 +67,19 @@
       }
     ],
     "tci_ref": "tci-000126",
-    "clinical_case": null
+    "clinical_case": null,
+    "diary": {
+      "photo_phase": 1,
+      "counts": [
+        1,
+        2,
+        1,
+        2,
+        3,
+        3,
+        3
+      ]
+    }
   },
   {
     "user_id": "5922a028-7ad1-5bb1-8034-1077cbdf6a1d",
@@ -228,7 +244,37 @@
       }
     ],
     "tci_ref": "tci-000123",
-    "clinical_case": null
+    "clinical_case": null,
+    "diary": {
+      "photo_phase": 0,
+      "counts": [
+        1,
+        2,
+        1,
+        2,
+        2,
+        3,
+        2,
+        3,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ]
+    }
   },
   {
     "user_id": "d732d88d-8724-52dc-bcda-2cdaef98a917",
@@ -470,6 +516,43 @@
       }
     ],
     "tci_ref": "tci-000128",
-    "clinical_case": "escalated_bp"
+    "clinical_case": "escalated_bp",
+    "diary": {
+      "photo_phase": 1,
+      "counts": [
+        1,
+        2,
+        1,
+        2,
+        2,
+        3,
+        2,
+        3,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ]
+    }
   }
 ]
