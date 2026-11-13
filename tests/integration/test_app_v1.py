@@ -1,5 +1,5 @@
 """D-81: the v1.0.0 mother app: first opening of a mother known to the hospital, Home, Màn 10, session check, chatbot answers."""
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 from fastapi.testclient import TestClient
@@ -38,10 +38,15 @@ def test_first_opening_goes_consent_guide_setup_home(app_client, db):
     done = app_client.get(f"/m/{persona.USER}/guide/done")
     assert done.headers["location"] == f"/m/{persona.USER}/setup"
     setup = app_client.get(done.headers["location"]).text
-    assert tci_feed.hospital_edd(db, persona.USER) in setup and vi("Week {n} + {d} days", n=24, d=3) in setup
-    home = app_client.post(f"/m/{persona.USER}/setup", data={"date_type": "EDD", "date": tci_feed.hospital_edd(db, persona.USER)})
+    assert tci_feed.hospital_edd(db, persona.USER) in setup and vi("Week {n} + {d} days", n=24, d=4) in setup
+    first = db.execute("SELECT MIN(visit_date) FROM VISIT WHERE user_id=?", (persona.USER,)).fetchone()[0]
+    assert f'name="first_visit_date" value="{first}"' in setup
+    edited = (datetime.fromisoformat(first) + timedelta(days=1)).date().isoformat()
+    home = app_client.post(f"/m/{persona.USER}/setup", data={"date_type": "EDD", "date": tci_feed.hospital_edd(db, persona.USER),
+                                                           "first_visit_date": edited})
+    assert db.execute("SELECT first_visit_date FROM PREGNANCY_PROFILE WHERE user_id=?", (persona.USER,)).fetchone()[0] == edited
     page = app_client.get(home.headers["location"]).text
-    assert ">109<" in page and vi("Next appointment") in page and "09/11/2026 · 08:30" in page and vi("{n} days left", n=7) in page
+    assert ">108<" in page and vi("Next appointment") in page and "09/11/2026 · 08:30" in page and vi("{n} days left", n=7) in page
     assert vi("Your doctor sent {n} notice", n=1) in page
 
 

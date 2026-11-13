@@ -8,7 +8,7 @@ S01 and S02 keep the placeholder names drawn in the wireframes ("Trần Thị B"
 
 The rows follow the wireframes: Lan (U01) has 2 reports being handled — C9 (symptom) and C10 (chatbot), both "Not viewed" (S-008, S-023, S-029); her 26/09 report C1 is "Resolved" (S-026, S-061); S-064 shows C1 at 20:18, before the nurse handled it.
 
-Appointment demo: U11 (An Nhiên) has a next-day host appointment; U04 (Phạm Ngọc Mai) has no appointment and keeps her stored due date. The generated `appointment-demo.json` stores relative fixture offsets, not an MB360 entity. The simulated host resolves these at startup and creates an unread Appointment notice only when enabled. One-day timing and retaining received notices when disabled are demo assumptions; S-010 Q3/Q4 remain open. See `docs/build/appointment-part-a.md`.
+Appointment demo: U11 (An Nhiên) has a next-day host appointment; U04 (Phạm Ngọc Mai) has no appointment. A fresh hosted demo sets relative pregnancy dates, with an earlier visit for U01 and a same-day appointment for U06. Reopening an existing demo preserves its profile and host dates. The generated `appointment-demo.json` stores relative fixture offsets, not an MB360 entity. The simulated host resolves these at startup and creates an unread Appointment notice only when enabled. One-day timing and retaining received notices when disabled are demo assumptions; S-010 Q3/Q4 remain open. See `docs/build/appointment-part-a.md`.
 
 ## Load test (gate G3)
 

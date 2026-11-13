@@ -8,7 +8,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from .. import appointment_demo, clock, tci_feed, ui
+from .. import appointment_demo, clock, persona, tci_feed, ui
 from ..alr.reports import gestational_week
 from ..alr.validation import GROUP2
 from ..hlt import dashboard
@@ -112,7 +112,11 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         if entry.next_step(conn, user_id) == "home":   # BR-006
             return go(user_id, "home")
         prefill = tci_feed.hospital_edd(conn, user_id) if date_type == "EDD" and "date" not in request.query_params else ""
-        return setup_page(request, user, {"date_type": date_type, "date": date or prefill or ""}, {})
+        form = {"date_type": date_type, "date": date or prefill or ""}
+        if user_id == persona.USER:
+            first_visit = conn.execute("SELECT MIN(visit_date) FROM VISIT WHERE user_id=?", (user_id,)).fetchone()[0]
+            form["first_visit_date"] = first_visit or ""
+        return setup_page(request, user, form, {})
 
     @app.post("/m/{user_id}/setup", response_class=HTMLResponse)
     async def setup_post(request: Request, user_id: str):

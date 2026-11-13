@@ -119,3 +119,28 @@ def test_existing_demo_database_upgrade_and_reopen_are_idempotent(db, user_id, t
 
 def test_plain_seed_has_no_host_appointments(client, db):
     assert not db.execute("SELECT 1 FROM sqlite_master WHERE name=?", (tci_feed.TABLE,)).fetchone()
+
+def test_fresh_demo_profiles_and_appointments(db, user_id, monkeypatch):
+    when = datetime(2026, 11, 13, 10)
+    monkeypatch.setattr(persona, "_copy_art", lambda: None)
+    persona.install(db, when)
+    expected = {
+        "tci-000123": ("2027-01-04", None, "2026-09-15 09:00"),
+        "tci-000126": ("2027-05-17", None, None),
+        "tci-000128": ("2026-11-16", None, "2026-11-13 16:00"),
+        "tci-000133": ("2027-07-05", "2026-09-28", "2026-11-14 09:00"),
+        "tci-000200": ("2027-03-01", None, "2026-11-20 08:30"),
+    }
+    for ref, (edd, lmp, appointment) in expected.items():
+        uid = user_id(ref)
+        host = db.execute(f"SELECT * FROM {tci_feed.TABLE} WHERE user_id=?", (uid,)).fetchone()
+        assert (host["hospital_edd"], host["next_appointment"]) == (edd, appointment)
+        if ref != persona.TCI_REF:
+            profile = db.execute("SELECT edd, lmp, first_visit_date FROM PREGNANCY_PROFILE WHERE user_id=?", (uid,)).fetchone()
+            first = db.execute("SELECT MIN(visit_date) FROM VISIT WHERE user_id=?", (uid,)).fetchone()[0]
+            assert tuple(profile) == (edd, lmp, first)
+    huong = user_id("tci-000128")
+    assert db.execute("SELECT appointment_reminder FROM NOTIFICATION_PREFERENCE WHERE user_id=?", (huong,)).fetchone()[0] == 0
+    assert not notices.list_for(db, huong, "Appointment")
+    assert tci_feed.next_appointment(db, huong, when)["days"] == 0
+    assert tci_feed.next_appointment(db, user_id("tci-000123"), when) is None

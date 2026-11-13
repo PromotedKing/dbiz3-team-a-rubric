@@ -11,7 +11,8 @@ from . import appointment_demo, art, tci_feed
 from .tml.diary import MEDIA_DIR
 
 TCI_REF = "tci-000200"
-DAYS_LEFT = 109              # 24 weeks + 3 days, as in the UI package
+GESTATIONAL_DAYS = 24 * 7 + 4
+DAYS_LEFT = 280 - GESTATIONAL_DAYS
 FACILITY = "Bệnh viện Thu Cúc"
 
 
@@ -28,7 +29,7 @@ VISITS = (
     (30, 20, "Siêu âm hình thái tuần 20", "Hình thái thai trong giới hạn bình thường", "Siêu âm hình thái chưa thấy bất thường. Hẹn khám lại sau 4 tuần.", "us-20", 25.0, 320, "116/74", "152", "56.4", "4.9"),
     (58, 16, "Khám thai định kỳ tuần 16", "Thai phát triển tốt", "Mẹ ăn uống tốt hơn, bớt nghén. Tiếp tục viên sắt theo đơn.", "us-16", 11.6, 110, "114/74", "150", "54.1", None),
     (86, 12, "Sàng lọc quý 1 tuần 12", "Kết quả sàng lọc nguy cơ thấp", "Độ mờ da gáy trong giới hạn. Kết quả sàng lọc nguy cơ thấp.", "us-12", 6.1, 18, "112/72", "158", "52.8", None),
-    (114, 8, "Khám thai lần đầu tuần 8", "Thai trong tử cung, có tim thai", "Đã thấy tim thai. Bác sĩ dặn mẹ bổ sung axit folic theo đơn.", "us-8", 1.6, 1, "110/70", "165", "52.0", None),
+    (116, 8, "Khám thai lần đầu tuần 8", "Thai trong tử cung, có tim thai", "Đã thấy tim thai. Bác sĩ dặn mẹ bổ sung axit folic theo đơn.", "us-8", 1.6, 1, "110/70", "165", "52.0", None),
 )
 # (days before today, HH:MM, value): home blood pressure reports with no case (normal, no symptoms)
 BP_HOME = ((26, "20:10", "116/76"), (23, "07:05", "118/78"), (19, "20:15", "121/77"), (15, "07:10", "117/75"), (12, "20:05", "119/78"),
@@ -77,15 +78,15 @@ def install(conn: sqlite3.Connection, now: datetime) -> str:
         return f"{day(n)} {clock}"
 
     def week_of(n: int) -> int:
-        return (24 * 7 + 3 - n) // 7
+        return (GESTATIONAL_DAYS - n) // 7
 
     conn.execute(tci_feed.DDL)
     conn.execute("INSERT INTO STAFF (staff_id, full_name, role, login_account) VALUES (?, 'Trần Thu Hà', 'Doctor', 'bs.thuha'), (?, 'Phạm Thị Lan', 'Nurse', 'yt.lan')", (DOCTOR, NURSE))
     conn.execute("""INSERT INTO USER_ACCOUNT (user_id, tci_account_ref, full_name, phone, date_of_birth, sex, record_code, role)
                     VALUES (?, ?, 'Nguyễn Thị Mai', '0912000678', '1996-04-12', 'Female', 'TC-00200', 'Mother')""", (USER, TCI_REF))
-    conn.execute("INSERT INTO NOTIFICATION_PREFERENCE (user_id, report_response, new_visit_result, appointment_reminder, watch_flag_reminder, updated_at) VALUES (?, 1, 1, 1, 0, ?)", (USER, at(114, "08:00")))
-    conn.execute("INSERT INTO PATIENT_ASSIGNMENT (user_id, doctor_id, valid_from, valid_to) VALUES (?, ?, ?, NULL)", (USER, DOCTOR, day(114)))
-    conn.execute("INSERT INTO EMR_LINKAGE_REQUEST (user_id, record_code, facility, status, requested_at, linked_at) VALUES (?, 'TC-00200', ?, 'Linked', ?, ?)", (USER, FACILITY, at(114, "08:00"), at(114, "09:00")))
+    conn.execute("INSERT INTO NOTIFICATION_PREFERENCE (user_id, report_response, new_visit_result, appointment_reminder, watch_flag_reminder, updated_at) VALUES (?, 1, 1, 1, 0, ?)", (USER, at(116, "08:00")))
+    conn.execute("INSERT INTO PATIENT_ASSIGNMENT (user_id, doctor_id, valid_from, valid_to) VALUES (?, ?, ?, NULL)", (USER, DOCTOR, day(116)))
+    conn.execute("INSERT INTO EMR_LINKAGE_REQUEST (user_id, record_code, facility, status, requested_at, linked_at) VALUES (?, 'TC-00200', ?, 'Linked', ?, ?)", (USER, FACILITY, at(116, "08:00"), at(116, "09:00")))
 
     def record(key, metric, group, value, unit, when, source, week, visit=None, context=None) -> str:
         rid = _id(f"hmr/{key}")
@@ -199,6 +200,6 @@ def install(conn: sqlite3.Connection, now: datetime) -> str:
     conn.execute(f"INSERT INTO {tci_feed.TABLE} (user_id, hospital_edd, next_appointment, appointment_place) VALUES (?, ?, ?, ?)",
                  (USER, edd.isoformat(), f"{today + timedelta(days=7)} 08:30", FACILITY))
     conn.commit()
-    appointment_demo.install(conn, now)
+    appointment_demo.install(conn, now, fresh_demo=True)
     _copy_art()
     return USER

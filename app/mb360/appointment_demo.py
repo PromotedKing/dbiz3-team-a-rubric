@@ -12,11 +12,12 @@ from datetime import datetime, timedelta
 from . import db as dbmod, tci_feed
 
 
-def install(conn: sqlite3.Connection, now: datetime) -> None:
+def install(conn: sqlite3.Connection, now: datetime, *, fresh_demo: bool = False) -> None:
     """Idempotently add demo cases, also when opening an older local demo DB.
 
     The host table is the boundary: plain schema/seed databases stay untouched.
     Existing switches, read times and appointments survive re-opening the DB.
+    Only a fresh demo rebases the seeded pregnancy profiles.
     """
     if not conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (tci_feed.TABLE,)).fetchone():
         return
@@ -34,19 +35,29 @@ def install(conn: sqlite3.Connection, now: datetime) -> None:
                     conn.execute(f"INSERT OR IGNORE INTO {table} ({', '.join(cols)}) VALUES ({', '.join('?' for _ in cols)})",
                                  [row[c] or None for c in cols])
     for fixture in fixtures:
+        if not fresh_demo and fixture.get("fresh_only"):
+            continue
         user = fixture["user_id"]
         if conn.execute(f"SELECT 1 FROM {tci_feed.TABLE} WHERE user_id=?", (user,)).fetchone():
             continue
-        edd_offset = fixture["days_until_edd"]
-        if edd_offset is None:
-            edd = conn.execute("SELECT edd FROM PREGNANCY_PROFILE WHERE user_id=?", (user,)).fetchone()[0]
-        else:
-            edd = (now.date() + timedelta(days=edd_offset)).isoformat()
         offset = fixture["days_until_appointment"]
         when = f"{now.date() + timedelta(days=offset)} {fixture['time']}" if offset is not None else None
-        conn.execute(f"INSERT INTO {tci_feed.TABLE} VALUES (?, ?, ?, ?)", (user, edd, when, fixture["place"]))
-        if edd_offset is not None:
+        if fresh_demo:
+            lmp = now.date() - timedelta(days=fixture["gestational_days"])
+            edd = (lmp + timedelta(days=280)).isoformat()
+            first, last = conn.execute(
+                "SELECT MIN(visit_date), MAX(visit_date) FROM VISIT WHERE user_id=?", (user,)
+            ).fetchone()
+            if fixture.get("appointment_at_last_visit") and last:
+                when = f"{last} {fixture['time']}"
+            conn.execute("UPDATE PREGNANCY_PROFILE SET edd=?, lmp=?, first_visit_date=? WHERE user_id=?",
+                         (edd, lmp.isoformat() if fixture.get("use_lmp") else None, first, user))
+        elif fixture["days_until_edd"] is not None:
+            edd = (now.date() + timedelta(days=fixture["days_until_edd"])).isoformat()
             conn.execute("UPDATE PREGNANCY_PROFILE SET edd=? WHERE user_id=?", (edd, user))
+        else:
+            edd = conn.execute("SELECT edd FROM PREGNANCY_PROFILE WHERE user_id=?", (user,)).fetchone()[0]
+        conn.execute(f"INSERT INTO {tci_feed.TABLE} VALUES (?, ?, ?, ?)", (user, edd, when, fixture["place"]))
     create_reminders(conn, now)
     conn.commit()
 

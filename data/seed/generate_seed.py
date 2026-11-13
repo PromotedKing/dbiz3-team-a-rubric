@@ -561,8 +561,16 @@ for k, ref, name, phone, offset in [
     APPOINTMENT_DEMO.append(dict(user_id=U[k], days_until_appointment=offset,
         time='09:00', days_until_edd=109, place='Bệnh viện Thu Cúc'))
 
-APPOINTMENT_DEMO.append(dict(user_id=U['U04'], days_until_appointment=None,
-    time=None, days_until_edd=None, place=None))
+APPOINTMENT_DEMO[0].update(gestational_days=6 * 7 + 4, use_lmp=True)
+APPOINTMENT_DEMO.extend([
+    dict(user_id=U['U04'], days_until_appointment=None, time=None,
+         days_until_edd=None, place=None, gestational_days=13 * 7 + 4),
+    dict(user_id=U['U01'], days_until_appointment=None, time='09:00',
+         days_until_edd=None, place='Bệnh viện Thu Cúc', gestational_days=32 * 7 + 4,
+         appointment_at_last_visit=True, fresh_only=True),
+    dict(user_id=U['U06'], days_until_appointment=0, time='16:00',
+         days_until_edd=None, place='Bệnh viện Thu Cúc', gestational_days=39 * 7 + 4, fresh_only=True),
+])
 
 # ============================================================================= checks
 # The schema is the source of the column order, keys and CHECK constraints.
@@ -869,7 +877,7 @@ lines = ['# Seed report', '',
          '**Seed assumption, not a decided rule:** gestational week = whole weeks counted back from the EDD with a 280-day pregnancy (`spec-ACC.md` §10 Q10 is open).', '',
          'S01 and S02 keep the placeholder names drawn in the wireframes ("Trần Thị B", "Nguyễn Văn A"); every other person is invented. Phone numbers follow the fictitious pattern 0900 000 1xx. Guidance templates and chatbot answers are placeholders, not clinical content; the hand-off offer quotes BOT BR-002. Thresholds come only from ALR BR-004 (D-14; D-15 Pending SME).', '',
          'The rows follow the wireframes: Lan (U01) has 2 reports being handled — C9 (symptom) and C10 (chatbot), both "Not viewed" (S-008, S-023, S-029); her 26/09 report C1 is "Resolved" (S-026, S-061); S-064 shows C1 at 20:18, before the nurse handled it.', '',
-         'Appointment demo: U11 (An Nhiên) has a next-day host appointment; U04 (Phạm Ngọc Mai) has no appointment and keeps her stored due date. The generated `appointment-demo.json` stores relative fixture offsets, not an MB360 entity. The simulated host resolves these at startup and creates an unread Appointment notice only when enabled. One-day timing and retaining received notices when disabled are demo assumptions; S-010 Q3/Q4 remain open. See `docs/build/appointment-part-a.md`.', '',
+         'Appointment demo: U11 (An Nhiên) has a next-day host appointment; U04 (Phạm Ngọc Mai) has no appointment. A fresh hosted demo sets relative pregnancy dates, with an earlier visit for U01 and a same-day appointment for U06. Reopening an existing demo preserves its profile and host dates. The generated `appointment-demo.json` stores relative fixture offsets, not an MB360 entity. The simulated host resolves these at startup and creates an unread Appointment notice only when enabled. One-day timing and retaining received notices when disabled are demo assumptions; S-010 Q3/Q4 remain open. See `docs/build/appointment-part-a.md`.', '',
          '## Load test (gate G3)', '',
          f'The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-memory database (the version is not written, so the report is the same on every machine) and the {len(LOAD_ORDER)} files were loaded in filename order with `PRAGMA foreign_keys = ON`: no constraint error, `PRAGMA foreign_key_check` empty, {sum(LOADED.values())} rows.', '',
          '| File | Table | Rows |', '|---|---|---|']
