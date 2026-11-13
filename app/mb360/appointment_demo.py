@@ -9,7 +9,7 @@ import sqlite3
 import uuid
 from datetime import datetime, timedelta
 
-from . import db as dbmod, tci_feed
+from . import db as dbmod, demo_clinical, tci_feed
 
 
 def install(conn: sqlite3.Connection, now: datetime, *, fresh_demo: bool = False) -> None:
@@ -45,6 +45,7 @@ def install(conn: sqlite3.Connection, now: datetime, *, fresh_demo: bool = False
         if fresh_demo:
             lmp = now.date() - timedelta(days=fixture["gestational_days"])
             edd = (lmp + timedelta(days=280)).isoformat()
+            demo_clinical.install_visits(conn, user, lmp, fixture["visits"])
             first, last = conn.execute(
                 "SELECT MIN(visit_date), MAX(visit_date) FROM VISIT WHERE user_id=?", (user,)
             ).fetchone()
@@ -52,6 +53,8 @@ def install(conn: sqlite3.Connection, now: datetime, *, fresh_demo: bool = False
                 when = f"{last} {fixture['time']}"
             conn.execute("UPDATE PREGNANCY_PROFILE SET edd=?, lmp=?, first_visit_date=? WHERE user_id=?",
                          (edd, lmp.isoformat() if fixture.get("use_lmp") else None, first, user))
+            demo_clinical.align_cases(conn, user, lmp, now.date(), fixture["tci_ref"])
+            demo_clinical.install_case(conn, user, fixture.get("clinical_case"), lmp, now)
         elif fixture["days_until_edd"] is not None:
             edd = (now.date() + timedelta(days=fixture["days_until_edd"])).isoformat()
             conn.execute("UPDATE PREGNANCY_PROFILE SET edd=? WHERE user_id=?", (edd, user))

@@ -25,11 +25,11 @@ DOCTOR, NURSE = _id("doctor"), _id("nurse")
 
 # (days before today, week, type, conclusion, doctor's note, image, length cm, weight g, BP, fetal heart rate, weight kg, fasting glucose)
 VISITS = (
-    (2, 24, "Khám thai định kỳ tuần 24", "Thai phát triển phù hợp tuổi thai", "Thai phát triển phù hợp tuổi thai. Mẹ tiếp tục đo huyết áp sáng – tối tại nhà.", "us-24", 30.0, 650, "118/76", "148", "58.2", "5.2"),
-    (30, 20, "Siêu âm hình thái tuần 20", "Hình thái thai trong giới hạn bình thường", "Siêu âm hình thái chưa thấy bất thường. Hẹn khám lại sau 4 tuần.", "us-20", 25.0, 320, "116/74", "152", "56.4", "4.9"),
-    (58, 16, "Khám thai định kỳ tuần 16", "Thai phát triển tốt", "Mẹ ăn uống tốt hơn, bớt nghén. Tiếp tục viên sắt theo đơn.", "us-16", 11.6, 110, "114/74", "150", "54.1", None),
-    (86, 12, "Sàng lọc quý 1 tuần 12", "Kết quả sàng lọc nguy cơ thấp", "Độ mờ da gáy trong giới hạn. Kết quả sàng lọc nguy cơ thấp.", "us-12", 6.1, 18, "112/72", "158", "52.8", None),
-    (116, 8, "Khám thai lần đầu tuần 8", "Thai trong tử cung, có tim thai", "Đã thấy tim thai. Bác sĩ dặn mẹ bổ sung axit folic theo đơn.", "us-8", 1.6, 1, "110/70", "165", "52.0", None),
+    (4, 24, "Khám thai định kỳ tuần 24", "Thai phát triển phù hợp tuổi thai", "Thai phát triển phù hợp tuổi thai. Mẹ tiếp tục đo huyết áp sáng – tối tại nhà.", "us-24", 30.0, 650, "116/74", "146", "58.0", None),
+    (32, 20, "Siêu âm hình thái tuần 20", "Hình thái thai trong giới hạn bình thường", "Siêu âm hình thái chưa thấy bất thường. Hẹn khám lại sau 4 tuần.", "us-20", 25.0, 320, "114/72", "148", "56.5", None),
+    (60, 16, "Khám thai định kỳ tuần 16", "Thai phát triển tốt", "Mẹ ăn uống tốt hơn, bớt nghén. Tiếp tục viên sắt theo đơn.", None, None, None, "112/72", "150", "55.0", None),
+    (88, 12, "Sàng lọc quý 1 tuần 12", "Kết quả sàng lọc nguy cơ thấp", "Độ mờ da gáy trong giới hạn. Kết quả sàng lọc nguy cơ thấp.", "us-12", 6.1, 18, "112/70", "154", "54.0", None),
+    (116, 8, "Khám thai lần đầu tuần 8", "Thai trong tử cung, có tim thai", "Đã thấy tim thai. Bác sĩ dặn mẹ bổ sung axit folic theo đơn.", None, None, None, "110/70", "148", "53.0", None),
 )
 # (days before today, HH:MM, value): home blood pressure reports with no case (normal, no symptoms)
 BP_HOME = ((26, "20:10", "116/76"), (23, "07:05", "118/78"), (19, "20:15", "121/77"), (15, "07:10", "117/75"), (12, "20:05", "119/78"),
@@ -97,11 +97,13 @@ def install(conn: sqlite3.Connection, now: datetime) -> str:
     for n, week, kind, conclusion, note, image, length, weight, bp, fhr, kg, glucose in VISITS:
         vid = _id(f"visit/{week}")
         conn.execute("""INSERT INTO VISIT (visit_id, user_id, visit_date, facility, visit_type, conclusion, doctor_note, ultrasound_image, fetal_length, estimated_fetal_weight, ultrasound_report_date, gestational_week)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (vid, USER, day(n), FACILITY, kind, conclusion, note, f"demo/{image}.svg", length, weight, day(n), week))
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (vid, USER, day(n), FACILITY, kind, conclusion, note, f"demo/{image}.svg" if image else None, length, weight, day(n) if image else None, week))
         when = at(n, "09:30")
         record(f"v{week}/bp", "Blood pressure", "Group 2", bp, "mmHg", when, "From visit", week, vid)
         record(f"v{week}/fhr", "Fetal heart rate", "Visit", fhr, "bpm", when, "From visit", week, vid)
         record(f"v{week}/kg", "Weight", "Group 1", kg, "kg", when, "From visit", week, vid)
+        if week >= 14:
+            record(f"v{week}/protein", "Urine protein", "Group 2", "Negative", None, when, "From visit", week, vid)
         if glucose:
             record(f"v{week}/glu", "Blood glucose", "Group 2", glucose, "mmol/L", when, "From visit", week, vid, "fasting")
 

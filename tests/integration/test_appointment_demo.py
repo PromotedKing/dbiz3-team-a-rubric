@@ -54,7 +54,7 @@ def test_appointment_filter_read_and_host_redirect(demo, db):
     client.get(f'/m/{mother}/home')
     appointment_demo.install(db, NOW)
     assert len(notices.list_for(db, mother, 'Appointment')) == 1
-    assert notices.unread_count(db, mother) == 0
+    assert all(row['read_at'] for row in notices.list_for(db, mother, 'Appointment'))
 
 
 def test_switch_off_stops_new_reminders_but_keeps_received_notices(demo, db):
@@ -125,7 +125,7 @@ def test_fresh_demo_profiles_and_appointments(db, user_id, monkeypatch):
     monkeypatch.setattr(persona, "_copy_art", lambda: None)
     persona.install(db, when)
     expected = {
-        "tci-000123": ("2027-01-04", None, "2026-09-15 09:00"),
+        "tci-000123": ("2027-01-04", None, "2026-11-02 09:00"),
         "tci-000126": ("2027-05-17", None, None),
         "tci-000128": ("2026-11-16", None, "2026-11-13 16:00"),
         "tci-000133": ("2027-07-05", "2026-09-28", "2026-11-14 09:00"),
@@ -142,5 +142,11 @@ def test_fresh_demo_profiles_and_appointments(db, user_id, monkeypatch):
     huong = user_id("tci-000128")
     assert db.execute("SELECT appointment_reminder FROM NOTIFICATION_PREFERENCE WHERE user_id=?", (huong,)).fetchone()[0] == 0
     assert not notices.list_for(db, huong, "Appointment")
+    assert [r[0] for r in db.execute("SELECT gestational_week FROM VISIT WHERE user_id=? ORDER BY visit_date", (huong,))] == [8, 12, 16, 21, 27, 31, 36, 38, 39]
+    assert db.execute("SELECT COUNT(*) FROM CARE_CASE WHERE user_id=? AND status='Escalated to doctor'", (huong,)).fetchone()[0] == 1
+    anh = user_id("tci-000133")
+    assert db.execute("SELECT COUNT(*) FROM CARE_CASE WHERE user_id=? AND case_source='Chatbot' AND status='Not viewed'", (anh,)).fetchone()[0] == 1
+    assert db.execute("SELECT COUNT(*) FROM VISIT WHERE user_id=?", (anh,)).fetchone()[0] == 0
+    assert not db.execute("PRAGMA foreign_key_check").fetchall()
     assert tci_feed.next_appointment(db, huong, when)["days"] == 0
     assert tci_feed.next_appointment(db, user_id("tci-000123"), when) is None

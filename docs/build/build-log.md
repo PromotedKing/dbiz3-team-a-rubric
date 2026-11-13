@@ -1,5 +1,10 @@
 # Build Log
 
+## 13/11/2026: clinical visits and cases for fresh demos (Hải Anh)
+
+- **Scope**: generate week-indexed visits for fresh demos, install them against the PR 1 pregnancy dates, and preserve retained visit and case identities. Add synthetic week 31 and 36 illustrations, Hương's escalated BP report and An Nhiên's chatbot handoff. The fixed CSV baseline and its coverage exceptions remain reproducible. Diary data stays for the next PR.
+- **Validation**: a temporary demo at 13/11/2026 contained 22 visits, 109 metric records and 10 clinical cases. Dashboard queries returned three not viewed, three escalated and four resolved. Generator, data-model and Spec Kit checks passed. Full pytest had 488 passes and two existing D-16 xfails.
+
 ## 13/11/2026: relative pregnancy and appointment dates for the hosted demo (Hải Anh)
 
 - **Scope**: on a fresh demo DB, install the show pregnancy dates and host appointments from the creation date. Keep the plain seed clock and CSVs fixed. Mai's setup suggests the first recorded visit and accepts edits. Reopening a DB with installed host fixtures preserves its dates.
