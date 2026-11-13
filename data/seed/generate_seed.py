@@ -600,6 +600,18 @@ for fixture in APPOINTMENT_DEMO:
     fixture['tci_ref'] = next(row['tci_account_ref'] for row in T['USER_ACCOUNT'] if row['user_id'] == fixture['user_id'])
     fixture['clinical_case'] = {'U06': 'escalated_bp', 'U11': 'chatbot'}.get(key)
 
+# Diary plans are indexed by weeks since the first recorded visit.
+SHOW_DIARIES = {
+    'U04': (1, [1, 2, 1, 2, 3, 3, 3]),
+    'U01': (0, [1, 2, 1, 2, 2, 3, 2, 3] + [5] * 6 + [4] * 11),
+    'U06': (1, [1, 2, 1, 2, 2, 3, 2, 3] + [5] * 13 + [4] * 11),
+    'U11': (0, []),
+}
+for fixture in APPOINTMENT_DEMO:
+    key = next(key for key, user in U.items() if user == fixture['user_id'])
+    phase, counts = SHOW_DIARIES[key]
+    fixture['diary'] = dict(photo_phase=phase, counts=counts)
+
 # ============================================================================= checks
 # The schema is the source of the column order, keys and CHECK constraints.
 DBX = sqlite3.connect(':memory:')
@@ -906,7 +918,7 @@ lines = ['# Seed report', '',
          'S01 and S02 keep the placeholder names drawn in the wireframes ("Trần Thị B", "Nguyễn Văn A"); every other person is invented. Phone numbers follow the fictitious pattern 0900 000 1xx. Guidance templates and chatbot answers are placeholders, not clinical content; the hand-off offer quotes BOT BR-002. Thresholds come only from ALR BR-004 (D-14; D-15 Pending SME).', '',
          'The rows follow the wireframes: Lan (U01) has 2 reports being handled — C9 (symptom) and C10 (chatbot), both "Not viewed" (S-008, S-023, S-029); her 26/09 report C1 is "Resolved" (S-026, S-061); S-064 shows C1 at 20:18, before the nurse handled it.', '',
          'Appointment demo: U11 (An Nhiên) has a next-day host appointment; U04 (Phạm Ngọc Mai) has no appointment. A fresh hosted demo sets relative pregnancy dates, with an earlier visit for U01 and a same-day appointment for U06. Reopening an existing demo preserves its profile and host dates. The generated `appointment-demo.json` stores relative fixture offsets, not an MB360 entity. The simulated host resolves these at startup and creates an unread Appointment notice only when enabled. One-day timing and retaining received notices when disabled are demo assumptions; S-010 Q3/Q4 remain open. See `docs/build/appointment-part-a.md`.', '',
-         'The generated host fixture also contains week-indexed visits for fresh demos. The row-kind and ENUM registers below describe the fixed CSV baseline.', '', '## Load test (gate G3)', '',
+         'The generated host fixture also contains week-indexed visits and diary plans for fresh demos. The row-kind and ENUM registers below describe the fixed CSV baseline.', '', '## Load test (gate G3)', '',
          f'The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-memory database (the version is not written, so the report is the same on every machine) and the {len(LOAD_ORDER)} files were loaded in filename order with `PRAGMA foreign_keys = ON`: no constraint error, `PRAGMA foreign_key_check` empty, {sum(LOADED.values())} rows.', '',
          '| File | Table | Rows |', '|---|---|---|']
 lines += [f'| `{FILE_OF[t]}` | {t} | {LOADED[t]} |' for t in LOAD_ORDER]

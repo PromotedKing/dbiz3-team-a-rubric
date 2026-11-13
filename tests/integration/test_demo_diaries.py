@@ -1,0 +1,50 @@
+"""Diary fixture coverage on the fresh-demo path."""
+from collections import Counter
+from datetime import date, datetime
+
+from fastapi.testclient import TestClient
+
+from mb360 import clock, persona
+from mb360.main import create_app
+
+NOW = datetime(2026, 11, 13, 10)
+
+
+def test_fresh_demo_diary_schedule_and_media(db, user_id, monkeypatch):
+    monkeypatch.setattr(persona, "_copy_art", lambda: None)
+    clock.set(NOW)
+    persona.install(db, NOW)
+    expected = {
+        "126": (7, [1, 2, 1, 2, 3, 3, 3], 5),
+        "200": (8, [1, 2, 1, 2, 2, 3, 2, 3] + [4, 5] * 4 + [4], 19),
+        "123": (8, [1, 2, 1, 2, 2, 3, 2, 3] + [5] * 6 + [4] * 11, 30),
+        "128": (8, [1, 2, 1, 2, 2, 3, 2, 3] + [5] * 13 + [4] * 11, 42),
+        "133": (6, [], 0),
+    }
+    for suffix, (first_week, counts, photos) in expected.items():
+        user = user_id("tci-000" + suffix)
+        rows = db.execute("""SELECT d.entry_date, d.gestational_week, d.mood, COUNT(i.image_id) AS photos
+                             FROM DIARY_ENTRY d LEFT JOIN DIARY_IMAGE i USING(diary_id)
+                             WHERE d.user_id=? GROUP BY d.diary_id ORDER BY d.entry_date""", (user,)).fetchall()
+        assert len(rows) == sum(counts)
+        assert Counter(r["gestational_week"] for r in rows) == dict(enumerate(counts, first_week))
+        assert sum(r["photos"] for r in rows) == photos
+        assert all(r["photos"] <= 1 and date.fromisoformat(r["entry_date"]) < NOW.date() for r in rows)
+        if rows:
+            first, = db.execute("SELECT MIN(visit_date) FROM VISIT WHERE user_id=?", (user,)).fetchone()
+            assert rows[0]["entry_date"] == first
+            assert max(Counter(r["entry_date"] for r in rows).values()) <= 2
+            assert len({r["mood"] for r in rows}) == 5
+            days = [r["entry_date"][-2:] for r in rows if r["gestational_week"] == first_week + len(counts) - 1]
+            assert days == (["09", "11", "12"] if suffix == "126" else ["09", "10", "11", "12"])
+    messages = db.execute("""SELECT u.tci_account_ref, f.week, f.created_at FROM FAMILY_MESSAGE f
+                             JOIN USER_ACCOUNT u USING(user_id) ORDER BY u.tci_account_ref, f.created_at""").fetchall()
+    assert [(r[0], r[1], r[2][:10]) for r in messages] == [
+        ("tci-000123", 32, "2026-11-12"), ("tci-000123", 32, "2026-11-12"),
+        ("tci-000126", 13, "2026-11-12"), ("tci-000128", 39, "2026-11-12"),
+    ]
+    assert not db.execute("PRAGMA foreign_key_check").fetchall()
+    with TestClient(create_app(db)) as client:
+        user = user_id("tci-000133")
+        for page in ("timeline", "journey", "health"):
+            assert client.get(f"/m/{user}/{page}").status_code == 200

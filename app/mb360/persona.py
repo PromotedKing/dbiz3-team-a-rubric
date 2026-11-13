@@ -7,7 +7,7 @@ import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from . import appointment_demo, art, tci_feed
+from . import appointment_demo, art, demo_diary, tci_feed
 from .tml.diary import MEDIA_DIR
 
 TCI_REF = "tci-000200"
@@ -34,23 +34,6 @@ VISITS = (
 # (days before today, HH:MM, value): home blood pressure reports with no case (normal, no symptoms)
 BP_HOME = ((26, "20:10", "116/76"), (23, "07:05", "118/78"), (19, "20:15", "121/77"), (15, "07:10", "117/75"), (12, "20:05", "119/78"),
            (9, "07:05", "121/77"), (6, "20:15", "120/78"), (4, "07:15", "118/76"))
-DIARY = (
-    (2, 24, "Happy", "Hôm nay đi khám, lần đầu nghe rõ tim con đập. Bác sĩ bảo con phát triển tốt, mẹ yên tâm hẳn.", ("bump-1", "hands")),
-    (1, 24, "Happy", "Tối nay bé đạp mạnh lắm, cả nhà cùng đặt tay lên bụng chờ con đạp.", ()),
-    (10, 22, "Calm", "Cuối tuần đi dạo công viên với bố. Trời mát, con đạp nhẹ suốt quãng đường.", ("park",)),
-    (16, 21, "Happy", "Bụng đã to hơn nhiều, áo cũ không còn vừa nữa. Chụp một tấm làm kỷ niệm.", ("bump-2", "flowers")),
-    (24, 20, "Nervous", "Mai đi siêu âm hình thái, mẹ hồi hộp quá. Mong mọi thứ đều ổn.", ()),
-    (29, 20, "Happy", "Siêu âm hình thái xong, bác sĩ nói mọi thứ tốt. Mẹ thở phào, về nhà khoe cả nhà.", ("bump-3",)),
-    (37, 19, "Calm", "Bắt đầu chuẩn bị quần áo sơ sinh. Bộ nào cũng bé xíu, xếp mãi không muốn cất.", ("clothes", "flowers")),
-    (44, 18, "Happy", "Hôm nay lần đầu thấy con máy rõ, như có con cá nhỏ bơi trong bụng.", ("hands",)),
-    (51, 17, "Tired", "Dạo này hay mỏi lưng, tối ngủ phải chèn gối. Bố xoa lưng cho mẹ.", ()),
-    (57, 16, "Happy", "Đi khám về, cả nhà bàn nhau đặt tên ở nhà cho con.", ("bump-2",)),
-    (66, 15, "Calm", "Hết nghén rồi, ăn gì cũng thấy ngon. Mẹ tự nấu bữa tối cho cả nhà.", ("flowers",)),
-    (72, 14, "Happy", "Sang tam cá nguyệt 2 rồi. Viết vài dòng để sau này kể lại cho con nghe.", ("bump-1", "park")),
-    (85, 12, "Worried", "Chờ kết quả sàng lọc mà lo. May kết quả trả về nguy cơ thấp.", ()),
-    (100, 10, "Tired", "Nghén nhiều, mùi gì cũng sợ. Cố ăn từng chút một vì con.", ()),
-    (113, 8, "Happy", "Lần đầu nghe tim con trong phòng siêu âm. Mẹ khóc lúc nào không hay.", ("hands",)),
-)
 GUIDANCE = "Nằm nghỉ nghiêng trái 15 phút rồi đo lại.\nĐau đầu không giảm, mờ mắt hoặc đau vùng trên rốn: đến viện ngay."
 BP_RESPONSE = ("Chỉ số vượt ngưỡng theo dõi. Mẹ chưa có dấu hiệu nguy hiểm, nhưng cần theo dõi sát 3 ngày tới và khám lại sớm hơn lịch.\n"
                "- Nằm nghỉ nghiêng trái 15 phút rồi đo lại, báo kết quả ở Trang chủ.\n"
@@ -186,11 +169,8 @@ def install(conn: sqlite3.Connection, now: datetime) -> str:
     history(bot, "Resolved", at(4, "22:00"), NURSE, "Nurse")
     respond("bot", bot, NURSE, "Nurse", "Y tá Lan đã gọi tư vấn. Mẹ nghỉ ngơi, theo dõi thêm và báo lại nếu đau tăng.", at(4, "22:00"))
 
-    for n, week, mood, text, photos in DIARY:
-        did = _id(f"diary/{n}")
-        conn.execute("INSERT INTO DIARY_ENTRY (diary_id, user_id, text, mood, gestational_week, entry_date) VALUES (?, ?, ?, ?, ?, ?)", (did, USER, text, mood, week, day(n)))
-        for order, photo in enumerate(photos, start=1):
-            conn.execute("INSERT INTO DIARY_IMAGE (image_id, diary_id, file, sort_order) VALUES (?, ?, ?, ?)", (_id(f"img/{n}/{order}"), did, f"demo/{photo}.svg", order))
+    diary_counts = [1, 2, 1, 2, 2, 3, 2, 3] + [4, 5] * 4 + [4]
+    demo_diary.install(conn, USER, today - timedelta(days=GESTATIONAL_DAYS), today, diary_counts, 0)
 
     # Self-tracked metrics: this morning (or as early as the clock allows) and the weeks before
     morning = min(now, datetime.combine(today, datetime.min.time()) + timedelta(hours=7, minutes=30)).strftime("%Y-%m-%d %H:%M")
