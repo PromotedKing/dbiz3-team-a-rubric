@@ -3,6 +3,7 @@
 ## 14/11/2026: staff notices for the five-mother demo (Hải Anh)
 
 - Replay staff actions against the fresh demo DB using CLI guidance and ALR notification handlers. Keep An Nhiên's Appointment notice and Hương's appointment switch. Simulated 13/11 with 7 read and 14 unread notices, and one Chatbot case moving to Viewed.
+- Expanded deterministic diary endings after the 13/11 audit. Every mother's most frequent ending is now below 20%. Integration coverage checks the repetition cap and the recorded visit week.
 
 ## 13/11/2026: relative diary history for fresh demos (Hải Anh)
 

@@ -15,8 +15,28 @@ NOTES = (
      "Chiều nay mình ngồi cạnh cửa sổ lâu hơn mọi ngày.", "Mình gấp lại chăn nhỏ rồi nhắn bà là cả nhà đang mong con.",
      "Tối nay bố nấu cơm, mình ngồi chọn bài hát muốn nghe cùng con."),
 )
-DETAILS = ("Trời mát nên mình mở cửa sổ một lúc.", "Mình muốn nhớ cả những chuyện nhỏ như thế này.",
-           "Lúc ghi lại, mình vẫn thấy vui.", "Mình nhắn cho bố đọc cùng.", "Giờ thì mình cất điện thoại đi nghỉ.")
+DETAILS = (
+    "Mình để cuốn sổ cạnh giường để mai còn nhớ viết.",
+    "Bố đọc xong rồi kể thêm chuyện của bố hôm nay.",
+    "Ngoài trời bắt đầu mưa khi mình viết đến dòng này.",
+    "Mình ghi vài chữ thôi rồi tắt đèn.",
+    "Cả nhà nói chuyện thêm một lát sau bữa tối.",
+    "Mình để dành tấm hình hôm nay trong thư mục của con.",
+    "Lúc ngồi xuống viết, mình mới nhận ra ngày trôi nhanh thật.",
+    "Mình pha một ly nước ấm rồi ngồi thêm một lúc.",
+    "Bà gọi hỏi thăm, hai bà cháu nói chuyện lâu hơn dự tính.",
+    "Mình nghe lại một bài hát cũ trước khi đi ngủ.",
+    "Mình đánh dấu trang này để sau này tìm lại.",
+)
+VISIT_DETAILS = {
+    True: ("Mình cất lại hình siêu âm để sau này xem cùng con.",
+           "Hai đứa ngồi xem lại hình siêu âm khi về đến nhà.",
+           "Mình để hình siêu âm vào bìa hồ sơ cùng giấy khám."),
+    False: ("Về nhà mình ghi lại vài điều muốn nhớ sau buổi khám.",
+            "Mình cất giấy khám vào bìa hồ sơ rồi mới đi ăn.",
+            "Trên đường về, mình kể cho bố nghe buổi khám hôm nay."),
+}
+
 
 
 def install(conn, user, lmp, today, counts, photo_phase):
@@ -39,11 +59,11 @@ def install(conn, user, lmp, today, counts, photo_phase):
                 raise ValueError("Demo diary date outside recorded pregnancy history")
             stage = 0 if week < 14 else 1 if week < 28 else 2
             note = NOTES[stage][ordinal % len(NOTES[stage])]
-            detail = DETAILS[(ordinal // len(NOTES[stage]) + week) % len(DETAILS)]
+            detail = DETAILS[(ordinal + ordinal // len(NOTES[stage])) % len(DETAILS)]
             if day in visits:
                 note = f"Hôm nay mình đi khám thai tuần {week}."
-                detail = ("Mình cất lại hình siêu âm để sau này xem cùng con." if visits[day]
-                          else "Về nhà mình ghi lại vài điều muốn nhớ sau buổi khám.")
+                options = VISIT_DETAILS[bool(visits[day])]
+                detail = options[week % len(options)]
             diary = uuid.uuid5(uuid.NAMESPACE_URL, f"mb360-demo-diary/{user}/{week}/{offset}")
             conn.execute("INSERT INTO DIARY_ENTRY VALUES (?,?,?,?,?,?)",
                          (str(diary), user, f"{note} {detail}", MOODS[ordinal % len(MOODS)], week, day.isoformat()))

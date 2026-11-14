@@ -37,6 +37,15 @@ def test_fresh_demo_diary_schedule_and_media(db, user_id, monkeypatch):
             assert len({r["mood"] for r in rows}) == 5
             days = [r["entry_date"][-2:] for r in rows if r["gestational_week"] == first_week + len(counts) - 1]
             assert days == (["09", "11", "12"] if suffix == "126" else ["09", "10", "11", "12"])
+        if rows:
+            entries = db.execute("SELECT entry_date,text,gestational_week FROM DIARY_ENTRY WHERE user_id=?", (user,)).fetchall()
+            endings = Counter(entry["text"].split(". ")[-1] for entry in entries)
+            assert max(endings.values()) / len(entries) <= 0.20
+            visits = dict(db.execute("SELECT visit_date,gestational_week FROM VISIT WHERE user_id=?", (user,)))
+            for entry in entries:
+                visit_week = visits.get(entry["entry_date"])
+                if visit_week is not None:
+                    assert entry["text"].startswith(f"Hôm nay mình đi khám thai tuần {visit_week}.")
     messages = db.execute("""SELECT u.tci_account_ref, f.week, f.created_at FROM FAMILY_MESSAGE f
                              JOIN USER_ACCOUNT u USING(user_id) ORDER BY u.tci_account_ref, f.created_at""").fetchall()
     assert [(r[0], r[1], r[2][:10]) for r in messages] == [
