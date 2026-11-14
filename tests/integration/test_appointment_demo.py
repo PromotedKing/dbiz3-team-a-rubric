@@ -145,7 +145,7 @@ def test_fresh_demo_profiles_and_appointments(db, user_id, monkeypatch):
     assert [r[0] for r in db.execute("SELECT gestational_week FROM VISIT WHERE user_id=? ORDER BY visit_date", (huong,))] == [8, 12, 16, 21, 27, 31, 36, 38, 39]
     assert db.execute("SELECT COUNT(*) FROM CARE_CASE WHERE user_id=? AND status='Escalated to doctor'", (huong,)).fetchone()[0] == 1
     anh = user_id("tci-000133")
-    assert db.execute("SELECT COUNT(*) FROM CARE_CASE WHERE user_id=? AND case_source='Chatbot' AND status='Not viewed'", (anh,)).fetchone()[0] == 1
+    assert db.execute("SELECT COUNT(*) FROM CARE_CASE WHERE user_id=? AND case_source='Chatbot' AND status='Viewed'", (anh,)).fetchone()[0] == 1
     assert db.execute("SELECT COUNT(*) FROM VISIT WHERE user_id=?", (anh,)).fetchone()[0] == 0
     assert not db.execute("PRAGMA foreign_key_check").fetchall()
     assert tci_feed.next_appointment(db, huong, when)["days"] == 0

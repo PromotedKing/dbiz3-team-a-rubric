@@ -57,6 +57,7 @@ def install(conn: sqlite3.Connection, now: datetime, *, fresh_demo: bool = False
                          (edd, lmp.isoformat() if fixture.get("use_lmp") else None, first, user))
             demo_clinical.align_cases(conn, user, lmp, now.date(), fixture["tci_ref"])
             demo_clinical.install_case(conn, user, fixture.get("clinical_case"), lmp, now)
+            demo_clinical.install_staff_notices(conn, user, fixture["tci_ref"], now)
         elif fixture["days_until_edd"] is not None:
             edd = (now.date() + timedelta(days=fixture["days_until_edd"])).isoformat()
             conn.execute("UPDATE PREGNANCY_PROFILE SET edd=? WHERE user_id=?", (edd, user))
