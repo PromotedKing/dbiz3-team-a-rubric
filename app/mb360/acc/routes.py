@@ -8,7 +8,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from .. import appointment_demo, clock, persona, tci_feed, ui
+from .. import appointment_demo, clock, persona, tci_booking, tci_feed, ui
 from ..alr.reports import gestational_week
 from ..alr.validation import GROUP2
 from ..hlt import dashboard
@@ -50,10 +50,12 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         ident["tci_account_ref"] = ident["tci_account_ref"] or f"tci-sim-{uuid.uuid4().hex[:8]}"
         return ident
 
+    host_account, remember_host = tci_booking.register(app, conn, page)
+
     @app.get("/tci", response_class=HTMLResponse)
     def tci_home(request: Request):
         """Màn 1: the home screen of the TCI app, signed in as one account."""
-        return page(request, "tci_home.html", account=tci_feed.host_account(conn), fields=IDENTITY)
+        return page(request, "tci_home.html", account=host_account(request), fields=IDENTITY)
 
     @app.get("/tci/accounts", response_class=HTMLResponse)
     def tci_accounts(request: Request):
@@ -69,7 +71,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
             return page(request, "not_female.html")
         if outcome == "consent":
             return page(request, "consent.html", ident=ident, error=None)
-        return signed_in(user_id, outcome)
+        return remember_host(signed_in(user_id, outcome), user_id)
 
     @app.post("/tci/consent", response_class=HTMLResponse)
     async def tci_consent(request: Request):
@@ -234,8 +236,3 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         except profile.ProfileError:
             return page(request, "notif_settings.html", 422, user=user, prefs=profile.preferences(conn, user_id))
         return RedirectResponse(f"/m/{user_id}/settings/notifications", status_code=303)
-
-    @app.get("/tci/booking", response_class=HTMLResponse)
-    def tci_booking(request: Request):
-        """"Book" tab of the simulated TCI host: the TCI app's booking flow, no screen in the sub-app (spec-APT BR-001)."""
-        return page(request, "tci_booking.html")

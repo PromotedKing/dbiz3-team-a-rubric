@@ -137,10 +137,10 @@ def test_home_report_button_opens_a_metric_from_the_instructions(client, user_id
     assert f'href="/m/{u06}/report?metric=Symptom"' in client.get(f"/m/{u06}/home").text          # no instruction
 
 
-def test_book_tab_of_the_tci_host_stores_nothing(client, db):
+def test_book_tab_opens_tci_form_without_writing(client, db):
     before = db.total_changes
     page = client.get("/tci/booking").text
-    assert vi("TCI app booking flow") in page and db.total_changes == before    # APT BR-002
+    assert "Đặt lịch khám" in page and "Phí khám dự kiến" in page and db.total_changes == before    # APT BR-002
     assert 'href="/tci/booking"' in client.get("/tci").text
 
 
