@@ -1,5 +1,9 @@
 # Build Log
 
+## 14/11/2026: staff notices for the five-mother demo (Hải Anh)
+
+- Replay staff actions against the fresh demo DB using CLI guidance and ALR notification handlers. Keep An Nhiên's Appointment notice and Hương's appointment switch. Simulated 13/11 with 7 read and 14 unread notices, and one Chatbot case moving to Viewed.
+
 ## 13/11/2026: relative diary history for fresh demos (Hải Anh)
 
 - **Scope**: generate weekly diary plans and install them against the visit calendar. Replace the old diary rows only on fresh demos, reuse the seven existing illustration assets and align retained family messages with the current pregnancy week. Keep CSV fixtures and the seed clock fixed.

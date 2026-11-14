@@ -3,7 +3,8 @@ import json
 import uuid
 from datetime import date, datetime, timedelta
 
-from .alr import cases, reports, thresholds
+from .acc.notices import open_notice
+from .alr import cases, notifications, reports, thresholds
 from .bot.chat import HANDOFF_TEXT
 from .cli import actions
 
@@ -105,3 +106,52 @@ def install_case(conn, user, kind, lmp, now):
         conn.commit()
         actions.mark_viewed(conn, case, nurse, measured + timedelta(minutes=5))
         actions.escalate(conn, case, nurse, measured + timedelta(minutes=10))
+
+def install_staff_notices(conn, user, ref, now):
+    """Replay demo staff events through the same handlers as the clinical web."""
+    if ref not in {"tci-000126", "tci-000128", "tci-000133"}:
+        return
+    nurse = conn.execute("SELECT staff_id FROM STAFF WHERE full_name='Trần Thị B'").fetchone()[0]
+    follow_up = conn.execute("SELECT template_id FROM GUIDANCE_TEMPLATE WHERE title='Follow-up visit'").fetchone()[0]
+    if ref == "tci-000133":
+        case, created = conn.execute("SELECT case_id,created_at FROM CARE_CASE WHERE user_id=? AND case_source='Chatbot'", (user,)).fetchone()
+        at = datetime.fromisoformat(created)
+        actions.mark_viewed(conn, case, nurse, at)
+        contact = conn.execute("SELECT template_id FROM GUIDANCE_TEMPLATE WHERE title='Contact the hospital'").fetchone()[0]
+        actions.send_guidance(conn, case, nurse, at, template_id=contact)
+        return
+
+    if ref == "tci-000126":
+        response = conn.execute("""SELECT s.* FROM STAFF_RESPONSE s JOIN CARE_CASE c USING(case_id)
+                                   JOIN METRIC_REPORT r ON r.report_id=c.metric_report_id
+                                   WHERE c.user_id=? AND r.report_code='BC-0926-011' AND s.responder_role='Doctor'""", (user,)).fetchone()
+        notifications.notify(conn, response["case_id"], "response", datetime.fromisoformat(response["sent_at"]),
+                             staff_id=response["responder_id"])
+        escalation = conn.execute("""SELECT n.notification_id FROM NOTIFICATION n JOIN CASE_STATUS_HISTORY h
+                                      ON h.case_id=n.case_id AND h.changed_at=n.created_at
+                                      WHERE n.user_id=? AND h.status='Escalated to doctor'""", (user,)).fetchone()
+        if escalation:
+            open_notice(conn, user, escalation[0], now)
+    else:
+        case, doctor, escalated = conn.execute("""SELECT c.case_id,c.assigned_doctor_id,h.changed_at FROM CARE_CASE c
+                                                   JOIN CASE_STATUS_HISTORY h USING(case_id)
+                                                   WHERE c.user_id=? AND h.status='Escalated to doctor'""", (user,)).fetchone()
+        at = datetime.fromisoformat(escalated)
+        actions.send_guidance(conn, case, nurse, at + timedelta(minutes=5), template_id=follow_up)
+        nurse_notice = conn.execute("SELECT notification_id FROM NOTIFICATION WHERE case_id=? AND created_at=?",
+                                    (case, (at + timedelta(minutes=5)).strftime(reports.DB_TIME))).fetchone()[0]
+        open_notice(conn, user, nurse_notice, at + timedelta(minutes=6))
+        actions.send_guidance(conn, case, doctor, at + timedelta(minutes=10), template_id=follow_up)
+        # These are show preferences only. Keep the appointment reminder off.
+        conn.execute("""UPDATE NOTIFICATION_PREFERENCE SET new_visit_result=1, watch_flag_reminder=1,
+                        updated_at=? WHERE user_id=?""", (at.strftime(reports.DB_TIME), user))
+        flag, doctor_name = conn.execute("""SELECT w.flag_id,s.full_name FROM WATCH_FLAG w JOIN STAFF s ON s.staff_id=w.flagged_by
+                                            WHERE w.user_id=? AND w.metric='Blood pressure' AND w.active=1""", (user,)).fetchone()
+        conn.execute("""INSERT INTO NOTIFICATION (notification_id,user_id,type,title,subtitle,created_at,watch_flag_id)
+                        VALUES (?,?,'Instruction reminder',?,?,?,?)""",
+                     (_id(user, "bp-reminder"), user, "Bác sĩ nhắc mẹ đo và báo huyết áp",
+                      f"Chỉ định của bác sĩ {doctor_name}", (at + timedelta(days=1)).strftime(reports.DB_TIME), flag))
+
+    visit, day = conn.execute("SELECT visit_id,visit_date FROM VISIT WHERE user_id=? ORDER BY visit_date DESC LIMIT 1",
+                              (user,)).fetchone()
+    notifications.notify_visit_result(conn, visit, datetime.fromisoformat(f"{day} 11:00"))

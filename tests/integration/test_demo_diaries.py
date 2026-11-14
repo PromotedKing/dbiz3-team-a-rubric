@@ -48,3 +48,27 @@ def test_fresh_demo_diary_schedule_and_media(db, user_id, monkeypatch):
         user = user_id("tci-000133")
         for page in ("timeline", "journey", "health"):
             assert client.get(f"/m/{user}/{page}").status_code == 200
+
+def test_fresh_demo_staff_notices_match_events(db, user_id, monkeypatch):
+    monkeypatch.setattr(persona, "_copy_art", lambda: None)
+    persona.install(db, NOW)
+    assert dict(db.execute("SELECT read_at IS NOT NULL, COUNT(*) FROM NOTIFICATION GROUP BY 1")) == {0: 14, 1: 7}
+    for suffix in ("123", "126", "128", "133", "200"):
+        user = user_id("tci-000" + suffix)
+        assert db.execute("""SELECT 1 FROM NOTIFICATION n WHERE user_id=? AND (
+                             visit_id IS NOT NULL OR watch_flag_id IS NOT NULL OR EXISTS (
+                             SELECT 1 FROM STAFF_RESPONSE s WHERE s.case_id=n.case_id))""", (user,)).fetchone()
+    responses = db.execute("""SELECT n.created_at,s.sent_at,n.read_at,s.responder_role FROM NOTIFICATION n
+                              JOIN STAFF_RESPONSE s ON s.case_id=n.case_id AND s.sent_at=n.created_at
+                              WHERE n.title LIKE '% responded to your %'""").fetchall()
+    assert Counter((r["responder_role"], r["read_at"] is not None) for r in responses) == {
+        ("Doctor", False): 2, ("Nurse", False): 1, ("Nurse", True): 1,
+    }
+    assert all(r["created_at"] == r["sent_at"] for r in responses)
+    assert not db.execute("""SELECT 1 FROM NOTIFICATION n JOIN VISIT v USING(visit_id)
+                             WHERE n.user_id<>v.user_id OR substr(n.created_at,1,10)<v.visit_date""").fetchone()
+    anh = user_id("tci-000133")
+    assert db.execute("SELECT read_at FROM NOTIFICATION WHERE user_id=? AND type='Appointment'", (anh,)).fetchone()[0] is None
+    assert dict(db.execute("SELECT status, COUNT(*) FROM CARE_CASE GROUP BY status")) == {
+        "Not viewed": 2, "Viewed": 1, "Escalated to doctor": 3, "Resolved": 4,
+    }
