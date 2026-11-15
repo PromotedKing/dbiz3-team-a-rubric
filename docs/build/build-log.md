@@ -1,5 +1,11 @@
 # Build Log
 
+## 14/11/2026: simulated TCI booking and history (Hải Anh)
+
+- Added host-only booking, confirmation and cancellation. Fresh demo databases install 22 completed appointments linked to visits, plus three current appointments. The fixed MB360 schema and CSV seed remain at 26 tables and 141 rows.
+- The host remembers the selected demo account independently of the sub-app session. Confirmation validates the slot in a write transaction and reuses the same appointment ID on a retry. Reminder preferences are stored on the host appointment.
+- Simulated 14/11/2026 at 10:00 in a temporary DB and verified booking and cancellation through HTTP. Generator, data-model and active Spec Kit checks passed.
+
 ## 14/11/2026: staff notices for the five-mother demo (Hải Anh)
 
 - Replay staff actions against the fresh demo DB using CLI guidance and ALR notification handlers. Keep An Nhiên's Appointment notice and Hương's appointment switch. Simulated 13/11 with 7 read and 14 unread notices, and one Chatbot case moving to Viewed.

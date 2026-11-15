@@ -1,0 +1,18 @@
+{% extends "tci_base.html" %}
+{% block content %}
+<h1 class="t-title">Xác nhận đặt lịch</h1>
+<div class="card bd">
+  <strong>{{ account.full_name }} · Tôi</strong>
+  <p>{{ facility }} · {{ specialty }}</p><p>{{ doctor.full_name }}</p>
+  <p>{{ when.strftime('%d/%m/%Y · %H:%M') }}</p><p>{{ reason }}</p>
+  <p>Phí khám dự kiến · {{ "{:,}".format(fee).replace(",", ".") }} đ</p>
+</div>
+<form action="/tci/booking/confirm" method="post" class="bl">
+  <input type="hidden" name="payload" value="{{ payload }}"><input type="hidden" name="signature" value="{{ signature }}">
+  <h2 class="t-title">Cài đặt thông báo nhắc hẹn khám</h2>
+  <label><input type="checkbox" name="reminder_enabled" role="switch"> Bật nhắc hẹn</label>
+  <div class="grid2"><div class="fld"><label for="reminder_day">Ngày nhắc</label><input class="inp" type="date" id="reminder_day" name="reminder_day" value="{{ reminder_day }}"></div>
+  <div class="fld"><label for="reminder_time">Giờ nhắc</label><input class="inp" type="time" id="reminder_time" name="reminder_time" value="{{ reminder_time }}"></div></div>
+  <button class="btn full">Xác nhận đặt lịch</button>
+</form>
+{% endblock %}

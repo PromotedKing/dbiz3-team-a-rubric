@@ -1,9 +1,16 @@
-{#- "Book" tab of the TCI host: the TCI app's own booking flow (spec-APT BR-001). The sub-app has no booking screen. -#}
 {% extends "tci_base.html" %}
 {% block content %}
-<div class="card bd" style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px">
-  <div class="fe">{{ icon.tci_feature("calendar") }}</div>
-  <p class="t-title">{{ _("TCI app booking flow") }}</p>
-  <p class="t-body" style="color:#6F6F6F">{{ _("Booking happens in the TCI app. This page stands in for it; no appointment is stored in Mother & Baby 360.") }}</p>
-</div>
+<h1 class="t-title">Đặt lịch khám</h1>
+<div class="card bd"><strong>{{ account.full_name }} · Tôi</strong><p>{{ account.date_of_birth | dmy }} · {{ _(account.sex) }}</p></div>
+<form action="/tci/booking" method="post" class="bl">
+  <div class="fld"><label for="facility">Cơ sở khám</label><select class="inp" id="facility" name="facility"><option>{{ facility }}</option></select></div>
+  <div class="fld"><label for="mode">Hình thức chọn</label><select class="inp" id="mode" name="mode"><option value="doctor">Theo bác sĩ</option><option value="specialty">Theo chuyên khoa</option></select></div>
+  <div class="fld"><label for="doctor">Bác sĩ</label><select class="inp" id="doctor" name="doctor">{% for doctor in doctors %}<option value="{{ doctor.staff_id }}">{{ doctor.full_name }}</option>{% endfor %}</select></div>
+  <div class="fld"><label for="specialty">Chuyên khoa · 07:00–20:00</label><select class="inp" id="specialty" name="specialty"><option>{{ specialty }}</option></select></div>
+  <div class="fld"><label for="reason">Lý do khám</label><textarea class="inp" id="reason" name="reason" required maxlength="200"></textarea></div>
+  <div class="grid2"><div class="fld"><label for="day">Ngày khám</label><input class="inp" type="date" id="day" name="day" min="{{ today }}" required></div>
+  <div class="fld"><label for="time">Giờ khám</label><input class="inp" type="time" id="time" name="time" min="07:00" max="20:00" required></div></div>
+  <p>Phí khám dự kiến · {{ "{:,}".format(fee).replace(",", ".") }} đ</p>
+  <button class="btn full">Đặt lịch</button>
+</form>
 {% endblock %}

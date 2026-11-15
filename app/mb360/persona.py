@@ -7,7 +7,7 @@ import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from . import appointment_demo, art, demo_diary, tci_feed
+from . import appointment_demo, art, demo_diary, tci_booking, tci_feed
 from .tml.diary import MEDIA_DIR
 
 TCI_REF = "tci-000200"
@@ -183,5 +183,6 @@ def install(conn: sqlite3.Connection, now: datetime) -> str:
                  (USER, edd.isoformat(), f"{today + timedelta(days=7)} 08:30", FACILITY))
     conn.commit()
     appointment_demo.install(conn, now, fresh_demo=True)
+    tci_booking.install(conn, now)
     _copy_art()
     return USER

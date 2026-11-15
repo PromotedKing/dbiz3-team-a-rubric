@@ -9,7 +9,7 @@ import sqlite3
 import uuid
 from datetime import datetime, timedelta
 
-from . import db as dbmod, demo_clinical, demo_diary, tci_feed
+from . import db as dbmod, demo_clinical, demo_diary, tci_booking, tci_feed
 
 
 def install(conn: sqlite3.Connection, now: datetime, *, fresh_demo: bool = False) -> None:
@@ -43,6 +43,8 @@ def install(conn: sqlite3.Connection, now: datetime, *, fresh_demo: bool = False
         offset = fixture["days_until_appointment"]
         when = f"{now.date() + timedelta(days=offset)} {fixture['time']}" if offset is not None else None
         if fresh_demo:
+            if offset == 0:
+                when = tci_booking.same_day_slot(now).strftime("%Y-%m-%d %H:%M")
             lmp = now.date() - timedelta(days=fixture["gestational_days"])
             edd = (lmp + timedelta(days=280)).isoformat()
             demo_clinical.install_visits(conn, user, lmp, fixture["visits"])

@@ -1,0 +1,25 @@
+{% extends "tci_base.html" %}
+{% set labels = {"Pending": "Chờ xác nhận", "Confirmed": "Đã xác nhận", "Cancelled": "Đã hủy", "Completed": "Đã khám"} %}
+{% block content %}
+<h1 class="t-title">Lịch sử đặt hẹn</h1>
+<div class="grid2">
+  <a class="btn so" href="/tci/appointments" {% if not history %}aria-current="page"{% endif %}>Lịch hiện tại</a>
+  <a class="btn so" href="/tci/appointments?tab=history" {% if history %}aria-current="page"{% endif %}>Lịch sử đặt</a>
+</div>
+{% for row in rows %}
+  <article class="card bd" data-appointment-id="{{ row.appointment_id }}">
+    <strong>{{ row.reason }}</strong> <span class="tag">{{ labels[row.status] }}</span>
+    <p>{{ row.appointment_at[:10] | dmy }} · {{ row.appointment_at[11:] }}</p>
+    <p>{{ row.facility }} · {{ row.specialty }}</p>
+    <p>{{ row.doctor or "Chưa ghi nhận bác sĩ" }}</p>
+    {% if history and row.status in ("Pending", "Confirmed") %}
+    <p>Đã qua giờ hẹn, chưa ghi nhận lần khám.</p>
+    {% elif not history and not row.visit_id %}
+    <form method="post" action="/tci/appointments/{{ row.appointment_id }}/cancel"><button class="btn so">Hủy lịch</button></form>
+    {% endif %}
+  </article>
+{% else %}
+  <div class="card bd"><p>Bạn chưa có lịch hẹn nào!</p></div>
+{% endfor %}
+<a class="btn full" href="/tci/booking">Đặt hẹn ngay</a>
+{% endblock %}
