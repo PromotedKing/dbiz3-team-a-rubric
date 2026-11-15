@@ -15,7 +15,8 @@
       {% if b.kind == "question" %}
         <p class="me">{{ b.m.text }}</p>
       {% elif b.kind == "answer" %}
-        <div class="bot"><p>{{ b.m.text | t_known }}</p><p class="t-cap" style="margin-top:6px">{{ _("For reference only; does not replace your doctor's advice.") }}</p></div>
+        <div class="bot"><p>{{ b.m.text | t_known }}</p><p class="t-cap" style="margin-top:6px">{{ _("For reference only; does not replace your doctor's advice.") }}</p>
+          {%- if b.danger_topic %}<p class="t-cap" style="margin-top:4px" data-hotline>{{ _("If you have any emergency signs, call {hotline}.", hotline=hotline) }}</p>{% endif %}</div>
       {% elif b.kind == "lookup" %}
         <div class="bot" data-lookup><p style="white-space:pre-line">{{ b.m.text }}</p>
           <p class="t-cap" style="margin-top:6px">{{ _("The chatbot only repeats your data from the app and does not assess it. If you are worried, ask a nurse.") }}</p>

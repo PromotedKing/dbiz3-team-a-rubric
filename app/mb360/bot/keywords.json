@@ -7,7 +7,8 @@
     "chảy máu", "ra máu", "xuất huyết", "đau bụng quằn quại", "đau bụng dữ dội", "co thắt", "hoa mắt", "chóng mặt",
     "ngất", "không thấy thai máy", "thai không máy", "vỡ ối", "rỉ ối",
     "không đạp", "ít đạp", "đạp yếu", "không thấy đạp", "không thấy con đạp", "co giật", "đau đầu dữ dội", "phù mặt", "phù tay",
-    "ối vỡ", "vỡ nước ối", "rỉ nước ối", "rò rỉ nước ối", "chảy nước ối", "ra nước ối", "nước ối chảy"
+    "ối vỡ", "vỡ nước ối", "rỉ nước ối", "rò rỉ nước ối", "chảy nước ối", "ra nước ối", "nước ối chảy",
+    "waters break*", "water break*"
   ],
   "personal_health_markers": [
     "i have", "i've had", "i feel", "i am feeling", "i'm feeling", "my baby is", "my blood", "my result", "is that normal",
@@ -154,6 +155,27 @@
     ],
     "fillers": [
       "bị", "có", "thấy", "hề", "dấu", "hiệu", "have", "has", "had", "any", "been", "see", "seen", "notice", "noticed", "feel", "felt", "experience", "experienced", "experiencing", "am", "is", "are", "was", "signs", "sign", "of"
+    ]
+  },
+  "general_framing": {
+    "status": "PROVISIONAL — decided by the BOT owner 15/11/2026, D-92 proposed, SME to confirm (spec-BOT §10 Q18). A question naming a danger sign is a general question when it says so ('explicit') or asks for knowledge about a third person or a case ('knowledge' + 'third_person'), and nothing says it is happening to the mother ('first_person', 'current'). Matching: bot/classify.py general_framing.",
+    "explicit": [
+      "hỏi chung", "hỏi chung chung", "nói chung", "chỉ hỏi", "hỏi thử", "tìm hiểu", "thắc mắc chung", "hỏi cho biết", "hỏi để biết", "không phải em bị", "không phải mình bị", "không phải tôi bị", "general question", "just asking", "in general", "just curious", "asking in general", "not me"
+    ],
+    "disclaimers": [
+      "không phải em bị", "không phải mình bị", "không phải tôi bị", "not me"
+    ],
+    "knowledge": [
+      "là gì", "là sao", "là bị gì", "là bệnh gì", "là dấu hiệu", "dấu hiệu của", "dấu hiệu gì", "có phải là", "nguyên nhân", "vì sao", "tại sao", "do đâu", "có nguy hiểm không", "nguy hiểm không", "có sao không", "có vấn đề gì", "là có vấn đề", "khi nào cần", "khi nào phải", "cần làm gì", "phải làm gì", "nên làm gì", "phải làm sao", "làm sao", "xử lý thế nào", "what is", "what are", "what causes", "why", "dangerous", "when should", "what does it mean", "what to do"
+    ],
+    "third_person": [
+      "bà bầu", "mẹ bầu", "thai phụ", "sản phụ", "phụ nữ mang thai", "người mang thai", "khi mang thai", "lúc mang thai", "trong thai kỳ", "khi có bầu", "nếu", "trường hợp", "pregnant women", "a pregnant woman", "during pregnancy", "in pregnancy", "if"
+    ],
+    "first_person": [
+      "tôi bị", "em bị", "mình bị", "tôi thấy", "em thấy", "mình thấy", "tôi đang", "em đang", "mình đang", "con em", "con mình", "bé nhà em", "của em", "của mình", "của tôi", "i have", "i've had", "i had", "i feel", "i am", "i'm", "my", "me"
+    ],
+    "current": [
+      "đang", "hiện tại", "bây giờ", "từ sáng", "từ tối", "từ qua", "từ hôm qua", "hôm nay", "nãy", "nãy giờ", "vừa nãy", "mấy hôm nay", "mấy ngày nay", "now", "right now", "today", "this morning", "since", "currently", "just now"
     ]
   }
 }

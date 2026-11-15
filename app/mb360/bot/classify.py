@@ -92,18 +92,42 @@ def lookup(text: str, k: dict | None = None) -> dict | None:
     return None
 
 
+def general_framing(text: str, k: dict | None = None) -> bool:
+    """D-92 (proposed, BOT §10 Q18): the question asks about a danger sign in general, not about the mother right now.
+
+    True when it says so ("mình hỏi chung", "just asking") or asks for knowledge about a third person or a case ("bà bầu
+    bị chảy máu là dấu hiệu gì", "nếu vỡ ối thì cần làm gì") — and nothing in it says the sign is hers or happening now
+    ("em bị", "mình đang", "từ sáng", "my"). A bare "chảy máu là bị gì?" is neither, so it keeps the danger notice."""
+    g = (k or _lists()).get("general_framing")
+    if not g:
+        return False
+    rest = (text or "").lower()
+    for d in g["disclaimers"]:                       # "không phải em bị" says the opposite of "em bị"
+        rest = re.sub(_pattern(plain(d) if rest == plain(rest) else d.lower()), " ", rest)
+    if has_any(rest, g["first_person"]) or has_any(rest, g["current"]):
+        return False
+    return has_any(text, g["explicit"]) or (has_any(text, g["knowledge"]) and has_any(text, g["third_person"]))
+
+
+def danger_topic(text: str) -> bool:
+    """The question names a danger sign, affirmed or not (S-034 adds the hotline line under a general answer, D-92)."""
+    k = _lists()
+    return any(danger_hits(text, k["danger_phrases"], k.get("negation")))
+
+
 def classify(text: str) -> dict:
     k = _lists()
     affirmed, denied = danger_hits(text, k["danger_phrases"], k.get("negation"))
-    if affirmed:
+    general = (affirmed or denied) and general_framing(text, k)
+    if affirmed and not general:
         return {"category": "needs_nurse", "danger": True}
-    if has_any(text, k["personal_health_markers"]) or has_any(text, k["symptom_words"]):
+    if not general and (has_any(text, k["personal_health_markers"]) or has_any(text, k["symptom_words"])):
         return {"category": "needs_nurse", "danger": False}
     found = lookup(text, k)
     if found:
         if has_any(text, k["app_lookups"]["interpretation"]):     # what the value means → nurse (BR-002, BR-006)
             return {"category": "needs_nurse", "danger": False}
         return {"category": "lookup", "danger": False, "lookup": found}
-    if not denied and not has_any(text, k["pregnancy_topics"]):    # a denied danger sign is still a pregnancy topic
+    if not (denied or general) and not has_any(text, k["pregnancy_topics"]):    # a named danger sign is a pregnancy topic
         return {"category": "out_of_scope", "danger": False}
     return {"category": "general", "danger": False}
