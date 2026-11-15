@@ -95,3 +95,29 @@ def test_invalid_question_stores_nothing(db, user_id, text):
     with pytest.raises(chat.ChatError):
         chat.ask(db, chat_mother(user_id), None, text, NOW, llm.FakeLLM())
     assert (count(db, "CHAT_MESSAGE"), count(db, "CONVERSATION")) == before
+
+
+class _Says(llm.FakeLLM):
+    def __init__(self, text):
+        super().__init__()
+        self.text = text
+
+    def answer(self, question, context):
+        super().answer(question, context)
+        return self.text
+
+
+def test_unsafe_answer_is_held_back_and_logged(db, user_id):
+    """Output check (§10 Q16): a dose in the answer → the fallback is shown; the raw answer and the reason are logged."""
+    raw = "Mẹ uống viên sắt 60 mg mỗi ngày."
+    conv = chat.ask(db, chat_mother(user_id), None, "Bà bầu nên ăn gì để đủ sắt?", NOW, _Says(raw))
+    assert messages(db, conv)[1]["text"] == chat.guard.FALLBACK_TEXT
+    data, entry = db.execute("SELECT ai_response_data, audit_log_entry FROM AI_RESPONSE_LOG WHERE conversation_id = ?", (conv,)).fetchone()
+    assert data == raw and json.loads(entry) == {"client": "fake", "model": None, "output_check": ["dose"], "shown": "fallback"}
+
+
+def test_safe_answer_is_shown_and_logged_as_passed(db, user_id):
+    conv = chat.ask(db, chat_mother(user_id), None, "Bà bầu nên ăn gì để đủ sắt?", NOW, _Says("Mẹ ăn thịt bò nạc và rau xanh đậm."))
+    assert messages(db, conv)[1]["text"] == "Mẹ ăn thịt bò nạc và rau xanh đậm."
+    entry = json.loads(db.execute("SELECT audit_log_entry FROM AI_RESPONSE_LOG WHERE conversation_id = ?", (conv,)).fetchone()[0])
+    assert entry["output_check"] == "passed" and entry["shown"] == "answer"

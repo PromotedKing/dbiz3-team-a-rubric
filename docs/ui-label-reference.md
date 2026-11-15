@@ -495,6 +495,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | BOT messages (D-79) | [Sample chatbot answer] | [Câu trả lời mẫu của chatbot] |
 | BOT messages (D-79) | Type your question. | Mẹ hãy nhập câu hỏi. |
 | BOT messages (D-79) | ⚠ Could not get an answer. Retry | ⚠ Chưa nhận được câu trả lời. Thử lại |
+| BOT messages (D-79) | I can't give a safe answer to this question here. Please ask your doctor or a nurse. | Câu này mình chưa thể trả lời an toàn ở đây. Mẹ hãy hỏi bác sĩ hoặc y tá nhé. |
 | CLI screens (D-79) | Nurse: {name} | Y tá: {name} |
 | CLI screens (D-79) | change | đổi |
 | CLI screens (D-79) | Choose a staff member (demo) | Chọn nhân viên y tế (demo) |

@@ -9,7 +9,7 @@ from datetime import date, datetime
 
 from ..alr import cases
 from ..alr.reports import gestational_week
-from . import classify
+from . import classify, guard
 
 DB_TIME = "%Y-%m-%d %H:%M"
 MAX_LEN = 500   # D-46
@@ -103,9 +103,12 @@ def save(conn: sqlite3.Connection, q: dict, answer: str | None, client) -> str:
         elif kind["category"] == "out_of_scope":
             _message(conn, conversation_id, "Chatbot", DECLINE_TEXT, at)          # FR-010
         else:
-            _message(conn, conversation_id, "Chatbot", fit(answer), at)
+            held = guard.check(answer)                                            # output check (§10 Q16)
+            _message(conn, conversation_id, "Chatbot", guard.FALLBACK_TEXT if held else fit(answer), at)
+            entry = {"client": getattr(client, "name", "unknown"), "model": getattr(client, "model", None),
+                     "output_check": held or "passed", "shown": "fallback" if held else "answer"}
             conn.execute("INSERT INTO AI_RESPONSE_LOG (log_id, conversation_id, ai_response_data, audit_log_entry) VALUES (?, ?, ?, ?)",
-                         (str(uuid.uuid4()), conversation_id, answer, json.dumps({"client": getattr(client, "name", "unknown")})))
+                         (str(uuid.uuid4()), conversation_id, answer, json.dumps(entry)))
         conn.execute("UPDATE CONVERSATION SET current_session_data = ? WHERE conversation_id = ?",
                      (json.dumps({"gestational_week": week, "earlier_turns": turns}), conversation_id))
         conn.commit()
