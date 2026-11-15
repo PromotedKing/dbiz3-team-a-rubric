@@ -532,6 +532,14 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | BOT data lookup (D-89) | Reports being handled: {n}. The latest is {status}. | Báo cáo đang được xử lý: {n}. Báo cáo mới nhất: {status}. |
 | BOT data lookup (D-89) | Your doctor has no tracking instruction for you now. | Hiện bác sĩ không có chỉ dẫn theo dõi nào cho mẹ. |
 | BOT data lookup (D-89) | Your doctor asked you to track: {metrics}. | Bác sĩ dặn mẹ theo dõi: {metrics}. |
+| BOT data lookup (D-93) | There is no fetal measurement in the app yet. | Trong app chưa có số đo thai nhi nào. |
+| BOT data lookup (D-93) | Latest fetal measurements ({date}): {items}. | Số đo thai nhi gần nhất ({date}): {items}. |
+| BOT data lookup (D-93) | estimated weight {w} g | cân nặng ước tính {w} g |
+| BOT data lookup (D-93) | length {l} cm | chiều dài {l} cm |
+| BOT data lookup (D-93) | The chatbot cannot read this for you yet. You can see it in the app. | Chatbot chưa đọc được phần này cho mẹ. Mẹ xem trong app ở đây nhé. |
+| BOT data lookup (D-93) | The chatbot cannot do this for you. You can do it yourself in the app. | Chatbot chưa làm thay mẹ việc này được. Mẹ tự làm trong app ở đây nhé. |
+| BOT data lookup (D-93) | Booking, changing or cancelling an appointment is done in the TCI app. Your appointments are here. | Đặt, đổi hoặc huỷ lịch khám làm trong app TCI. Lịch hẹn của mẹ ở đây. |
+| BOT data lookup (D-93) | The chatbot cannot see your medical record (blood type, history, allergies): please ask your doctor at your next visit. Your profile in the app is here. | Chatbot không xem được hồ sơ bệnh án của mẹ (nhóm máu, tiền sử, dị ứng): mẹ hỏi bác sĩ ở lần khám tới nhé. Hồ sơ của mẹ trong app ở đây. |
 | CLI screens (D-79) | Nurse: {name} | Y tá: {name} |
 | CLI screens (D-79) | change | đổi |
 | CLI screens (D-79) | Choose a staff member (demo) | Chọn nhân viên y tế (demo) |
