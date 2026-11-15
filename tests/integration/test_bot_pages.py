@@ -81,3 +81,13 @@ def test_out_of_scope_is_declined_without_buttons(client, user_id):
 
 def test_empty_question_is_refused(client, user_id):
     assert client.post(f"/m/{user_id('tci-000133')}/chat", data={"text": ""}).status_code == 422
+
+
+def test_lookup_answer_links_to_the_screen(client, user_id):
+    """FR-012, BR-006 (D-89, proposed): the app answers from her data, says it does not assess it, links to S-025."""
+    uid = user_id("tci-000126")
+    _, page = ask(client, uid, "Huyết áp lần trước của em là bao nhiêu?")
+    shown = text(page)
+    assert "145/92 mmHg" in shown and vi("The chatbot only repeats your data from the app and does not assess it. If you are worried, ask a nurse.") in shown
+    assert f'href="/m/{uid}/history?metric=Blood%20pressure"' in page and vi("View in the app") in shown
+    assert vi("For reference only; does not replace your doctor's advice.") not in shown     # not an AI answer

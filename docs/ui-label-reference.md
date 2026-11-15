@@ -496,6 +496,33 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | BOT messages (D-79) | Type your question. | Mẹ hãy nhập câu hỏi. |
 | BOT messages (D-79) | ⚠ Could not get an answer. Retry | ⚠ Chưa nhận được câu trả lời. Thử lại |
 | BOT messages (D-79) | I can't give a safe answer to this question here. Please ask your doctor or a nurse. | Câu này mình chưa thể trả lời an toàn ở đây. Mẹ hãy hỏi bác sĩ hoặc y tá nhé. |
+| BOT data lookup (D-89) | The chatbot only repeats your data from the app and does not assess it. If you are worried, ask a nurse. | Chatbot chỉ nhắc lại dữ liệu của mẹ trong app, không đánh giá. Nếu lo lắng, mẹ hãy hỏi y tá. |
+| BOT data lookup (D-89) | View in the app | Xem trong app |
+| BOT data lookup (D-89) | You have no upcoming appointment in the TCI app. | Mẹ chưa có lịch hẹn sắp tới trong app TCI. |
+| BOT data lookup (D-89) | Your next appointment: {day}, {at}, {place}. | Lịch hẹn tới của mẹ: {day}, {at}, tại {place}. |
+| BOT data lookup (D-89) | That is today. | Tức là hôm nay. |
+| BOT data lookup (D-89) | That is tomorrow. | Tức là ngày mai. |
+| BOT data lookup (D-89) | That is in {days} days. | Tức là còn {days} ngày nữa. |
+| BOT data lookup (D-89) | There is no visit in the app yet. | Trong app chưa có lần khám nào. |
+| BOT data lookup (D-89) | {days} days ago | {days} ngày trước |
+| BOT data lookup (D-89) | Your latest visit: {date} ({ago}). | Lần khám gần nhất của mẹ: ngày {date} ({ago}). |
+| BOT data lookup (D-89) | Recorded at that visit: {items}. | Ghi nhận ở lần khám đó: {items}. |
+| BOT data lookup (D-89) | There is no {metric} value in the app yet. | Trong app chưa có giá trị {metric} nào. |
+| BOT data lookup (D-89) | Latest {metric}: {value}, {date} ({source}). | Chỉ số {metric} gần nhất: {value}, {date} ({source}). |
+| BOT data lookup (D-89) | This is the only {metric} value in the app. | Đây là giá trị {metric} duy nhất trong app. |
+| BOT data lookup (D-89) | The one before: {value}, {date}. | Lần trước đó: {value}, {date}. |
+| BOT data lookup (D-89) | Change: {change}. | Chênh lệch: {change}. |
+| BOT data lookup (D-89) | systolic {s}, diastolic {d} mmHg | tâm thu {s}, tâm trương {d} mmHg |
+| BOT data lookup (D-89) | Your pregnancy profile is not set up yet. | Mẹ chưa khai báo thông tin thai kỳ. |
+| BOT data lookup (D-89) | You are in week {week} of your pregnancy. | Mẹ đang ở tuần thai thứ {week}. |
+| BOT data lookup (D-89) | Due date: {edd}, in {days} days. | Ngày dự sinh: {edd}, còn {days} ngày. |
+| BOT data lookup (D-89) | You have no unread notices. | Mẹ không có thông báo nào chưa đọc. |
+| BOT data lookup (D-89) | You have {n} unread notices. | Mẹ có {n} thông báo chưa đọc. |
+| BOT data lookup (D-89) | Latest: {title}, {at}. | Mới nhất: {title}, {at}. |
+| BOT data lookup (D-89) | None of your reports is being handled now. | Hiện không có báo cáo nào của mẹ đang được xử lý. |
+| BOT data lookup (D-89) | Reports being handled: {n}. The latest is {status}. | Báo cáo đang được xử lý: {n}. Báo cáo mới nhất: {status}. |
+| BOT data lookup (D-89) | Your doctor has no tracking instruction for you now. | Hiện bác sĩ không có chỉ dẫn theo dõi nào cho mẹ. |
+| BOT data lookup (D-89) | Your doctor asked you to track: {metrics}. | Bác sĩ dặn mẹ theo dõi: {metrics}. |
 | CLI screens (D-79) | Nurse: {name} | Y tá: {name} |
 | CLI screens (D-79) | change | đổi |
 | CLI screens (D-79) | Choose a staff member (demo) | Chọn nhân viên y tế (demo) |

@@ -208,6 +208,12 @@ The PRD in `docs/prd.md` was refined on 14/10/2026 (product context, M1 – M5, 
 |---|---|---|---|
 | D-86 | **Keep the current D-80 navigation.** Hải Anh confirms the team's choice: sub-app root tabs are Home · Timeline · Chatbot · From doctor · Profile; no Appointments tab and no booking CTA on S-008 (including the no-appointment case). Booking entry stays in the TCI host app. The read-only next-appointment card, Appointment notices on S-009 and switch on S-010 remain under D-77 / D-81. FR-001 is retained as host-only / N/A in MB360. The proposed Part B booking-session API/adapter/CTA is cancelled, not adopted. D-77 / DM-04 still prohibit storing appointments in MB360. This confirms D-80's navigation without changing unrelated decisions or resolving Client/SME markers (including S-010 Q3/Q4). | **Confirmed by Hải Anh on behalf of the team, 11/11/2026**; shared documents remain subject to owner review | PRD C1/backlog; spec-APT FR-001, FR-005, BR-001/BR-003; S-008 and historical tab rows; function/screen lists; architecture; no code/schema/seed change |
 
+### Proposed chatbot data lookup (15/11/2026)
+
+| ID | Decision | Status | Affected artifacts |
+|---|---|---|---|
+| D-89 | **The chatbot answers questions about the mother's own data that the sub-app already shows her, from that data, inside the app (proposed by Sang, 15/11/2026).** Topics: next appointment, latest visit, latest metric value and its change from the previous one, gestational week and due date, unread notices, reports being handled, doctor's instructions. The answer is built by the app with simple arithmetic and a link to the screen; the LLM never sees the data (BR-001 unchanged); no normal / high / low judgement and no "Alert" — a question about what a value means still goes to the nurse offer (BR-002). Inspired by hospital assistants that answer from the patient's own record (Epic Emmie, K Health PatientGPT), without their LLM-on-record design. | Proposed — BOT owner (Sang); review Chi; Client to confirm scope (BOT §10 Q17) | spec-BOT FR-012, BR-002, BR-006, §10 Q17; `docs/function-list.md`; `data/data-model-MB360.md` §3; S-034 |
+
 ### References for D-15
 
 - ADA, *Glucose Monitoring During Pregnancy* (2024): targets fasting < 95 mg/dL, 1 h after a meal < 140 mg/dL, 2 h after a meal < 120 mg/dL — https://diabetes.org/sites/default/files/2024-10/Glucose-Monitoring-During-Pregnancy-patient-FINAL.pdf
