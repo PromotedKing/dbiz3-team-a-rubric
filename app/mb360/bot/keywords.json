@@ -23,5 +23,20 @@
     "week", "ultrasound", "check-up", "kick", "nausea", "sleep", "exercise", "weight", "stretch mark",
     "bầu", "thai", "mang thai", "em bé", "bé", "sữa", "sinh", "mẹ", "bố", "ăn", "dinh dưỡng", "siêu âm", "khám", "ốm nghén", "cho con bú",
     "mất ngủ", "ngủ", "tập thể dục", "vận động", "chuột rút", "nghén", "rạn da", "kem rạn", "vết rạn"
-  ]
+  ],
+  "answer_checks": {
+    "status": "PROVISIONAL — team draft 15/11/2026, Pending SME (spec-BOT §10 Q16). Checks the LLM answer, not the question: bot/guard.py.",
+    "dose_patterns": [
+      "\\d+([.,]\\d+)?\\s*(mg|mcg|µg|iu|ui)\\b", "\\d+\\s*(viên|giọt|ống)(?!\\w)", "\\b\\d+\\s*(tablets?|capsules?|drops?)\\b"
+    ],
+    "diagnosis_phrases": [
+      "có thể mẹ bị", "có thể mẹ đã bị", "chắc là mẹ bị", "mẹ đã mắc", "mẹ bị mắc", "mẹ có dấu hiệu của bệnh", "you have been diagnosed", "you are suffering from", "you probably have", "you likely have"
+    ],
+    "watch_list": [
+      "gan", "pate", "pa tê", "cá kiếm", "cá mập", "cá thu vua", "cá ngừ mắt to", "gỏi", "sushi", "đồ sống", "trứng sống", "sữa chưa tiệt trùng", "rượu", "bia", "đu đủ xanh", "rau ngót", "rau răm", "ngải cứu", "dứa", "liver", "swordfish", "shark", "king mackerel", "raw fish", "raw egg*", "unpasteurised", "unpasteurized", "alcohol", "paracetamol", "acetaminophen", "ibuprofen", "aspirin", "kháng sinh", "antibiotic*", "thuốc giảm đau", "painkiller*"
+    ],
+    "avoid_words": [
+      "tránh", "hạn chế", "không nên", "kiêng", "không ăn", "không uống", "không dùng", "không được", "hỏi bác sĩ", "hỏi ý kiến bác sĩ", "avoid", "limit", "do not", "don't", "should not", "shouldn't", "ask your doctor", "ask the doctor"
+    ]
+  }
 }
