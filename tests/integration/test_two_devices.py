@@ -130,3 +130,13 @@ def test_two_tabs_ask_the_same_danger_question_and_connect(client, db, user_id):
     assert db.execute("SELECT COUNT(*) FROM CARE_CASE WHERE user_id = ? AND case_source = 'Chatbot'", (uid,)).fetchone()[0] == 1
     assert db.execute("""SELECT COUNT(*) FROM CHAT_MESSAGE m JOIN CONVERSATION c ON c.conversation_id = m.conversation_id
                          WHERE c.user_id = ? AND m.sender = 'Mother' AND m.text = ?""", (uid, DANGER)).fetchone()[0] == 1
+
+
+def test_general_question_about_a_danger_sign(client, user_id):
+    """D-92 (proposed): answered as a general question, with the hotline line under the answer; a plain general answer has none."""
+    uid = user_id("tci-000133")
+    page = client.get(client.post(f"/m/{uid}/chat", data={"text": "chảy máu là có vấn đề gì, mình hỏi chung"}).headers["location"]).text
+    assert vi("[Sample chatbot answer]") in page and vi("Signs that need medical attention") not in page
+    assert "data-hotline" in page
+    page = client.get(client.post(f"/m/{uid}/chat", data={"text": "Bà bầu nên ăn gì để đủ sắt?"}).headers["location"]).text
+    assert "data-hotline" not in page                       # a new conversation with a plain general answer

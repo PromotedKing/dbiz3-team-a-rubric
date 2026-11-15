@@ -153,3 +153,8 @@ def test_groq_empty_answer_raises(monkeypatch):
     monkeypatch.setattr(urllib.request, "urlopen", lambda req, timeout: _Resp({"choices": [{"message": {"content": ""}}]}))
     with pytest.raises(ValueError):
         llm.GroqLLM("k", "m").answer("q", {})
+
+
+def test_system_prompt_handles_general_questions_about_warning_signs():
+    """D-92: a general question about a danger sign reaches the LLM, which must send her to hospital if it is happening now."""
+    assert "warning sign of pregnancy" in llm.SYSTEM_PROMPT and "if it is happening to her now" in llm.SYSTEM_PROMPT

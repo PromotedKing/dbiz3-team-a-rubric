@@ -38,7 +38,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
             else:
                 kind = {"needs_nurse": "handoff", "out_of_scope": "decline", "lookup": "lookup"}.get(last_q["intent"] if last_q else None, "answer")
                 out.append({"kind": kind, "m": m, "q": last_q["row"] if last_q else None, "danger": last_q["danger"] if last_q else False,
-                            "link": lookup.link(user_id, last_q["parsed"]) if kind == "lookup" else None})
+                            "link": lookup.link(user_id, last_q["parsed"]) if kind == "lookup" else None,
+                            "danger_topic": kind == "answer" and last_q is not None and classify.danger_topic(last_q["row"]["text"])})
         return out
 
     def page(request: Request, user, conversation_id: str | None, status: int = 200, error: str | None = None, text: str = ""):
