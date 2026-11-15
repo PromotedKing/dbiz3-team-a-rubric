@@ -839,3 +839,9 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 ## 15/11/2026: proposed booking and cancellation notices
 
 - Extended Appointment notices under proposed D-88. Home and S-009 reconcile interactive TCI events by appointment ID and event kind. Confirmations bypass the reminder switch. No push or background delivery.
+
+## 15/11/2026: chatbot avoids foods debated in pregnancy (Sang, branch `sang/bot-prompt-food`)
+
+- **User request**: a live test on Render (Groq · openai/gpt-oss-120b) answered "Bà bầu nên ăn gì để đủ sắt?" with a list that included liver, a food pregnant women are usually told to limit. Added one sentence to `SYSTEM_PROMPT` in `app/mb360/bot/llm.py`: suggest only foods widely accepted as safe in pregnancy, never a debated or usually-limited food (example: liver), and send questions about such a food to the doctor. The same prompt goes to Groq and Gemini.
+- **Pending SME**: the wording and the example are a team proposal, not hospital content (same status as the other chatbot texts, D-81). No spec, seed, schema or label change; BOT BR-001/BR-002 and the risk-keyword check are unchanged.
+- **Tests**: `test_system_prompt_avoids_debated_foods` in `tests/unit/test_bot_llm.py` (no network call).
