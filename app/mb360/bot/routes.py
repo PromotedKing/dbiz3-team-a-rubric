@@ -56,6 +56,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
             answer = await run_in_threadpool(client.answer, q["text"], q["context"]) if q["context"] is not None else None
             async with serial.LOCK:
                 conversation_id = chat.save(conn, q, answer, client)
+        except chat.AlreadyAsked as e:          # same question a moment ago, e.g. in another tab (D-90): show it, store nothing
+            return RedirectResponse(f"/m/{user_id}/chat/{e.conversation_id}", status_code=303)
         except chat.ChatError as e:
             if e.status == 404:
                 raise HTTPException(404, e.message)

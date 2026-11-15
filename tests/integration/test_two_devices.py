@@ -117,3 +117,16 @@ def test_report_before_the_pregnancy_profile_goes_to_setup(client, mother_withou
 def test_profile_edit_before_the_pregnancy_profile_goes_to_setup(client, mother_without_profile):
     r = client.post(f"/m/{mother_without_profile}/profile/edit", data={"edd": "2027-02-20", "height_cm": "158"})
     assert r.status_code == 303 and r.headers["location"] == f"/m/{mother_without_profile}/setup"
+
+
+def test_two_tabs_ask_the_same_danger_question_and_connect(client, db, user_id):
+    """Reported 15/11/2026: tab A and tab B both open on the chatbot, both send "chảy máu" and tap "Connect to nurse"."""
+    uid = user_id("tci-000133")
+    conv_a, form_a = handoff_form(client, uid)
+    r = client.post(f"/m/{uid}/chat", data={"text": DANGER})               # tab B, still on the welcome screen
+    assert r.status_code == 303 and r.headers["location"] == conv_a
+    assert client.post(form_a, data={"choice": "connect"}).status_code == 303
+    assert client.post(form_a, data={"choice": "connect"}).status_code == 303   # tab B taps on what it now shows
+    assert db.execute("SELECT COUNT(*) FROM CARE_CASE WHERE user_id = ? AND case_source = 'Chatbot'", (uid,)).fetchone()[0] == 1
+    assert db.execute("""SELECT COUNT(*) FROM CHAT_MESSAGE m JOIN CONVERSATION c ON c.conversation_id = m.conversation_id
+                         WHERE c.user_id = ? AND m.sender = 'Mother' AND m.text = ?""", (uid, DANGER)).fetchone()[0] == 1

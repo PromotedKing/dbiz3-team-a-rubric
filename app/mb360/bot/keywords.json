@@ -146,5 +146,14 @@
         "needs": [["what"], ["mine"]]
       }
     ]
+  },
+  "negation": {
+    "status": "PROVISIONAL — decided by the BOT owner 15/11/2026, D-91 proposed, SME to confirm (spec-BOT §10 Q15). A danger phrase is denied only when a negator comes right before it in the same clause, with at most 4 filler words between: bot/classify.py danger_hits.",
+    "negators": [
+      "không", "chưa", "chẳng", "chả", "no", "not", "never", "without", "don't", "dont", "didn't", "didnt", "haven't", "havent", "hasn't", "hasnt", "isn't", "isnt", "aren't", "wasn't"
+    ],
+    "fillers": [
+      "bị", "có", "thấy", "hề", "dấu", "hiệu", "have", "has", "had", "any", "been", "see", "seen", "notice", "noticed", "feel", "felt", "experience", "experienced", "experiencing", "am", "is", "are", "was", "signs", "sign", "of"
+    ]
   }
 }

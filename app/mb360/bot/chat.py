@@ -3,9 +3,10 @@
 The context passed to the LLM holds only the earlier question / answer pairs of this conversation and the
 gestational week — never anything from the medical record (BR-001)."""
 import json
+import re
 import sqlite3
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from ..alr import cases
 from ..alr.reports import gestational_week
@@ -19,10 +20,44 @@ DECLINE_TEXT = ("I can only help with pregnancy, prenatal care, nutrition and po
                 "Could you ask me a pregnancy question?")   # wording open (BOT §10 Q13)
 
 
+REPEAT_MINUTES = 5   # D-90 (proposed): the same question again within this time is the same request (e.g. a second tab)
+
+
 class ChatError(Exception):
     def __init__(self, status: int, message: str):
         super().__init__(message)
         self.status, self.message = status, message
+
+
+class AlreadyAsked(ChatError):
+    """D-90: the mother sent this question a moment ago (another tab or device): show that conversation, store nothing."""
+    def __init__(self, conversation_id: str):
+        super().__init__(303, "Already asked")
+        self.conversation_id = conversation_id
+
+
+def _key(text: str) -> str:
+    """The question as compared for D-90: lower case, without accents and punctuation."""
+    return " ".join(re.findall(r"\w+", classify.plain(text or "")))
+
+
+def _asked_just_now(conn, user_id: str, text: str, at: str) -> str | None:
+    """The conversation where the mother sent the same question in the last REPEAT_MINUTES, or None (D-90)."""
+    since = (datetime.strptime(at, DB_TIME) - timedelta(minutes=REPEAT_MINUTES)).strftime(DB_TIME)
+    rows = conn.execute("""SELECT m.text, m.conversation_id FROM CHAT_MESSAGE m JOIN CONVERSATION v ON v.conversation_id = m.conversation_id
+                           WHERE v.user_id = ? AND m.sender = 'Mother' AND m.sent_at >= ?
+                           ORDER BY m.sent_at DESC, m.rowid DESC""", (user_id, since)).fetchall()
+    key = _key(text)
+    return next((r["conversation_id"] for r in rows if _key(r["text"]) == key), None)
+
+
+def _open_case_for_same_question(conn, user_id: str, text: str) -> str | None:
+    """D-90: an open Chatbot case of this mother opened from the same question (BOT §10 Q11)."""
+    rows = conn.execute("""SELECT c.case_id, m.text FROM CARE_CASE c JOIN CHAT_MESSAGE m ON m.message_id = c.chat_message_id
+                           WHERE c.user_id = ? AND c.case_source = 'Chatbot' AND c.status <> 'Resolved'
+                           ORDER BY c.created_at DESC""", (user_id,)).fetchall()
+    key = _key(text)
+    return next((r["case_id"] for r in rows if _key(r["text"]) == key), None)
 
 
 def _week(conn, user_id: str, now: datetime) -> int | None:
@@ -75,6 +110,9 @@ def prepare(conn: sqlite3.Connection, user_id: str, conversation_id: str | None,
     if conversation_id and conn.execute("SELECT 1 FROM CONVERSATION WHERE conversation_id = ? AND user_id = ?",
                                         (conversation_id, user_id)).fetchone() is None:
         raise ChatError(404, "Unknown conversation")
+    earlier = _asked_just_now(conn, user_id, text, now.strftime(DB_TIME))
+    if earlier:
+        raise AlreadyAsked(earlier)
     kind = classify.classify(text)
     week = _week(conn, user_id, now)
     context = lookup_answer = None
@@ -94,6 +132,9 @@ def ask(conn: sqlite3.Connection, user_id: str, conversation_id: str | None, tex
 def save(conn: sqlite3.Connection, q: dict, answer: str | None, client) -> str:
     """Stores the question and the chatbot's reply in one transaction; returns the conversation."""
     user_id, conversation_id, text, kind, week, at = q["user_id"], q["conversation_id"], q["text"], q["kind"], q["week"], q["at"]
+    earlier = _asked_just_now(conn, user_id, text, at)       # stored by another tab while this one waited for the LLM (D-90)
+    if earlier:
+        return earlier
     try:
         if conversation_id is None:
             conversation_id = str(uuid.uuid4())
@@ -137,7 +178,9 @@ def handoff(conn: sqlite3.Connection, user_id: str, message_id: str, choice: str
     try:
         conn.execute("UPDATE CHAT_MESSAGE SET handoff_choice = ? WHERE message_id = ?",
                      ("Connect to nurse" if choice == "connect" else "No thanks", message_id))
-        case_id = cases.open_chatbot_case(conn, user_id, message_id, now) if choice == "connect" else None
+        case_id = None
+        if choice == "connect":                 # D-90: one open case per question, even when asked again in another tab
+            case_id = _open_case_for_same_question(conn, user_id, m["text"]) or cases.open_chatbot_case(conn, user_id, message_id, now)
         conn.commit()
     except Exception:
         conn.rollback()

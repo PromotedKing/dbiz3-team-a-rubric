@@ -121,3 +121,40 @@ def test_safe_answer_is_shown_and_logged_as_passed(db, user_id):
     assert messages(db, conv)[1]["text"] == "Mẹ ăn thịt bò nạc và rau xanh đậm."
     entry = json.loads(db.execute("SELECT audit_log_entry FROM AI_RESPONSE_LOG WHERE conversation_id = ?", (conv,)).fetchone()[0])
     assert entry["output_check"] == "passed" and entry["shown"] == "answer"
+
+
+def test_same_question_again_a_moment_later_is_not_stored_twice(db, user_id):
+    """D-90 (BOT §10 Q11): a second tab sends the same question → the first conversation, nothing new stored."""
+    uid = chat_mother(user_id)
+    conv = chat.ask(db, uid, None, "Tôi bị chảy máu", NOW, llm.FakeLLM())
+    n = count(db, "CHAT_MESSAGE")
+    with pytest.raises(chat.AlreadyAsked) as e:
+        chat.ask(db, uid, None, "tôi bị  chảy máu!", NOW, llm.FakeLLM())     # same words, other case / spacing / punctuation
+    assert e.value.conversation_id == conv and count(db, "CHAT_MESSAGE") == n
+
+
+def test_two_tabs_waiting_at_the_same_time_store_one_question(db, user_id):
+    """Both tabs passed the check before either saved (the LLM is awaited outside the lock): the second save stores nothing."""
+    uid = chat_mother(user_id)
+    a = chat.prepare(db, uid, None, "Bà bầu nên ăn gì?", NOW)
+    b = chat.prepare(db, uid, None, "Bà bầu nên ăn gì?", NOW)
+    fake = llm.FakeLLM()
+    conv = chat.save(db, a, "[Sample chatbot answer]", fake)
+    n = count(db, "CHAT_MESSAGE")
+    assert chat.save(db, b, "[Sample chatbot answer]", fake) == conv and count(db, "CHAT_MESSAGE") == n
+
+
+def test_same_question_later_joins_the_open_case(db, user_id):
+    """D-90: asked again after the repeat window while its case is open → no second case; after it is resolved → a new one."""
+    from datetime import timedelta
+    uid = chat_mother(user_id)
+    def ask_and_connect(at):
+        conv = chat.ask(db, uid, None, "Tôi bị chảy máu", at, llm.FakeLLM())
+        q = messages(db, conv)[0]
+        return chat.handoff(db, uid, q["message_id"], "connect", at)
+    first = ask_and_connect(NOW)
+    assert ask_and_connect(NOW + timedelta(minutes=30)) == first
+    assert db.execute("SELECT COUNT(*) FROM CARE_CASE WHERE user_id = ? AND case_source = 'Chatbot'", (uid,)).fetchone()[0] == 1
+    db.execute("UPDATE CARE_CASE SET status = 'Resolved', closed_at = ?, closed_by = (SELECT staff_id FROM STAFF LIMIT 1) WHERE case_id = ?",
+               ((NOW + timedelta(hours=1)).strftime(chat.DB_TIME), first))
+    assert ask_and_connect(NOW + timedelta(hours=2)) != first

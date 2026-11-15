@@ -212,6 +212,8 @@ One row per (function, entity) pair, decided from the FR text, its §5.1 fields 
 | BOT FR-008 | CHAT_MESSAGE | U | BOT §5 FR-008 (`handoff_choice`) |
 | BOT FR-008 | CARE_CASE | C | BOT §5 FR-008 ("create a Case … through ALR FR-021") |
 | BOT FR-009 | CHAT_MESSAGE | U | BOT §5 FR-009 (`handoff_choice` = No thanks) |
+| BOT FR-001 | CHAT_MESSAGE | R | BOT §5.1 FR-001 (the same question within 5 minutes is not stored again); D-90 (proposed) |
+| BOT FR-008 | CARE_CASE | R | BOT §5.1 FR-008 (reuse the open case of the same question); D-90 (proposed) |
 | BOT FR-012 | CHAT_MESSAGE | C | BOT §5 FR-012 (the lookup answer, a Chatbot message); D-89 (proposed) |
 | BOT FR-012 | PREGNANCY_PROFILE | R | BOT §5 FR-012 (week and due date); D-89 (proposed) |
 | BOT FR-012 | VISIT | R | BOT §5 FR-012 (latest visit); D-89 (proposed) |
@@ -292,7 +294,7 @@ One row per (function, entity) pair, decided from the FR text, its §5.1 fields 
 | WATCH_FLAG | CLI FR-025 | ACC FR-016; HLT FR-002; ALR FR-007, FR-011, FR-020, FR-022; BOT FR-012 | ALR FR-016; CLI FR-025 | — |
 | METRIC_REPORT | ALR FR-020 | ALR FR-002, FR-003, FR-005, FR-021; CLI FR-002, FR-003, FR-014 | — | — |
 | REPORT_SYMPTOM | ALR FR-020 | ALR FR-005; CLI FR-002, FR-003 | — | — |
-| CARE_CASE | ALR FR-021; BOT FR-008 | ACC FR-016; HLT FR-002, FR-004; ALR FR-002, FR-003, FR-005, FR-008, FR-018; CLI FR-002, FR-003, FR-009, FR-013, FR-014, FR-015, FR-020; BOT FR-012 | ALR FR-004, FR-009; CLI FR-004, FR-005, FR-016, FR-017, FR-019, FR-021 | — |
+| CARE_CASE | ALR FR-021; BOT FR-008 | ACC FR-016; HLT FR-002, FR-004; ALR FR-002, FR-003, FR-005, FR-008, FR-018; CLI FR-002, FR-003, FR-009, FR-013, FR-014, FR-015, FR-020; BOT FR-008, FR-012 | ALR FR-004, FR-009; CLI FR-004, FR-005, FR-016, FR-017, FR-019, FR-021 | — |
 | CASE_STATUS_HISTORY | ALR FR-004, FR-009, FR-021; CLI FR-004, FR-005, FR-016, FR-017, FR-019, FR-021 | ALR FR-005 | — | — |
 | STAFF_RESPONSE | CLI FR-024 | ALR FR-005, FR-007 | — | — |
 | GUIDANCE_TEMPLATE | — (seed data — DM-10) | ALR FR-007, FR-016; CLI FR-024, FR-025 | — | — |
@@ -303,7 +305,7 @@ One row per (function, entity) pair, decided from the FR text, its §5.1 fields 
 | DIARY_IMAGE | TML FR-009 | TML FR-003 | — | — |
 | FAMILY_MESSAGE | TML FR-011 | TML FR-003, FR-004, FR-011 | — | — |
 | CONVERSATION | BOT FR-003 | BOT FR-002 | BOT FR-003 | — |
-| CHAT_MESSAGE | BOT FR-001, FR-002, FR-012 | ALR FR-002, FR-005, FR-021; CLI FR-002, FR-003 | BOT FR-006, FR-008, FR-009 | — |
+| CHAT_MESSAGE | BOT FR-001, FR-002, FR-012 | ALR FR-002, FR-005, FR-021; CLI FR-002, FR-003; BOT FR-001 | BOT FR-006, FR-008, FR-009 | — |
 | AI_RESPONSE_LOG | BOT FR-004 | — | — | — |
 | APPOINTMENT_RECORD | — (TCI app) | APT FR-005, FR-009; BOT FR-012 | — | — |
 
