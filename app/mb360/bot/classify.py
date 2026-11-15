@@ -48,6 +48,38 @@ def has_any(text: str, phrases: list[str]) -> bool:
     return False
 
 
+_CLAUSE = re.compile(r"[,.;:!?\n]|\b(?:nhưng|nhung|mà|but|however)\b")
+_WORD = re.compile(r"[\w']+")
+
+
+def danger_hits(text: str, phrases: list[str], negation: dict | None) -> tuple[bool, bool]:
+    """(an affirmed danger phrase, a denied one) — BOT §10 Q15, D-91 (proposed).
+
+    A danger phrase is denied only when, in the same clause, a negator ("không", "chưa", "not", "no" …) comes right
+    before it, with at most four filler words between ("không bị", "không hề có", "don't have any"). Anything else
+    stays a danger sign, the safe side: "không biết có bị ra máu không", "không còn ra máu" (it bled before) and
+    "không ra máu nhưng đau bụng dữ dội" (the second sign is not denied). A phrase that is itself negative ("không
+    đạp", "no fetal movement") is matched as a whole, so its own "không" never denies it."""
+    lowered = (text or "").lower()
+    accentless = lowered == plain(lowered)
+    form = plain if accentless else (lambda s: s.lower())
+    negators = [form(n).split() for n in (negation or {}).get("negators", [])]
+    fillers = {form(f) for f in (negation or {}).get("fillers", [])}
+    affirmed = denied = False
+    for p in phrases:
+        for m in re.finditer(_pattern(form(p)), lowered):
+            clause = _CLAUSE.split(lowered[:m.start()])[-1]
+            words = _WORD.findall(clause)
+            i, skipped = len(words), 0
+            while i and skipped < 4 and words[i - 1] in fillers:
+                i, skipped = i - 1, skipped + 1
+            if negators and any(n and words[max(i - len(n), 0):i] == n for n in negators):
+                denied = True
+            else:
+                affirmed = True
+    return affirmed, denied
+
+
 def lookup(text: str, k: dict | None = None) -> dict | None:
     """FR-012: the data-lookup topic of a question ({"topic": …, "metric": …}), or None. A topic matches when the question
     has one of its words and every cue group of one of its "needs" lines (keywords.json → app_lookups)."""
@@ -62,7 +94,8 @@ def lookup(text: str, k: dict | None = None) -> dict | None:
 
 def classify(text: str) -> dict:
     k = _lists()
-    if has_any(text, k["danger_phrases"]):
+    affirmed, denied = danger_hits(text, k["danger_phrases"], k.get("negation"))
+    if affirmed:
         return {"category": "needs_nurse", "danger": True}
     if has_any(text, k["personal_health_markers"]) or has_any(text, k["symptom_words"]):
         return {"category": "needs_nurse", "danger": False}
@@ -71,6 +104,6 @@ def classify(text: str) -> dict:
         if has_any(text, k["app_lookups"]["interpretation"]):     # what the value means → nurse (BR-002, BR-006)
             return {"category": "needs_nurse", "danger": False}
         return {"category": "lookup", "danger": False, "lookup": found}
-    if not has_any(text, k["pregnancy_topics"]):
+    if not denied and not has_any(text, k["pregnancy_topics"]):    # a denied danger sign is still a pregnancy topic
         return {"category": "out_of_scope", "danger": False}
     return {"category": "general", "danger": False}
