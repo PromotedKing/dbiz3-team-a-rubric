@@ -14,3 +14,5 @@
 S-106 is read-only. Entry points are S-008 and S-009. Other mothers' lists are denied. Booking and cancellation stay in TCI.
 
 **Exception pending team review:** Quản lý lịch ở TCI ↗ opens the signed-in mother’s TCI list for cancellation or rebooking.
+
+Booking and cancellation notices open the corresponding host card under proposed FR-015.

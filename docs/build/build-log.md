@@ -835,3 +835,7 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Request**: update the branch and resolve conflicts for owner merge in PR #24. Fast-forwarded the remote review fix, then merged `origin/main` at `3164d6d` without rewriting history.
 - **Resolution**: `app/mb360/acc/routes.py` retains mother validation and appointment reminder creation from main alongside the notification type/unread filters from this branch. All other upstream changes merged automatically. Downstream templates, seed and clinical rules require no additional edits.
 - **Validation**: full pytest suite: 487 passed, 2 existing xfailed; one Starlette/httpx deprecation warning. `git diff --check` passed.
+
+## 15/11/2026: proposed booking and cancellation notices
+
+- Extended Appointment notices under proposed D-88. Home and S-009 reconcile interactive TCI events by appointment ID and event kind. Confirmations bypass the reminder switch. No push or background delivery.

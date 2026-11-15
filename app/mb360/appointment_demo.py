@@ -89,6 +89,28 @@ def create_reminders(conn: sqlite3.Connection, now: datetime, user_id: str | Non
     """
     if not tci_feed.has_appointments(conn):
         return
+    # Only the interactive TCI confirmation writes an estimated fee. Imported
+    # visits and seeded upcoming slots leave it NULL.
+    events = conn.execute(f"""SELECT a.*, s.full_name AS doctor FROM {tci_feed.APPOINTMENTS} a
+                              LEFT JOIN STAFF s ON s.staff_id=a.doctor_id
+                              WHERE a.estimated_fee IS NOT NULL AND a.visit_id IS NULL
+                                AND (? IS NULL OR a.user_id=?)""", (user_id, user_id))
+    current = now.strftime("%Y-%m-%d %H:%M")
+    for row in events:
+        when = datetime.fromisoformat(row["appointment_at"]).strftime("%d/%m/%Y · %H:%M")
+        doctor = row["doctor"] or "Chưa ghi nhận bác sĩ"
+        for event, stamp, title, subtitle in (
+            ("booked", row["created_at"], "Đã đặt lịch thành công", f"{when} · {doctor}"),
+            ("cancelled", row["cancelled_at"], f"Lịch {when} đã được hủy", doctor),
+        ):
+            if stamp is None or stamp > current:
+                continue
+            notification = str(uuid.uuid5(uuid.NAMESPACE_URL, f"mb360-appointment/{row['appointment_id']}/{event}"))
+            conn.execute("""INSERT OR IGNORE INTO NOTIFICATION
+                            (notification_id,user_id,type,title,subtitle,created_at,appointment_ref)
+                            VALUES (?,?,'Appointment',?,?,?,?)""",
+                         (notification,row["user_id"],title,subtitle,stamp,row["appointment_id"]))
+
     rows = conn.execute(f"""SELECT f.* FROM {tci_feed.APPOINTMENTS} f
                            JOIN NOTIFICATION_PREFERENCE p ON p.user_id=f.user_id
                            WHERE p.appointment_reminder=1 AND f.reminder_enabled=1 AND f.status IN ('Pending','Confirmed') AND (? IS NULL OR f.user_id=?)""", (user_id, user_id)).fetchall()
