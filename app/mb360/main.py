@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import appointment_demo, clock, ui
+from . import appointment_demo, clock, errors, ui
 from . import db as dbmod
 from .alr import cases, my_reports, reports, routing, status, thresholds, validation
 from .alr import status as status_mod
@@ -22,6 +22,7 @@ ui.install(TEMPLATES)
 def create_app(conn: sqlite3.Connection) -> FastAPI:
     appointment_demo.install(conn, clock.now())
     app = FastAPI(title="Mother & Baby 360")
+    errors.install(app, TEMPLATES)                  # no raw JSON / plain-text error page (15/11/2026)
     app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")   # TCI theme (D-79, D-80)
     ui.use_connection(conn)
 
@@ -30,6 +31,9 @@ def create_app(conn: sqlite3.Connection) -> FastAPI:
         if row is None:
             raise HTTPException(404, "Unknown mother")
         return row
+
+    def has_profile(user_id: str) -> bool:
+        return conn.execute("SELECT 1 FROM PREGNANCY_PROFILE WHERE user_id = ?", (user_id,)).fetchone() is not None
 
     def instructions(user_id: str) -> list[sqlite3.Row]:
         return conn.execute("SELECT * FROM WATCH_FLAG WHERE user_id = ? AND active = 1 ORDER BY metric", (user_id,)).fetchall()
@@ -57,6 +61,8 @@ def create_app(conn: sqlite3.Connection) -> FastAPI:
 
     @app.get("/m/{user_id}/report", response_class=HTMLResponse)
     def new_report(request: Request, user_id: str, metric: str = "Symptom", glucose_context: str = ""):
+        if not has_profile(user_id):
+            return RedirectResponse(f"/m/{user_id}/setup", status_code=303)
         form = {"metric": metric, "glucose_context": glucose_context, "symptoms": [],
                 "measured_at": clock.now().strftime(validation.FORM_TIME)}
         return report_form(request, mother(user_id), metric, form, {})
@@ -64,6 +70,8 @@ def create_app(conn: sqlite3.Connection) -> FastAPI:
     @app.post("/m/{user_id}/report")
     async def submit_report(request: Request, user_id: str):
         user = mother(user_id)
+        if not has_profile(user_id):        # ACC BR-006: no week without a profile; was a 500 error (15/11/2026)
+            return RedirectResponse(f"/m/{user_id}/setup", status_code=303)
         data = await request.form()
         form = {k: data.get(k, "") for k in ("metric", "systolic", "diastolic", "value", "level", "glucose_context",
                                                "measured_at", "other_symptom_text", "note")}

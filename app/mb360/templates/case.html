@@ -2,6 +2,7 @@
 {% macro label_tag(l) %}<span class="tag {{ 'above' if l == 'Above threshold' else 'normal' if l == 'Normal' else '' }}">{{ l | t }}</span>{% endmacro %}
 {% block content %}
 <p><a class="link" href="/staff/{{ me.staff_id }}/cases">← {{ _("Cases to handle") }}</a></p>
+{% if updated %}<p class="card" role="status" data-updated style="border-left:4px solid #C4520A;margin-bottom:12px">{{ _("This case was already updated, maybe on another screen. Its current status is shown below.") }}</p>{% endif %}
 <h1 style="margin-bottom:12px">{{ _("Mother quick profile") }}</h1>
 <div class="grid2">
   <div class="card">

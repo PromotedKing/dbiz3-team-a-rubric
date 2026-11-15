@@ -303,6 +303,15 @@ The wireframe images show on-screen text in Vietnamese. This table maps the Engl
 | CTA | Confirm / Cancel / Close / Edit / Send | Xác nhận / Hủy / Đóng / Sửa / Gửi |
 | CTA | Stay / Close app | Ở lại / Đóng app |
 | CTA | Back to TCI app | Quay lại app TCI |
+| Error screen (15/11/2026) | Could not complete this | Chưa thực hiện được |
+| Error screen (15/11/2026) | Some of the information sent is not valid. Go back and try again. | Một số thông tin gửi đi chưa hợp lệ. Mẹ hãy quay lại và thử lại. |
+| Error screen (15/11/2026) | This is not available for this account. | Nội dung này không dành cho tài khoản đang dùng. |
+| Error screen (15/11/2026) | This page or item is no longer available. | Trang hoặc nội dung này không còn nữa. |
+| Error screen (15/11/2026) | This was already changed, maybe on another screen. Open it again to see the latest state. | Việc này đã được thực hiện, có thể trên một máy khác. Hãy mở lại để xem trạng thái mới nhất. |
+| Error screen (15/11/2026) | Something went wrong. Please try again. | Đã có lỗi xảy ra. Vui lòng thử lại. |
+| Error screen (15/11/2026) | Go to Home | Về Trang chủ |
+| Error screen (15/11/2026) | Go to the case list | Về danh sách ca |
+| Error screen (15/11/2026) | This case was already updated, maybe on another screen. Its current status is shown below. | Ca này vừa được cập nhật, có thể trên một màn hình khác. Trạng thái hiện tại hiển thị bên dưới. |
 | CTA | Retry / Refresh | Thử lại / Làm mới |
 | CTA | Mark all as read | Đánh dấu đã đọc tất cả |
 | CTA | Mark as viewed | Đánh dấu Đã xem |

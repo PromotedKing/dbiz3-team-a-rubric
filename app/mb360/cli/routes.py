@@ -80,7 +80,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
                     flag=flag, flag_label=dashboard.FLAGS[flag][0] if flag else None, nav="cases")
 
     @app.get("/staff/{staff_id}/cases/{case_id}", response_class=HTMLResponse)
-    def case_page(request: Request, staff_id: str, case_id: str, error: str = "", edit: str = ""):
+    def case_page(request: Request, staff_id: str, case_id: str, error: str = "", edit: str = "", updated: int = 0):
         me = staff(staff_id)
         data = case_detail.load(conn, case_id)
         if data is None:
@@ -88,14 +88,17 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         templates = conn.execute("SELECT template_id, title FROM GUIDANCE_TEMPLATE ORDER BY title").fetchall()
         editing = next((f for f in data["flags"] if f["flag_id"] == edit), None) if me["role"] == "Doctor" else None
         return page(request, "case.html", me=me, can=actions.allowed(conn, case_id, staff_id), templates=templates,
-                    error=error, editing=editing, group2=instructions.GROUP2, **data)
+                    error=error, editing=editing, group2=instructions.GROUP2, updated=updated, **data)
 
     def act(staff_id: str, case_id: str, fn, *args, **kw):
         staff(staff_id)
         try:
             fn(conn, case_id, staff_id, clock.now(), *args, **kw)
         except actions.ActionError as e:
-            raise HTTPException(e.status, e.message)
+            if e.status != 409:
+                raise HTTPException(e.status, e.message)
+            # 409: the case moved on, e.g. another screen already did this → show it as it is now
+            return RedirectResponse(f"/staff/{staff_id}/cases/{case_id}?updated=1", status_code=303)
         return RedirectResponse(f"/staff/{staff_id}/cases/{case_id}", status_code=303)
 
     @app.post("/staff/{staff_id}/cases/{case_id}/view")

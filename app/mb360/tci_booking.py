@@ -218,6 +218,8 @@ def register(app, conn, page):
                                     AND status IN ('Pending','Confirmed') AND appointment_at>?""",
                                    (now, appointment_id, user, now))
             if not changed.rowcount:
+                if conn.execute(f"SELECT status FROM {TABLE} WHERE appointment_id=?", (appointment_id,)).fetchone()[0] == "Cancelled":
+                    return RedirectResponse("/tci/appointments?tab=history", status_code=303)   # already cancelled, e.g. on another device
                 raise HTTPException(409, "Chỉ hủy được lịch tương lai chưa khám.")
         return RedirectResponse("/tci/appointments?tab=history", status_code=303)
 
