@@ -111,3 +111,8 @@ For demo/test only, generated accounts `tci-000133` and `tci-000134` start with 
 - [x] All five states are filled in, or marked "not applicable" / `[NEEDS CLARIFICATION]` with a reason.
 - [x] Every navigation target is a Screen ID that exists in the Screen List, or is a hand-off to the TCI app (the "Appointments" tab).
 - [x] Every element that displays data names the field it displays, matching the module spec (Notification Preference — `spec-ACC.md` §6).
+
+
+## Proposed D-88
+
+The switch is the overall gate for demo reminders. Per-appointment settings belong to TCI; the service checks on access, not in the background. The previous-day default for seeded appointments and retention of received notices are demo assumptions. Q3 and Q4 remain open.

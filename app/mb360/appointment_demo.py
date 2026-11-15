@@ -66,6 +66,17 @@ def install(conn: sqlite3.Connection, now: datetime, *, fresh_demo: bool = False
         else:
             edd = conn.execute("SELECT edd FROM PREGNANCY_PROFILE WHERE user_id=?", (user,)).fetchone()[0]
         conn.execute(f"INSERT INTO {tci_feed.TABLE} VALUES (?, ?, ?, ?)", (user, edd, when, fixture["place"]))
+    if not tci_feed.has_appointments(conn):
+        tci_booking.install(conn, now)
+    # PR A stored seeded slots without a reminder. Only its stable fixture IDs
+    # receive the demo default; explicitly disabled user bookings stay off.
+    for user, at, appointment_id in conn.execute(f"SELECT user_id, appointment_at, appointment_id FROM {tci_feed.APPOINTMENTS} WHERE reminder_at IS NULL"):
+        fixture_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"tci-upcoming/{user}"))
+        if appointment_id != fixture_id:
+            continue
+        reminder = (datetime.fromisoformat(at).date() - timedelta(days=1)).isoformat() + " 00:00"
+        conn.execute(f"UPDATE {tci_feed.APPOINTMENTS} SET reminder_at=?,reminder_enabled=1 WHERE appointment_id=?",
+                     (reminder, fixture_id))
     create_reminders(conn, now)
     conn.commit()
 
@@ -76,23 +87,27 @@ def create_reminders(conn: sqlite3.Connection, now: datetime, user_id: str | Non
     The real TCI delivery channel and scheduling are outside this demo. Disabled
     switches stop NEW reminders; they never delete or hide a received notice.
     """
-    if not conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (tci_feed.TABLE,)).fetchone():
+    if not tci_feed.has_appointments(conn):
         return
-    rows = conn.execute(f"""SELECT f.* FROM {tci_feed.TABLE} f
+    rows = conn.execute(f"""SELECT f.* FROM {tci_feed.APPOINTMENTS} f
                            JOIN NOTIFICATION_PREFERENCE p ON p.user_id=f.user_id
-                           WHERE p.appointment_reminder=1 AND (? IS NULL OR f.user_id=?)""", (user_id, user_id)).fetchall()
+                           WHERE p.appointment_reminder=1 AND f.reminder_enabled=1 AND f.status IN ('Pending','Confirmed') AND (? IS NULL OR f.user_id=?)""", (user_id, user_id)).fetchall()
     for row in rows:
-        if not row["next_appointment"]:
+        when = datetime.fromisoformat(row["appointment_at"])
+        reminder = row["reminder_at"]
+        if not reminder or not datetime.fromisoformat(reminder) <= now < when:
             continue
-        when = datetime.strptime(row["next_appointment"], "%Y-%m-%d %H:%M")
-        if (when.date() - now.date()).days != 1:
+        reference = row["appointment_id"]
+        legacy = f"{row['user_id']}:{when:%Y%m%d%H%M}"
+        if conn.execute("SELECT 1 FROM NOTIFICATION WHERE user_id=? AND type='Appointment' AND appointment_ref=?",
+                        (row["user_id"], legacy)).fetchone():
             continue
-        reference = f"{row['user_id']}:{when:%Y%m%d%H%M}"
-        notification = str(uuid.uuid5(uuid.NAMESPACE_URL, f"mb360-demo-reminder/{reference}"))
+        day_label = "ngày mai " if (when.date() - now.date()).days == 1 else ""
+        notification = str(uuid.uuid5(uuid.NAMESPACE_URL, f"mb360-demo-reminder/{reference}/{reminder}"))
         conn.execute("""INSERT OR IGNORE INTO NOTIFICATION
                         (notification_id, user_id, type, title, subtitle, created_at, read_at,
                          case_id, visit_id, watch_flag_id, appointment_ref)
                         VALUES (?, ?, 'Appointment', 'Appointment reminder', ?, ?, NULL, NULL, NULL, NULL, ?)""",
-                     (notification, row["user_id"], f"Nhắc mẹ khám thai ngày mai {when:%d/%m/%Y · %H:%M} tại {row['appointment_place']}.",
+                     (notification, row["user_id"], f"Nhắc mẹ khám thai {day_label}{when:%d/%m/%Y · %H:%M} tại {row['facility']}.",
                       now.strftime("%Y-%m-%d %H:%M"), reference))
     conn.commit()

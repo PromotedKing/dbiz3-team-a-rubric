@@ -13,7 +13,7 @@ from fastapi.responses import RedirectResponse
 from . import clock, tci_feed
 from .acc import entry
 
-TABLE = "TCI_HOST_APPOINTMENT"
+TABLE = tci_feed.APPOINTMENTS
 FACILITY = "Bệnh viện Thu Cúc"
 SPECIALTY = "Sản khoa"
 FEE = 300_000  # Illustrative only
@@ -54,10 +54,11 @@ def install(conn, now):
                                  AND (valid_to IS NULL OR valid_to>=?) ORDER BY valid_from DESC LIMIT 1""",
                               (row["user_id"], at[:10], at[:10])).fetchone()
         conn.execute(f"""INSERT OR IGNORE INTO {TABLE}
-                        (appointment_id,user_id,facility,doctor_id,specialty,reason,appointment_at,status,created_at)
-                        VALUES (?,?,?,?,?,?,?,'Confirmed',?)""",
+                        (appointment_id,user_id,facility,doctor_id,specialty,reason,appointment_at,status,created_at,reminder_at,reminder_enabled)
+                        VALUES (?,?,?,?,?,?,?,'Confirmed',?,?,1)""",
                      (str(uuid.uuid5(uuid.NAMESPACE_URL, f"tci-upcoming/{row['user_id']}")), row["user_id"],
-                      row["appointment_place"], doctor[0] if doctor else None, SPECIALTY, "Khám thai", at, now.strftime(STAMP)))
+                      row["appointment_place"], doctor[0] if doctor else None, SPECIALTY, "Khám thai", at, now.strftime(STAMP),
+                      (datetime.fromisoformat(at).date() - timedelta(days=1)).isoformat() + " 00:00"))
     conn.commit()
 
 
@@ -111,24 +112,39 @@ def register(app, conn, page):
     def signed(payload):
         return hmac.new(key, payload.encode(), hashlib.sha256).hexdigest()
 
+    def return_path(request, user):
+        uid = user["user_id"]
+        token = request.cookies.get(entry.COOKIE)
+        expected = signed(f"mb360-return/{uid}/{token}")
+        if entry.valid_session(conn, token, uid, clock.now()) and hmac.compare_digest(
+            request.cookies.get("tci_mb360_return", ""), expected
+        ):
+            return f"/m/{uid}/appointments"
+        return None
+
     @app.get("/tci/appointments")
     def appointments(request: Request, tab: str = "current"):
         user = owner(request)
-        rows = []
-        if conn.execute("SELECT 1 FROM sqlite_master WHERE name=? AND type='table'", (TABLE,)).fetchone():
-            rows = conn.execute(f"""SELECT a.*,s.full_name AS doctor FROM {TABLE} a
-                                   LEFT JOIN STAFF s ON s.staff_id=a.doctor_id WHERE a.user_id=?
-                                   ORDER BY a.appointment_at DESC""", (user["user_id"],)).fetchall()
-        now = clock.now().strftime(STAMP)
+        current, past = tci_feed.appointments(conn, user["user_id"], clock.now())
         history = tab == "history"
-        active = [row for row in rows if row["status"] in ("Pending", "Confirmed") and row["appointment_at"] > now]
-        return page(request, "tci_appointments.html", rows=[r for r in rows if r not in active] if history else active[::-1],
-                    history=history, now=now, account=user)
+        return page(request, "tci_appointments.html", rows=past if history else current,
+                    history=history, account=user, return_path=return_path(request, user))
 
     @app.get("/tci/booking")
-    def booking(request: Request):
-        return page(request, "tci_booking.html", account=owner(request), doctors=doctors(), facility=FACILITY,
-                    specialty=SPECIALTY, fee=FEE, today=clock.now().date())
+    def booking(request: Request, source: str = ""):
+        user = owner(request)
+        token = request.cookies.get(entry.COOKIE)
+        session_user = conn.execute("SELECT user_id FROM SESSION WHERE session_token=?", (token,)).fetchone()
+        handoff = source == "mb360" and session_user and entry.valid_session(conn, token, session_user[0], clock.now())
+        if handoff:
+            user = conn.execute("SELECT * FROM USER_ACCOUNT WHERE user_id=?", (session_user[0],)).fetchone()
+        response = page(request, "tci_booking.html", account=user, doctors=doctors(), facility=FACILITY,
+                        specialty=SPECIALTY, fee=FEE, today=clock.now().date())
+        if handoff:
+            remember(response, user["user_id"])
+            response.set_cookie("tci_mb360_return", signed(f"mb360-return/{user['user_id']}/{token}"),
+                                httponly=True, samesite="lax", secure=entry.SECURE_COOKIE)
+        return response
 
     @app.post("/tci/booking")
     async def preview(request: Request):

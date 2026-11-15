@@ -236,3 +236,13 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         except profile.ProfileError:
             return page(request, "notif_settings.html", 422, user=user, prefs=profile.preferences(conn, user_id))
         return RedirectResponse(f"/m/{user_id}/settings/notifications", status_code=303)
+
+    @app.get("/m/{user_id}/appointments", response_class=HTMLResponse)
+    def appointments(request: Request, user_id: str, tab: str = "current"):
+        user = mother(user_id)
+        if not entry.valid_session(conn, request.cookies.get(entry.COOKIE), user_id, clock.now()):
+            raise HTTPException(404, "Appointment list not found")
+        current, past = tci_feed.appointments(conn, user_id, clock.now())
+        history = tab == "history"
+        return page(request, "appointments.html", user=user, rows=past if history else current,
+                    history=history, today=clock.now().date().isoformat())

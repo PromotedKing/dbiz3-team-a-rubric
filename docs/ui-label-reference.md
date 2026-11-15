@@ -699,6 +699,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Mother app v1.0.0 (D-81) | Week by week | Xem theo từng tuần |
 | Mother app v1.0.0 (D-81) | Mother & Baby 360 will use the following information from the TCI app, with no need to sign in again: | Mẹ & Bé 360 sẽ dùng các thông tin sau từ app TCI, không cần đăng nhập lại: |
 | Mother app v1.0.0 (D-81) | Next appointment | Lịch khám kế tiếp |
+| Proposed S-106 | Appointment schedule | Lịch khám |
 | Mother app v1.0.0 (D-81) | Open as another TCI account | Mở bằng tài khoản TCI khác |
 | Mother app v1.0.0 (D-81) | Sample data: everyone here is invented, and the medical wording is waiting for hospital review. | Dữ liệu mẫu: mọi tên người đều là giả, nội dung y khoa đang chờ bệnh viện duyệt. |
 | Mother app v1.0.0 (D-81) | See the timeline | Xem dòng thời gian |
@@ -800,3 +801,8 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Notification filter dropdown (10/11/2026) | Filter | Lọc |
 | Notification dropdown review (11/11/2026) | All notifications | Tất cả thông báo |
 | Report response link (11/11/2026) | Detailed instructions from your doctor | Chỉ dẫn cụ thể của bác sĩ |
+
+
+## Proposed S-106 labels
+
+**Lịch khám**, **Lịch hiện tại**, **Lịch sử đặt**, **Đặt lịch khám ↗**, **Xem kết quả ›**, **Mẹ chưa có lịch hẹn nào**, **Mẹ chưa có lần khám nào**.

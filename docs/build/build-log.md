@@ -1,5 +1,11 @@
 # Build Log
 
+## 15/11/2026: proposed read-only appointment screen (Hải Anh)
+
+- Proposed D-88 adds S-106 and changes the Appointment notice destination. Home and S-106 read the same host list; booking still lives in TCI. The return link is bound to the verified session.
+- Demo reminders use both switches and a per-appointment time. Seeded host slots default to the previous calendar day. Checks run on app access, with no scheduler. S-010 Q3/Q4 and ACC Q10 stay open.
+- Generated and refreshed the first APT snapshot with the official script. The fixed CSV baseline remains 26 tables and 141 rows.
+
 ## 14/11/2026: simulated TCI booking and history (Hải Anh)
 
 - Added host-only booking, confirmation and cancellation. Fresh demo databases install 22 completed appointments linked to visits, plus three current appointments. The fixed MB360 schema and CSV seed remain at 26 tables and 141 rows.

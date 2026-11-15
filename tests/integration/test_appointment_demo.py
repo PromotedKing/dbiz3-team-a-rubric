@@ -41,7 +41,7 @@ def test_accounts_open_home_with_tomorrow_card_and_no_appointment_case(demo, db)
     assert not notices.list_for(db, empty, 'Appointment')
 
 
-def test_appointment_filter_read_and_host_redirect(demo, db):
+def test_appointment_filter_read_and_list_redirect(demo, db):
     client, mother, _ = demo
     row, = notices.list_for(db, mother, 'Appointment')
     assert row['read_at'] is None and row['appointment_ref']
@@ -49,7 +49,7 @@ def test_appointment_filter_read_and_host_redirect(demo, db):
     assert page.status_code == 200 and page.text.count('data-notice') == 1
     assert 'ngày mai 11/11/2026' in page.text
     opened = client.get(f"/m/{mother}/notices/{row['notification_id']}")
-    assert opened.status_code == 303 and opened.headers['location'] == '/tci/booking'
+    assert opened.status_code == 303 and opened.headers['location'] == f"/m/{mother}/appointments?tab=current#appointment-{row['appointment_ref']}"
     assert notices.list_for(db, mother, 'Appointment')[0]['read_at'] == '2026-11-10 10:00'
     client.get(f'/m/{mother}/home')
     appointment_demo.install(db, NOW)
@@ -64,7 +64,7 @@ def test_switch_off_stops_new_reminders_but_keeps_received_notices(demo, db):
     path = f'/m/{mother}/settings/notifications'
     assert client.post(path, data={'key': 'appointment_reminder', 'value': '0'}).status_code == 303
     # Simulate a NEW appointment in the host feed, due tomorrow on the following day.
-    db.execute(f'UPDATE {tci_feed.TABLE} SET next_appointment=? WHERE user_id=?', ('2026-11-12 09:00', mother))
+    db.execute(f'UPDATE {tci_feed.APPOINTMENTS} SET appointment_at=?, reminder_at=? WHERE user_id=?', ('2026-11-12 09:00', '2026-11-11 00:00', mother))
     db.commit()
     clock.set(NOW + timedelta(days=1))
     appointment_demo.install(db, clock.now())  # a restart must not turn the switch back on
@@ -87,7 +87,7 @@ def test_fresh_deploy_uses_relative_dates_and_never_creates_appointment_table(db
     notice, = notices.list_for(db, mother, 'Appointment')
     assert (when.date() + timedelta(days=1)).strftime('%d/%m/%Y') in notice['subtitle']
     names = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-    assert len(names) == 27 and not any(name.startswith('APPOINTMENT') for name in names)
+    assert len(names) == 28 and not any(name.startswith('APPOINTMENT') for name in names)
 
 
 def test_existing_demo_database_upgrade_and_reopen_are_idempotent(db, user_id, tmp_path):

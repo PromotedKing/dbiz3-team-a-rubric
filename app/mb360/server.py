@@ -42,6 +42,8 @@ async def tci_session(request: Request, call_next):
     """ACC FR-015: every sub-app page needs the session opened from the TCI app; otherwise S-043."""
     parts = request.url.path.split("/")
     if len(parts) > 2 and parts[1] == "m" and not entry.valid_session(conn, request.cookies.get(entry.COOKIE), parts[2], clock.now()):
+        if len(parts) > 3 and parts[3] == "appointments":
+            return Response(status_code=404)
         return RedirectResponse("/session-expired", status_code=303)
     return await call_next(request)
 

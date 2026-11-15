@@ -89,3 +89,47 @@ def test_host_history_matches_visits_and_empty_tabs(host, db, user_id):
 def test_same_day_slot_is_deterministic(hour, minute, expected):
     now = NOW.replace(hour=hour, minute=minute)
     assert tci_booking.same_day_slot(now).strftime("%H:%M") == expected
+
+def test_mb360_appointments_round_trip(host, db, user_id):
+    for suffix, current_count, history_count in (("123", 0, 6), ("126", 0, 2), ("128", 1, 9), ("133", 1, 0), ("200", 1, 5)):
+        user = user_id("tci-000" + suffix)
+        # The runtime persona starts with consent pending; use its demo session.
+        from mb360.acc import entry
+        if suffix == "200":
+            entry._new_session(db, user, NOW)
+            db.commit()
+            host.cookies.set(entry.COOKIE, entry.latest_session(db, user))
+        else:
+            sign_in(host, db, user)
+        path = f"/m/{user}/appointments"
+        current = host.get(path)
+        history = host.get(path + "?tab=history")
+        assert current.status_code == history.status_code == 200
+        assert current.text.count('<article') == current_count
+        assert history.text.count("Xem kết quả") == history_count
+        assert "data-back" in current.text and '<nav class="tabs"' not in current.text
+        assert "/tci/booking?source=mb360" in current.text
+        home = host.get(f"/m/{user}/home")
+        if suffix != "200":
+            assert path in home.text
+            assert ("Chưa có lịch sắp tới" in home.text) == (current_count == 0)
+    host.cookies.delete(entry.COOKIE)
+    user = user_id("tci-000123")
+    sign_in(host, db, user)
+    path = f"/m/{user}/appointments"
+    assert host.get(f"/m/{user_id('tci-000133')}/appointments").status_code == 404
+    assert host.get("/tci/booking?source=mb360&return=https://example.invalid").status_code == 200
+    form = draft(host, booking_form(db))
+    form.update(reminder_enabled="on", reminder_day="2026-11-14", reminder_time="10:00")
+    assert host.post("/tci/booking/confirm", data=form).status_code == 303
+    assert path in host.get("/tci/appointments").text
+    assert "example.invalid" not in host.get("/tci/appointments").text
+    appointment = db.execute(f"SELECT appointment_id FROM {tci_booking.TABLE} WHERE reason='Khám thai mẫu'").fetchone()[0]
+    assert appointment in host.get(path).text
+    host.get(f"/m/{user}/home")
+    notice = db.execute("SELECT notification_id FROM NOTIFICATION WHERE appointment_ref=?", (appointment,)).fetchone()[0]
+    assert host.get(f"/m/{user}/notices/{notice}").headers["location"].endswith(f"#appointment-{appointment}")
+    assert host.post(f"/tci/appointments/{appointment}/cancel").status_code == 303
+    assert "Đã hủy" in host.get(path + "?tab=history").text
+    host.get(f"/m/{user}/home")
+    assert db.execute("SELECT COUNT(*) FROM NOTIFICATION WHERE appointment_ref=?", (appointment,)).fetchone()[0] == 1
