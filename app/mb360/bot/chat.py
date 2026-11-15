@@ -9,7 +9,7 @@ from datetime import date, datetime
 
 from ..alr import cases
 from ..alr.reports import gestational_week
-from . import classify, guard
+from . import classify, guard, lookup
 
 DB_TIME = "%Y-%m-%d %H:%M"
 MAX_LEN = 500   # D-46
@@ -55,11 +55,12 @@ def fit(answer: str, limit: int = ANSWER_MAX) -> str:
     return cut[:end + 1].strip() if end >= limit // 2 else cut[:cut.rfind(" ")].rstrip(",;:") + "…"
 
 
-def _message(conn, conversation_id, sender, text, at, intent=None, is_risk=0) -> str:
+def _message(conn, conversation_id, sender, text, at, intent=None, is_risk=0, extra=None) -> str:
     mid = str(uuid.uuid4())
+    parsed = {"intent": intent, **(extra or {})} if intent else None
     conn.execute("""INSERT INTO CHAT_MESSAGE (message_id, conversation_id, sender, text, parsed_intent, is_risk, handoff_choice, sent_at)
                     VALUES (?, ?, ?, ?, ?, ?, NULL, ?)""",
-                 (mid, conversation_id, sender, text, json.dumps({"intent": intent}) if intent else None, is_risk, at))
+                 (mid, conversation_id, sender, text, json.dumps(parsed, ensure_ascii=False) if parsed else None, is_risk, at))
     return mid
 
 
@@ -76,11 +77,13 @@ def prepare(conn: sqlite3.Connection, user_id: str, conversation_id: str | None,
         raise ChatError(404, "Unknown conversation")
     kind = classify.classify(text)
     week = _week(conn, user_id, now)
-    context = None
+    context = lookup_answer = None
     if kind["category"] == "general":
         context = {"gestational_week": week, "earlier": _earlier(conn, conversation_id) if conversation_id else []}
+    elif kind["category"] == "lookup":                                            # FR-012: built here, no LLM (BR-006)
+        lookup_answer = lookup.answer(conn, user_id, kind["lookup"], now)
     return {"user_id": user_id, "conversation_id": conversation_id, "text": text, "kind": kind, "week": week,
-            "at": now.strftime(DB_TIME), "context": context}
+            "at": now.strftime(DB_TIME), "context": context, "lookup_answer": lookup_answer}
 
 
 def ask(conn: sqlite3.Connection, user_id: str, conversation_id: str | None, text: str, now: datetime, client) -> str:
@@ -97,8 +100,11 @@ def save(conn: sqlite3.Connection, q: dict, answer: str | None, client) -> str:
             conn.execute("INSERT INTO CONVERSATION (conversation_id, user_id, current_session_data) VALUES (?, ?, NULL)",
                          (conversation_id, user_id))
         turns = len(_earlier(conn, conversation_id))
-        _message(conn, conversation_id, "Mother", text, at, kind["category"], 1 if kind["category"] == "needs_nurse" else 0)
-        if kind["category"] == "needs_nurse":
+        _message(conn, conversation_id, "Mother", text, at, kind["category"], 1 if kind["category"] == "needs_nurse" else 0,
+                 kind.get("lookup"))
+        if kind["category"] == "lookup":
+            _message(conn, conversation_id, "Chatbot", fit(q["lookup_answer"]), at)   # FR-012; not an AI answer, so no AI_RESPONSE_LOG
+        elif kind["category"] == "needs_nurse":
             _message(conn, conversation_id, "Chatbot", HANDOFF_TEXT, at)          # FR-007: no case yet (D-34)
         elif kind["category"] == "out_of_scope":
             _message(conn, conversation_id, "Chatbot", DECLINE_TEXT, at)          # FR-010

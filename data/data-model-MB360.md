@@ -212,6 +212,14 @@ One row per (function, entity) pair, decided from the FR text, its §5.1 fields 
 | BOT FR-008 | CHAT_MESSAGE | U | BOT §5 FR-008 (`handoff_choice`) |
 | BOT FR-008 | CARE_CASE | C | BOT §5 FR-008 ("create a Case … through ALR FR-021") |
 | BOT FR-009 | CHAT_MESSAGE | U | BOT §5 FR-009 (`handoff_choice` = No thanks) |
+| BOT FR-012 | CHAT_MESSAGE | C | BOT §5 FR-012 (the lookup answer, a Chatbot message); D-89 (proposed) |
+| BOT FR-012 | PREGNANCY_PROFILE | R | BOT §5 FR-012 (week and due date); D-89 (proposed) |
+| BOT FR-012 | VISIT | R | BOT §5 FR-012 (latest visit); D-89 (proposed) |
+| BOT FR-012 | HEALTH_METRIC_RECORD | R | BOT §5 FR-012 (latest and previous value of a metric); D-89 (proposed) |
+| BOT FR-012 | NOTIFICATION | R | BOT §5 FR-012 (unread notices); D-89 (proposed) |
+| BOT FR-012 | CARE_CASE | R | BOT §5 FR-012 (reports being handled); D-89 (proposed) |
+| BOT FR-012 | WATCH_FLAG | R | BOT §5 FR-012 (doctor's instructions); D-89 (proposed) |
+| BOT FR-012 | APPOINTMENT_RECORD | R | BOT §5 FR-012 (next appointment, read from the TCI app); D-89 (proposed) |
 | APT FR-005 | APPOINTMENT_RECORD | R | APT §5 FR-005 (read-only card on S-008) — external |
 | APT FR-009 | NOTIFICATION | C | APT §5 FR-009 ("creates the mother's Appointment notification") |
 | APT FR-009 | NOTIFICATION_PREFERENCE | R | APT §5 FR-009 ("when the Appointment reminders switch is on") |
@@ -273,18 +281,18 @@ One row per (function, entity) pair, decided from the FR text, its §5.1 fields 
 |---|---|---|---|---|
 | USER_ACCOUNT | ACC FR-011 | ACC FR-001, FR-015, FR-017, FR-023, FR-024; CLI FR-002, FR-007 | — | — |
 | SESSION | ACC FR-015 | — | ACC FR-019 | — |
-| PREGNANCY_PROFILE | ACC FR-005 | ACC FR-016, FR-017, FR-018, FR-023, FR-024; ALR FR-015; TML FR-003, FR-006, FR-008; CLI FR-002, FR-007 | ACC FR-005, FR-022 | — |
+| PREGNANCY_PROFILE | ACC FR-005 | ACC FR-016, FR-017, FR-018, FR-023, FR-024; ALR FR-015; TML FR-003, FR-006, FR-008; CLI FR-002, FR-007; BOT FR-012 | ACC FR-005, FR-022 | — |
 | CONSENT_RECORD | ACC FR-011 | — | — | — |
 | EMR_LINKAGE_REQUEST | ACC FR-002 | ACC FR-001, FR-023 | — | — |
-| NOTIFICATION | ALR FR-018, FR-019, FR-022; APT FR-009; CLI FR-005 | ACC FR-025 | ACC FR-026 | — |
+| NOTIFICATION | ALR FR-018, FR-019, FR-022; APT FR-009; CLI FR-005 | ACC FR-025; BOT FR-012 | ACC FR-026 | — |
 | NOTIFICATION_PREFERENCE | ACC FR-011 | ALR FR-018, FR-019, FR-022; APT FR-009 | ACC FR-027 | — |
-| HEALTH_METRIC_RECORD | ACC FR-005; HLT FR-007; ALR FR-020 | ACC FR-016; HLT FR-001, FR-002, FR-003, FR-004, FR-005, FR-008, FR-009, FR-010, FR-011, FR-012; ALR FR-002, FR-005; CLI FR-002, FR-003, FR-008, FR-010, FR-014, FR-015 | — | — |
-| VISIT | — (seed data — D-59) | ACC FR-016; HLT FR-002; ALR FR-019; TML FR-003, FR-004, FR-005; CLI FR-007, FR-010, FR-025 | — | — |
+| HEALTH_METRIC_RECORD | ACC FR-005; HLT FR-007; ALR FR-020 | ACC FR-016; HLT FR-001, FR-002, FR-003, FR-004, FR-005, FR-008, FR-009, FR-010, FR-011, FR-012; ALR FR-002, FR-005; CLI FR-002, FR-003, FR-008, FR-010, FR-014, FR-015; BOT FR-012 | — | — |
+| VISIT | — (seed data — D-59) | ACC FR-016; HLT FR-002; ALR FR-019; TML FR-003, FR-004, FR-005; CLI FR-007, FR-010, FR-025; BOT FR-012 | — | — |
 | PATIENT_CLINICAL_PROFILE | — (seed data — D-59) | CLI FR-007 | — | — |
-| WATCH_FLAG | CLI FR-025 | ACC FR-016; HLT FR-002; ALR FR-007, FR-011, FR-020, FR-022 | ALR FR-016; CLI FR-025 | — |
+| WATCH_FLAG | CLI FR-025 | ACC FR-016; HLT FR-002; ALR FR-007, FR-011, FR-020, FR-022; BOT FR-012 | ALR FR-016; CLI FR-025 | — |
 | METRIC_REPORT | ALR FR-020 | ALR FR-002, FR-003, FR-005, FR-021; CLI FR-002, FR-003, FR-014 | — | — |
 | REPORT_SYMPTOM | ALR FR-020 | ALR FR-005; CLI FR-002, FR-003 | — | — |
-| CARE_CASE | ALR FR-021; BOT FR-008 | ACC FR-016; HLT FR-002, FR-004; ALR FR-002, FR-003, FR-005, FR-008, FR-018; CLI FR-002, FR-003, FR-009, FR-013, FR-014, FR-015, FR-020 | ALR FR-004, FR-009; CLI FR-004, FR-005, FR-016, FR-017, FR-019, FR-021 | — |
+| CARE_CASE | ALR FR-021; BOT FR-008 | ACC FR-016; HLT FR-002, FR-004; ALR FR-002, FR-003, FR-005, FR-008, FR-018; CLI FR-002, FR-003, FR-009, FR-013, FR-014, FR-015, FR-020; BOT FR-012 | ALR FR-004, FR-009; CLI FR-004, FR-005, FR-016, FR-017, FR-019, FR-021 | — |
 | CASE_STATUS_HISTORY | ALR FR-004, FR-009, FR-021; CLI FR-004, FR-005, FR-016, FR-017, FR-019, FR-021 | ALR FR-005 | — | — |
 | STAFF_RESPONSE | CLI FR-024 | ALR FR-005, FR-007 | — | — |
 | GUIDANCE_TEMPLATE | — (seed data — DM-10) | ALR FR-007, FR-016; CLI FR-024, FR-025 | — | — |
@@ -295,9 +303,9 @@ One row per (function, entity) pair, decided from the FR text, its §5.1 fields 
 | DIARY_IMAGE | TML FR-009 | TML FR-003 | — | — |
 | FAMILY_MESSAGE | TML FR-011 | TML FR-003, FR-004, FR-011 | — | — |
 | CONVERSATION | BOT FR-003 | BOT FR-002 | BOT FR-003 | — |
-| CHAT_MESSAGE | BOT FR-001, FR-002 | ALR FR-002, FR-005, FR-021; CLI FR-002, FR-003 | BOT FR-006, FR-008, FR-009 | — |
+| CHAT_MESSAGE | BOT FR-001, FR-002, FR-012 | ALR FR-002, FR-005, FR-021; CLI FR-002, FR-003 | BOT FR-006, FR-008, FR-009 | — |
 | AI_RESPONSE_LOG | BOT FR-004 | — | — | — |
-| APPOINTMENT_RECORD | — (TCI app) | APT FR-005, FR-009 | — | — |
+| APPOINTMENT_RECORD | — (TCI app) | APT FR-005, FR-009; BOT FR-012 | — | — |
 
 No function deletes anything (DM-13); delete behaviour is in §9.
 

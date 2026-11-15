@@ -10,14 +10,16 @@
 | HLT | 12 | 1 | 0 |
 | ALR | 22 | 1 | 7 |
 | TML | 14 | 2 | 4 |
-| BOT | 11 | 0 | 6 |
+| BOT | 12 | 0 | 7 |
 | APT | 10 | 7 | 0 |
 | CLI | 25 | 5 | 2 |
-| **Total** | **122** | **24** | **23** |
+| **Total** | **123** | **24** | **24** |
 
 *Updated 29/09/2026 (review against the MVP Scope): 7 new FRs (ALR-FR-020 – 022, BOT-FR-006 – 009); 13 more Won't (HLT-FR-006, ALR-FR-017, APT-FR-002 – 004 / 006 – 008 / 010, CLI-FR-011 / 018 / 022 / 023). Won't rows are kept for traceability.*
 
 *Updated 14/10/2026 (PRD alignment, D-71 – D-78): 6 new FRs — ACC-FR-028 (onboarding guide), TML-FR-012 – 014 (daily indicators, journey review, PDF album), BOT-FR-010 – 011 (out-of-scope decline, medical-attention notice); APT-FR-001 / 005 / 009 become Could (D-77); CLI-FR-003 shows the chat transcript (D-78).*
+
+*Updated 15/11/2026 (D-89, proposed): 1 new FR — BOT-FR-012 (data lookup answered inside the app).*
 
 ## ACC — Onboarding & Session
 
@@ -130,6 +132,7 @@
 | 85 | — (new FR, no DBIZ2 row) | `BOT-FR-009` (new) | No thanks → show hotline *(team-named)* | On "No, thanks" the system MUST record `handoff_choice`, create no case and show the hotline number (D-34; BOT-03). | Process *(team)* | System | Chat Message ID (UUID; Required); handoff_choice = No thanks (ENUM; Required) | *(UI: hotline number shown)* | Must (BOT-03) |
 | 86 | — (new FR, no DBIZ2 row) | `BOT-FR-010` (new) | Decline out-of-scope question *(team-named)* | The system MUST reply to a question outside pregnancy, prenatal care, nutrition and postpartum wellness with a polite decline, without a hand-off offer and without a case (D-76). | Process *(team)* | System | Chat Message (UUID; Required) | Decline answer (TEXT; Required) | Must (D-76) |
 | 87 | — (new FR, no DBIZ2 row) | `BOT-FR-011` (new) | Show medical-attention notice *(team-named)* | When a "needs a nurse" question matches a danger phrase (D-47), the system MUST stop general advice and show the notice "Signs that need medical attention" at the top of the hand-off bubble (D-76). | Screen *(team)* | System | Chat Message ID (UUID; Required) | *(UI: notice + hand-off bubble on S-034)* | Must (D-76) |
+| 88 | — (new FR, no DBIZ2 row) | `BOT-FR-012` (new) | Answer a data lookup in the app *(team-named)* | When a question only asks for the mother's own data that the sub-app already shows (next appointment, latest visit, latest metric value, week and due date, unread notices, reports being handled, doctor's instructions), the system MUST answer it from that data inside the app, with simple arithmetic and a link to the screen; the data never goes to the LLM and the answer gives no clinical judgement (BR-006; D-89, proposed). | Process *(team)* | System | Chat Message (UUID; Required); the mother's own sub-app data (rows; Required) | Lookup answer (TEXT; Required); link to the screen *(UI)* | Should (D-89) |
 
 ## APT — Appointment (handed off to the TCI app)
 

@@ -28,7 +28,7 @@ def test_answer_check(case):
 
 
 def test_the_set_covers_every_route():
-    assert {c["expect"] for c in SET["questions"]} == {"general", "needs_nurse", "danger", "out_of_scope"}
+    assert {c["expect"] for c in SET["questions"]} == {"general", "needs_nurse", "danger", "lookup", "out_of_scope"}
     assert len(SET["questions"]) >= 40
 
 

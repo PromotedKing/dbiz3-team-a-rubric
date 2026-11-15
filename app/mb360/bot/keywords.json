@@ -67,5 +67,84 @@
     "avoid_words": [
       "tránh", "hạn chế", "không nên", "kiêng", "không ăn", "không uống", "không dùng", "không được", "hỏi bác sĩ", "hỏi ý kiến bác sĩ", "avoid", "limit", "do not", "don't", "should not", "shouldn't", "ask your doctor", "ask the doctor"
     ]
+  },
+  "app_lookups": {
+    "status": "PROVISIONAL — team draft 15/11/2026, D-89 proposed (spec-BOT FR-012, BR-006, §10 Q17). A question is a lookup when it has a topic's words and every cue group of one of its 'needs' lines; a lookup that also has an interpretation cue goes to the nurse offer. Matching: bot/classify.py.",
+    "cues": {"mine": ["của em", "của mình", "của tôi", "của mẹ", "em đang", "mình đang", "tôi đang", "nhà em", "my", "mine", "i am", "i'm"], "recent": ["lần trước", "lần khám trước", "gần nhất", "gần đây nhất", "mới nhất", "vừa rồi", "hôm trước", "lần cuối", "hiện tại", "bây giờ", "last", "latest", "previous", "most recent", "current"], "when": ["khi nào", "bao giờ", "ngày nào", "hôm nào", "mấy giờ", "lúc nào", "ở đâu", "ngày mấy", "when", "what time", "where", "what day"], "value": ["bao nhiêu", "là mấy", "mấy", "how much", "what was", "what is", "what's"], "results": ["kết quả", "result*"], "fresh": ["chưa", "mới", "nào", "bao nhiêu", "mấy", "any", "new", "unread", "how many"], "progress": ["xem chưa", "ai xem", "trạng thái", "đến đâu", "thế nào rồi", "xử lý chưa", "trả lời chưa", "status", "seen", "viewed", "handled"], "what": ["gì", "nào", "những gì", "what", "which"]},
+    "interpretation": ["có cao không", "có thấp không", "có ổn không", "có tốt không", "có sao không", "có bình thường không", "có nguy hiểm không", "có vấn đề gì không", "cao không", "thấp không", "bình thường không", "ổn không", "is it high", "is it low", "is it ok", "is that ok", "is it normal", "is that normal", "too high", "too low"],
+    "topics": [
+      {
+        "topic": "last_visit",
+        "words": ["lần khám trước", "lần khám gần nhất", "lần khám vừa rồi", "khám lần trước", "lần khám cuối", "last visit", "last check-up", "latest visit"],
+        "needs": [["when"], ["results"], ["value"]]
+      },
+      {
+        "topic": "appointment",
+        "words": ["lịch khám", "lịch hẹn", "lần khám tới", "lần khám sau", "lần khám tiếp theo", "buổi khám tới", "tái khám", "appointment*", "next check-up", "next visit"],
+        "needs": [["when"], ["mine"]]
+      },
+      {
+        "topic": "week",
+        "words": ["ngày dự sinh", "dự sinh", "tuần thứ mấy", "thai mấy tuần", "bao nhiêu tuần", "due date", "how many weeks"],
+        "needs": [["when"], ["mine"], ["recent"]]
+      },
+      {
+        "topic": "metric",
+        "metric": "Blood pressure",
+        "words": ["huyết áp", "blood pressure"],
+        "needs": [["recent"], ["mine", "value"]]
+      },
+      {
+        "topic": "metric",
+        "metric": "Fetal heart rate",
+        "words": ["tim thai", "nhịp tim thai", "fetal heart rate", "fetal heartbeat"],
+        "needs": [["recent"], ["mine", "value"]]
+      },
+      {
+        "topic": "metric",
+        "metric": "Heart rate",
+        "words": ["nhịp tim", "heart rate", "pulse"],
+        "needs": [["recent"], ["mine", "value"]]
+      },
+      {
+        "topic": "metric",
+        "metric": "Weight",
+        "words": ["cân nặng", "weight"],
+        "needs": [["recent"], ["mine", "value"]]
+      },
+      {
+        "topic": "metric",
+        "metric": "Blood glucose",
+        "words": ["đường huyết", "đường máu", "blood sugar", "blood glucose"],
+        "needs": [["recent"], ["mine", "value"]]
+      },
+      {
+        "topic": "metric",
+        "metric": "Urine protein",
+        "words": ["protein niệu", "đạm niệu", "protein trong nước tiểu", "urine protein"],
+        "needs": [["recent"], ["mine", "value"]]
+      },
+      {
+        "topic": "metric",
+        "metric": "Temperature",
+        "words": ["nhiệt độ", "thân nhiệt", "temperature"],
+        "needs": [["recent"], ["mine", "value"]]
+      },
+      {
+        "topic": "reports",
+        "words": ["báo cáo", "phản ánh", "report*"],
+        "needs": [["progress"]]
+      },
+      {
+        "topic": "notices",
+        "words": ["tin nhắn", "thông báo", "bác sĩ trả lời", "bác sĩ phản hồi", "y tá trả lời", "y tá phản hồi", "message*", "notification*"],
+        "needs": [["fresh"], ["mine"]]
+      },
+      {
+        "topic": "instructions",
+        "words": ["bác sĩ dặn", "chỉ dẫn", "dặn theo dõi", "cần theo dõi", "instruction*"],
+        "needs": [["what"], ["mine"]]
+      }
+    ]
   }
 }

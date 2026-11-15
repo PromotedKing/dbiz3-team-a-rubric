@@ -51,6 +51,7 @@ The conversation screen between the mother and the chatbot: it answers general p
 | 15 | "Type your question…" field | Input (text) | Chat Message — text (`spec-BOT.md` FR-001) | Yes | not empty; ≤ **500 characters** (D-46) |
 | 16 | "Send" button | Button (primary) | sends the question (FR-001 → FR-002) | Yes | disabled while the input field is empty |
 | 17 | 5-tab bar, "Chatbot" selected | Toggle (tab) | navigation (D-27, D-30) | Yes | — |
+| 18 | *(Added 15/11/2026, D-89 proposed)* Data-lookup answer bubble, e.g. "Latest blood pressure: 145/92 mmHg, 26/09/2026 · 18:02" + caption "The chatbot only repeats your data from the app and does not assess it. If you are worried, ask a nurse." + link "View in the app ›" | Chat bubble (left) | built by the app from the mother's own data, not by the LLM (`spec-BOT.md` FR-012, BR-006); the link opens the screen that shows the data (S-106, S-023, S-025, S-105, From doctor, S-029, S-027) | No | no "For reference only" line: it is not an AI answer; not in the wireframe |
 
 Note: the "[S-033] … [Connect to nurse] … [No, thanks] … [Error] …" boxes on the image are annotations, described in §4–§6. The answer content is a placeholder.
 
@@ -127,6 +128,7 @@ Note: the "[S-033] … [Connect to nurse] … [No, thanks] … [Error] …" boxe
 | 3 | [NEEDS CLARIFICATION: the real hotline number — see `spec-BOT.md` §10 Q8.] | No | Open |
 | 4 | [NEEDS CLARIFICATION: after "Connect to nurse" is tapped, are the two buttons locked; does a follow-up question on the same topic create a new case?] | No | Open |
 | 5 | [NEEDS CLARIFICATION: the exact wording of the "Sent to a nurse" bubble — it exists only in the annotation and is not drawn.] | No | Open |
+| 6 | [NEEDS CLARIFICATION: element #18 (data-lookup bubble, D-89 proposed) has no wireframe; layout and wording to be confirmed by UX/UI — see `spec-BOT.md` §10 Q17.] | No | Open |
 
 ---
 
