@@ -130,6 +130,16 @@ def test_groq_request_and_answer(monkeypatch):
     assert [m["role"] for m in body["messages"]] == ["system", "user", "assistant", "user"] and "Tuần thai 24" in body["messages"][-1]["content"]
 
 
+def test_system_prompt_avoids_debated_foods(monkeypatch):
+    """Groq and Gemini both get the rule against foods whose safety in pregnancy is debated (live check, 15/11/2026)."""
+    assert "debated" in llm.SYSTEM_PROMPT and "ask her doctor" in llm.SYSTEM_PROMPT
+    sent = []
+    monkeypatch.setattr(urllib.request, "urlopen", lambda req, timeout: sent.append(json.loads(req.data)) or _Resp(
+        {"choices": [{"message": {"role": "assistant", "content": "Mẹ ăn thịt bò nạc."}}]}))
+    llm.GroqLLM("test-key-not-real", "openai/gpt-oss-120b").answer("Ăn gì đủ sắt?", {"gestational_week": 20, "earlier": []})
+    assert sent[0]["messages"][0] == {"role": "system", "content": llm.SYSTEM_PROMPT}
+
+
 def test_groq_key_comes_first(monkeypatch, tmp_path):
     monkeypatch.delenv("MB360_LLM", raising=False)
     monkeypatch.delenv("GROQ_MODEL", raising=False)
