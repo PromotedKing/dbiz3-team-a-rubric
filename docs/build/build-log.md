@@ -1,5 +1,12 @@
 # Build Log
 
+## 15/11/2026: proposed read-only appointment screen (Hải Anh)
+
+- Proposed D-88 adds S-106 and changes the Appointment notice destination. Home and S-106 read the same host list; booking still lives in TCI. The return link is bound to the verified session.
+- Demo reminders use both switches and a per-appointment time. Seeded host slots default to the previous calendar day. Checks run on app access, with no scheduler. S-010 Q3/Q4 and ACC Q10 stay open.
+- Kept the proposed TCI management handoff in its own commit for team review.
+- Generated and refreshed the first APT snapshot with the official script. The fixed CSV baseline remains 26 tables and 141 rows.
+
 ## 14/11/2026: simulated TCI booking and history (Hải Anh)
 
 - Added host-only booking, confirmation and cancellation. Fresh demo databases install 22 completed appointments linked to visits, plus three current appointments. The fixed MB360 schema and CSV seed remain at 26 tables and 141 rows.
@@ -828,3 +835,7 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Request**: update the branch and resolve conflicts for owner merge in PR #24. Fast-forwarded the remote review fix, then merged `origin/main` at `3164d6d` without rewriting history.
 - **Resolution**: `app/mb360/acc/routes.py` retains mother validation and appointment reminder creation from main alongside the notification type/unread filters from this branch. All other upstream changes merged automatically. Downstream templates, seed and clinical rules require no additional edits.
 - **Validation**: full pytest suite: 487 passed, 2 existing xfailed; one Starlette/httpx deprecation warning. `git diff --check` passed.
+
+## 15/11/2026: proposed booking and cancellation notices
+
+- Extended Appointment notices under proposed D-88. Home and S-009 reconcile interactive TCI events by appointment ID and event kind. Confirmations bypass the reminder switch. No push or background delivery.

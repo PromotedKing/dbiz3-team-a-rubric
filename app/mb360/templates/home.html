@@ -25,10 +25,12 @@
 </a>
 
 {% if appointment %}
-<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;gap:8px" data-appointment>
+<a href="/m/{{ user.user_id }}/appointments" class="card lnk" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;gap:8px" data-appointment>
   <div><p class="t-cap">{{ _("Next appointment") }}</p><p class="t-body b">{{ _(appointment.long_day) }}, {{ appointment.at }}</p></div>
-  <span class="tag ok">{{ _("{n} days left", n=appointment.days) }}</span>
-</div>
+  <span class="tag ok">{{ _("Today") if appointment.days == 0 else _("{n} days left", n=appointment.days) }}</span>
+</a>
+{% else %}
+<a class="card bd lnk" href="/m/{{ user.user_id }}/appointments">Lịch khám · Chưa có lịch sắp tới</a>
 {% endif %}
 
 <a href="/m/{{ user.user_id }}/report?metric={{ (flags[0] if flags else 'Symptom') | urlencode }}" class="btn full cta" data-report-cta>

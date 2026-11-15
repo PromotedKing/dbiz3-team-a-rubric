@@ -23,7 +23,7 @@ This module connects the mother's digital journey to in-person hospital care whe
 
 **In scope**
 
-- The host app provides its own booking entry point; no booking CTA or Appointments tab is built in the sub-app (FR-001 host-only; BR-001, BR-003; D-80 / D-86).
+- The host app provides its own booking entry point; S-106 may hand off booking to TCI, with no CTA on Home or Appointments root tab (FR-001 host-only; BR-001, BR-003; D-80 / D-86).
 - Displaying the next appointment on S-008 as a read-only card using the TCI host feed; if none exists, the current app omits the card and shows no booking CTA (FR-005, BR-002).
 - Reminder notifications for upcoming appointments (FR-009) — the MVP notification type "Appointment reminders" (S-010), delivered via the TCI app (X-05).
 
@@ -56,7 +56,7 @@ This module connects the mother's digital journey to in-person hospital care whe
 **Acceptance scenarios**
 
 1. **Given** the mother is on Home (S-008), **When** the screen renders, **Then** no booking button or Appointments tab is shown; the root tab bar follows D-80 (BR-003).
-2. **Given** the mother wants to book a visit, **When** she uses the TCI host app's own booking entry point, **Then** booking takes place in TCI; there is no corresponding sub-app navigation control (FR-001 host-only).
+2. **Given** the mother wants to book a visit, **When** she uses the TCI host app's own booking entry point, **Then** booking takes place in TCI; S-106 links to the host booking screen (FR-001 host-only).
 3. Choosing a date / doctor / clinic, checking the slot, confirming the booking and the confirmation message all happen **inside the TCI app** and are not specified by this module (APT-01).
 
 ### US-2 (P3): Get reminded about an upcoming appointment
@@ -65,7 +65,7 @@ This module connects the mother's digital journey to in-person hospital care whe
 
 **Acceptance scenarios**
 
-1. **Given** an upcoming appointment exists and "Appointment reminders" is on (S-010), **When** the reminder time arrives, **Then** the system sends an "Appointment" notification via the TCI app (FR-009, X-05); tapping it on S-009 opens the TCI app's appointment flow.
+1. **Given** an upcoming appointment exists and "Appointment reminders" is on (S-010), **When** the reminder time arrives, **Then** the system sends an "Appointment" notification via the TCI app (FR-009, X-05); tapping it on S-009 opens the read-only S-106 list.
 2. **Given** the mother has an upcoming appointment, **When** she opens S-008, **Then** the read-only next-appointment card shows day, date/time (`dd/mm/yyyy · HH:mm`) and days left from the TCI host feed, as in the current app (FR-005, BR-002; D-81 / D-86).
 3. **Given** the mother has no upcoming appointment, **When** she opens S-008, **Then** the current app omits the next-appointment card and shows no booking CTA (D-80 / D-86).
 
@@ -151,10 +151,10 @@ sequenceDiagram
 | FR-006 | F-106 | The system MUST update appointment or task status based on user interaction with reminders. | Mom | **Won't / N/A — done by the TCI app (APT-01)** |
 | FR-007 | F-107 | The system MUST log appointment or schedule updates for audit and tracking purposes. | System | **Won't / N/A — done by the TCI app (APT-01)** |
 | FR-008 | F-116 | The system MUST send booking confirmation notifications to the patient and relevant staff. | System | **Won't / N/A — done by the TCI app (APT-01)** |
-| FR-009 | F-117 | The system MUST send reminder notifications for upcoming appointments or tasks. **MVP:** creates the mother's "Appointment" notification (`spec-ACC.md` entity Notification) when the "Appointment reminders" switch on S-010 is on; delivered via the TCI app (X-05); tapping it on S-009 opens the TCI app's appointment flow. | System | Could (D-77) |
+| FR-009 | F-117 | The system MUST send reminder notifications for upcoming appointments or tasks. **MVP:** creates the mother's "Appointment" notification (`spec-ACC.md` entity Notification) when the "Appointment reminders" switch on S-010 is on; delivered via the TCI app (X-05); tapping it on S-009 opens the read-only S-106 list. | System | Could (D-77) |
 | FR-010 | F-118 | The system MUST send confirmation notifications when an appointment is canceled. | System | **Won't / N/A — done by the TCI app (APT-01)** |
 
-*FR-001 is host-only; FR-005 is the read-only S-008 card; FR-009 is the appointment reminder. The current sub-app has no booking button or Appointments tab (D-80 / D-86).*
+*FR-001 is host-only; FR-005 is the read-only S-008 card; FR-009 is the appointment reminder. The sub-app has no Home booking button or Appointments root tab (D-80 / D-86).*
 
 ### 5.1 Input / Output contract
 
@@ -164,7 +164,7 @@ sequenceDiagram
 | FR-002 | — | — | — | — | — | **Won't / N/A (TCI app)** |
 | FR-003 | — | — | — | — | — | **Won't / N/A (TCI app)** |
 | FR-004 | — | — | — | — | — | **Won't / N/A (TCI app)** |
-| FR-005 | User ID | UUID | Yes | Upcoming Appointments (read from the TCI app) | LIST of OBJECT (appointment_ref, visit_name, appointment_at, facility, doctor_name) | External integration fields retained; the current demo renders day, date/time and days left from its simulated host feed (D-81). Read-only card on S-008; empty → card omitted, no booking CTA (D-86). How the card is refreshed after booking: §10 Q9 |
+| FR-005 | User ID | UUID | Yes | Upcoming Appointments (read from the TCI app) | LIST of OBJECT (appointment_ref, visit_name, appointment_at, facility, doctor_name) | External integration fields retained; the current demo renders day, date/time and days left from its simulated host feed (D-81). Read-only card on S-008; empty → read-only S-106 entry row, no booking CTA (proposed D-88). How the card is refreshed after booking: §10 Q9 |
 | FR-006 | — | — | — | — | — | **Won't / N/A (TCI app)** |
 | FR-007 | — | — | — | — | — | **Won't / N/A (TCI app)** |
 | FR-008 | — | — | — | — | — | **Won't / N/A (TCI app)** |
@@ -175,7 +175,7 @@ sequenceDiagram
 
 | Rule ID | Rule | Why it exists |
 |---|---|---|
-| BR-001 | This module MUST NOT create or manage a native appointment system. Booking and its entry point belong to the TCI host app; S-008 has no booking button. Opening an Appointment notice on S-009 retains its existing host redirect. | D-77 (host-owned records), D-80 / D-86 (current navigation); DM-04. |
+| BR-001 | This module MUST NOT create or manage a native appointment system. Booking and its entry point belong to the TCI host app; S-008 has no booking button. Opening an Appointment notice on S-009 marks it read and opens S-106 (D-88 proposed). | D-77 (host-owned records), D-80 / D-86 (current navigation); DM-04. |
 | BR-002 | Any appointment record created through the host app's flow is the authoritative record; this module must not maintain a conflicting, duplicate schedule of its own. The "Upcoming appointments" card on S-008 only reads from this record. | Direct consequence of BR-001, stated explicitly here since neither DBIZ2 nor MVP v8 draws what happens if the two disagree — see the open question in §10. |
 | BR-003 | The sub-app's five root tabs MUST be Home · Timeline · Chatbot · From doctor · Profile. It MUST NOT show an Appointments tab or a booking CTA on Home. Child screens retain their back navigation without a root tab bar. | D-80, confirmed by the APT owner on 11/11/2026 (D-86); `app/mb360/ui.py`, `templates/base.html`. |
 
@@ -199,7 +199,7 @@ DBIZ2 has native-booking screens S-012 – S-022 (5 with a mockup). MVP v8 does 
 | S-008 (belongs to `spec-ACC`) | Read-only next-appointment card; omitted when no appointment exists; no booking CTA | Could (D-77) | Data from TCI (BR-002), current implementation D-81 / D-86. |
 | S-008 (belongs to `spec-ACC`) | No booking button | N/A | D-80 / D-86; booking remains in the host app. |
 | 5-tab bar (root mother screens only) | Home · Timeline · Chatbot · From doctor · Profile | Shared shell | No Appointments tab (BR-003; D-80). |
-| S-009 (belongs to `spec-ACC`) | Appointment notice; opening it marks it read and opens the TCI host booking flow | Could (D-77) | Existing FR-009 behavior retained; this is not a Home booking CTA. |
+| S-009 (belongs to `spec-ACC`) | Appointment notice; opening it marks it read and opens the read-only S-106 list | Could (D-77) | Proposed D-88; this is not a Home booking CTA. |
 | S-010 (belongs to `spec-ACC`) | "Appointment reminders" switch | Could (D-77) | FR-009; hidden if APT is not built |
 
 *Booking remains available through the TCI host app. No booking-session API, adapter or replacement booking UI is introduced by this alignment.*
@@ -217,7 +217,7 @@ DBIZ2 has native-booking screens S-012 – S-022 (5 with a mockup). MVP v8 does 
 | Item | v1.0.0 app | Source |
 |---|---|---|
 | Next appointment | S-008 shows "Lịch khám kế tiếp" (day, date, time, days left), read from the TCI host app; in the demo a simulated host table (`app/mb360/tci_feed.py`), no MB360 schema change, nothing stored by the sub-app | D-81 (U2) |
-| Booking | No booking path in the sub-app; the TCI host's own "Book" tab is outside the sub-app. FR-001 is host-only. | D-80 / D-86 |
+| Booking | S-106 links to TCI booking under proposed D-88. The booking form and writes remain host-only under FR-001. | D-80 / D-86 |
 | Reminders | "Appointment reminders" switch on S-010 (ACC FR-027) | D-81 |
 
 ## 8. Success criteria (mandatory)
@@ -274,3 +274,14 @@ DBIZ2 has native-booking screens S-012 – S-022 (5 with a mockup). MVP v8 does 
 - [x] Success criteria contain no technology words.
 - [x] Open questions carry forward the undefined redirect mechanism, the return to the sub-app and the card refresh.
 - [x] The traceability table points to real rows/sheets/figures.
+
+
+## Proposed D-88 requirements (S-106)
+
+- **FR-011.** When the signed-in mother opens S-106, the sub-app shall read her host appointments and display Current appointments and Booking history, showing time, facility, clinician, specialty, status and a Today label where applicable. When a tab has no rows, the screen shall show its own empty state.
+- **FR-012.** When an appointment has passed without a recorded visit, S-106 shall show it in history with an explanation. Where a completed appointment is linked to the mother's visit on that date, S-106 shall link to the timeline day without showing clinical results itself.
+- **FR-013.** When the mother opens an Appointment notification, the system shall mark it read and open S-106 at the matching host appointment, or at the current list if its reference cannot be resolved. The system shall deny requests for other mothers' lists.
+- **FR-014.** When Home or S-009 checks demo reminders, the system shall create at most one notice per host appointment and reminder time if both switches are on and the appointment is still current. The fixture uses the previous day as a demo default. Received notices remain visible when reminders stop. S-010 Q3/Q4 remain open. There is no background scheduler.
+- Booking, scheduling preferences per appointment, and cancellation are owned by the TCI host. S-106 never writes appointment records. The return path is bound to the verified session. D-77 / DM-04 and the five D-80 root tabs are retained.
+
+- **FR-015 (Proposed D-88).** When Home or S-009 checks the host after the mother books or cancels an interactive TCI appointment, the sub-app shall show one Appointment notice for each recorded event. Booking shows time and clinician; cancellation identifies the slot. Both reference S-106. This extends the Appointment type beyond FR-009 reminders. The overall reminder switch does not gate confirmations. Seed fixtures generate no booking or cancellation notices. There is no push or background scheduling.

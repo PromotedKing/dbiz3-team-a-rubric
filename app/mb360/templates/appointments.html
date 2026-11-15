@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% set page_title = "Appointment schedule" %}
+{% set back_url = "/m/" ~ user.user_id ~ "/home" %}
+{% set path = "/m/" ~ user.user_id ~ "/appointments" %}
+{% set labels = {"Pending": "Chờ xác nhận", "Confirmed": "Đã xác nhận", "Cancelled": "Đã hủy", "Completed": "Đã khám"} %}
+{% block content %}
+<a href="/tci/booking?source=mb360" class="btn full">Đặt lịch khám ↗</a>
+<a class="lnk t-cap" href="/tci/appointments?source=mb360">Quản lý lịch ở TCI ↗</a>
+<div class="grid2">
+  <a class="btn so" href="{{ path }}" {% if not history %}aria-current="page"{% endif %}>Lịch hiện tại</a>
+  <a class="btn so" href="{{ path }}?tab=history" {% if history %}aria-current="page"{% endif %}>Lịch sử đặt</a>
+</div>
+{% for row in rows %}
+<article class="card bd" id="appointment-{{ row.appointment_id }}">
+  <strong>{{ row.appointment_at[:10] | dmy }} · {{ row.appointment_at[11:] }}</strong>
+  {% if not history and row.appointment_at[:10] == today %}<span class="tag">Hôm nay</span>{% endif %}
+  <span class="tag">{{ labels[row.status] }}</span>
+  <p>{{ row.doctor or "Chưa ghi nhận bác sĩ" }}</p>
+  <p>{{ row.specialty }} · {{ row.facility }}</p>
+  {% if row.status == "Completed" and row.result_day %}
+  <a class="lnk" href="/m/{{ user.user_id }}/timeline/day/{{ row.result_day }}">Xem kết quả ›</a>
+  {% elif history and row.status in ("Pending", "Confirmed") %}
+  <p>Đã qua giờ hẹn, chưa ghi nhận lần khám.</p>
+  {% endif %}
+</article>
+{% else %}
+<div class="card bd"><p>{{ "Mẹ chưa có lần khám nào" if history else "Mẹ chưa có lịch hẹn nào" }}</p>
+{% if not history %}<a class="btn" href="/tci/booking?source=mb360">Đặt lịch khám ↗</a>{% endif %}</div>
+{% endfor %}
+{% endblock %}

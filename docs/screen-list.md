@@ -1,8 +1,8 @@
 # Screen List (Group A)
 
-ID scheme `S-{DBIZ2 ID}`; `S-025A` (D-38), `S-104` (D-74) and `S-105` (D-75) are the only non-DBIZ2 IDs. Actor and Priority of in-scope screens are team inferences (DBIZ2 has neither column for screens).
+ID scheme `S-{DBIZ2 ID}`; `S-025A` (D-38), `S-104` (D-74) and `S-105` (D-75) are existing non-DBIZ2 IDs; S-106 is proposed. Actor and Priority of in-scope screens are team inferences (DBIZ2 has neither column for screens).
 
-## In-scope screens (63 DBIZ2 IDs + S-025A, S-104, S-105)
+## In-scope screens (63 DBIZ2 IDs + S-025A, S-104, S-105, proposed S-106)
 
 | Actor | Function name | Screen ID | Screen name | Screen overview | Priority |
 |---|---|---|---|---|---|
@@ -48,6 +48,7 @@ ID scheme `S-{DBIZ2 ID}`; `S-025A` (D-38), `S-104` (D-74) and `S-105` (D-75) are
 | Mom | TML — Pregnancy Timeline & Diary | S-046 | Due Date Input Screen | Drawn in the same frame as S-007; see S-007. Own full spec `screen-spec-S-046.md` (own full spec — D-55) + `img/S-046.png` (copy of the shared image) *(Wireframe title: Pregnancy setup; DBIZ2 mockup: No; drawn: Yes (shared with S-007).)* | Must |
 | Mom | TML — Pregnancy Timeline & Diary | S-047 | Due Date Confirmation Screen | Confirmation that due date is saved *(Wireframe title: —; DBIZ2 mockup: No; drawn: No.)* | Must |
 | Mom | TML — Pregnancy Timeline & Diary | S-048 | Pregnancy Timeline (weekly) | Week selection with arrows; content tied to **real visits** (ultrasound image, measurements from the visit form, doctor's note); no Tips or "Size of" content (**scope change, pending Client approval** — D-02; TML FR-001/FR-007); "Messages to Baby" (mom & dad; TML FR-011, **Must item, pending Client approval** — D-03, D-65); week diary + "+ Add diary entry" (→ S-051). **D-75:** indicators of the week listed by day + visit card on top, diary and messages below; "My journey" → S-105 *(Wireframe title: Pregnancy timeline; DBIZ2 mockup: Yes; drawn: Yes — to redraw.)* | Must |
+| Mom | APT | S-106 | Lịch khám | Proposed D-88 read-only current and historical host appointments, reached from S-008 and S-009 | Could |
 | Mom | TML — Pregnancy Timeline & Diary | S-105 | My Journey & Album | **New ID (D-75)** — not a DBIZ2 row. Journey review by stage (trimesters, boundaries Pending SME) and PDF keepsake album export (TML FR-013, FR-014). Screen spec file: `screen-spec-S-105.md` *(Wireframe title: —; DBIZ2 mockup: No; drawn: No.)* | Must |
 | Mom | TML — Pregnancy Timeline & Diary | S-049 | Pregnancy Week Scroll Screen | Scroll through pregnancy weeks *(Wireframe title: —; DBIZ2 mockup: No; drawn: No.)* | Must |
 | Mom | TML — Pregnancy Timeline & Diary | S-050 | Pregnancy Week Detail Screen | Detailed view of a selected pregnancy week *(Wireframe title: —; DBIZ2 mockup: No; drawn: No.)* | Must |
@@ -143,12 +144,12 @@ Listed for traceability. Screen spec files for these are marked **Removed**, not
 
 ## Build scope
 
-Classification of the 66 in-scope IDs (63 DBIZ2 + `S-025A`, `S-104`, `S-105`) by how each one is delivered. It is derived only from the columns above (drawn / module / notes); it does not add or remove any screen.
+Classification of the 67 in-scope IDs including proposed S-106 by how each one is delivered. It is derived only from the columns above (drawn / module / notes); it does not add or remove any screen.
 
 | Build scope | Count | Screen IDs | What exists in this package |
 |---|---|---|---|
 | **A. Build — drawn, own screen spec + image** | 27 | S-001, S-007, S-008, S-009, S-010, S-011, S-023, S-024, S-025, S-025A, S-026, S-027, S-028, S-029, S-031, S-032, S-033, S-034, S-043, S-046, S-048, S-051, S-052, S-061, S-064, S-083, S-103 | `screens/screen-spec-{ID}.md` + `screens/img/{ID}.png`. Images to redraw after the PRD alignment (14/10/2026): S-001, S-007 / S-046, S-008, S-025A, S-034, S-048, S-064 (chatbot variant) |
-| **A2. Build — specified, not drawn yet (new IDs)** | 2 | S-104 (D-74), S-105 (D-75) | `screens/screen-spec-{ID}.md` only; image to be drawn |
+| **A2. Build — specified, not drawn yet (new IDs)** | 3 | S-104 (D-74), S-105 (D-75), S-106 (proposed D-88) | `screens/screen-spec-{ID}.md` only; image to be drawn |
 | **B. Handled by Host App (Redirect only)** | 11 | S-012 – S-022 | No screen in the sub-app; booking controls belong to the TCI host app; no sub-app Home booking CTA or Appointments tab (`spec-APT.md` §1, BR-003; D-80 / D-86). Listed for traceability only |
 | **C. Covered inside another screen or a shared template — no own spec** | 6 | S-037 (Could — not built in the MVP, BOT-02), S-038 and S-041 (shared error / loading templates, `docs/ui-label-reference.md` "UI conventions"), S-044 (the gestational-week card on S-008 opens S-048), S-045 (non-UI check), S-053 (toast "Diary entry saved" after S-051) | Described in the screen spec named in brackets |
 | **D. In scope, not drawn — delivery not decided** | 20 | S-039, S-040, S-042, S-047, S-049, S-050, S-054 – S-060, S-062, S-063, S-065 – S-069 | Listed for traceability only. `[NEEDS CLARIFICATION: for each ID — build it, merge it into a drawn screen, or drop it?]` Known links: S-047 ↔ `screen-spec-S-046.md` §9 Q5; S-049 / S-050 ↔ week arrows on S-048; S-054 / S-060 ↔ staff sign-in (`spec-CLI.md` §10 Q11); S-059 ↔ `screen-spec-S-061.md` §9 Q4 |
@@ -156,7 +157,7 @@ Classification of the 66 in-scope IDs (63 DBIZ2 + `S-025A`, `S-104`, `S-105`) by
 ## Reconciliation
 
 - **103 DBIZ2 screen IDs** = 63 in scope (56 module rows + 7 `SHARED`) + 6 Removed + 34 Won't.
-- **+3 IDs outside the 103:** `S-025A` (supplied report screen, D-38), `S-104` (onboarding guide, D-74) and `S-105` (journey review & album, D-75). No other ID beyond `S-103` is used.
+- **+3 IDs outside the 103:** `S-025A` (supplied report screen, D-38), `S-104` (onboarding guide, D-74) and `S-105` (journey review & album, D-75). S-106 is proposed under D-88.
 - **Screens drawn:** 27 IDs in 23 drawings — S-001, S-007/S-046, S-008, S-009, S-010, S-011, S-023, S-024, S-025, S-025A, S-026, S-027, S-028, S-029, S-031, S-032/S-033/S-034, S-043, S-048, S-051/S-052, S-061, S-064, S-083, S-103 — plus the UI-conventions page (text in `docs/ui-label-reference.md`). S-043 is drawn in the same style but is not part of the wireframe file. **27 image files** (the 4 shared IDs S-046, S-032, S-033, S-052 have image copies — D-55).
 
 ## Open items that affect this list

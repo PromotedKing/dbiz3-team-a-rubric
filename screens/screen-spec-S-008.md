@@ -53,7 +53,7 @@ Note: the wireframe's booking CTA and appointment empty-state annotation are his
 | State | What the user sees | Trigger |
 |---|---|---|
 | Default | all sections as drawn: gestational week, new visit-result notification, 2 highlighted cards, 4 self-tracked metric cards, upcoming appointment (read-only; no booking CTA) | screen opens with data |
-| Empty (no data) | **Appointments (current app):** card omitted, no booking CTA (D-80 / D-86). **Other sections (not drawn):** use the same D-27 empty template (icon + 1 sentence + CTA if needed); the notification card is hidden when there are no new results; the exact wording for the "My reports" card, the "Doctor's instructions" card and the self-tracked metrics section is `[NEEDS CLARIFICATION]` — see §9 Q2 | new mother, no data yet in the section concerned |
+| Empty (no data) | **Appointments (current app):** read-only S-106 entry row, no booking CTA (proposed D-88). **Other sections (not drawn):** use the same D-27 empty template (icon + 1 sentence + CTA if needed); the notification card is hidden when there are no new results; the exact wording for the "My reports" card, the "Doctor's instructions" card and the self-tracked metrics section is `[NEEDS CLARIFICATION]` — see §9 Q2 | new mother, no data yet in the section concerned |
 | Loading | shared skeleton: grey blocks in place of content, same layout (D-27) | screen opening, data loading |
 | Error | shared banner "⚠ Could not load data. Retry" (D-27); tapping "Retry" reloads | data load fails |
 | Success / confirmation | not applicable — destination screen with no action that needs confirmation | — |
@@ -129,3 +129,8 @@ Demo-only test cases from the generator: `tci-000133` opens Home with a host app
 - [x] All five states are filled in, or marked "not applicable"/`[NEEDS CLARIFICATION]` with a reason.
 - [x] Every navigation target is a Screen ID that exists in the Screen List, the TCI app, or is tagged `[NEEDS CLARIFICATION]`.
 - [x] Every element that displays data names the field it displays, matching the module spec.
+
+
+## Proposed D-88
+
+The next-appointment card or no-upcoming-appointment row opens the read-only S-106 list. Home has no booking CTA.

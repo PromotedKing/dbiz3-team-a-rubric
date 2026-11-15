@@ -169,3 +169,10 @@ User requested resolving arrow misalignment and the floating read-all appearance
 ### Read-all contrast — 11/11/2026
 
 User requested stronger separation from the page background. Read-all uses a more saturated pale green fill (#D6F1E1), visible green border (#91D7AE) and dark green text (#006E35), retaining the balanced toolbar geometry.
+
+
+## Proposed D-88
+
+Opening an Appointment notice marks it read and opens S-106 at the matching appointment where available, otherwise the current list.
+
+Proposed FR-015 adds Appointment notices for confirmed bookings and cancellations in TCI. Both open S-106 and are independent of the reminder switch.

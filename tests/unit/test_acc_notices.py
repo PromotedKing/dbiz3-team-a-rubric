@@ -78,7 +78,7 @@ def test_targets(db, lan):
     assert notices.open_notice(db, lan, _add(db, lan, "c"), NOW) == f"{base}/my-reports"
     assert notices.open_notice(db, lan, _add(db, lan, "d", "Visit result", visit=visit), NOW) == f"{base}/health"
     assert notices.open_notice(db, lan, _add(db, lan, "e", "Instruction reminder", flag=flag), NOW) == f"{base}/instructions"
-    assert notices.open_notice(db, lan, _add(db, lan, "f", "Appointment"), NOW) == "/tci/booking"
+    assert notices.open_notice(db, lan, _add(db, lan, "f", "Appointment"), NOW) == f"/m/{lan}/appointments"
 
 
 def test_type_and_unread_filters_intersect(db, lan):

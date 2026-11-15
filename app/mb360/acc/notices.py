@@ -3,6 +3,7 @@ import re
 import sqlite3
 from datetime import datetime
 
+from .. import tci_feed
 from ..alr import thresholds
 
 TYPES = ("Report", "Visit result", "Appointment", "Instruction reminder")
@@ -25,14 +26,20 @@ def unread_count(conn: sqlite3.Connection, user_id: str) -> int:
     return conn.execute("SELECT COUNT(*) FROM NOTIFICATION WHERE user_id = ? AND read_at IS NULL", (user_id,)).fetchone()[0]
 
 
-def _target(conn: sqlite3.Connection, n: sqlite3.Row) -> str:
+def _target(conn: sqlite3.Connection, n: sqlite3.Row, now: datetime) -> str:
     base = f"/m/{n['user_id']}"
     if n["type"] == "Visit result":
         return f"{base}/health"          # "New visit results" opens S-023 (Ánh §2, S-008 Q3)
     if n["type"] == "Instruction reminder":
         return f"{base}/instructions"
     if n["type"] == "Appointment":
-        return "/tci/booking"
+        path = f"{base}/appointments"
+        current, history = tci_feed.appointments(conn, n["user_id"], now)
+        for tab, rows in (("current", current), ("history", history)):
+            for row in rows:
+                if row["appointment_id"] == n["appointment_ref"]:
+                    return f"{path}?tab={tab}#appointment-{row['appointment_id']}"
+        return path
     case = conn.execute("SELECT metric_report_id FROM CARE_CASE WHERE case_id = ?", (n["case_id"],)).fetchone() if n["case_id"] else None
     if case is None:
         return f"{base}/my-reports"
@@ -47,7 +54,7 @@ def open_notice(conn: sqlite3.Connection, user_id: str, notification_id: str, no
     conn.execute("UPDATE NOTIFICATION SET read_at = ? WHERE notification_id = ? AND read_at IS NULL",
                  (now.strftime("%Y-%m-%d %H:%M"), notification_id))
     conn.commit()
-    return _target(conn, n)
+    return _target(conn, n, now)
 
 
 def mark_all_read(conn: sqlite3.Connection, user_id: str, now: datetime) -> None:

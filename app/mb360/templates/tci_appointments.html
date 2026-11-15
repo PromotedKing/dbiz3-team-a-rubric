@@ -1,6 +1,7 @@
 {% extends "tci_base.html" %}
 {% set labels = {"Pending": "Chờ xác nhận", "Confirmed": "Đã xác nhận", "Cancelled": "Đã hủy", "Completed": "Đã khám"} %}
 {% block content %}
+{% if return_path %}<a class="lnk" href="{{ return_path }}">Về Mẹ & Bé 360</a>{% endif %}
 <h1 class="t-title">Lịch sử đặt hẹn</h1>
 <div class="grid2">
   <a class="btn so" href="/tci/appointments" {% if not history %}aria-current="page"{% endif %}>Lịch hiện tại</a>
