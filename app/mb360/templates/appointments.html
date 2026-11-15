@@ -5,6 +5,7 @@
 {% set labels = {"Pending": "Chờ xác nhận", "Confirmed": "Đã xác nhận", "Cancelled": "Đã hủy", "Completed": "Đã khám"} %}
 {% block content %}
 <a href="/tci/booking?source=mb360" class="btn full">Đặt lịch khám ↗</a>
+<a class="lnk t-cap" href="/tci/appointments?source=mb360">Quản lý lịch ở TCI ↗</a>
 <div class="grid2">
   <a class="btn so" href="{{ path }}" {% if not history %}aria-current="page"{% endif %}>Lịch hiện tại</a>
   <a class="btn so" href="{{ path }}?tab=history" {% if history %}aria-current="page"{% endif %}>Lịch sử đặt</a>

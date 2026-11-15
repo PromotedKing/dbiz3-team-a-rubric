@@ -118,6 +118,10 @@ def test_mb360_appointments_round_trip(host, db, user_id):
     sign_in(host, db, user)
     path = f"/m/{user}/appointments"
     assert host.get(f"/m/{user_id('tci-000133')}/appointments").status_code == 404
+    assert "/tci/appointments?source=mb360" in host.get(path).text
+    management = host.get("/tci/appointments?source=mb360")
+    assert management.status_code == 303 and management.headers["location"] == "/tci/appointments"
+    assert path in host.get("/tci/appointments").text
     assert host.get("/tci/booking?source=mb360&return=https://example.invalid").status_code == 200
     form = draft(host, booking_form(db))
     form.update(reminder_enabled="on", reminder_day="2026-11-14", reminder_time="10:00")

@@ -4,6 +4,7 @@
 
 - Proposed D-88 adds S-106 and changes the Appointment notice destination. Home and S-106 read the same host list; booking still lives in TCI. The return link is bound to the verified session.
 - Demo reminders use both switches and a per-appointment time. Seeded host slots default to the previous calendar day. Checks run on app access, with no scheduler. S-010 Q3/Q4 and ACC Q10 stay open.
+- Kept the proposed TCI management handoff in its own commit for team review.
 - Generated and refreshed the first APT snapshot with the official script. The fixed CSV baseline remains 26 tables and 141 rows.
 
 ## 14/11/2026: simulated TCI booking and history (Hải Anh)

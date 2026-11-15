@@ -123,7 +123,16 @@ def register(app, conn, page):
         return None
 
     @app.get("/tci/appointments")
-    def appointments(request: Request, tab: str = "current"):
+    def appointments(request: Request, tab: str = "current", source: str = ""):
+        if source == "mb360":
+            token = request.cookies.get(entry.COOKIE)
+            session_user = conn.execute("SELECT user_id FROM SESSION WHERE session_token=?", (token,)).fetchone()
+            if session_user and entry.valid_session(conn, token, session_user[0], clock.now()):
+                uid = session_user[0]
+                response = remember(RedirectResponse("/tci/appointments", status_code=303), uid)
+                response.set_cookie("tci_mb360_return", signed(f"mb360-return/{uid}/{token}"),
+                                    httponly=True, samesite="lax", secure=entry.SECURE_COOKIE)
+                return response
         user = owner(request)
         current, past = tci_feed.appointments(conn, user["user_id"], clock.now())
         history = tab == "history"
