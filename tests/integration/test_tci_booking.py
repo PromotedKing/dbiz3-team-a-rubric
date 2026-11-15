@@ -60,7 +60,8 @@ def test_booking_replay_conflicts_and_owned_cancellation(host, db, user_id):
     host.cookies.delete("tci_demo_account")
     assert host.post(url).status_code == 303
     assert "Đã hủy" in host.get("/tci/appointments?tab=history").text
-    assert host.post(url).status_code == 409
+    repeat = host.post(url)                  # a second device cancels again: the history, not an error (15/11/2026)
+    assert repeat.status_code == 303 and repeat.headers["location"] == "/tci/appointments?tab=history"
 
 
 @pytest.mark.parametrize("day,time", [("2026-11-14","09:00"), ("2026-11-15","06:59"),

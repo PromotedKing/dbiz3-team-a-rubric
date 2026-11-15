@@ -215,6 +215,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
     @app.post("/m/{user_id}/profile/edit", response_class=HTMLResponse)
     async def profile_save(request: Request, user_id: str):
         user = mother(user_id)
+        if profile.load(conn, user_id, clock.now())["edd"] is None:    # BR-006, like the GET; was a 500 error (15/11/2026)
+            return go(user_id, "setup")
         form = {k: v for k, v in (await request.form()).items()}
         try:
             profile.save(conn, user_id, form, clock.now())

@@ -92,5 +92,6 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         try:
             chat.handoff(conn, user_id, message_id, choice, clock.now())
         except chat.ChatError as e:
-            raise HTTPException(e.status, e.message)
+            if e.status != 409:                  # 409: already chosen, e.g. on another device → show the choice made (FR-008/009)
+                raise HTTPException(e.status, e.message)
         return RedirectResponse(f"/m/{user_id}/chat/{conversation_id}", status_code=303)

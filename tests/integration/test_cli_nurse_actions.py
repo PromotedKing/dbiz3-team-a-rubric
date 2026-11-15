@@ -23,7 +23,9 @@ def test_nurse_flow_on_rpt006(client, db, staff_id, boundary_case):
     page = client.get(base).text
     assert vi("Close case") not in page
     before = written(db)
-    assert client.post(f"{base}/close").status_code in (403, 409)
+    stale = client.post(f"{base}/close")     # only a stale screen still shows the button: refused, case shown as it is now
+    assert stale.status_code == 303 and stale.headers["location"] == f"{base}?updated=1"
+    assert case_row(db, case)["status"] == "Escalated to doctor"
     assert written(db) == before
 
 
