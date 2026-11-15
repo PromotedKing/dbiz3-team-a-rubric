@@ -130,10 +130,52 @@ def instructions(conn, user_id, now, _):
     return [ui.t("Your doctor asked you to track: {metrics}.", metrics=", ".join(ui.t(r["metric"]).lower() for r in rows))]
 
 
+def _latest_fetal_visit(conn, user_id):
+    return conn.execute("""SELECT * FROM VISIT WHERE user_id = ? AND (estimated_fetal_weight IS NOT NULL OR fetal_length IS NOT NULL)
+                           ORDER BY visit_date DESC LIMIT 1""", (user_id,)).fetchone()
+
+
+def fetal(conn, user_id, now, found):
+    """D-93: the baby's measures from the latest visit that has them, as on the visit day screen — not the mother's weight."""
+    v = _latest_fetal_visit(conn, user_id)
+    if v is None:
+        return [ui.t("There is no fetal measurement in the app yet.")]
+    found["path"] = f"timeline/day/{v['visit_date']}"
+    items = ([ui.t("estimated weight {w} g", w=v["estimated_fetal_weight"])] if v["estimated_fetal_weight"] is not None else []) + \
+            ([ui.t("length {l} cm", l=v["fetal_length"])] if v["fetal_length"] is not None else [])
+    return [ui.t("Latest fetal measurements ({date}): {items}.", date=ui.dmy(v["visit_date"]), items=", ".join(items))]
+
+
+# D-93 (proposed): her own data the chatbot cannot read yet, and things it cannot do for her, get a pointer to the screen
+# instead of going to the LLM, which has no data and could make up an answer (BR-001).
+SEE = "The chatbot cannot read this for you yet. You can see it in the app."
+DO = "The chatbot cannot do this for you. You can do it yourself in the app."
+
+
+def _pointer(text):
+    return lambda conn, user_id, now, found: [ui.t(text)]
+
+
+def visit_notes(conn, user_id, now, found):
+    v = conn.execute("SELECT visit_date FROM VISIT WHERE user_id = ? ORDER BY visit_date DESC LIMIT 1", (user_id,)).fetchone()
+    if v is None:
+        return [ui.t("There is no visit in the app yet.")]
+    found["path"] = f"timeline/day/{v['visit_date']}"
+    return [ui.t(SEE)]
+
+
 ANSWERS = {"appointment": appointment, "last_visit": last_visit, "metric": metric, "week": week, "notices": notices_,
-           "reports": reports, "instructions": instructions}
+           "reports": reports, "instructions": instructions, "fetal": fetal, "see_visit_notes": visit_notes,
+           "act_booking": _pointer("Booking, changing or cancelling an appointment is done in the TCI app. Your appointments are here."),
+           "act_report": _pointer(DO), "act_diary": _pointer(DO), "act_reminders": _pointer(DO),
+           "see_record": _pointer("The chatbot cannot see your medical record (blood type, history, allergies): please ask your doctor "
+                                  "at your next visit. Your profile in the app is here."),
+           "trend": _pointer(SEE), "see_diary": _pointer(SEE), "see_family": _pointer(SEE), "see_staff_reply": _pointer(SEE),
+           "see_report_count": _pointer(SEE)}
 SCREENS = {"appointment": "appointments", "last_visit": "health", "week": "journey", "notices": "notices", "reports": "my-reports",
-           "instructions": "instructions"}
+           "instructions": "instructions", "fetal": "timeline", "see_visit_notes": "health", "act_booking": "appointments",
+           "act_report": "report", "act_diary": "diary/new", "act_reminders": "settings/notifications", "see_record": "profile",
+           "see_diary": "timeline", "see_family": "journey", "see_staff_reply": "notices", "see_report_count": "my-reports"}
 
 
 def answer(conn: sqlite3.Connection, user_id: str, found: dict, now: datetime) -> str:
@@ -145,6 +187,6 @@ def link(user_id: str, found: dict | None) -> str | None:
     """The screen that shows the data (S-034 bubble button)."""
     if not found or found.get("topic") not in ANSWERS:
         return None
-    if found["topic"] == "metric":
+    if found["topic"] in ("metric", "trend"):
         return f"/m/{user_id}/history?metric={quote(found['metric'])}"
-    return f"/m/{user_id}/{SCREENS[found['topic']]}"
+    return f"/m/{user_id}/{found.get('path') or SCREENS[found['topic']]}"

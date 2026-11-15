@@ -8,12 +8,20 @@
     "ngất", "không thấy thai máy", "thai không máy", "vỡ ối", "rỉ ối",
     "không đạp", "ít đạp", "đạp yếu", "không thấy đạp", "không thấy con đạp", "co giật", "đau đầu dữ dội", "phù mặt", "phù tay",
     "ối vỡ", "vỡ nước ối", "rỉ nước ối", "rò rỉ nước ối", "chảy nước ối", "ra nước ối", "nước ối chảy",
-    "waters break*", "water break*"
+    "waters break*", "water break*",
+    "muốn chết", "không muốn sống", "tự tử", "tự sát", "tự làm hại", "làm hại bản thân", "làm hại con", "kill myself",
+    "suicide", "suicidal", "hurt myself", "harm myself", "end my life"
   ],
   "personal_health_markers": [
     "i have", "i've had", "i feel", "i am feeling", "i'm feeling", "my baby is", "my blood", "my result", "is that normal",
     "is it normal", "is that okay", "should i worry", "do i need to see",
     "tôi bị", "em bị", "mình bị", "tôi thấy", "em thấy", "có sao không", "có bình thường không", "kết quả của tôi"
+  ],
+  "emotional_markers": [
+   "em lo", "mình lo", "tôi lo", "lo lắng quá", "lo quá", "em buồn", "mình buồn", "tôi buồn", "buồn quá", "hay khóc", "khóc nhiều", "muốn khóc", "chán nản", "chán quá", "căng thẳng quá", "stress quá", "bế tắc", "cô đơn", "không ai quan tâm", "không quan tâm em", "không quan tâm mình", "sợ quá", "em sợ", "mình sợ", "tôi sợ", "i feel sad", "i'm sad", "i am sad", "i feel anxious", "i'm anxious", "i'm worried", "i am worried", "i keep crying", "i feel depressed", "i'm depressed", "i feel alone", "i'm scared", "i am scared"
+  ],
+  "nurse_requests": [
+   "gọi y tá", "gọi bác sĩ", "nhắn y tá", "nhắn bác sĩ", "nói chuyện với y tá", "nói chuyện với bác sĩ", "kết nối y tá", "kết nối với y tá", "talk to a nurse", "call a nurse", "speak to a nurse", "talk to a doctor", "call a doctor"
   ],
   "symptom_words": [
     "fever", "pain", "ache", "swelling", "swollen", "vomiting", "medicine", "medication", "dose", "pill*",
@@ -52,7 +60,8 @@
     "nằm ngửa", "nằm nghiêng", "tư thế ngủ", "quan hệ vợ chồng", "du lịch", "đi máy bay", "nhuộm tóc", "mỹ phẩm",
     "xoa bóp", "massage", "xông hơi", "cà phê", "trà sữa", "nước dừa", "tăng cân", "giảm cân", "cân nặng", "bơi lội",
     "yoga", "đi bộ", "nghỉ thai sản", "đồ ăn", "thức ăn", "món ăn", "hoa quả", "trái cây", "ăn cá", "ăn cua", "ăn tôm",
-    "hải sản", "uống trà", "kiêng khem"
+    "hải sản", "uống trà", "kiêng khem",
+    "gặp bác sĩ", "khám bác sĩ", "đi khám", "see a doctor", "see the doctor"
   ],
   "answer_checks": {
     "status": "PROVISIONAL — team draft 15/11/2026, Pending SME (spec-BOT §10 Q16). Checks the LLM answer, not the question: bot/guard.py.",
@@ -70,10 +79,93 @@
     ]
   },
   "app_lookups": {
-    "status": "PROVISIONAL — team draft 15/11/2026, D-89 proposed (spec-BOT FR-012, BR-006, §10 Q17). A question is a lookup when it has a topic's words and every cue group of one of its 'needs' lines; a lookup that also has an interpretation cue goes to the nurse offer. Matching: bot/classify.py.",
-    "cues": {"mine": ["của em", "của mình", "của tôi", "của mẹ", "em đang", "mình đang", "tôi đang", "nhà em", "my", "mine", "i am", "i'm"], "recent": ["lần trước", "lần khám trước", "gần nhất", "gần đây nhất", "mới nhất", "vừa rồi", "hôm trước", "lần cuối", "hiện tại", "bây giờ", "last", "latest", "previous", "most recent", "current"], "when": ["khi nào", "bao giờ", "ngày nào", "hôm nào", "mấy giờ", "lúc nào", "ở đâu", "ngày mấy", "when", "what time", "where", "what day"], "value": ["bao nhiêu", "là mấy", "mấy", "how much", "what was", "what is", "what's"], "results": ["kết quả", "result*"], "fresh": ["chưa", "mới", "nào", "bao nhiêu", "mấy", "any", "new", "unread", "how many"], "progress": ["xem chưa", "ai xem", "trạng thái", "đến đâu", "thế nào rồi", "xử lý chưa", "trả lời chưa", "status", "seen", "viewed", "handled"], "what": ["gì", "nào", "những gì", "what", "which"]},
+    "status": "PROVISIONAL — team draft 15/11/2026, D-89 proposed (spec-BOT FR-012, BR-006, §10 Q17). A question is a lookup when it has a topic's words and every cue group of one of its 'needs' lines; a lookup that also has an interpretation cue goes to the nurse offer. Matching: bot/classify.py. Group 1 (15/11/2026, D-93 proposed): fetal measures, metric trends, pointers to screens and requests to act — answered in the app, never by the LLM.",
+    "cues": {"mine": ["của em", "của mình", "của tôi", "của mẹ", "em đang", "mình đang", "tôi đang", "nhà em", "my", "mine", "i am", "i'm"], "recent": ["lần trước", "lần khám trước", "gần nhất", "gần đây nhất", "mới nhất", "vừa rồi", "hôm trước", "lần cuối", "hiện tại", "bây giờ", "last", "latest", "previous", "most recent", "current"], "when": ["khi nào", "bao giờ", "ngày nào", "hôm nào", "mấy giờ", "lúc nào", "ở đâu", "ngày mấy", "when", "what time", "where", "what day"], "value": ["bao nhiêu", "là mấy", "mấy", "how much", "what was", "what is", "what's"], "results": ["kết quả", "result*"], "fresh": ["chưa", "mới", "nào", "bao nhiêu", "mấy", "any", "new", "unread", "how many"], "progress": ["xem chưa", "ai xem", "trạng thái", "đến đâu", "thế nào rồi", "xử lý chưa", "trả lời chưa", "status", "seen", "viewed", "handled"], "what": ["gì", "nào", "những gì", "what", "which"], "help": ["giúp em", "giúp mình", "giúp tôi", "giúp mẹ", "hộ em", "hộ mình", "hộ tôi", "cho em", "cho mình", "cho tôi", "for me", "can you", "could you", "please"], "able": ["được không", "có thể", "làm sao để", "làm thế nào để", "cách", "ở đâu", "how do i", "how can i", "where can i"], "trend": ["tuần này", "tháng này", "tuần qua", "tháng qua", "trung bình", "mấy lần", "bao nhiêu lần", "từ đầu thai kỳ", "xu hướng", "this week", "this month", "average", "how many times", "trend", "since the start"], "read": ["đọc", "xem", "là gì", "thế nào", "là bao nhiêu", "what is", "show", "read"]},
     "interpretation": ["có cao không", "có thấp không", "có ổn không", "có tốt không", "có sao không", "có bình thường không", "có nguy hiểm không", "có vấn đề gì không", "cao không", "thấp không", "bình thường không", "ổn không", "is it high", "is it low", "is it ok", "is that ok", "is it normal", "is that normal", "too high", "too low"],
     "topics": [
+      {
+        "topic": "act_booking",
+        "words": ["đặt lịch", "đổi lịch", "dời lịch", "huỷ lịch", "hủy lịch", "đặt hẹn", "book an appointment", "reschedule", "cancel my appointment", "cancel the appointment"],
+        "needs": [["help"], ["mine"], ["able"]]
+      },
+      {
+        "topic": "act_report",
+        "words": ["gửi báo cáo", "nhập huyết áp", "nhập đường huyết", "nhập chỉ số", "báo cáo huyết áp", "báo cáo đường huyết", "send a report", "report my"],
+        "needs": [["help"], ["able"]]
+      },
+      {
+        "topic": "act_diary",
+        "words": ["ghi nhật ký", "viết nhật ký", "thêm nhật ký", "write my diary", "add a diary"],
+        "needs": [["help"], ["able"]]
+      },
+      {
+        "topic": "act_reminders",
+        "words": ["bật nhắc", "tắt nhắc", "nhắc lịch", "cài nhắc", "turn on reminders", "turn off reminders", "reminder*"],
+        "needs": [["help"], ["able"]]
+      },
+      {
+        "topic": "see_record",
+        "words": ["hồ sơ", "nhóm máu", "tiền sử", "bệnh án", "dị ứng", "medical record", "blood type", "allerg*"],
+        "needs": [["mine"], ["read"]]
+      },
+      {
+        "topic": "fetal",
+        "words": ["cân nặng thai nhi", "cân nặng thai", "cân nặng của bé", "cân nặng em bé", "thai nhi nặng", "bé nặng", "chiều dài thai nhi", "chiều dài của bé", "chiều dài thai", "fetal weight", "baby's weight", "fetal length"],
+        "needs": [["recent"], ["mine"]]
+      },
+      {
+        "topic": "see_visit_notes",
+        "words": ["kết luận", "ghi chú của bác sĩ", "bác sĩ ghi", "kết quả siêu âm", "siêu âm lần", "doctor's note", "conclusion", "ultrasound result"],
+        "needs": [["recent"], ["mine"]]
+      },
+      {
+        "topic": "trend",
+        "metric": "Blood pressure",
+        "words": ["huyết áp", "blood pressure"],
+        "needs": [["trend"]]
+      },
+      {
+        "topic": "trend",
+        "metric": "Fetal heart rate",
+        "words": ["tim thai", "nhịp tim thai", "fetal heart rate", "fetal heartbeat"],
+        "needs": [["trend"]]
+      },
+      {
+        "topic": "trend",
+        "metric": "Heart rate",
+        "words": ["nhịp tim", "heart rate", "pulse"],
+        "needs": [["trend"]]
+      },
+      {
+        "topic": "trend",
+        "metric": "Weight",
+        "words": ["cân nặng", "weight", "tăng cân", "tăng bao nhiêu cân"],
+        "needs": [["trend"]]
+      },
+      {
+        "topic": "trend",
+        "metric": "Blood glucose",
+        "words": ["đường huyết", "đường máu", "blood sugar", "blood glucose"],
+        "needs": [["trend"]]
+      },
+      {
+        "topic": "trend",
+        "metric": "Urine protein",
+        "words": ["protein niệu", "đạm niệu", "protein trong nước tiểu", "urine protein"],
+        "needs": [["trend"]]
+      },
+      {
+        "topic": "trend",
+        "metric": "Sleep",
+        "words": ["giấc ngủ", "ngủ được", "sleep"],
+        "needs": [["trend"]]
+      },
+      {
+        "topic": "trend",
+        "metric": "Temperature",
+        "words": ["nhiệt độ", "thân nhiệt", "temperature"],
+        "needs": [["trend"]]
+      },
       {
         "topic": "last_visit",
         "words": ["lần khám trước", "lần khám gần nhất", "lần khám vừa rồi", "khám lần trước", "lần khám cuối", "last visit", "last check-up", "latest visit"],
@@ -145,6 +237,26 @@
         "topic": "instructions",
         "words": ["bác sĩ dặn", "chỉ dẫn", "dặn theo dõi", "cần theo dõi", "instruction*"],
         "needs": [["what"], ["mine"]]
+      },
+      {
+        "topic": "see_diary",
+        "words": ["nhật ký", "em ghi gì", "mình ghi gì", "em viết gì", "mình viết gì", "diary", "journal"],
+        "needs": [["recent"], ["mine"], ["what"], ["value"], ["when"]]
+      },
+      {
+        "topic": "see_family",
+        "words": ["bố bé nhắn", "bố nhắn", "chồng em nhắn", "gia đình nhắn", "lời nhắn", "nhắn gửi con", "message to the baby", "messages to baby"],
+        "needs": [["what"], ["mine"], ["recent"]]
+      },
+      {
+        "topic": "see_staff_reply",
+        "words": ["y tá nói", "bác sĩ nói", "y tá dặn", "the nurse said", "the doctor said"],
+        "needs": [["what"], ["mine"]]
+      },
+      {
+        "topic": "see_report_count",
+        "words": ["báo cáo", "report*"],
+        "needs": [["value"]]
       }
     ]
   },

@@ -227,6 +227,12 @@ The PRD in `docs/prd.md` was refined on 14/10/2026 (product context, M1 – M5, 
 |---|---|---|---|
 | D-92 | **A general question that names a danger sign is answered as a general question (BOT §10 Q18).** Reported by Sang: "chảy máu là có vấn đề gì, mình hỏi chung" got the medical-attention notice. General when the question says so or asks for knowledge about a third person or a case, and nothing says the sign is the mother's or happening now; otherwise the notice stays (a bare "chảy máu là bị gì?" keeps it). Under such an answer S-034 shows "If you have any emergency signs, call {hotline}.", and the system prompt tells the LLM to end by sending her to hospital if it is happening to her now. Lists in `keywords.json` → `general_framing`. | Proposed — BOT owner (Sang), 15/11/2026; **Nurse-Clinical SME to confirm** (it narrows FR-011) | spec-BOT §5.1 FR-006, FR-011, §10 Q18; `app/mb360/bot/llm.py` system prompt; S-034 general answer |
 
+### Chatbot gaps, group 1 (15/11/2026)
+
+| ID | Decision | Status | Affected artifacts |
+|---|---|---|---|
+| D-93 | **Close the chatbot's unsafe gaps found by a 55-question probe (proposed by Sang, 15/11/2026).** (1) Worry, sadness or crying ("em buồn và hay khóc", possible antenatal / postnatal depression) and a request for the nurse were declined as out of scope: they now get the nurse offer; self-harm phrases ("muốn chết", "tự tử") are danger phrases. (2) "Cân nặng thai nhi" was answered with the mother's weight: the baby's estimated weight and length from the latest visit are answered instead, as on the visit day screen. (3) Questions about her own data the chatbot cannot read yet (medical record, the doctor's conclusion and note, ultrasound result, trends, diary, family messages, staff replies) and requests to act for her (book / change / cancel an appointment, send a report, write a diary entry, set reminders) went to the LLM, which has no data and could make up an answer: they now get a pointer to the screen, built in the app (FR-012, BR-006). | Proposed — BOT owner (Sang); **Nurse-Clinical SME to confirm the distress and self-harm lists**; Client: scope of FR-012 (Q17) | spec-BOT §5.1 FR-006, FR-012, §10 Q17; `docs/function-list.md` row 88; `docs/ui-label-reference.md` |
+
 ### References for D-15
 
 - ADA, *Glucose Monitoring During Pregnancy* (2024): targets fasting < 95 mg/dL, 1 h after a meal < 140 mg/dL, 2 h after a meal < 120 mg/dL — https://diabetes.org/sites/default/files/2024-10/Glucose-Monitoring-During-Pregnancy-patient-FINAL.pdf

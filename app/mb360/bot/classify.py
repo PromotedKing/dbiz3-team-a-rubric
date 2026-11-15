@@ -121,7 +121,9 @@ def classify(text: str) -> dict:
     general = (affirmed or denied) and general_framing(text, k)
     if affirmed and not general:
         return {"category": "needs_nurse", "danger": True}
-    if not general and (has_any(text, k["personal_health_markers"]) or has_any(text, k["symptom_words"])):
+    if not general and (has_any(text, k["personal_health_markers"]) or has_any(text, k["symptom_words"])
+                        or has_any(text, k.get("emotional_markers", []))        # worry, sadness, crying → nurse (D-93)
+                        or has_any(text, k.get("nurse_requests", []))):         # "gọi y tá cho em" → the nurse offer (D-93)
         return {"category": "needs_nurse", "danger": False}
     found = lookup(text, k)
     if found:
