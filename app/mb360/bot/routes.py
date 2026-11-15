@@ -10,7 +10,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.concurrency import run_in_threadpool
 
 from .. import clock, serial, ui
-from . import chat, classify, llm
+from . import chat, classify, llm, lookup
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
 ui.install(TEMPLATES)
@@ -26,22 +26,24 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
             raise HTTPException(404, "Unknown mother")
         return row
 
-    def bubbles(conversation_id: str) -> list[dict]:
+    def bubbles(conversation_id: str, user_id: str) -> list[dict]:
         rows = conn.execute("SELECT * FROM CHAT_MESSAGE WHERE conversation_id = ? ORDER BY sent_at, rowid", (conversation_id,)).fetchall()
         out, last_q = [], None
         for m in rows:
             if m["sender"] == "Mother":
-                intent = json.loads(m["parsed_intent"]).get("intent") if m["parsed_intent"] else None
-                last_q = {"row": m, "intent": intent, "danger": classify.classify(m["text"])["danger"] if m["is_risk"] else False}
+                parsed = json.loads(m["parsed_intent"]) if m["parsed_intent"] else {}
+                last_q = {"row": m, "intent": parsed.get("intent"), "parsed": parsed,
+                          "danger": classify.classify(m["text"])["danger"] if m["is_risk"] else False}
                 out.append({"kind": "question", "m": m})
             else:
-                kind = {"needs_nurse": "handoff", "out_of_scope": "decline"}.get(last_q["intent"] if last_q else None, "answer")
-                out.append({"kind": kind, "m": m, "q": last_q["row"] if last_q else None, "danger": last_q["danger"] if last_q else False})
+                kind = {"needs_nurse": "handoff", "out_of_scope": "decline", "lookup": "lookup"}.get(last_q["intent"] if last_q else None, "answer")
+                out.append({"kind": kind, "m": m, "q": last_q["row"] if last_q else None, "danger": last_q["danger"] if last_q else False,
+                            "link": lookup.link(user_id, last_q["parsed"]) if kind == "lookup" else None})
         return out
 
     def page(request: Request, user, conversation_id: str | None, status: int = 200, error: str | None = None, text: str = ""):
         return TEMPLATES.TemplateResponse(request, "chat.html", {
-            "user": user, "conversation_id": conversation_id, "bubbles": bubbles(conversation_id) if conversation_id else [],
+            "user": user, "conversation_id": conversation_id, "bubbles": bubbles(conversation_id, user["user_id"]) if conversation_id else [],
             "suggested": SUGGESTED, "hotline": HOTLINE, "error": error, "text": text}, status_code=status)
 
     async def handle_ask(request: Request, user_id: str, conversation_id: str | None):

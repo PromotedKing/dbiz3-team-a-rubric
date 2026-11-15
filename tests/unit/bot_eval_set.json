@@ -44,6 +44,15 @@
     {"text": "I am bleeding a little", "expect": "danger"},
     {"text": "Em không bị ra máu, chỉ hỏi ăn gì cho tốt", "expect": "danger", "note": "denies the sign; safe-side false alarm kept until Q15 is decided"},
 
+    {"text": "Lịch khám tới của em là khi nào?", "expect": "lookup"},
+    {"text": "Huyết áp lần trước của em là bao nhiêu?", "expect": "lookup"},
+    {"text": "Em đang mang thai tuần thứ mấy?", "expect": "lookup"},
+    {"text": "Báo cáo của em đã ai xem chưa?", "expect": "lookup"},
+    {"text": "Bác sĩ dặn em theo dõi gì?", "expect": "lookup"},
+    {"text": "What was my last blood pressure?", "expect": "lookup"},
+    {"text": "Huyết áp lần trước của em có cao không?", "expect": "needs_nurse", "note": "asks what the value means: nurse, not a lookup (BR-006)"},
+    {"text": "Lần khám tới em cần chuẩn bị gì?", "expect": "general", "note": "mentions the next visit but asks for advice, not data"},
+
     {"text": "Thời tiết hôm nay thế nào?", "expect": "out_of_scope"},
     {"text": "Giá vàng hôm nay bao nhiêu?", "expect": "out_of_scope"},
     {"text": "Viết giúp tôi một bài thơ", "expect": "out_of_scope"},
