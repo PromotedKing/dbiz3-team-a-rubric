@@ -289,5 +289,35 @@
     "current": [
       "đang", "hiện tại", "bây giờ", "từ sáng", "từ tối", "từ qua", "từ hôm qua", "hôm nay", "nãy", "nãy giờ", "vừa nãy", "mấy hôm nay", "mấy ngày nay", "now", "right now", "today", "this morning", "since", "currently", "just now"
     ]
+  },
+  "small_talk": {
+    "status": "PROVISIONAL — D-95 proposed (16/11/2026). Only when nothing else in the question is recognised: bot/classify.py.",
+    "greeting": [
+      "chào", "xin chào", "chào bạn", "chào em", "alo", "hello", "hi", "hey", "good morning"
+    ],
+    "thanks": [
+      "cảm ơn", "cám ơn", "cảm ơn bạn", "thank*", "thanks"
+    ],
+    "identity": [
+      "bạn là ai", "bạn là gì", "bạn làm được gì", "bạn giúp được gì", "who are you", "what can you do"
+    ],
+    "bye": [
+      "tạm biệt", "bye", "goodbye", "see you"
+    ]
+  },
+  "hospital_info": [
+    "giá khám", "chi phí", "bảng giá", "giá dịch vụ", "gói thai sản", "gói khám", "gói sinh", "gói đẻ", "viện phí", "đặt cọc", "địa chỉ", "chi nhánh", "thu cúc ở đâu", "bệnh viện ở đâu", "phòng khám ở đâu", "đường đi", "giờ làm việc", "giờ mở cửa", "mấy giờ mở cửa", "làm việc mấy giờ", "bảo hiểm", "bhyt", "tổng đài", "hotline", "số điện thoại", "price*", "cost", "fee*", "package*", "address", "opening hours", "insurance", "phone number"
+  ],
+  "follow_up": {
+    "status": "PROVISIONAL — D-95 proposed (16/11/2026). Read with the previous question of the same conversation: bot/classify.py follow_up.",
+    "more_before": [
+      "lần trước nữa", "trước đó nữa", "trước nữa", "các lần trước", "before that", "the one before", "earlier ones"
+    ],
+    "switch": [
+      "còn", "thế còn", "vậy còn", "thì sao", "what about", "how about"
+    ],
+    "explain": [
+      "giải thích", "rõ hơn", "chi tiết hơn", "nói thêm", "cụ thể hơn", "ví dụ", "tại sao vậy", "vì sao vậy", "explain", "tell me more", "more detail*", "why is that"
+    ]
   }
 }

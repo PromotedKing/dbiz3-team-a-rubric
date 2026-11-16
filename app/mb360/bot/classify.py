@@ -141,6 +141,45 @@ def classify(text: str) -> dict:
         if has_any(text, k["app_lookups"]["interpretation"]):     # what the value means → nurse (BR-002, BR-006)
             return {"category": "needs_nurse", "danger": False}
         return {"category": "lookup", "danger": False, "lookup": found}
+    if has_any(text, k.get("hospital_info", [])):    # prices, packages, address, hours: not in the app, never guessed (D-95)
+        return {"category": "hospital_info", "danger": False}
     if not (denied or general) and not has_any(text, k["pregnancy_topics"]):    # a named danger sign is a pregnancy topic
+        talk = k.get("small_talk", {})
+        for reply in ("identity", "thanks", "bye", "greeting"):   # only when nothing else is recognised (D-95)
+            if has_any(text, talk.get(reply, [])):
+                return {"category": "small_talk", "danger": False, "reply": reply}
         return {"category": "out_of_scope", "danger": False}
     return {"category": "general", "danger": False}
+
+
+def follow_up(text: str, previous: dict | None) -> dict | None:
+    """D-95 (proposed): a question that only makes sense after the previous one in the same conversation. `previous` is
+    that question's parsed_intent. Returns the classification to use instead, or None.
+    - "Còn lần trước nữa?" after a metric → her latest readings of that metric;
+    - "Còn cân nặng thì sao?" after a metric or a trend → the same question for the other metric;
+    - "Giải thích rõ hơn" after a general answer → a general question (the LLM gets the earlier turns, FR-003); after a
+      lookup → the nurse offer, because explaining her own values is the nurse's job (BR-002, BR-006)."""
+    k = _lists()
+    f = k.get("follow_up")
+    if not f or not previous:
+        return None
+    intent, topic, metric = previous.get("intent"), previous.get("topic"), previous.get("metric")
+    if intent == "lookup" and metric and has_any(text, f["more_before"]):
+        return {"category": "lookup", "danger": False, "lookup": {"topic": "readings", "metric": metric}}
+    if intent == "lookup" and topic in ("metric", "trend", "readings") and has_any(text, f["switch"]):
+        other = next((t["metric"] for t in k["app_lookups"]["topics"] if t["topic"] == "metric" and has_any(text, t["words"])), None)
+        if other:
+            return {"category": "lookup", "danger": False,
+                    "lookup": {"topic": topic, "metric": other, **({"when": previous["when"]} if "when" in previous else {})}}
+    if has_any(text, f["explain"]):
+        if intent == "general":
+            return {"category": "general", "danger": False}
+        if intent == "lookup":
+            return {"category": "needs_nurse", "danger": False}
+    return None
+
+
+def unclear_follow_up(text: str) -> bool:
+    """A follow-up ("còn lần trước nữa?") with nothing before it to follow: ask for the whole question (D-95)."""
+    f = _lists().get("follow_up") or {}
+    return any(has_any(text, f.get(g, [])) for g in ("more_before", "switch", "explain"))

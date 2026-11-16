@@ -16,7 +16,7 @@ TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / 
 ui.install(TEMPLATES)
 SUGGESTED = ("Trouble sleeping during pregnancy", "Should I exercise?", "Leg cramps")   # Màn 11
 LOG = logging.getLogger("mb360.bot")
-HOTLINE = "1900 xxxx"   # placeholder (BOT §10 Q8)
+HOTLINE = chat.HOTLINE   # placeholder (BOT §10 Q8)
 
 
 def register(app: FastAPI, conn: sqlite3.Connection) -> None:
@@ -36,7 +36,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
                           "danger": classify.classify(m["text"])["danger"] if m["is_risk"] else False}
                 out.append({"kind": "question", "m": m})
             else:
-                kind = {"needs_nurse": "handoff", "out_of_scope": "decline", "lookup": "lookup"}.get(last_q["intent"] if last_q else None, "answer")
+                kind = {"needs_nurse": "handoff", "out_of_scope": "decline", "lookup": "lookup", "small_talk": "decline",
+                        "hospital_info": "decline"}.get(last_q["intent"] if last_q else None, "answer")
                 out.append({"kind": kind, "m": m, "q": last_q["row"] if last_q else None, "danger": last_q["danger"] if last_q else False,
                             "link": lookup.link(user_id, last_q["parsed"]) if kind == "lookup" else None,
                             "danger_topic": kind == "answer" and last_q is not None and classify.danger_topic(last_q["row"]["text"])})

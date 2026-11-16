@@ -290,12 +290,23 @@ def report_count(conn, user_id, now, _):
     return [ui.t("You have sent {n} reports; {k} are being handled now.", n=sent, k=open_)]
 
 
+def readings(conn, user_id, now, found):
+    """D-95: "Còn lần trước nữa?" after a metric → her three latest readings of it, as S-025 lists them."""
+    m = found["metric"]
+    rows = conn.execute("""SELECT * FROM HEALTH_METRIC_RECORD WHERE user_id = ? AND metric = ?
+                           ORDER BY measured_at DESC, created_at DESC LIMIT 3""", (user_id, m)).fetchall()
+    if not rows:
+        return [ui.t("There is no {metric} value in the app yet.", metric=ui.t(m).lower())]
+    return [ui.t("Your latest {metric} readings: {items}.", metric=ui.t(m).lower(),
+                 items="; ".join(f"{_value(r)} ({ui.show_time(r['measured_at'])})" for r in rows))]
+
+
 ANSWERS = {"appointment": appointment, "last_visit": last_visit, "metric": metric, "week": week, "notices": notices_,
            "reports": reports, "instructions": instructions, "fetal": fetal, "see_visit_notes": visit_notes,
            "act_booking": _pointer("Booking, changing or cancelling an appointment is done in the TCI app. Your appointments are here."),
            "act_report": _pointer(DO), "act_diary": _pointer(DO), "act_reminders": _pointer(DO),
            "see_record": record, "trend": trend, "see_diary": diary, "see_family": family, "see_staff_reply": staff_reply,
-           "see_report_count": report_count}
+           "see_report_count": report_count, "readings": readings}
 SCREENS = {"appointment": "appointments", "last_visit": "health", "week": "journey", "notices": "notices", "reports": "my-reports",
            "instructions": "instructions", "fetal": "timeline", "see_visit_notes": "health", "act_booking": "appointments",
            "act_report": "report", "act_diary": "diary/new", "act_reminders": "settings/notifications", "see_record": "profile",
@@ -311,6 +322,6 @@ def link(user_id: str, found: dict | None) -> str | None:
     """The screen that shows the data (S-034 bubble button)."""
     if not found or found.get("topic") not in ANSWERS:
         return None
-    if found["topic"] in ("metric", "trend"):
+    if found["topic"] in ("metric", "trend", "readings"):
         return f"/m/{user_id}/history?metric={quote(found['metric'])}"
     return f"/m/{user_id}/{found.get('path') or SCREENS[found['topic']]}"

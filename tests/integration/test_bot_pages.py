@@ -91,3 +91,13 @@ def test_lookup_answer_links_to_the_screen(client, user_id):
     assert "145/92 mmHg" in shown and vi("The chatbot only repeats your data from the app and does not assess it. If you are worried, ask a nurse.") in shown
     assert f'href="/m/{uid}/history?metric=Blood%20pressure"' in page and vi("View in the app") in shown
     assert vi("For reference only; does not replace your doctor's advice.") not in shown     # not an AI answer
+
+
+def test_small_talk_and_hospital_information_on_the_page(client, user_id):
+    """D-95 (proposed): fixed replies in Vietnamese, no AI disclaimer (they are not AI answers)."""
+    uid = user_id("tci-000133")
+    _, page = ask(client, uid, "Chào bạn")
+    assert vi("You're welcome, Mom! Ask me anytime.") not in page
+    assert "Chào mẹ!" in text(page) and vi("For reference only; does not replace your doctor's advice.") not in page
+    _, page = ask(client, uid, "Giá khám thai ở Thu Cúc bao nhiêu?")
+    assert "mẹ xem trong app TCI hoặc gọi 1900 xxxx" in text(page)
