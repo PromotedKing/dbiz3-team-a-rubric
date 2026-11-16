@@ -536,10 +536,33 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | BOT data lookup (D-93) | Latest fetal measurements ({date}): {items}. | Số đo thai nhi gần nhất ({date}): {items}. |
 | BOT data lookup (D-93) | estimated weight {w} g | cân nặng ước tính {w} g |
 | BOT data lookup (D-93) | length {l} cm | chiều dài {l} cm |
-| BOT data lookup (D-93) | The chatbot cannot read this for you yet. You can see it in the app. | Chatbot chưa đọc được phần này cho mẹ. Mẹ xem trong app ở đây nhé. |
 | BOT data lookup (D-93) | The chatbot cannot do this for you. You can do it yourself in the app. | Chatbot chưa làm thay mẹ việc này được. Mẹ tự làm trong app ở đây nhé. |
 | BOT data lookup (D-93) | Booking, changing or cancelling an appointment is done in the TCI app. Your appointments are here. | Đặt, đổi hoặc huỷ lịch khám làm trong app TCI. Lịch hẹn của mẹ ở đây. |
-| BOT data lookup (D-93) | The chatbot cannot see your medical record (blood type, history, allergies): please ask your doctor at your next visit. Your profile in the app is here. | Chatbot không xem được hồ sơ bệnh án của mẹ (nhóm máu, tiền sử, dị ứng): mẹ hỏi bác sĩ ở lần khám tới nhé. Hồ sơ của mẹ trong app ở đây. |
+| BOT data lookup (D-94) | Medical record number: {code}. | Mã hồ sơ khám: {code}. |
+| BOT data lookup (D-94) | Hospital record link: {status}. | Liên kết hồ sơ bệnh viện: {status}. |
+| BOT data lookup (D-94) | Height: {h} cm. | Chiều cao: {h} cm. |
+| BOT data lookup (D-94) | Blood type, history and allergies are not shown in the app: please ask your doctor at your next visit. | Nhóm máu, tiền sử và dị ứng không có trong app: mẹ hỏi bác sĩ ở lần khám tới nhé. |
+| BOT data lookup (D-94) | Doctor's note: “{note}” | Ghi chú của bác sĩ: “{note}” |
+| BOT data lookup (D-94) | The doctor left no note at this visit. | Lần khám này bác sĩ không để lại ghi chú. |
+| BOT data lookup (D-94) | Ultrasound: {items}. | Siêu âm: {items}. |
+| BOT data lookup (D-94) | the last {n} days | {n} ngày qua |
+| BOT data lookup (D-94) | the whole pregnancy | cả thai kỳ |
+| BOT data lookup (D-94) | No {metric} value in {span}. | Không có giá trị {metric} nào trong {span}. |
+| BOT data lookup (D-94) | {metric} in {span}: {n} readings, the latest {value} ({date}). | {metric} trong {span}: {n} lần đo, gần nhất {value} ({date}). |
+| BOT data lookup (D-94) | Average {avg}, lowest {low}, highest {high} {unit}. | Trung bình {avg}, thấp nhất {low}, cao nhất {high} {unit}. |
+| BOT data lookup (D-94) | Change from the first to the latest reading: {change}. | Chênh lệch từ lần đo đầu đến lần gần nhất: {change}. |
+| BOT data lookup (D-94) | You have no diary entry yet. | Mẹ chưa viết nhật ký nào. |
+| BOT data lookup (D-94) | You have written {n} diary entries; the latest on {date}. | Mẹ đã viết {n} trang nhật ký; trang gần nhất ngày {date}. |
+| BOT data lookup (D-94) | No diary entry on {date}. | Ngày {date} mẹ không viết nhật ký. |
+| BOT data lookup (D-94) | No diary entry in the last 7 days. | 7 ngày qua mẹ chưa viết nhật ký. |
+| BOT data lookup (D-94) | {date} ({mood}): “{entry}” | {date} ({mood}): “{entry}” |
+| BOT data lookup (D-94) | There is no message to the baby yet. | Chưa có lời nhắn nào gửi bé. |
+| BOT data lookup (D-94) | Message from {author} (week {week}): “{message}” | Lời nhắn của {author} (tuần {week}): “{message}” |
+| BOT data lookup (D-94) | No nurse or doctor has replied to you yet. | Chưa có y tá hay bác sĩ nào phản hồi mẹ. |
+| BOT data lookup (D-94) | Latest reply from {role} {name} ({date}): | Phản hồi gần nhất của {role} {name} ({date}): |
+| BOT data lookup (D-94) | To do: {items}. | Việc cần làm: {items}. |
+| BOT data lookup (D-94) | Follow-up visit: {when}. | Hẹn khám: {when}. |
+| BOT data lookup (D-94) | You have sent {n} reports; {k} are being handled now. | Mẹ đã gửi {n} báo cáo; {k} báo cáo đang được xử lý. |
 | CLI screens (D-79) | Nurse: {name} | Y tá: {name} |
 | CLI screens (D-79) | change | đổi |
 | CLI screens (D-79) | Choose a staff member (demo) | Chọn nhân viên y tế (demo) |

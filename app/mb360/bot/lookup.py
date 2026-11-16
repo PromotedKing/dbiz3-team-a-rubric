@@ -5,7 +5,7 @@ It repeats values as the screens show them, adds only simple arithmetic (days un
 value, counts) and never says whether a value is normal, high or low. The text is Vietnamese, from the labels in
 docs/ui-label-reference.md, one line per fact; the bubble on S-034 links to the screen that shows the data."""
 import sqlite3
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from urllib.parse import quote
 
 from .. import tci_feed, ui
@@ -141,14 +141,10 @@ def fetal(conn, user_id, now, found):
     if v is None:
         return [ui.t("There is no fetal measurement in the app yet.")]
     found["path"] = f"timeline/day/{v['visit_date']}"
-    items = ([ui.t("estimated weight {w} g", w=v["estimated_fetal_weight"])] if v["estimated_fetal_weight"] is not None else []) + \
-            ([ui.t("length {l} cm", l=v["fetal_length"])] if v["fetal_length"] is not None else [])
-    return [ui.t("Latest fetal measurements ({date}): {items}.", date=ui.dmy(v["visit_date"]), items=", ".join(items))]
+    return [ui.t("Latest fetal measurements ({date}): {items}.", date=ui.dmy(v["visit_date"]), items=", ".join(_measures(v)))]
 
 
-# D-93 (proposed): her own data the chatbot cannot read yet, and things it cannot do for her, get a pointer to the screen
-# instead of going to the LLM, which has no data and could make up an answer (BR-001).
-SEE = "The chatbot cannot read this for you yet. You can see it in the app."
+# D-93 (proposed): requests to act for her get a pointer to the screen where she can do it, instead of the LLM.
 DO = "The chatbot cannot do this for you. You can do it yourself in the app."
 
 
@@ -156,22 +152,150 @@ def _pointer(text):
     return lambda conn, user_id, now, found: [ui.t(text)]
 
 
+def _quote(text: str, n: int = 140) -> str:
+    text = " ".join((text or "").split())
+    return text if len(text) <= n else text[:n].rsplit(" ", 1)[0] + "…"
+
+
+def _measures(v) -> list[str]:
+    return ([ui.t("estimated weight {w} g", w=v["estimated_fetal_weight"])] if v["estimated_fetal_weight"] is not None else []) + \
+           ([ui.t("length {l} cm", l=v["fetal_length"])] if v["fetal_length"] is not None else [])
+
+
+# D-94 (proposed): answers read from the data the mother already sees in the sub-app, as the screens show it. What the
+# sub-app does not show her (blood type, history, allergies, the doctor's conclusion) is still not read (BR-006).
+def record(conn, user_id, now, found):
+    """S-103: record number, hospital record link, due date, height. Asked only for blood type, history or allergies:
+    just say they are not in the app."""
+    from ..acc import profile
+    if found.get("clinical"):
+        return [ui.t("Blood type, history and allergies are not shown in the app: please ask your doctor at your next visit.")]
+    user = conn.execute("SELECT record_code FROM USER_ACCOUNT WHERE user_id = ?", (user_id,)).fetchone()
+    p, link_row = profile.load(conn, user_id, now), profile.latest_link(conn, user_id)
+    lines = [ui.t("Medical record number: {code}.", code=user["record_code"] or "—")]
+    if link_row is not None:
+        lines.append(ui.t("Hospital record link: {status}.", status=ui.t(link_row["status"]).lower()))
+    if p["edd"]:
+        lines.append(ui.t("Due date: {date}", date=ui.dmy(p["edd"])) + ".")
+    if p["height_cm"]:
+        lines.append(ui.t("Height: {h} cm.", h=p["height_cm"]))
+    lines.append(ui.t("Blood type, history and allergies are not shown in the app: please ask your doctor at your next visit."))
+    return lines
+
+
 def visit_notes(conn, user_id, now, found):
-    v = conn.execute("SELECT visit_date FROM VISIT WHERE user_id = ? ORDER BY visit_date DESC LIMIT 1", (user_id,)).fetchone()
+    """The latest visit as its day screen shows it: the doctor's note and the baby's measures (not the conclusion)."""
+    v = conn.execute("SELECT * FROM VISIT WHERE user_id = ? ORDER BY visit_date DESC LIMIT 1", (user_id,)).fetchone()
     if v is None:
         return [ui.t("There is no visit in the app yet.")]
     found["path"] = f"timeline/day/{v['visit_date']}"
-    return [ui.t(SEE)]
+    lines = [ui.t("Your latest visit: {date} ({ago}).", date=ui.dmy(v["visit_date"]),
+                  ago=_days((now.date() - date.fromisoformat(v["visit_date"])).days))]
+    lines.append(ui.t("Doctor's note: “{note}”", note=_quote(v["doctor_note"])) if v["doctor_note"]
+                 else ui.t("The doctor left no note at this visit."))
+    if _measures(v):
+        lines.append(ui.t("Ultrasound: {items}.", items=", ".join(_measures(v))))
+    elif (u := _latest_fetal_visit(conn, user_id)) is not None:       # the latest ultrasound was at an earlier visit
+        lines.append(ui.t("Latest fetal measurements ({date}): {items}.", date=ui.dmy(u["visit_date"]), items=", ".join(_measures(u))))
+    return lines
+
+
+PERIODS = {"week": 7, "all": 3650}       # anything else: the 30 days S-025 shows by default (HLT §10 Q12)
+
+
+def trend(conn, user_id, now, found):
+    """S-025 for the period asked: number of readings, average / lowest / highest as the screen computes them, and for
+    weight the change from the first to the latest reading. Arithmetic only (BR-006)."""
+    from ..hlt import history
+    m = found["metric"]
+    days = PERIODS.get(found.get("when"), history.DEFAULT_DAYS)
+    data = history.load(conn, user_id, m, now.date() - timedelta(days=days), None, None, now)
+    rows = data["rows"]
+    span = ui.t("the whole pregnancy") if found.get("when") == "all" else ui.t("the last {n} days", n=days)
+    if not rows:
+        return [ui.t("No {metric} value in {span}.", metric=ui.t(m).lower(), span=span)]
+    lines = [ui.t("{metric} in {span}: {n} readings, the latest {value} ({date}).", metric=ui.t(m), span=span, n=len(rows),
+                  value=rows[0]["value"], date=ui.show_time(rows[0]["at"]))]
+    if data["stats"]:
+        unit = rows[0]["value"].split(" ", 1)[1] if " " in rows[0]["value"] else ""
+        lines.append(ui.t("Average {avg}, lowest {low}, highest {high} {unit}.", avg=data["stats"]["average"],
+                          low=data["stats"]["lowest"], high=data["stats"]["highest"], unit=unit).replace(" .", "."))
+    if m == "Weight" and len(rows) > 1:
+        first, last = _number(rows[-1]["value"].split()[0]), _number(rows[0]["value"].split()[0])
+        if first is not None and last is not None:
+            lines.append(ui.t("Change from the first to the latest reading: {change}.", change=f"{_signed(last - first)} kg"))
+    return lines
+
+
+def diary(conn, user_id, now, found):
+    """Timeline / day screen: her own entries, quoted (TML)."""
+    rows = conn.execute("SELECT * FROM DIARY_ENTRY WHERE user_id = ? ORDER BY entry_date DESC, rowid DESC", (user_id,)).fetchall()
+    if not rows:
+        return [ui.t("You have no diary entry yet.")]
+    if found.get("count"):
+        return [ui.t("You have written {n} diary entries; the latest on {date}.", n=len(rows), date=ui.dmy(rows[0]["entry_date"]))]
+    when = found.get("when")
+    if when in ("yesterday", "today"):
+        day = (now.date() - timedelta(days=1 if when == "yesterday" else 0)).isoformat()
+        picked = [r for r in rows if r["entry_date"] == day]
+        found["path"] = f"timeline/day/{day}"
+        if not picked:
+            return [ui.t("No diary entry on {date}.", date=ui.dmy(day))]
+    elif when == "week":
+        since = (now.date() - timedelta(days=7)).isoformat()
+        picked = [r for r in rows if r["entry_date"] >= since][:3]
+        if not picked:
+            return [ui.t("No diary entry in the last 7 days.")]
+    else:
+        picked = rows[:1]
+        found["path"] = f"timeline/day/{rows[0]['entry_date']}"
+    return [ui.t("{date} ({mood}): “{entry}”", date=ui.dmy(r["entry_date"]),
+                 mood=ui.t_known(r["mood"]).lower() if r["mood"] else "—", entry=_quote(r["text"], 120)) for r in picked]
+
+
+def family(conn, user_id, now, _):
+    """S-105: the latest messages to the baby (TML FR-011 shows them; writing is pending D-03)."""
+    rows = conn.execute("SELECT * FROM FAMILY_MESSAGE WHERE user_id = ? ORDER BY created_at DESC, rowid DESC LIMIT 2",
+                        (user_id,)).fetchall()
+    if not rows:
+        return [ui.t("There is no message to the baby yet.")]
+    return [ui.t("Message from {author} (week {week}): “{message}”", author=ui.t_known(r["author"]).lower(), week=r["week"],
+                 message=_quote(r["text"], 120)) for r in rows]
+
+
+def staff_reply(conn, user_id, now, _):
+    """Màn 10: the latest reply from clinical staff, split as the screen splits it (comment, to-dos, follow-up visit)."""
+    r = conn.execute("""SELECT k.case_id FROM STAFF_RESPONSE s JOIN CARE_CASE k ON k.case_id = s.case_id
+                        WHERE k.user_id = ? ORDER BY s.sent_at DESC, s.rowid DESC LIMIT 1""", (user_id,)).fetchone()
+    resp = notices.latest_response(conn, r["case_id"]) if r else None
+    if resp is None:
+        return [ui.t("No nurse or doctor has replied to you yet.")]
+    parts = notices.parse_response(notices._response_text(resp))
+    lines = [ui.t("Latest reply from {role} {name} ({date}):", role=ui.t(resp["responder_role"]).lower(), name=resp["full_name"],
+                  date=ui.show_time(resp["sent_at"]))]
+    if parts["comment"]:
+        lines.append("“" + _quote(parts["comment"], 200) + "”")
+    if parts["todo"]:
+        lines.append(ui.t("To do: {items}.", items="; ".join(parts["todo"])))
+    if parts["follow_up"]:
+        lines.append(ui.t("Follow-up visit: {when}.", when=parts["follow_up"]))
+    return lines
+
+
+def report_count(conn, user_id, now, _):
+    """S-029: how many reports she sent and how many of their cases are still being handled."""
+    sent = conn.execute("SELECT COUNT(*) FROM METRIC_REPORT WHERE user_id = ?", (user_id,)).fetchone()[0]
+    open_ = conn.execute("SELECT COUNT(*) FROM CARE_CASE WHERE user_id = ? AND case_source <> 'Chatbot' AND status <> 'Resolved'",
+                         (user_id,)).fetchone()[0]
+    return [ui.t("You have sent {n} reports; {k} are being handled now.", n=sent, k=open_)]
 
 
 ANSWERS = {"appointment": appointment, "last_visit": last_visit, "metric": metric, "week": week, "notices": notices_,
            "reports": reports, "instructions": instructions, "fetal": fetal, "see_visit_notes": visit_notes,
            "act_booking": _pointer("Booking, changing or cancelling an appointment is done in the TCI app. Your appointments are here."),
            "act_report": _pointer(DO), "act_diary": _pointer(DO), "act_reminders": _pointer(DO),
-           "see_record": _pointer("The chatbot cannot see your medical record (blood type, history, allergies): please ask your doctor "
-                                  "at your next visit. Your profile in the app is here."),
-           "trend": _pointer(SEE), "see_diary": _pointer(SEE), "see_family": _pointer(SEE), "see_staff_reply": _pointer(SEE),
-           "see_report_count": _pointer(SEE)}
+           "see_record": record, "trend": trend, "see_diary": diary, "see_family": family, "see_staff_reply": staff_reply,
+           "see_report_count": report_count}
 SCREENS = {"appointment": "appointments", "last_visit": "health", "week": "journey", "notices": "notices", "reports": "my-reports",
            "instructions": "instructions", "fetal": "timeline", "see_visit_notes": "health", "act_booking": "appointments",
            "act_report": "report", "act_diary": "diary/new", "act_reminders": "settings/notifications", "see_record": "profile",
