@@ -88,7 +88,18 @@ def lookup(text: str, k: dict | None = None) -> dict | None:
         return None
     for t in k["topics"]:
         if has_any(text, t["words"]) and any(all(has_any(text, k["cues"][g]) for g in line) for line in t["needs"]):
-            return {"topic": t["topic"], **({"metric": t["metric"]} if "metric" in t else {})}
+            found = {"topic": t["topic"], **({"metric": t["metric"]} if "metric" in t else {})}
+            # D-94: the period asked about, for trends and the diary ("tuần này", "hôm qua", "từ đầu thai kỳ"), and a count
+            if t["topic"] in ("trend", "see_diary"):
+                for when in ("yesterday", "today", "week", "all"):
+                    if has_any(text, k["cues"].get(f"when_{when}", [])):
+                        found["when"] = when
+                        break
+                if t["topic"] == "see_diary" and has_any(text, k["cues"].get("count", [])):
+                    found["count"] = True
+            if t["topic"] == "see_record" and has_any(text, k["cues"].get("clinical", [])):
+                found["clinical"] = True                 # blood type, history, allergies: not shown in the app
+            return found
     return None
 
 
