@@ -563,6 +563,13 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | BOT data lookup (D-94) | To do: {items}. | Việc cần làm: {items}. |
 | BOT data lookup (D-94) | Follow-up visit: {when}. | Hẹn khám: {when}. |
 | BOT data lookup (D-94) | You have sent {n} reports; {k} are being handled now. | Mẹ đã gửi {n} báo cáo; {k} báo cáo đang được xử lý. |
+| BOT chat (D-95) | Your latest {metric} readings: {items}. | Các lần đo {metric} gần nhất của mẹ: {items}. |
+| BOT chat (D-95) | Hello, Mom! I can answer general questions about pregnancy and read your data in this app. What would you like to ask? | Chào mẹ! Mình trả lời được các câu hỏi chung về thai kỳ và đọc dữ liệu của mẹ trong app. Mẹ muốn hỏi gì ạ? |
+| BOT chat (D-95) | You're welcome, Mom! Ask me anytime. | Không có gì ạ! Mẹ cần gì cứ hỏi mình nhé. |
+| BOT chat (D-95) | I am the pregnancy assistant of Mother & Baby 360. I answer general questions about pregnancy and read your data in this app; I do not diagnose and do not replace your doctor. | Mình là trợ lý thai sản của Mẹ & Bé 360. Mình trả lời câu hỏi chung về thai kỳ và đọc dữ liệu của mẹ trong app; mình không chẩn đoán và không thay thế bác sĩ. |
+| BOT chat (D-95) | Goodbye, Mom! Take care of yourself and the baby. | Tạm biệt mẹ! Mẹ giữ gìn sức khỏe cho mình và bé nhé. |
+| BOT chat (D-95) | Could you ask the whole question again, Mom? For example: “What was my last blood pressure?” | Mẹ hỏi lại đầy đủ giúp mình nhé? Ví dụ: “Huyết áp lần trước của em là bao nhiêu?” |
+| BOT chat (D-95) | For prices, packages, insurance, addresses and opening hours of Thu Cuc Hospital, please see the TCI app or call {hotline}. | Giá khám, gói dịch vụ, bảo hiểm, địa chỉ và giờ làm việc của Bệnh viện Thu Cúc: mẹ xem trong app TCI hoặc gọi {hotline} nhé. |
 | CLI screens (D-79) | Nurse: {name} | Y tá: {name} |
 | CLI screens (D-79) | change | đổi |
 | CLI screens (D-79) | Choose a staff member (demo) | Chọn nhân viên y tế (demo) |

@@ -20,6 +20,17 @@ DECLINE_TEXT = ("I can only help with pregnancy, prenatal care, nutrition and po
                 "Could you ask me a pregnancy question?")   # wording open (BOT §10 Q13)
 
 
+HOTLINE = "1900 xxxx"   # placeholder (BOT §10 Q8)
+SMALL_TALK = {          # D-95 (proposed): fixed replies, shown through the label table (no LLM)
+    "greeting": "Hello, Mom! I can answer general questions about pregnancy and read your data in this app. What would you like to ask?",
+    "thanks": "You're welcome, Mom! Ask me anytime.",
+    "identity": ("I am the pregnancy assistant of Mother & Baby 360. I answer general questions about pregnancy and read your "
+                 "data in this app; I do not diagnose and do not replace your doctor."),
+    "bye": "Goodbye, Mom! Take care of yourself and the baby.",
+    "unclear": "Could you ask the whole question again, Mom? For example: “What was my last blood pressure?”",
+}
+HOSPITAL_TEXT = ("For prices, packages, insurance, addresses and opening hours of Thu Cuc Hospital, please see the TCI app "
+                 "or call {hotline}.")   # D-95: no hospital data in the app yet, so never guessed by the LLM
 REPEAT_MINUTES = 5   # D-90 (proposed): the same question again within this time is the same request (e.g. a second tab)
 
 
@@ -114,14 +125,22 @@ def prepare(conn: sqlite3.Connection, user_id: str, conversation_id: str | None,
     if earlier:
         raise AlreadyAsked(earlier)
     kind = classify.classify(text)
+    if conversation_id and kind["category"] in ("general", "out_of_scope", "small_talk"):     # D-95: read with the previous question
+        prev = conn.execute("""SELECT parsed_intent FROM CHAT_MESSAGE WHERE conversation_id = ? AND sender = 'Mother'
+                               ORDER BY sent_at DESC, rowid DESC LIMIT 1""", (conversation_id,)).fetchone()
+        kind = classify.follow_up(text, json.loads(prev[0]) if prev and prev[0] else None) or kind
+    if kind["category"] == "out_of_scope" and classify.unclear_follow_up(text):
+        kind = {"category": "small_talk", "danger": False, "reply": "unclear"}
     week = _week(conn, user_id, now)
     context = lookup_answer = None
+    fixed = (SMALL_TALK[kind["reply"]] if kind["category"] == "small_talk"
+             else HOSPITAL_TEXT.format(hotline=HOTLINE) if kind["category"] == "hospital_info" else None)
     if kind["category"] == "general":
         context = {"gestational_week": week, "earlier": _earlier(conn, conversation_id) if conversation_id else []}
     elif kind["category"] == "lookup":                                            # FR-012: built here, no LLM (BR-006)
         lookup_answer = lookup.answer(conn, user_id, kind["lookup"], now)
     return {"user_id": user_id, "conversation_id": conversation_id, "text": text, "kind": kind, "week": week,
-            "at": now.strftime(DB_TIME), "context": context, "lookup_answer": lookup_answer}
+            "at": now.strftime(DB_TIME), "context": context, "lookup_answer": lookup_answer, "fixed": fixed}
 
 
 def ask(conn: sqlite3.Connection, user_id: str, conversation_id: str | None, text: str, now: datetime, client) -> str:
@@ -143,7 +162,9 @@ def save(conn: sqlite3.Connection, q: dict, answer: str | None, client) -> str:
         turns = len(_earlier(conn, conversation_id))
         _message(conn, conversation_id, "Mother", text, at, kind["category"], 1 if kind["category"] == "needs_nurse" else 0,
                  kind.get("lookup"))
-        if kind["category"] == "lookup":
+        if q.get("fixed"):
+            _message(conn, conversation_id, "Chatbot", q["fixed"], at)               # D-95: small talk, hospital information
+        elif kind["category"] == "lookup":
             _message(conn, conversation_id, "Chatbot", fit(q["lookup_answer"]), at)   # FR-012; not an AI answer, so no AI_RESPONSE_LOG
         elif kind["category"] == "needs_nurse":
             _message(conn, conversation_id, "Chatbot", HANDOFF_TEXT, at)          # FR-007: no case yet (D-34)
