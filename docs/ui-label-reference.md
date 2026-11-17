@@ -884,6 +884,13 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Clinical notifications (D-107) | Escalated {time} | Đã chuyển {time} |
 | Clinical notifications (D-107) | Sent {time} | Mẹ gửi {time} |
 | Clinical notifications (D-107) | No notifications. | Không có thông báo nào. |
+| Nurse permissions (D-98, D-99) | Only a doctor can close this case: the value is above threshold. Escalate it to the doctor. | Chỉ bác sĩ mới được đóng ca này: chỉ số vượt ngưỡng. Hãy chuyển ca cho bác sĩ. |
+| Nurse permissions (D-98, D-99) | Only a doctor can close this case: the chatbot marked this question as a danger sign. Escalate it to the doctor. | Chỉ bác sĩ mới được đóng ca này: chatbot đã đánh dấu câu hỏi là dấu hiệu nguy hiểm. Hãy chuyển ca cho bác sĩ. |
+| Case routing (D-96, D-97) | Will be sent to: Dr. {name} | Sẽ gửi tới: BS. {name} |
+| Case routing (D-96, D-97) | Will be sent to the doctor on duty · Responsible doctor: Dr. {name} (Away) | Sẽ gửi tới bác sĩ đang trực · Bác sĩ phụ trách: BS. {name} (Vắng) |
+| Case routing (D-96, D-97) | Will be sent to: Dr. {name} · Doctor availability unknown | Sẽ gửi tới: BS. {name} · Chưa rõ bác sĩ có mặt hay không |
+| Case routing (D-96, D-97) | No doctor available: the case is visible to all doctors | Không có bác sĩ nào nhận: ca này hiện với tất cả bác sĩ |
+| Case routing (D-96, D-97) | This mother is not in your care (spec-CLI BR-010) | Mẹ này không thuộc danh sách bạn phụ trách |
 
 
 ## Proposed S-106 labels

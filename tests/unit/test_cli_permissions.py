@@ -6,7 +6,9 @@ from tests.cli_helpers import NOW, RPT004, a_template, case_by_code, case_row, w
 
 
 def test_nurse_allowed_actions_on_a_case_not_escalated(db, staff_id, boundary_case):
-    assert actions.allowed(db, boundary_case, staff_id("Trần Thị B")) == {"view", "escalate", "guidance", "close"}
+    """`boundary_case` is 140/90 = "Above threshold", so BR-012 (D-98, proposed) takes "close" away:
+    escalating is the only way on. A case below the threshold keeps it — tests/unit/test_cli_must_escalate.py."""
+    assert actions.allowed(db, boundary_case, staff_id("Trần Thị B")) == {"view", "escalate", "guidance"}
 
 
 def test_nurse_cannot_close_an_escalated_case(db, staff_id):

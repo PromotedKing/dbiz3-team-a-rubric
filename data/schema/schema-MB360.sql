@@ -11,8 +11,11 @@ CREATE TABLE STAFF (
     full_name VARCHAR(100) NOT NULL CHECK (length(full_name) <= 100),  -- VARCHAR(100)
     role TEXT NOT NULL CHECK (role IN ('Nurse', 'Doctor')),  -- ENUM (Nurse / Doctor)
     login_account VARCHAR(100) NOT NULL CHECK (length(login_account) <= 100),  -- VARCHAR(100) — provisional (CLI §10 Q11)
+    availability TEXT CHECK (availability IN ('Available', 'Away')),  -- ENUM (Available / Away) — doctors only, default Available
+    on_duty INTEGER CHECK (on_duty IN (0, 1)),  -- BOOLEAN — doctors only, default false
     PRIMARY KEY (staff_id),
-    UNIQUE (login_account)
+    UNIQUE (login_account),
+    CONSTRAINT ck_staff_doctor_fields CHECK ((role = 'Doctor') = (availability IS NOT NULL AND on_duty IS NOT NULL))  -- CLI §6 Staff (D-97); DM-40
 );
 
 CREATE TABLE THRESHOLD_RULE (

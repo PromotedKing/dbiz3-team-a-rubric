@@ -71,11 +71,26 @@
   {% endfor %}
   {% endif %}
 
+  {#- FR-026 / FR-027 (D-96, D-97 proposed): the nurse sees who the case would go to before she confirms;
+      every reader sees the mother's responsible doctor and whether he is present. The nurse never chooses. -#}
+  {% if routing %}
+  <p class="caption routing{% if routing.outcome in ('none', 'unknown') %} warn{% endif %}">
+    {%- if routing.outcome == "responsible" %}{{ _("Will be sent to: Dr. {name}", name=routing.responsible_name) }}
+    {%- elif routing.outcome == "on_duty" %}{{ _("Will be sent to the doctor on duty · Responsible doctor: Dr. {name} (Away)", name=routing.responsible_name) }}
+    {%- elif routing.outcome == "unknown" %}{{ _("Will be sent to: Dr. {name} · Doctor availability unknown", name=routing.responsible_name) }}
+    {%- else %}{{ _("No doctor available: the case is visible to all doctors") }}{% endif -%}
+  </p>
+  {% endif %}
   <div class="actions" style="justify-content:flex-start">
     {% if "view" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/view"><button class="btn sm">{{ _("Mark as viewed") }}</button></form>{% endif %}
     {% if "escalate" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/escalate"><button class="btn sm outline">{{ _("Escalate to doctor") }}</button></form>{% endif %}
     {% if "close" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/close"><button class="btn sm">{{ _("Close case") }}</button></form>{% endif %}
   </div>
+  {#- BR-012 (D-98, proposed): the nurse sees why "Close case" is not there, so she escalates instead -#}
+  {% if must_escalate and me.role == "Nurse" and case.status != "Escalated to doctor" and case.status != "Resolved" %}
+  <p class="caption">{{ _("Only a doctor can close this case: the value is above threshold. Escalate it to the doctor.") if must_escalate == "above"
+      else _("Only a doctor can close this case: the chatbot marked this question as a danger sign. Escalate it to the doctor.") }}</p>
+  {% endif %}
 
   {% if responses %}
   <h3 style="margin-top:16px">{{ _("Responses sent") }}</h3>

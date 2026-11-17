@@ -7,6 +7,7 @@ from datetime import date, datetime
 
 from ..alr import thresholds
 from ..alr.reports import gestational_week
+from . import actions
 from .queue import SYMPTOM_LABELS
 
 STATUSES = ("Not viewed", "Viewed", "Escalated to doctor", "Resolved")
@@ -29,9 +30,13 @@ def waited(created_at: str, now: datetime) -> dict:
 
 
 def cases(conn: sqlite3.Connection, now: datetime, source: str | None = None, start: date | None = None,
-          end: date | None = None, doctor_id: str | None = None) -> list[dict]:
-    """Every case with what the dashboard and the board need, newest first."""
-    sql = """SELECT c.case_id, c.status, c.case_source, c.created_at, c.closed_at, c.assigned_doctor_id, u.full_name, u.record_code, p.edd,
+          end: date | None = None, doctor_id: str | None = None, viewer: str | None = None) -> list[dict]:
+    """Every case with what the dashboard and the board need, newest first.
+
+    `viewer` applies BR-010 (D-96, proposed): a nurse sees all, a doctor only his own mothers and — while
+    he is on duty — those of an Away responsible doctor, plus any case with no assigned doctor (BR-011
+    step 4). Left out, nothing is filtered, as before."""
+    sql = """SELECT c.case_id, c.status, c.case_source, c.created_at, c.closed_at, c.assigned_doctor_id, c.user_id, u.full_name, u.record_code, p.edd,
                     r.report_id, r.metric, h.value, h.unit, h.glucose_context, m.text AS question, m.text, m.is_risk, m.parsed_intent, d.full_name AS doctor,
                     (SELECT COUNT(*) FROM STAFF_RESPONSE s WHERE s.case_id = c.case_id) AS responses,
                     (SELECT COUNT(*) FROM STAFF_RESPONSE s WHERE s.case_id = c.case_id AND s.responder_role = 'Doctor') AS doctor_responses
@@ -45,8 +50,12 @@ def cases(conn: sqlite3.Connection, now: datetime, source: str | None = None, st
                AND (? IS NULL OR c.assigned_doctor_id = ?)
              ORDER BY c.created_at DESC"""
     s, e = (start.isoformat() if start else None), (end.isoformat() if end else None)
+    mine = actions.visible_users(conn, viewer, now.date()) if viewer else None
     out = []
     for row in conn.execute(sql, (source, source, s, s, e, e, doctor_id, doctor_id)):
+        if mine is not None and row["user_id"] not in mine and not (      # BR-010
+                row["assigned_doctor_id"] is None and row["status"] == "Escalated to doctor"):   # BR-011 step 4
+            continue
         symptoms = [r[0] for r in conn.execute("SELECT symptom FROM REPORT_SYMPTOM WHERE report_id = ? ORDER BY symptom", (row["report_id"],))] if row["report_id"] else []
         if row["case_source"] == "Chatbot":
             content, value, label = row["question"], None, thresholds.NOT_ASSESSED
@@ -59,6 +68,7 @@ def cases(conn: sqlite3.Connection, now: datetime, source: str | None = None, st
         danger = row["case_source"] == "Chatbot" and danger_of(row)          # D-101: the bot's danger flag
         out.append({
             "case_id": row["case_id"], "status": row["status"], "case_source": row["case_source"], "created_at": row["created_at"],
+            "user_id": row["user_id"], "assigned_doctor_id": row["assigned_doctor_id"],
             "mother": row["full_name"], "record_code": row["record_code"], "doctor": row["doctor"],
             "week": gestational_week(date.fromisoformat(row["edd"]), now.date()) if row["edd"] else None,
             "content": content, "value": value, "label": label,

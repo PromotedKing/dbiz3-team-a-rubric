@@ -82,16 +82,17 @@ def add(table, _kind, _note='', **row):
 
 # ---- STAFF (S01 / S02 keep the placeholder names drawn in the wireframes)
 S = {k: uid('staff-' + k) for k in ['S01', 'S02', 'S03', 'S04', 'S05', 'S06', 'S07']}
-for k, kind, note, name, role, login in [
-    ('S01', 'ordinary', 'nurse drawn on S-061 / S-026 (wireframe placeholder name)', 'Trần Thị B', 'Nurse', 'nurse.tranthib'),
-    ('S02', 'ordinary', 'doctor drawn on S-064 / S-009 (wireframe placeholder name)', 'Nguyễn Văn A', 'Doctor', 'dr.nguyenvana'),
-    ('S03', 'ordinary', '', 'Lê Thị Hạnh', 'Nurse', 'nurse.lethihanh'),
-    ('S04', 'ordinary', '', 'Phạm Quốc Dũng', 'Doctor', 'dr.phamquocdung'),
-    ('S05', 'ordinary', '', 'Hoàng Thị Yến', 'Nurse', 'nurse.hoangthiyen'),
-    ('S06', 'boundary', 'full_name and login_account exactly 100 characters (VARCHAR(100))', text_of_len('Nguyễn Thị Minh Châu', 100), 'Nurse', text_of_len('nurse.long', 100)),
-    ('S07', 'exceptional', 'doctor with no assigned mother: no case is escalated to him (CLI §10 Q10)', 'Vũ Minh Hải', 'Doctor', 'dr.vuminhhai'),
+for k, kind, note, name, role, login, availability, on_duty in [
+    ('S01', 'ordinary', 'nurse drawn on S-061 / S-026 (wireframe placeholder name)', 'Trần Thị B', 'Nurse', 'nurse.tranthib', None, None),
+    ('S02', 'ordinary', 'doctor drawn on S-064 / S-009 (wireframe placeholder name); Available, not on duty', 'Nguyễn Văn A', 'Doctor', 'dr.nguyenvana', 'Available', 0),
+    ('S03', 'ordinary', '', 'Lê Thị Hạnh', 'Nurse', 'nurse.lethihanh', None, None),
+    ('S04', 'exceptional', 'responsible doctor marked Away: his mothers route to the on-duty doctor (CLI BR-011 step 2)', 'Phạm Quốc Dũng', 'Doctor', 'dr.phamquocdung', 'Away', 0),
+    ('S05', 'ordinary', '', 'Hoàng Thị Yến', 'Nurse', 'nurse.hoangthiyen', None, None),
+    ('S06', 'boundary', 'full_name and login_account exactly 100 characters (VARCHAR(100))', text_of_len('Nguyễn Thị Minh Châu', 100), 'Nurse', text_of_len('nurse.long', 100), None, None),
+    ('S07', 'ordinary', 'the doctor on duty: he has no mother of his own, and covers the mothers of an Away doctor (CLI BR-010, BR-011)', 'Vũ Minh Hải', 'Doctor', 'dr.vuminhhai', 'Available', 1),
 ]:
-    add('STAFF', kind, note, staff_id=S[k], full_name=name, role=role, login_account=login)
+    add('STAFF', kind, note, staff_id=S[k], full_name=name, role=role, login_account=login,
+        availability=availability, on_duty=on_duty)
 STAFF_ROLE = {r['staff_id']: r['role'] for r in T['STAFF']}
 
 # ---- USER_ACCOUNT (mothers only — DM-02 default)
