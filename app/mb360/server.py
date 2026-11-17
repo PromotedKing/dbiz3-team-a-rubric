@@ -23,6 +23,7 @@ def _open():
         return dbmod.open_file(str(DB_FILE))
     conn = dbmod.build(str(DB_FILE))
     persona.install(conn, clock.now())
+    persona.onboard(conn, clock.now())     # D-100: a restart must not send her through consent and setup again
     return conn
 
 
@@ -42,10 +43,31 @@ async def tci_session(request: Request, call_next):
     """ACC FR-015: every sub-app page needs the session opened from the TCI app; otherwise S-043."""
     parts = request.url.path.split("/")
     if len(parts) > 2 and parts[1] == "m" and not entry.valid_session(conn, request.cookies.get(entry.COOKIE), parts[2], clock.now()):
+        reopened = _reopen(request, parts[2])
+        if reopened:
+            return reopened
         if len(parts) > 3 and parts[3] == "appointments":
             return Response(status_code=404)
         return RedirectResponse("/session-expired", status_code=303)
     return await call_next(request)
+
+
+def _reopen(request: Request, user_id: str):
+    """D-100 (proposed): the sub-app session is gone (it expired, or the hosted app restarted) but the simulated TCI app is
+    still signed in to this mother, who has already agreed: the TCI app opens the sub-app again, as it would on a phone,
+    instead of S-043. A GET goes on to the page asked for; a POST goes back to the page it came from (its form is not
+    replayed). Anyone else still gets S-043."""
+    account = getattr(app.state, "tci_account", None)
+    host = account(request) if account else None
+    if host is None or host["user_id"] != user_id or not entry.has_consent(conn, user_id):
+        return None
+    token = entry.reopen(conn, user_id, clock.now())
+    back = request.headers.get("referer", "")
+    target = request.url.path if request.method == "GET" else (
+        back.split(str(request.base_url).rstrip("/"), 1)[-1] if back.startswith(str(request.base_url)) else f"/m/{user_id}/home")
+    response = RedirectResponse(target + (f"?{request.url.query}" if request.method == "GET" and request.url.query else ""), status_code=303)
+    response.set_cookie(entry.COOKIE, token, httponly=True, samesite="lax", secure=entry.SECURE_COOKIE)
+    return response
 
 
 @app.middleware("http")

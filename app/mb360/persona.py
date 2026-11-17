@@ -42,6 +42,19 @@ BP_RESPONSE = ("Chỉ số vượt ngưỡng theo dõi. Mẹ chưa có dấu hi�
                "Hẹn khám: {follow_up}")
 
 
+def onboard(conn: sqlite3.Connection, now: datetime) -> None:
+    """D-100 (proposed): the sample mother after the first opening — consent given and pregnancy set up, through the same
+    functions the screens use (ACC FR-011, FR-005). mb360.server calls it when it builds a new database at start-up, so a
+    restart of the hosted app (sleep, deploy) does not send her through consent and setup again; "Chạy lại từ lần mở đầu
+    tiên" (/showcase/reset) still installs her without it, to show the first-opening flow."""
+    from .acc import entry, setup
+    acc = conn.execute("SELECT * FROM USER_ACCOUNT WHERE user_id = ?", (USER,)).fetchone()
+    entry.agree(conn, {**dict(acc), "sex": "Female"}, True, now)
+    first = conn.execute("SELECT MIN(visit_date) FROM VISIT WHERE user_id = ?", (USER,)).fetchone()[0]
+    setup.save(conn, USER, {"date_type": "EDD", "date": tci_feed.hospital_edd(conn, USER), "height_cm": "", "weight_kg": "",
+                            "first_visit_date": first or ""}, now)
+
+
 def _copy_art() -> None:
     folder = Path(MEDIA_DIR) / "demo"
     folder.mkdir(parents=True, exist_ok=True)
