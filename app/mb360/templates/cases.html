@@ -17,7 +17,7 @@
   <tr{% if r.label == 'Above threshold' %} class="above-row"{% endif %}>
     <td><strong>{{ r.mother }}</strong></td>
     <td>{% if r.week is not none %}{{ _("Week {n}", n=r.week) }}{% endif %}</td>
-    <td>{{ r.case_source | t }}</td>
+    <td>{{ r.case_source | t }}{% if r.danger %} <span class="tag above" data-danger>{{ _("Signs that need medical attention") }}</span>{% endif %}</td>
     <td>{{ r.content | t_list if r.case_source == "Symptom" else (r.content | t if r.case_source == "Metric report" else r.content) }}</td>
     <td>{{ r.value | t_known or "—" }} <span class="tag {{ 'above' if r.label == 'Above threshold' else 'normal' if r.label == 'Normal' else '' }}">{{ r.label | t }}</span></td>
     <td>{{ r.submitted_at | show_time }}</td>

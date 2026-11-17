@@ -910,3 +910,12 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Hospital information**: `keywords.json` → `hospital_info`; category `hospital_info` with a fixed reply pointing to the TCI app and the hotline (placeholder, Q8); new open question spec-BOT §10 Q19 (Client). `chat.HOTLINE` is now the one placeholder, used by `routes`.
 - **Chain**: `docs/decisions.md` D-95; `specs/spec-BOT.md` v1.15.0 — §5.1 FR-003, FR-010, §10 Q19. 8 labels. No schema, seed or CRUD change.
 - **Tests**: new `tests/unit/test_bot_group3.py` (19), one page test in `tests/integration/test_bot_pages.py`. Full suite 744 passed, 3 xfailed.
+
+## 17/11/2026: tester feedback — stored danger flag, everyday illnesses, medicine questions (Sang, branch `sang/bot-danger-flag-health`)
+
+- **Feedback**: (1) is the chatbot's danger flag stored on the Case or only on the message (needed for BR-012 of PR #43)? (2) does the bot leave medicine / vitamin questions to the nurse? (3) "sổ mũi" was declined as out of scope until the tester added that she is pregnant.
+- **Findings**: (1) stored nowhere — `routes.bubbles` classified the text again for S-034, and the clinical web had no flag; (2) partly — "thuốc" questions got the nurse offer, but vitamins and supplements reached the LLM and "paracetamol" was declined; no medicine guidance template exists; (3) everyday illnesses and drug names were neither symptom nor topic words.
+- **Fix (D-101, proposed; user chose the options)**: `chat.save` stores `danger` in the question's `parsed_intent`; `chat.danger_of(row)` reads it (old rows: classified again); `cli.queue`, `cli.dashboard` (also `alarm`), `cli.case_detail` and S-034 use it; tag "Signs that need medical attention" on the case card, the case list and the case page. `keywords.json`: 37 everyday-illness symptom words, new `medicine_words` and `medicine_decision` (→ nurse offer), general health words and medicine names as topics. Not built: BR-012 "a nurse cannot close it" (PR #43 not accepted yet).
+- **Numbering**: PR #43 proposes D-96 – D-99; this is D-101 (D-100 is kept for the unmerged restart fix).
+- **Chain**: `docs/decisions.md` D-101; `specs/spec-BOT.md` v1.16.0 — §5.1 FR-006, FR-011, §6 Chat Message. No schema, seed or label change (the tag reuses an existing label). S-061 / S-064 screen specs to be updated by their owners.
+- **Tests**: new `tests/unit/test_bot_tester_feedback.py` (20), 6 cases in `bot_eval_set.json`; one follow-up test now expects the stored flag. Full suite: see the pull request.
