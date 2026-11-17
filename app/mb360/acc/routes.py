@@ -51,6 +51,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         return ident
 
     host_account, remember_host = tci_booking.register(app, conn, page)
+    app.state.tci_account = host_account          # mb360.server reopens the sub-app from it (D-100)
 
     @app.get("/tci", response_class=HTMLResponse)
     def tci_home(request: Request):
