@@ -95,6 +95,15 @@ def agree(conn: sqlite3.Connection, identity: dict, accepted: bool, now: datetim
     return _run(conn, write)
 
 
+def has_consent(conn: sqlite3.Connection, user_id: str) -> bool:
+    return conn.execute("SELECT 1 FROM CONSENT_RECORD WHERE user_id = ? AND accepted = 1", (user_id,)).fetchone() is not None
+
+
+def reopen(conn: sqlite3.Connection, user_id: str, now: datetime) -> str:
+    """D-100: a new session for a mother who already agreed, opened again from the TCI app (FR-015)."""
+    return _run(conn, lambda: _new_session(conn, user_id, now))
+
+
 def next_step(conn: sqlite3.Connection, user_id: str) -> str:
     return _next_step(conn, user_id)
 

@@ -910,3 +910,28 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Hospital information**: `keywords.json` → `hospital_info`; category `hospital_info` with a fixed reply pointing to the TCI app and the hotline (placeholder, Q8); new open question spec-BOT §10 Q19 (Client). `chat.HOTLINE` is now the one placeholder, used by `routes`.
 - **Chain**: `docs/decisions.md` D-95; `specs/spec-BOT.md` v1.15.0 — §5.1 FR-003, FR-010, §10 Q19. 8 labels. No schema, seed or CRUD change.
 - **Tests**: new `tests/unit/test_bot_group3.py` (19), one page test in `tests/integration/test_bot_pages.py`. Full suite 744 passed, 3 xfailed.
+
+## 16/11/2026: the hosted demo no longer asks for consent and setup after each restart (Sang, branch `sang/keep-onboarding-after-restart`)
+
+- **User report**: every time the app session expired, the mother had to start again: fill in her information and agree to the terms.
+- **Cause**: not the 12-hour session. On Render's free plan the SQLite file is not kept; the service restarts after ~15 minutes without use and at every deploy (many merges on 15–16/11), and `mb360.server` rebuilds the sample data with the sample mother before her first opening. The browser kept its old session cookie, so S-043 appeared, then consent (S-002) and setup (S-007).
+- **Fix (D-100, proposed)**: `persona.onboard` (consent + setup through `entry.agree` and `setup.save`) when the server builds a new database; `/showcase/reset` keeps the first-opening flow. `server._reopen`: a page under `/m/{id}/` without a valid session, while the simulated TCI app (signed cookie or host feed) is signed in to that mother who has agreed, gets a new session (`entry.reopen`) and goes on (GET) or back to the page it came from (POST, not replayed). Any other case still gets S-043. The TCI account check is shared through `app.state.tci_account`.
+- **Not fixed**: data added during a demo is still lost at a restart (needs a kept database: paid disk or external database — team decision).
+- **Chain**: `docs/decisions.md` D-100; `specs/spec-ACC.md` v1.10.0 — §5.1 FR-015, new §10 Q24 (Chi to review). No schema, seed or label change.
+- **Tests**: new `tests/integration/test_server_restart.py` (5) runs `mb360.server` itself on a temporary file: a new database opens straight to Home; after a restart with the old cookie the session is reopened (no S-043); a POST is not replayed; another mother still gets S-043; the reset button still shows consent. Full suite 749 passed, 3 xfailed.
+
+## 17/11/2026: tester feedback — stored danger flag, everyday illnesses, medicine questions (Sang, branch `sang/bot-danger-flag-health`)
+
+- **Feedback**: (1) is the chatbot's danger flag stored on the Case or only on the message (needed for BR-012 of PR #43)? (2) does the bot leave medicine / vitamin questions to the nurse? (3) "sổ mũi" was declined as out of scope until the tester added that she is pregnant.
+- **Findings**: (1) stored nowhere — `routes.bubbles` classified the text again for S-034, and the clinical web had no flag; (2) partly — "thuốc" questions got the nurse offer, but vitamins and supplements reached the LLM and "paracetamol" was declined; no medicine guidance template exists; (3) everyday illnesses and drug names were neither symptom nor topic words.
+- **Fix (D-101, proposed; user chose the options)**: `chat.save` stores `danger` in the question's `parsed_intent`; `chat.danger_of(row)` reads it (old rows: classified again); `cli.queue`, `cli.dashboard` (also `alarm`), `cli.case_detail` and S-034 use it; tag "Signs that need medical attention" on the case card, the case list and the case page. `keywords.json`: 37 everyday-illness symptom words, new `medicine_words` and `medicine_decision` (→ nurse offer), general health words and medicine names as topics. Not built: BR-012 "a nurse cannot close it" (PR #43 not accepted yet).
+- **Numbering**: PR #43 proposes D-96 – D-99; this is D-101 (D-100 is kept for the unmerged restart fix).
+- **Chain**: `docs/decisions.md` D-101; `specs/spec-BOT.md` v1.16.0 — §5.1 FR-006, FR-011, §6 Chat Message. No schema, seed or label change (the tag reuses an existing label). S-061 / S-064 screen specs to be updated by their owners.
+- **Tests**: new `tests/unit/test_bot_tester_feedback.py` (20), 6 cases in `bot_eval_set.json`; one follow-up test now expects the stored flag. Full suite: see the pull request.
+
+## 17/11/2026: the nurse's case list opens on "Not viewed" (Sang, branch `sang/nurse-default-not-viewed`)
+
+- **User request**: change the nurse's default filter on S-061 from "All" to "Not viewed". spec-CLI §10 Q5 was open; recorded as D-102 (proposed) for Trung (CLI) and Ánh / Chi (S-061) to review.
+- **Change**: one line in `cli/routes.py`; combined with the existing order "Sort: Newest" (submission time, or case creation for a chatbot case), the nurse sees the cases waiting for her, the most recent first. The doctor's default ("Escalated to doctor") and the "Needs attention" link from the Overview ("All" for that group) are unchanged.
+- **Chain**: `docs/decisions.md` D-102; `specs/spec-CLI.md` v1.8.1 §10 Q5; `screens/screen-spec-S-061.md` §4 state row and §9 Q1.
+- **Tests**: `tests/integration/test_cli_queue_page.py::test_nurse_queue_header_and_default_filter` now expects "Not viewed" and checks that "All" still lists every case. Full suite: see the pull request.

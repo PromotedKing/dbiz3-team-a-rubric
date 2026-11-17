@@ -64,6 +64,7 @@
   {% else %}
   <div class="row"><h2 class="grow" style="margin:0">{{ _("Chatbot question") }}</h2><span class="tag status">{{ case.status | t }}</span></div>
   <p class="caption">{{ _("Source: Chatbot · whole conversation") }}</p>
+  {% if danger %}<p><span class="tag above" data-danger>{{ _("Signs that need medical attention") }}</span></p>{% endif %}
   {% for m in transcript %}
   <div class="msg {% if m.message_id == question_id %}marked{% endif %}" {% if m.message_id == question_id %}data-escalated-question{% endif %}>
     <strong>{{ m.sender | t }}</strong> <span class="caption">{{ m.sent_at | show_time }}</span><br>{{ m.text }}</div>

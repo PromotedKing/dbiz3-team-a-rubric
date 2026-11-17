@@ -10,9 +10,13 @@ def test_staff_selector_lists_the_seed_staff(client):
 
 
 def test_nurse_queue_header_and_default_filter(client, db, staff_id):
-    page = client.get(f"/staff/{staff_id('Trần Thị B')}/cases").text
+    """D-102 (spec-CLI §10 Q5): the nurse's list opens on "Not viewed", the cases waiting for her; "All" is one click away."""
+    nurse = staff_id("Trần Thị B")
+    page = client.get(f"/staff/{nurse}/cases").text
     assert vi("Nurse: {name}", name="Trần Thị B") in page
-    assert 'data-active-filter="All"' in page
+    assert 'data-active-filter="Not viewed"' in page
+    assert page.count(vi("View report") + " ›") == db.execute("SELECT COUNT(*) FROM CARE_CASE WHERE status = 'Not viewed'").fetchone()[0]
+    page = client.get(f"/staff/{nurse}/cases", params={"status": "All"}).text
     assert page.count(vi("View report") + " ›") == db.execute("SELECT COUNT(*) FROM CARE_CASE").fetchone()[0]
 
 
@@ -35,3 +39,14 @@ def test_filter_and_empty_state(client, db, staff_id):
 def test_view_report_opens_the_case(client, db, staff_id, boundary_case):
     nurse, case = staff_id("Trần Thị B"), boundary_case
     assert f'href="/staff/{nurse}/cases/{case}"' in client.get(f"/staff/{nurse}/cases").text
+
+
+def test_nurse_default_view_is_not_viewed_newest_first(client, db, staff_id):
+    """D-102: "Not viewed" combined with "Sort: Newest" — the most recent waiting case comes first."""
+    from mb360.cli import queue
+    rows = queue.list_cases(db, "Not viewed")
+    assert [r["submitted_at"] for r in rows] == sorted((r["submitted_at"] for r in rows), reverse=True)
+    page = client.get(f"/staff/{staff_id('Trần Thị B')}/cases").text
+    positions = [page.index(f'/cases/{r["case_id"]}') for r in rows]
+    assert positions == sorted(positions) and len(rows) >= 2
+    assert vi("Sort: Newest") in page

@@ -2,6 +2,7 @@
 the cases as they stand. Nothing is stored and no new threshold is made up: "above threshold" comes from THRESHOLD_RULE,
 the alarm symptoms are the PRD M3 list (D-73), waiting time is shown, never judged."""
 import sqlite3
+from ..bot.chat import danger_of
 from datetime import date, datetime
 
 from ..alr import thresholds
@@ -31,7 +32,7 @@ def cases(conn: sqlite3.Connection, now: datetime, source: str | None = None, st
           end: date | None = None, doctor_id: str | None = None) -> list[dict]:
     """Every case with what the dashboard and the board need, newest first."""
     sql = """SELECT c.case_id, c.status, c.case_source, c.created_at, c.closed_at, c.assigned_doctor_id, u.full_name, u.record_code, p.edd,
-                    r.report_id, r.metric, h.value, h.unit, h.glucose_context, m.text AS question, d.full_name AS doctor,
+                    r.report_id, r.metric, h.value, h.unit, h.glucose_context, m.text AS question, m.text, m.is_risk, m.parsed_intent, d.full_name AS doctor,
                     (SELECT COUNT(*) FROM STAFF_RESPONSE s WHERE s.case_id = c.case_id) AS responses,
                     (SELECT COUNT(*) FROM STAFF_RESPONSE s WHERE s.case_id = c.case_id AND s.responder_role = 'Doctor') AS doctor_responses
              FROM CARE_CASE c JOIN USER_ACCOUNT u ON u.user_id = c.user_id
@@ -55,13 +56,14 @@ def cases(conn: sqlite3.Connection, now: datetime, source: str | None = None, st
             content, label = row["metric"], thresholds.evaluate(conn, row["metric"], row["value"], row["glucose_context"])
             value = f"{row['value']} {row['unit']}" if row["unit"] else row["value"]
         real_symptoms = [x for x in symptoms if x != "No symptoms"]
+        danger = row["case_source"] == "Chatbot" and danger_of(row)          # D-101: the bot's danger flag
         out.append({
             "case_id": row["case_id"], "status": row["status"], "case_source": row["case_source"], "created_at": row["created_at"],
             "mother": row["full_name"], "record_code": row["record_code"], "doctor": row["doctor"],
             "week": gestational_week(date.fromisoformat(row["edd"]), now.date()) if row["edd"] else None,
             "content": content, "value": value, "label": label,
             "with_symptoms": ", ".join(SYMPTOM_LABELS.get(x, x) for x in real_symptoms) if row["value"] is not None else "",
-            "alarm": bool(ALARM_SYMPTOMS.intersection(symptoms)), "answered": row["responses"] > 0, "doctor_answered": row["doctor_responses"] > 0,
+            "alarm": bool(ALARM_SYMPTOMS.intersection(symptoms)) or danger, "danger": danger, "answered": row["responses"] > 0, "doctor_answered": row["doctor_responses"] > 0,
             "waited": waited(row["created_at"], now) if row["status"] != "Resolved" else None,
         })
     return out
