@@ -263,6 +263,15 @@ The PRD in `docs/prd.md` was refined on 14/10/2026 (product context, M1 – M5, 
 |---|---|---|---|
 | D-102 | **The nurse's case list (S-061) opens on "Not viewed" (spec-CLI §10 Q5; requested by Sang, 17/11/2026).** It showed "All", following the mockup, so cases already handled mixed with those waiting for her; the wireframe highlights "Not viewed (2)". The doctor's list stays "Escalated to doctor" (CLI-02); opened from the Overview's "Needs attention" it stays "All" for that group; every filter is still one click away. | Proposed — **CLI owner (Trung), S-061 owners (Ánh, Chi) to review** | spec-CLI §10 Q5; S-061 §4, §9; `app/mb360/cli/routes.py` |
 
+### Split of the nurse and doctor screens (17/11/2026)
+
+| ID | Decision | Status | Affected artifacts |
+|---|---|---|---|
+| D-103 | **Split of the clinical web screens by role.** `S-061` and `S-064` now describe the Nurse; the Doctor versions are new screens `S-061D` and `S-064D` (precedent: `S-025A`). The data blocks are shared; the screens differ in the buttons and in the cases they show (D-96, `spec-CLI.md` BR-010). | Proposed | `screens/screen-spec-S-061.md`, `S-064.md`, `S-061D.md`, `S-064D.md`; Screen List |
+| D-104 | **Nurse case list shows what to do first: sort "Priority", a "Waiting" column and the count on "Home (n)" (17/11/2026).** Default sort "Priority": cases "Above threshold" and "Not viewed" first, then by waiting time, longest first; replaces "Sort: Newest" for the nurse. Reason: nurses are not at the screen all day, so the list itself must show what to do first. No time limit and no new status. The default filter "Not viewed" is D-102. | Proposed | `screens/screen-spec-S-061.md`; `spec-CLI.md` scope, US-1, FR-002 |
+| D-105 | **The Nurse role has no "Notifications" button; the Doctor keeps it.** Closes `S-061` Q5 and `S-064` Q7 for the nurse. | Proposed | `screens/screen-spec-S-061.md`, `S-064.md`, `S-061D.md` |
+| D-106 | **No screen to author guidance templates in the MVP;** the list holds only seed examples marked illustrative. When the screen exists, only doctors author templates (D-99). | Proposed | `screens/screen-spec-S-064D.md`; `spec-CLI.md` BR-013, Q15 |
+
 ### References for D-15
 
 - ADA, *Glucose Monitoring During Pregnancy* (2024): targets fasting < 95 mg/dL, 1 h after a meal < 140 mg/dL, 2 h after a meal < 120 mg/dL — https://diabetes.org/sites/default/files/2024-10/Glucose-Monitoring-During-Pregnancy-patient-FINAL.pdf
