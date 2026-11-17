@@ -56,7 +56,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
 
     @app.get("/staff/{staff_id}/notifications", response_class=HTMLResponse)
     def staff_notifications(request: Request, staff_id: str):
-        """S-059 inside the clinical web (D-107, ALR-03): read from the cases, nothing stored (DM-32)."""
+        """S-059 inside the clinical web (D-109, ALR-03): read from the cases, nothing stored (DM-32)."""
         me = staff(staff_id)
         return page(request, "staff_notices.html", me=me, rows=notices.lines(conn, staff_id, me["role"], clock.now()),
                     badge=notices.count(conn, staff_id, me["role"]), nav="notifications", updated=clock.now())
