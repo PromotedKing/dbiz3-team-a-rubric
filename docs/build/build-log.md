@@ -928,3 +928,10 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Numbering**: PR #43 proposes D-96 – D-99; this is D-101 (D-100 is kept for the unmerged restart fix).
 - **Chain**: `docs/decisions.md` D-101; `specs/spec-BOT.md` v1.16.0 — §5.1 FR-006, FR-011, §6 Chat Message. No schema, seed or label change (the tag reuses an existing label). S-061 / S-064 screen specs to be updated by their owners.
 - **Tests**: new `tests/unit/test_bot_tester_feedback.py` (20), 6 cases in `bot_eval_set.json`; one follow-up test now expects the stored flag. Full suite: see the pull request.
+
+## 17/11/2026: the nurse's case list opens on "Not viewed" (Sang, branch `sang/nurse-default-not-viewed`)
+
+- **User request**: change the nurse's default filter on S-061 from "All" to "Not viewed". spec-CLI §10 Q5 was open; recorded as D-102 (proposed) for Trung (CLI) and Ánh / Chi (S-061) to review.
+- **Change**: one line in `cli/routes.py`; combined with the existing order "Sort: Newest" (submission time, or case creation for a chatbot case), the nurse sees the cases waiting for her, the most recent first. The doctor's default ("Escalated to doctor") and the "Needs attention" link from the Overview ("All" for that group) are unchanged.
+- **Chain**: `docs/decisions.md` D-102; `specs/spec-CLI.md` v1.8.1 §10 Q5; `screens/screen-spec-S-061.md` §4 state row and §9 Q1.
+- **Tests**: `tests/integration/test_cli_queue_page.py::test_nurse_queue_header_and_default_filter` now expects "Not viewed" and checks that "All" still lists every case. Full suite: see the pull request.

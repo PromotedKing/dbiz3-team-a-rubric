@@ -54,6 +54,7 @@ Note: the "[Role label] …" and "[Escalate to doctor] …" boxes in the mockup 
 | State | What the user sees | Trigger |
 |---|---|---|
 | Default (shown in mockup) | case table per filter, at full width | screen opens |
+| Nurse role, default *(D-102, proposed)* | the table opens with the filter **"Not viewed"** — the cases waiting for the nurse; she can switch to "All" and the other statuses | screen opens without a filter |
 | Doctor role | header "Dr. Nguyễn Văn A"; same table with the **default filter "Escalated to doctor"**; the doctor may switch filters to view other cases, but can act only on escalated cases (Send guidance, Close case on `S-064`); no "Mark as viewed" (CLI-02, D-43 as revised) | a doctor signs in |
 | Empty (no data) | "No cases to handle." | the filter has no cases |
 | Loading | shared skeleton (D-27) | table loading |
@@ -101,7 +102,7 @@ Note: the "[Role label] …" and "[Escalate to doctor] …" boxes in the mockup 
 
 | # | Question | Blocking? | Status |
 |---|---|---|---|
-| 1 | Default filter when the screen opens. | No | Open (`spec-CLI.md` Q5) |
+| 1 | Default filter when the screen opens. | No | Decided 17/11/2026 (D-102, proposed): nurse "Not viewed", doctor "Escalated to doctor" (`spec-CLI.md` Q5) |
 | 2 | Does the nurse see all cases or only assigned cases; which escalated cases does a given doctor see. | Yes | **Partly resolved** — a doctor sees the escalated cases assigned to him (D-68); which cases the nurse sees is still open in `spec-CLI.md` Q10 (remaining part). `spec-CLI.md` Q16 was closed by the module review (CLI-02: the doctor's default filter is "Escalated to doctor"), but which escalated cases a given doctor sees still depends on Q10. "Every doctor account sees escalated cases" is only the review's suggestion for the demo |
 | 3 | Are quick notes per person or shared by the shift. | No | Resolved — not applicable: Quick notes removed (screen-spec fix #9, CLI-03) |
 | 4 | The web "Notifications" (S-059), "Patients" (S-062) and "Settings" screens are not drawn. | No | Open |
