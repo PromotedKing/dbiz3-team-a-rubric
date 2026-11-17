@@ -267,10 +267,16 @@ The PRD in `docs/prd.md` was refined on 14/10/2026 (product context, M1 – M5, 
 
 | ID | Decision | Status | Affected artifacts |
 |---|---|---|---|
-| D-103 | **Split of the clinical web screens by role.** `S-061` and `S-064` now describe the Nurse; the Doctor versions are new screens `S-061D` and `S-064D` (precedent: `S-025A`). The data blocks are shared; the screens differ in the buttons and in the cases they show (D-96, `spec-CLI.md` BR-010). | Proposed | `screens/screen-spec-S-061.md`, `S-064.md`, `S-061D.md`, `S-064D.md`; Screen List |
+| D-103 | **Split of the clinical web screens by role — role views of one page each (D-107).** `S-061` and `S-064` now describe the Nurse; the Doctor versions `S-061D` and `S-064D` are role views of the same pages, not separate routes (precedent: `S-025A`). The data blocks are shared; the screens differ in the buttons and in the cases they show (D-96, `spec-CLI.md` BR-010). | Proposed | `screens/screen-spec-S-061.md`, `S-064.md`, `S-061D.md`, `S-064D.md`; Screen List |
 | D-104 | **Nurse case list shows what to do first: sort "Priority", a "Waiting" column and the count on "Home (n)" (17/11/2026).** Default sort "Priority": cases "Above threshold" and "Not viewed" first, then by waiting time, longest first; replaces "Sort: Newest" for the nurse. Reason: nurses are not at the screen all day, so the list itself must show what to do first. No time limit and no new status. The default filter "Not viewed" is D-102. | Proposed | `screens/screen-spec-S-061.md`; `spec-CLI.md` scope, US-1, FR-002 |
 | D-105 | **The Nurse role has no "Notifications" button; the Doctor keeps it.** Closes `S-061` Q5 and `S-064` Q7 for the nurse. | Proposed | `screens/screen-spec-S-061.md`, `S-064.md`, `S-061D.md` |
 | D-106 | **No screen to author guidance templates in the MVP;** the list holds only seed examples marked illustrative. When the screen exists, only doctors author templates (D-99). | Proposed | `screens/screen-spec-S-064D.md`; `spec-CLI.md` BR-013, Q15 |
+
+### D-107 — One page per screen, role from the session (Trung's answers, 17/11/2026)
+
+| ID | Decision | Status | Affected artifacts |
+|---|---|---|---|
+| D-107 | **One page per screen; the role comes from the session.** `S-061` / `S-061D` and `S-064` / `S-064D` are role views of the same two pages (D-103), built as one UI with conditions; no duplicated routes. Sign-in: staff username + the shared team password (D-82); the app looks the username up in STAFF (column `role`: Nurse / Doctor) and the session keeps `staff_id` and `staff_role`. Routes `/staff/{id}/...` stay as they are; the server takes the role from the session, never from `{id}`, refuses an `{id}` that is not the session's `staff_id`, and checks the permission of every action (BR-004, BR-012). Source: Trung, 17/11/2026 (answers 1 to 3); the server-side checks are the team's proposal. | Proposed | `spec-CLI.md` scope, §5.3 E-4 and E-5, §7.1, §7.3, Q11; `docs/decisions.md` D-103 |
 
 ### References for D-15
 
