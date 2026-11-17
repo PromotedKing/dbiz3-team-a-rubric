@@ -876,14 +876,14 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Notification filter dropdown (10/11/2026) | Filter | Lọc |
 | Notification dropdown review (11/11/2026) | All notifications | Tất cả thông báo |
 | Report response link (11/11/2026) | Detailed instructions from your doctor | Chỉ dẫn cụ thể của bác sĩ |
-| Clinical notifications (D-107) | Cases waiting for a first look. | Ca đang chờ xem lần đầu. |
-| Clinical notifications (D-107) | Cases a nurse escalated to you. | Ca y tá đã chuyển cho bạn. |
-| Clinical notifications (D-107) | {n} waiting | {n} ca đang chờ |
-| Clinical notifications (D-107) | Shown while the case is open · nothing is marked as read | Hiện khi ca còn mở · không có trạng thái đã đọc |
-| Clinical notifications (D-107) | Escalated by Nurse {name} · {time} | Y tá {name} chuyển · {time} |
-| Clinical notifications (D-107) | Escalated {time} | Đã chuyển {time} |
-| Clinical notifications (D-107) | Sent {time} | Mẹ gửi {time} |
-| Clinical notifications (D-107) | No notifications. | Không có thông báo nào. |
+| Clinical notifications (D-109) | Cases waiting for a first look. | Ca đang chờ xem lần đầu. |
+| Clinical notifications (D-109) | Cases a nurse escalated to you. | Ca y tá đã chuyển cho bạn. |
+| Clinical notifications (D-109) | {n} waiting | {n} ca đang chờ |
+| Clinical notifications (D-109) | Shown while the case is open · nothing is marked as read | Hiện khi ca còn mở · không có trạng thái đã đọc |
+| Clinical notifications (D-109) | Escalated by Nurse {name} · {time} | Y tá {name} chuyển · {time} |
+| Clinical notifications (D-109) | Escalated {time} | Đã chuyển {time} |
+| Clinical notifications (D-109) | Sent {time} | Mẹ gửi {time} |
+| Clinical notifications (D-109) | No notifications. | Không có thông báo nào. |
 | Nurse permissions (D-98, D-99) | Only a doctor can close this case: the value is above threshold. Escalate it to the doctor. | Chỉ bác sĩ mới được đóng ca này: chỉ số vượt ngưỡng. Hãy chuyển ca cho bác sĩ. |
 | Nurse permissions (D-98, D-99) | Only a doctor can close this case: the chatbot marked this question as a danger sign. Escalate it to the doctor. | Chỉ bác sĩ mới được đóng ca này: chatbot đã đánh dấu câu hỏi là dấu hiệu nguy hiểm. Hãy chuyển ca cho bác sĩ. |
 | Case routing (D-96, D-97) | Will be sent to: Dr. {name} | Sẽ gửi tới: BS. {name} |

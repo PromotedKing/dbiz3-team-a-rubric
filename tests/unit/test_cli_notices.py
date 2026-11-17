@@ -1,4 +1,4 @@
-"""D-107 — the "Notifications" list inside the clinical web (S-059; CLI FR-005, FR-019, FR-020; ALR FR-009).
+"""D-109 — the "Notifications" list inside the clinical web (S-059; CLI FR-005, FR-019, FR-020; ALR FR-009).
 
 Nothing is stored (DM-32): every line is read from CARE_CASE and CASE_STATUS_HISTORY.
 """
@@ -14,7 +14,7 @@ def stored(db):
 # ---------------------------------------------------------------- the bell (S-061 #4)
 
 def test_nurse_badge_counts_every_case_waiting_for_a_first_look(db, staff_id):
-    """D-107: the nurse's number is the "Not viewed" queue, whoever the mother's doctor is."""
+    """D-109: the nurse's number is the "Not viewed" queue, whoever the mother's doctor is."""
     expected = db.execute("SELECT COUNT(*) FROM CARE_CASE WHERE status = 'Not viewed'").fetchone()[0]
     assert expected > 0
     assert notices.count(db, staff_id("Trần Thị B"), "Nurse") == expected
