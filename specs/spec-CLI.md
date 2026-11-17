@@ -4,9 +4,9 @@
 |---|---|
 | Module ID | `CLI` |
 | Module name | Clinical Escalation — UI: "Cases to handle" / "Mother quick profile" (web, for Nurse and Doctor) |
-| Spec version | v1.8.1 (17/11/2026: §10 Q5 decided — the nurse's S-061 opens on "Not viewed", D-102 proposed) — v1.8.0 (07/11/2026: v1.0.0 app and hosting — Session 11 EARS lines (§5.3), Overview and Case board (D-85), shared password (D-82)) — v1.7.0 (14/10/2026: chat transcript in the hand-over — FR-003, BR-009, D-78) — v1.6.3 (30/09/2026: data-model review decisions applied — DM-02, DM-05, DM-10; responsible doctor D-68; 29/09/2026: fetal heart rate reference range aligned with the latest MVP Scope; review 29/09/2026: CLI-01 – CLI-06, X-02, X-04, X-07 / DM-25 data types; Doctor permissions per screen-spec fix #4) |
+| Spec version | v1.8.0 (07/11/2026: v1.0.0 app and hosting — Session 11 EARS lines (§5.3), Overview and Case board (D-85), shared password (D-82)) — v1.7.0 (14/10/2026: chat transcript in the hand-over — FR-003, BR-009, D-78) — v1.6.3 (30/09/2026: data-model review decisions applied — DM-02, DM-05, DM-10; responsible doctor D-68; 29/09/2026: fetal heart rate reference range aligned with the latest MVP Scope; review 29/09/2026: CLI-01 – CLI-06, X-02, X-04, X-07 / DM-25 data types; Doctor permissions per screen-spec fix #4) |
 | Author (team member) | Trung (drafted 16/09/2026) — diagrams checked node by node by Tâm, 17/09/2026 (verifier ≠ converter) |
-| Date | 17/11/2026 |
+| Date | 07/11/2026 |
 | Status | Draft |
 | Approved by (Client role) | *pending* |
 | DBIZ2 source | Function List rows `F-055`–`F-071`, `F-098`–`F-099`, `F-128`–`F-130`, `F-138` (23 rows); Screens `S-054`–`S-069` |
@@ -71,7 +71,7 @@ This module closes the safety loop that `ALR` opens: the nurse reviews cases cre
 
 **Acceptance scenarios**
 
-1. **Given** the nurse is signed in, **When** she opens S-061, **Then** the header shows "Nurse: [name]" and the "Cases to handle" table shows the filter "Not viewed", sorted "Newest" — the cases waiting for her, the most recent first (D-102, proposed; §10 Q5).
+1. **Given** the nurse is signed in, **When** she opens S-061, **Then** the header shows "Nurse: [name]" and the "Cases to handle" table is sorted "Newest"; default filter `[NEEDS CLARIFICATION: the wireframe highlights "Not viewed (2)" but states no rule — §10 Q5]`.
 2. **When** she selects Not viewed / Viewed / Escalated to doctor / Resolved / All, **Then** the table shows only cases in that status.
 3. **Given** there are no cases, **Then** "No cases to handle." is shown.
 4. **When** she clicks "View report ›" on a row, **Then** S-064 opens with that case's Report block.
@@ -410,7 +410,7 @@ S-061 and S-064 cover the work of "Nurse Alert review" (S-056 – S-058): the nu
 | # | Question | Blocking? | Owner | Status |
 |---|---|---|---|---|
 | 4 | S-054 / S-060 (sign-in), S-059, S-062, S-063, S-065 have no mockup. | No | UX/UI | Open |
-| 5 | Default filter of S-061 (the wireframe highlights "Not viewed (2)"). | No | UX/UI | Decided 17/11/2026 by Sang, D-102 proposed, **CLI owner (Trung) and S-061 owners (Ánh, Chi) to review**: the nurse's list opens on "Not viewed" (the cases waiting for her, as the wireframe highlights); the doctor's stays "Escalated to doctor" (CLI-02); opened from the Overview's "Needs attention" it stays "All" for that group |
+| 5 | Default filter of S-061 (the wireframe highlights "Not viewed (2)"). | No | UX/UI | Open |
 | 8 | Contacting the mother to verify (FR-023, Figure 5): S-064 has no phone number / call button. Is FR-023 still used? **Resolved (CLI-05):** no — FR-023 is Won't. | No | BA | Resolved |
 | 9 | The target of "View report ›" on S-061 is S-064 (per the Report block on S-064; the spec currently uses S-064); is S-065 still needed? | No | UX/UI | Open |
 | 10 | [NEEDS CLARIFICATION: How is the **responsible doctor** determined when the nurse clicks "Escalate to doctor"?] **Blocks:** `spec-ALR.md` FR-009 (who receives the high-priority notification; = ALR §10 Q19), this spec FR-019 and FR-022 (§5), BR-003 (§5.2), the Patient Assignment entity (§6), and the edge case "no responsible doctor" (§3). **What the sources say:** DBIZ2 F-099 says "assigned obstetrician", F-130 says "assigned doctor"; the wireframes (S-061, S-064) do not show a doctor being chosen; the Patient Assignment entity exists but no rule says how it is filled. **Options for the Client to choose from (the team has not chosen one):** (a) the obstetrician recorded for the mother in the hospital system; (b) a doctor assigned to the mother by the hospital inside the web tool; (c) the doctor on duty at the time of escalation; (d) every doctor account. **Team suggestion for the demo (CLI-06, not a decision):** option (d) — every doctor account sees escalated cases, so no assignment table is needed. **Also to answer:** what the system does when no responsible doctor is found; whether the nurse sees all cases or only the cases of assigned mothers. | Yes (main question resolved) | Client / Team | Resolved (D-68) — option (b): a doctor assigned to the mother by the hospital; in the MVP the assignment is seed data (DM-10), Patient Assignment is kept. **Still open (not blocking the data model):** behaviour when the mother has no active responsible doctor; whether the nurse sees all cases |
