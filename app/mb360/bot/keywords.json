@@ -25,7 +25,17 @@
   ],
   "symptom_words": [
     "fever", "pain", "ache", "swelling", "swollen", "vomiting", "medicine", "medication", "dose", "pill*",
-    "sốt", "đau", "phù", "sưng", "nôn", "buồn nôn", "ngứa", "khó thở", "ho", "thuốc", "liều"
+    "sốt", "đau", "phù", "sưng", "nôn", "buồn nôn", "ngứa", "khó thở", "ho", "thuốc", "liều",
+    "sổ mũi", "chảy nước mũi", "nghẹt mũi", "ngạt mũi", "hắt hơi", "bị cảm", "cảm lạnh", "cảm cúm", "bị cúm",
+    "đau họng", "viêm họng", "rát họng", "khàn tiếng", "tiêu chảy", "đi ngoài", "ngộ độc", "ớn lạnh", "nhức mỏi",
+    "mẩn ngứa", "nổi mẩn", "phát ban", "nổi mề đay", "dị ứng", "viêm", "nhiễm trùng", "nhiễm khuẩn", "covid",
+    "runny nose", "stuffy nose", "sore throat", "a cold", "common cold", "have the flu", "got the flu", "caught the flu", "have flu", "diarrhea", "diarrhoea", "rash", "allergy", "infection"
+  ],
+  "medicine_words": [
+   "paracetamol", "panadol", "efferalgan", "hapacol", "ibuprofen", "aspirin", "kháng sinh", "thuốc bổ", "thuốc nam", "thuốc bắc", "đông y", "thực phẩm chức năng", "viên uống", "viên sắt", "sắt", "canxi", "vitamin*", "dha", "axit folic", "acid folic", "men vi sinh", "siro", "antibiotic*", "supplement*", "painkiller*", "tylenol", "iron", "calcium", "folic"
+  ],
+  "medicine_decision": [
+   "có nên", "nên uống", "được không", "uống được", "dùng được", "uống thêm", "dùng thêm", "quên uống", "quên liều", "ngừng", "dừng", "bỏ uống", "đổi sang", "uống bao nhiêu", "uống mấy", "loại nào", "hãng nào", "which brand", "uống chung", "uống cùng", "em uống", "mình uống", "tôi uống", "em đang uống", "should i take", "can i take", "is it safe to take", "i forgot", "i missed", "stop taking"
   ],
   "pregnancy_topics": [
     "pregnan*", "baby", "babies", "fetus", "foetus", "trimester", "prenatal", "antenatal", "postpartum", "birth", "labour",
@@ -61,7 +71,10 @@
     "xoa bóp", "massage", "xông hơi", "cà phê", "trà sữa", "nước dừa", "tăng cân", "giảm cân", "cân nặng", "bơi lội",
     "yoga", "đi bộ", "nghỉ thai sản", "đồ ăn", "thức ăn", "món ăn", "hoa quả", "trái cây", "ăn cá", "ăn cua", "ăn tôm",
     "hải sản", "uống trà", "kiêng khem",
-    "gặp bác sĩ", "khám bác sĩ", "đi khám", "see a doctor", "see the doctor"
+    "gặp bác sĩ", "khám bác sĩ", "đi khám", "see a doctor", "see the doctor",
+    "bệnh", "triệu chứng", "sức khỏe", "sức khoẻ", "cơ thể", "health", "symptom*", "paracetamol", "panadol",
+    "efferalgan", "hapacol", "ibuprofen", "aspirin", "kháng sinh", "thuốc bổ", "thuốc nam", "thuốc bắc", "đông y",
+    "viên uống", "sắt", "men vi sinh", "siro", "antibiotic*", "supplement*", "painkiller*", "tylenol"
   ],
   "answer_checks": {
     "status": "PROVISIONAL — team draft 15/11/2026, Pending SME (spec-BOT §10 Q16). Checks the LLM answer, not the question: bot/guard.py.",

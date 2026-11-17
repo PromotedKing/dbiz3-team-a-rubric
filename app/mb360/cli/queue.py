@@ -1,5 +1,6 @@
 """S-061 "Cases to handle": CLI FR-002, FR-020, BR-007; doctor badge (ALR FR-009, DM-32 — derived, not stored)."""
 import sqlite3
+from ..bot.chat import danger_of
 from datetime import date
 
 from ..alr import thresholds
@@ -20,7 +21,8 @@ def symptom_text(conn: sqlite3.Connection, report_id: str) -> str:
 def list_cases(conn: sqlite3.Connection, status: str | None = None) -> list[dict]:
     rows = conn.execute(
         """SELECT c.case_id, c.status, c.case_source, c.created_at, u.full_name, p.edd,
-                  r.report_id, r.metric, r.submitted_at, h.value, h.unit, h.glucose_context, m.text AS question
+                  r.report_id, r.metric, r.submitted_at, h.value, h.unit, h.glucose_context, m.text AS question,
+                  m.text, m.is_risk, m.parsed_intent
            FROM CARE_CASE c
            JOIN USER_ACCOUNT u ON u.user_id = c.user_id
            LEFT JOIN PREGNANCY_PROFILE p ON p.user_id = c.user_id
@@ -46,6 +48,7 @@ def list_cases(conn: sqlite3.Connection, status: str | None = None) -> list[dict
             "week": gestational_week(date.fromisoformat(row["edd"]), today) if row["edd"] else None,
             "case_source": row["case_source"], "content": content, "value": value, "label": label,
             "submitted_at": row["submitted_at"] or row["created_at"],
+            "danger": row["case_source"] == "Chatbot" and danger_of(row),       # D-101: the bot's danger flag
         })
     result.sort(key=lambda r: r["submitted_at"], reverse=True)
     return result

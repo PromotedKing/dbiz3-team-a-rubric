@@ -47,6 +47,15 @@ class AlreadyAsked(ChatError):
         self.conversation_id = conversation_id
 
 
+def danger_of(row) -> bool:
+    """D-101 (proposed): the danger flag of a mother's question as stored when it was classified (parsed_intent "danger").
+    Rows stored before 17/11/2026 have no flag: classified again from their text, as S-034 did until then."""
+    if not row or not row["is_risk"]:
+        return False
+    parsed = json.loads(row["parsed_intent"]) if row["parsed_intent"] else {}
+    return bool(parsed["danger"]) if "danger" in parsed else classify.classify(row["text"])["danger"]
+
+
 def _key(text: str) -> str:
     """The question as compared for D-90: lower case, without accents and punctuation."""
     return " ".join(re.findall(r"\w+", classify.plain(text or "")))
@@ -161,7 +170,7 @@ def save(conn: sqlite3.Connection, q: dict, answer: str | None, client) -> str:
                          (conversation_id, user_id))
         turns = len(_earlier(conn, conversation_id))
         _message(conn, conversation_id, "Mother", text, at, kind["category"], 1 if kind["category"] == "needs_nurse" else 0,
-                 kind.get("lookup"))
+                 kind.get("lookup") or ({"danger": kind["danger"]} if kind["category"] == "needs_nurse" else None))   # D-101
         if q.get("fixed"):
             _message(conn, conversation_id, "Chatbot", q["fixed"], at)               # D-95: small talk, hospital information
         elif kind["category"] == "lookup":

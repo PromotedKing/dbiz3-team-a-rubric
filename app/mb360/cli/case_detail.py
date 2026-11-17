@@ -1,5 +1,6 @@
 """S-064 data: CLI FR-003, FR-007, FR-008, FR-010, FR-014, FR-015, BR-009 (D-78), CLI-01."""
 import sqlite3
+from ..bot.chat import danger_of
 from datetime import date
 
 from ..alr import thresholds
@@ -52,5 +53,6 @@ def load(conn: sqlite3.Connection, case_id: str) -> dict | None:
                                  (latest_visit["visit_id"],)).fetchall() if latest_visit else []
     return {"case": case, "mother": mother, "profile": profile, "clinical": clinical, "week": week, "flags": flags,
             "report": report, "record": record, "symptoms": symptoms, "label": label, "transcript": transcript,
-            "question_id": question_id, "history_metric": metric, "history": history, "threshold": threshold,
+            "question_id": question_id, "danger": bool(question_id) and danger_of(
+                conn.execute("SELECT * FROM CHAT_MESSAGE WHERE message_id = ?", (question_id,)).fetchone()), "history_metric": metric, "history": history, "threshold": threshold,
             "responses": responses, "visits": visits, "latest_visit": latest_visit, "latest_values": latest_values}

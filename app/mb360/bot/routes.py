@@ -33,7 +33,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
             if m["sender"] == "Mother":
                 parsed = json.loads(m["parsed_intent"]) if m["parsed_intent"] else {}
                 last_q = {"row": m, "intent": parsed.get("intent"), "parsed": parsed,
-                          "danger": classify.classify(m["text"])["danger"] if m["is_risk"] else False}
+                          "danger": chat.danger_of(m)}                     # stored when classified (D-101)
                 out.append({"kind": "question", "m": m})
             else:
                 kind = {"needs_nurse": "handoff", "out_of_scope": "decline", "lookup": "lookup", "small_talk": "decline",

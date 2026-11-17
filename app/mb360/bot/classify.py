@@ -134,7 +134,9 @@ def classify(text: str) -> dict:
         return {"category": "needs_nurse", "danger": True}
     if not general and (has_any(text, k["personal_health_markers"]) or has_any(text, k["symptom_words"])
                         or has_any(text, k.get("emotional_markers", []))        # worry, sadness, crying → nurse (D-93)
-                        or has_any(text, k.get("nurse_requests", []))):         # "gọi y tá cho em" → the nurse offer (D-93)
+                        or has_any(text, k.get("nurse_requests", []))           # "gọi y tá cho em" → the nurse offer (D-93)
+                        or (has_any(text, k.get("medicine_words", []))           # a medicine / vitamin / supplement and a decision
+                            and has_any(text, k.get("medicine_decision", [])))):  # about taking it → the nurse offer (D-101)
         return {"category": "needs_nurse", "danger": False}
     found = lookup(text, k)
     if found:
