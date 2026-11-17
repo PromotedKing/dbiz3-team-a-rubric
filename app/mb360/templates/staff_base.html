@@ -16,7 +16,7 @@
     <span class="tci-name">{{ _("Mother & Baby 360") }} · {{ _("Clinical web") }}</span>
     {% if me %}
     <span class="who">
-      {#- S-059 bell (D-96): nurse → cases waiting for a first look, doctor → cases escalated to him -#}
+      {#- S-059 bell (D-107): nurse → cases waiting for a first look, doctor → cases escalated to him -#}
       {% if badge is not none %}<a class="bell{% if nav | default('') == 'notifications' %} on{% endif %}" href="/staff/{{ me.staff_id }}/notifications" title="{{ _('Notifications') }}" aria-label="{{ _('Notifications') }}">{{ icon.bell() }} <span class="badge{% if not badge %} zero{% endif %}">{{ badge }}</span></a>{% endif %}
       <span class="avatar">{{ initials(me.full_name) }}</span>
       <span>{{ _("Nurse: {name}", name=me.full_name) if me.role == "Nurse" else _("Dr. {name}", name=me.full_name) }}<br>

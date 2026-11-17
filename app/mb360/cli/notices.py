@@ -1,10 +1,10 @@
-"""S-059 "Notifications" inside the clinical web (CLI FR-005, FR-019, FR-020; ALR FR-009; D-96).
+"""S-059 "Notifications" inside the clinical web (CLI FR-005, FR-019, FR-020; ALR FR-009; D-107).
 
 Nothing is stored (DM-32): NOTIFICATION holds the mother's notifications only and has no `staff_id`, so
 there is no read / unread state, and no push or SMS (ALR-03). Every line is read from CARE_CASE and
 CASE_STATUS_HISTORY as they stand, exactly like the doctor's badge.
 
-Nurse: the cases waiting for a first look ("Not viewed" — the badge of S-061 #4, D-96), the ones that are
+Nurse: the cases waiting for a first look ("Not viewed" — the badge of S-061 #4, D-107), the ones that are
 above threshold (THRESHOLD_RULE, never a number written here) or carry an alarm symptom (PRD M3 list,
 D-73) on top. Doctor: the cases a nurse escalated to him (ALR FR-009; responsible doctor = active
 PATIENT_ASSIGNMENT, D-68), the one escalated longest ago and still without his answer on top.

@@ -56,7 +56,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
 
     @app.get("/staff/{staff_id}/notifications", response_class=HTMLResponse)
     def staff_notifications(request: Request, staff_id: str):
-        """S-059 inside the clinical web (D-96, ALR-03): read from the cases, nothing stored (DM-32)."""
+        """S-059 inside the clinical web (D-107, ALR-03): read from the cases, nothing stored (DM-32)."""
         me = staff(staff_id)
         return page(request, "staff_notices.html", me=me, rows=notices.lines(conn, staff_id, me["role"], clock.now()),
                     badge=notices.count(conn, staff_id, me["role"]), nav="notifications", updated=clock.now())
@@ -72,8 +72,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
     @app.get("/staff/{staff_id}/cases", response_class=HTMLResponse)
     def cases(request: Request, staff_id: str, status: str = "", flag: str = ""):
         me = staff(staff_id)
-        # Default filter: doctor "Escalated to doctor" (CLI-02); nurse "All" (S-061 mockup; spec-CLI §10 Q5 open)
-        active = status if status in FILTERS else ("Escalated to doctor" if me["role"] == "Doctor" else "All")
+        # Default filter: doctor "Escalated to doctor" (CLI-02); nurse "Not viewed", the cases waiting for her (D-102, spec-CLI §10 Q5)
+        active = status if status in FILTERS else ("Escalated to doctor" if me["role"] == "Doctor" else "Not viewed")
         flag = flag if flag in dashboard.FLAGS else ""
         if flag:                               # opened from "Needs attention" on the dashboard: every open case of that group
             active = "All"

@@ -5,7 +5,7 @@
   <span class="kline">
     {% if r.case_source == "Metric report" %}<b>{{ r.content | t }} {{ r.value | t_known }}</b> <span class="tag {{ 'above' if r.label == 'Above threshold' else 'normal' }}">{{ r.label | t }}</span>
     {% elif r.case_source == "Symptom" %}<b>{{ r.content | t_list }}</b>
-    {% else %}<span class="tag source">{{ _("Chatbot") }}</span> {{ r.content | truncate(70) }}{% endif %}
+    {% else %}<span class="tag source">{{ _("Chatbot") }}</span>{% if r.danger %} <span class="tag above" data-danger>{{ _("Signs that need medical attention") }}</span>{% endif %} {{ r.content | truncate(70) }}{% endif %}
   </span>
   {% if r.with_symptoms %}<span class="caption">{{ _("With:") }} {{ r.with_symptoms | t_list }}</span>{% endif %}
   <span class="kfoot">

@@ -1,4 +1,4 @@
-"""D-96 — the "Notifications" page of the clinical web (S-059, S-061 #4)."""
+"""D-107 — the "Notifications" page of the clinical web (S-059, S-061 #4)."""
 from mb360 import ui
 from mb360.cli import actions
 
@@ -6,7 +6,7 @@ from tests.cli_helpers import NOW
 
 
 def test_nurse_sees_the_bell_with_the_first_look_queue(client, db, staff_id):
-    """S-061 #4 for the nurse was [NEEDS CLARIFICATION] before D-96: she had no bell at all."""
+    """S-061 #4 for the nurse was [NEEDS CLARIFICATION] before D-107: she had no bell at all."""
     nurse = staff_id("Trần Thị B")
     waiting = db.execute("SELECT COUNT(*) FROM CARE_CASE WHERE status = 'Not viewed'").fetchone()[0]
     page = client.get(f"/staff/{nurse}/dashboard").text

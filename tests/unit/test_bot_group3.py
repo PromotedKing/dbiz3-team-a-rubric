@@ -54,7 +54,7 @@ def test_follow_ups_after_a_metric(talk):
     intent, shown, _ = talk("Còn cân nặng thì sao?")
     assert intent == {"intent": "lookup", "topic": "readings", "metric": "Weight"}
     intent, _, llm_input = talk("Giải thích rõ hơn được không?")          # explaining her values is the nurse's job (BR-002)
-    assert intent == {"intent": "needs_nurse"} and llm_input is None
+    assert intent == {"intent": "needs_nurse", "danger": False} and llm_input is None
 
 
 def test_switch_metric_keeps_the_period(talk):
