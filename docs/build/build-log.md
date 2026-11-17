@@ -910,3 +910,12 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Hospital information**: `keywords.json` → `hospital_info`; category `hospital_info` with a fixed reply pointing to the TCI app and the hotline (placeholder, Q8); new open question spec-BOT §10 Q19 (Client). `chat.HOTLINE` is now the one placeholder, used by `routes`.
 - **Chain**: `docs/decisions.md` D-95; `specs/spec-BOT.md` v1.15.0 — §5.1 FR-003, FR-010, §10 Q19. 8 labels. No schema, seed or CRUD change.
 - **Tests**: new `tests/unit/test_bot_group3.py` (19), one page test in `tests/integration/test_bot_pages.py`. Full suite 744 passed, 3 xfailed.
+
+## 16/11/2026: the hosted demo no longer asks for consent and setup after each restart (Sang, branch `sang/keep-onboarding-after-restart`)
+
+- **User report**: every time the app session expired, the mother had to start again: fill in her information and agree to the terms.
+- **Cause**: not the 12-hour session. On Render's free plan the SQLite file is not kept; the service restarts after ~15 minutes without use and at every deploy (many merges on 15–16/11), and `mb360.server` rebuilds the sample data with the sample mother before her first opening. The browser kept its old session cookie, so S-043 appeared, then consent (S-002) and setup (S-007).
+- **Fix (D-100, proposed)**: `persona.onboard` (consent + setup through `entry.agree` and `setup.save`) when the server builds a new database; `/showcase/reset` keeps the first-opening flow. `server._reopen`: a page under `/m/{id}/` without a valid session, while the simulated TCI app (signed cookie or host feed) is signed in to that mother who has agreed, gets a new session (`entry.reopen`) and goes on (GET) or back to the page it came from (POST, not replayed). Any other case still gets S-043. The TCI account check is shared through `app.state.tci_account`.
+- **Not fixed**: data added during a demo is still lost at a restart (needs a kept database: paid disk or external database — team decision).
+- **Chain**: `docs/decisions.md` D-100; `specs/spec-ACC.md` v1.10.0 — §5.1 FR-015, new §10 Q24 (Chi to review). No schema, seed or label change.
+- **Tests**: new `tests/integration/test_server_restart.py` (5) runs `mb360.server` itself on a temporary file: a new database opens straight to Home; after a restart with the old cookie the session is reopened (no S-043); a POST is not replayed; another mother still gets S-043; the reset button still shows consent. Full suite 749 passed, 3 xfailed.
