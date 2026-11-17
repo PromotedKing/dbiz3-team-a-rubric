@@ -9,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 
 from .. import ui
 from .. import clock
-from . import actions, case_detail, dashboard, instructions, queue
+from . import actions, case_detail, dashboard, instructions, notices, queue
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
 ui.install(TEMPLATES)
@@ -52,7 +52,14 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         rows = dashboard.cases(conn, clock.now(), **f)
         mine = dashboard.cases(conn, clock.now(), doctor_id=staff_id, **f) if me["role"] == "Doctor" else None
         return page(request, "staff_dashboard.html", me=me, s=dashboard.summary(rows, staff_id, mine), f=f, sources=dashboard.SOURCES,
-                    badge=queue.doctor_badge(conn, staff_id) if me["role"] == "Doctor" else None, nav="dashboard", updated=clock.now())
+                    badge=notices.count(conn, staff_id, me["role"]), nav="dashboard", updated=clock.now())
+
+    @app.get("/staff/{staff_id}/notifications", response_class=HTMLResponse)
+    def staff_notifications(request: Request, staff_id: str):
+        """S-059 inside the clinical web (D-96, ALR-03): read from the cases, nothing stored (DM-32)."""
+        me = staff(staff_id)
+        return page(request, "staff_notices.html", me=me, rows=notices.lines(conn, staff_id, me["role"], clock.now()),
+                    badge=notices.count(conn, staff_id, me["role"]), nav="notifications", updated=clock.now())
 
     @app.get("/staff/{staff_id}/board", response_class=HTMLResponse)
     def staff_board(request: Request, staff_id: str, source: str = "", start: str = Query("", alias="from"), end: str = Query("", alias="to")):
@@ -60,7 +67,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         me = staff(staff_id)
         f = filters(source, start, end)
         return page(request, "staff_board.html", me=me, columns=dashboard.board(dashboard.cases(conn, clock.now(), **f)), f=f,
-                    sources=dashboard.SOURCES, badge=queue.doctor_badge(conn, staff_id) if me["role"] == "Doctor" else None, nav="board")
+                    sources=dashboard.SOURCES, badge=notices.count(conn, staff_id, me["role"]), nav="board")
 
     @app.get("/staff/{staff_id}/cases", response_class=HTMLResponse)
     def cases(request: Request, staff_id: str, status: str = "", flag: str = ""):
@@ -75,7 +82,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         if flag:
             rows = [r for r in rows if r["case_id"] in ids]
         not_viewed = len(queue.list_cases(conn, "Not viewed"))
-        badge = queue.doctor_badge(conn, staff_id) if me["role"] == "Doctor" else None
+        badge = notices.count(conn, staff_id, me["role"])
         return page(request, "cases.html", me=me, rows=rows, active=active, filters=FILTERS, not_viewed=not_viewed, badge=badge,
                     flag=flag, flag_label=dashboard.FLAGS[flag][0] if flag else None, nav="cases")
 
@@ -88,7 +95,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         templates = conn.execute("SELECT template_id, title FROM GUIDANCE_TEMPLATE ORDER BY title").fetchall()
         editing = next((f for f in data["flags"] if f["flag_id"] == edit), None) if me["role"] == "Doctor" else None
         return page(request, "case.html", me=me, can=actions.allowed(conn, case_id, staff_id), templates=templates,
-                    error=error, editing=editing, group2=instructions.GROUP2, updated=updated, **data)
+                    error=error, editing=editing, group2=instructions.GROUP2, updated=updated,
+                    badge=notices.count(conn, staff_id, me["role"]), **data)
 
     def act(staff_id: str, case_id: str, fn, *args, **kw):
         staff(staff_id)

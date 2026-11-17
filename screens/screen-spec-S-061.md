@@ -8,7 +8,7 @@
 | Priority | Should |
 | Belongs to module | `spec-CLI.md` |
 | Mockup image | `img/S-061.png` (drawn for the Nurse role) |
-| Status | Draft (revised 29/09/2026 — screen-spec fix #4, #9) |
+| Status | Draft (revised 17/11/2026 — element #4 and the "Notifications" target answered by D-96, proposed; 29/09/2026 — screen-spec fix #4, #9) |
 
 > **v1.0.0 app (07/11/2026, D-80 – D-85):** Also opened filtered from the new Overview (`?flag=`); see the Overview and Case board in spec-CLI §7.3 (D-85).
 
@@ -31,7 +31,7 @@ Web home page for nurses and doctors: one table, at full width, combining every 
 | 1 | Logo | Image | static | No | — |
 | 2 | Sidebar: "Home" (selected), "Patients", "Settings" | Navigation | navigation | Yes | — |
 | 3 | Title "Cases to handle" | Header | static | No | — |
-| 4 | "Notifications (2)" button | Button + badge | **Doctor:** number of cases in status "Escalated to doctor" whose `assigned_doctor_id` is the signed-in doctor — derived from Case, not stored, no read / unread state (`spec-ALR.md` FR-009, DM-32, D-68; no push / SMS — ALR-03). **Nurse:** `[NEEDS CLARIFICATION: what the button shows for a nurse — no notification to clinical staff is stored (DM-32), but the mockup, drawn for the Nurse role, shows "Notifications (2)"; §9 Q5, owner Team]`. The web notification list is not drawn (S-059) | No | — |
+| 4 | "Notifications (2)" button | Button + badge | **Doctor:** number of cases in status "Escalated to doctor" whose `assigned_doctor_id` is the signed-in doctor — derived from Case, not stored, no read / unread state (`spec-ALR.md` FR-009, DM-32, D-68; no push / SMS — ALR-03). **Nurse:** number of cases waiting for a first look (status "Not viewed") — the same cases element #6 counts, which is what the mockup's "Notifications (2)" shows (**D-96, proposed — Chi to confirm**; `spec-CLI.md` §10 Q5). Derived from Case for both roles, nothing stored, no read / unread state. The button opens the notification list, built in the v1.0.0 app as `/staff/{id}/notifications` although S-059 has no mockup (D-96) | No | — |
 | 5 | Role label "Nurse: Trần Thị B ▾" | Dropdown | Staff — role + full name (`spec-CLI.md` §6, D-28) | Yes | matches the signed-in user (BR-005) |
 | 6 | Filters "Not viewed (1)", "Viewed", "Escalated to doctor", "Resolved", "All" (the mockup shows "All" selected, so rows of every status are visible) | Toggle (chip, single select) | Case — status (D-18); count on "Not viewed" | Yes | default: **Doctor → "Escalated to doctor"** (CLI-02); Nurse → `[NEEDS CLARIFICATION: spec-CLI.md Q5]` |
 | 7 | "Sort: Newest ▾" | Dropdown | order by submission time | No | only "Newest" is shown in the mockup `[NEEDS CLARIFICATION: are there other options]` |
@@ -69,7 +69,7 @@ Note: the "[Role label] …" and "[Escalate to doctor] …" boxes in the mockup 
 | 3 | "View report ›" | click | opens the quick profile with the case's Report block (FR-006) | `S-064` |
 | 4 | *(Removed — Quick notes, screen-spec fix #9)* | — | — | — |
 | 5 | *(Removed — Quick notes, screen-spec fix #9)* | — | — | — |
-| 6 | "Notifications" | click | `[NEEDS CLARIFICATION: S-059 not drawn]` | `S-059` |
+| 6 | "Notifications" | click | opens the notification list of the signed-in staff member: nurse → cases "Not viewed" (above threshold or alarm symptoms first), doctor → cases escalated to him with the nurse and time (D-96) | `S-059` |
 | 7 | Sidebar "Patients" / "Settings" | click | — | `S-062` / `[NEEDS CLARIFICATION: no ID yet]` |
 | 8 | Role label ▾ | click | `[NEEDS CLARIFICATION: account menu not drawn]` | — |
 
@@ -104,7 +104,7 @@ Note: the "[Role label] …" and "[Escalate to doctor] …" boxes in the mockup 
 | 1 | Default filter when the screen opens. | No | Open (`spec-CLI.md` Q5) |
 | 2 | Does the nurse see all cases or only assigned cases; which escalated cases does a given doctor see. | Yes | **Partly resolved** — a doctor sees the escalated cases assigned to him (D-68); which cases the nurse sees is still open in `spec-CLI.md` Q10 (remaining part). `spec-CLI.md` Q16 was closed by the module review (CLI-02: the doctor's default filter is "Escalated to doctor"), but which escalated cases a given doctor sees still depends on Q10. "Every doctor account sees escalated cases" is only the review's suggestion for the demo |
 | 3 | Are quick notes per person or shared by the shift. | No | Resolved — not applicable: Quick notes removed (screen-spec fix #9, CLI-03) |
-| 4 | The web "Notifications" (S-059), "Patients" (S-062) and "Settings" screens are not drawn. | No | Open |
+| 4 | The web "Notifications" (S-059), "Patients" (S-062) and "Settings" screens are not drawn. | No | Open — S-059 is **built** in the v1.0.0 app (D-96, content in `spec-CLI.md` §10 Q20); a mockup is still missing. S-062 and S-064 Settings unchanged |
 | 5 | [NEEDS CLARIFICATION: what does the "Notifications (n)" button show for a nurse? No notification to clinical staff is stored (DM-32); options: hide the button for the Nurse role, or count the cases "Not viewed". The mockup (Nurse role) shows "Notifications (2)".] Owner: Team. | No | Open |
 
 ---
