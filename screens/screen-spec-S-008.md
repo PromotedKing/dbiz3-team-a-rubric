@@ -134,3 +134,13 @@ Demo-only test cases from the generator: `tci-000133` opens Home with a host app
 ## Proposed D-88
 
 The next-appointment card or no-upcoming-appointment row opens the read-only S-106 list. Home has no booking CTA.
+
+### Due-date card layout — 18/11/2026
+
+Use a taller card that reaches both edges and begins directly below the header when there is no toast. Round the bottom corners and use a mint gradient with subtle translucent SVG facets. Place the greeting, due date and pregnancy progress inside the card and span the progress bar across the content width. The card opens S-048.
+
+Blend the app’s dark green accent across the bottom edge and fade it upward into mint while keeping the area behind text light.
+
+Give the greeting and due date visual prominence, align the remaining-days count with the date’s numeric baseline when space permits, and group the pregnancy week and trimester below the progress bar.
+
+Position the greeting slightly above the date block and let it enter with a short fade and upward motion when reduced motion is off.

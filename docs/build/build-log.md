@@ -1040,3 +1040,115 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 ## 18/11/2026: reduce the notification introduction size (Tâm)
 
 - **S-009**: used the shared 12 px caption style for the introduction in `app/mb360/templates/notices.html` and removed the old override from `app/mb360/static/tci.css`.
+
+## 18/11/2026: simplify the due-date card illustration (Tâm, branch `tam/pregnancy-home-illustration`)
+
+- **S-008**: placed due date and pregnancy progress next to a minimal mother-and-baby illustration on a mint gradient.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/templates/home.html`, `app/mb360/static/tci.css` and `app/mb360/static/mother-baby-hero.png`.
+
+## 18/11/2026: soften and enlarge the due-date card (Tâm)
+
+- **S-008**: restored the original mint gradient, increased card height and replaced the artwork with soft, faceless silhouettes.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css` and `app/mb360/static/mother-baby-hero.png`.
+
+## 18/11/2026: make the due-date hero full width (Tâm)
+
+- **S-008**: expanded the hero to the screen edges and used layered mint and teal gradients to blend in the larger illustration.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: include the greeting in the full-width due-date hero (Tâm)
+
+- **S-008**: moved the greeting into the gradient, aligned the hero to the header and simplified the color transitions.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/templates/home.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: apply the gradient to the mother-and-baby artwork (Tâm)
+
+- **S-008**: restored the original mint background and blended the gradient artwork across the right half of the full-width hero.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css` and `app/mb360/static/mother-baby-hero.png`.
+
+## 18/11/2026: extend the home hero and round its bottom corners (Tâm)
+
+- **S-008**: set a taller mint section with rounded bottom corners and full-opacity mother-and-baby artwork at the bottom right.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css` and `app/mb360/static/mother-baby-hero.png`.
+
+## 18/11/2026: redraw the home illustration in geometric gradients (Tâm)
+
+- **S-008**: replaced the portrait-style artwork with an abstract mother-and-baby mark made of broad mint-gradient shapes.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css` and `app/mb360/static/mother-baby-hero.png`.
+
+## 18/11/2026: blend the mother-and-baby motif into the hero background (Tâm)
+
+- **S-008**: replaced the foreground image with a soft-light background layer over the original mint gradient.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/templates/home.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: make the blended home illustration more distinct (Tâm)
+
+- **S-008**: replaced the abstract motif with a clear side-profile illustration and used multiply blending to retain contrast on mint.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css` and `app/mb360/static/mother-baby-hero.png`.
+
+## 18/11/2026: keep only the mint gradient on the due-date card (Tâm)
+
+- **S-008**: removed the illustration and expanded the progress bar to the content width.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: strengthen the mint gradient on the home card (Tâm)
+
+- **S-008**: deepened the mint gradient on the due-date card in `app/mb360/static/tci.css`.
+
+## 18/11/2026: refine the home gradient and typography (Tâm)
+
+- **S-008**: increased the mint gradient contrast and aligned the greeting, due date, remaining days and pregnancy progress.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/templates/home.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: add subtle arcs to the due-date gradient (Tâm)
+
+- **S-008**: added two faint decorative arcs in the hero’s upper-right corner.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: add the app green to the home gradient (Tâm)
+
+- **S-008**: blended the supplied green swatch, matching the existing `#008C44` token, into the upper-right corner.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: use layered shapes on the due-date card (Tâm)
+
+- **S-008**: replaced the arcs with translucent geometric layers over the mint gradient.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: extend the green accent on the home hero (Tâm)
+
+- **S-008**: increased the spread of the green accent in `app/mb360/static/tci.css`.
+
+## 18/11/2026: move the strong green to the bottom of the home hero (Tâm)
+
+- **S-008**: anchored the dark green accent at the bottom right and limited its vertical spread to keep the text legible.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: spread the dark green evenly across the home hero (Tâm)
+
+- **S-008**: replaced the corner accent with a full-width gradient that fades upward from the bottom.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: give the home hero more vertical space (Tâm)
+
+- **S-008**: increased the minimum hero height by 16 px in `app/mb360/static/tci.css`.
+
+## 18/11/2026: lift and animate the home greeting (Tâm)
+
+- **S-008**: raised the greeting by 6 px and reused the entrance animation for users who allow motion.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: group the home pregnancy information (Tâm)
+
+- **S-008**: placed the greeting above a translucent due-date and progress panel, with the two numeric readouts aligned at regular phone widths.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/templates/home.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: restore the open gradient layout (Tâm)
+
+- **S-008**: placed the due date and progress directly on the gradient again and kept the brief greeting entrance.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/templates/home.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: align the due date and countdown (Tâm)
+
+- **S-008**: aligned the date and countdown on their numeric baseline and rendered the decorative facets as inline SVG.
+- **Chain**: S-008 screen spec → home template and TCI stylesheet.
