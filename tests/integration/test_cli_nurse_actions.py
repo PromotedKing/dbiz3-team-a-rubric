@@ -18,7 +18,8 @@ def test_nurse_flow_on_rpt006(client, db, staff_id, boundary_case):
 
     assert client.post(f"{base}/escalate").status_code == 303
     row = case_row(db, case)
-    assert row["status"] == "Escalated to doctor" and row["assigned_doctor_id"] == staff_id("Phạm Quốc Dũng")
+    # her responsible doctor is Away in the seed, so BR-011 routes the case to the doctor on duty (D-97)
+    assert row["status"] == "Escalated to doctor" and row["assigned_doctor_id"] == staff_id("Vũ Minh Hải")
 
     page = client.get(base).text
     assert vi("Close case") not in page

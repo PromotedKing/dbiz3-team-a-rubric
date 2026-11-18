@@ -446,7 +446,7 @@ Checked by `tools/check_data_model.py` (run from the repository root). The numbe
 | Check | Catalogue (§2 / §6) | ERD (§4) | Schema (`schema-MB360.sql`) | Agree? |
 |---|---|---|---|---|
 | Stored entities / tables | 26 | 26 | 26 | Yes |
-| Attributes / columns | 175 | — (conceptual) | 175 | Yes |
+| Attributes / columns | 177 | — (conceptual) | 177 | Yes |
 | Relationships / foreign keys | 40 (foreign-key columns) | 40 | 40 | Yes |
 | Relationships read both ways (§4.1) | — | 40 of 40 | — | Yes |
 | Marker agrees with its forward and reverse sentence | — | 40 of 40 | — | Yes |
@@ -765,8 +765,12 @@ Owner: CLI. Separate from USER_ACCOUNT (DM-02 resolved).
 | `full_name` | `full_name` | VARCHAR(100) | VARCHAR(100) | Yes |  | CLI §6 Staff |
 | `role` | `role` | ENUM (Nurse / Doctor) | TEXT | Yes |  | CLI §6 Staff; D-49 |
 | `login_account` | `login_account` | VARCHAR(100) — provisional (CLI §10 Q11) | VARCHAR(100) | Yes | UK | CLI §6 Staff |
+| `availability` | `availability` | ENUM (Available / Away) | TEXT | Doctors only | | CLI §6 Staff; D-97 (proposed) |
+| `on_duty` | `on_duty` | BOOLEAN | INTEGER | Doctors only | | CLI §6 Staff; D-97 (proposed) |
 
 Natural key: `login_account`.
+
+`availability` and `on_duty` are read by CLI BR-010 (who sees which cases) and BR-011 (who receives an escalated case). CLI §6 declares both "Required; Doctors only; default Available / false", so the schema holds them for a doctor and leaves them empty for a nurse: `CHECK ((role = 'Doctor') = (availability IS NOT NULL AND on_duty IS NOT NULL))` (DM-40). Seed data in the MVP — no screen; later read from the hospital roster (CLI §10 Q22).
 
 ### PATIENT_ASSIGNMENT
 
@@ -1126,6 +1130,8 @@ erDiagram
         string full_name
         enum role
         string login_account UK
+        enum availability
+        boolean on_duty
     }
     PATIENT_ASSIGNMENT {
         uuid user_id PK, FK

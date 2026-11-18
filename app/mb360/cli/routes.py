@@ -49,8 +49,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         """D-85: overview of the cases, every number opens the cases behind it."""
         me = staff(staff_id)
         f = filters(source, start, end)
-        rows = dashboard.cases(conn, clock.now(), **f)
-        mine = dashboard.cases(conn, clock.now(), doctor_id=staff_id, **f) if me["role"] == "Doctor" else None
+        rows = dashboard.cases(conn, clock.now(), viewer=staff_id, **f)          # BR-010
+        mine = dashboard.cases(conn, clock.now(), doctor_id=staff_id, viewer=staff_id, **f) if me["role"] == "Doctor" else None
         return page(request, "staff_dashboard.html", me=me, s=dashboard.summary(rows, staff_id, mine), f=f, sources=dashboard.SOURCES,
                     badge=notices.count(conn, staff_id, me["role"]), nav="dashboard", updated=clock.now())
 
@@ -66,7 +66,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         """D-85: the cases in columns by status; a card opens its case."""
         me = staff(staff_id)
         f = filters(source, start, end)
-        return page(request, "staff_board.html", me=me, columns=dashboard.board(dashboard.cases(conn, clock.now(), **f)), f=f,
+        return page(request, "staff_board.html", me=me, columns=dashboard.board(dashboard.cases(conn, clock.now(), viewer=staff_id, **f)), f=f,
                     sources=dashboard.SOURCES, badge=notices.count(conn, staff_id, me["role"]), nav="board")
 
     @app.get("/staff/{staff_id}/cases", response_class=HTMLResponse)
@@ -77,11 +77,11 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         flag = flag if flag in dashboard.FLAGS else ""
         if flag:                               # opened from "Needs attention" on the dashboard: every open case of that group
             active = "All"
-            ids = dashboard.flagged_ids(dashboard.cases(conn, clock.now()), flag)
-        rows = queue.list_cases(conn, None if active == "All" else active)
+            ids = dashboard.flagged_ids(dashboard.cases(conn, clock.now(), viewer=staff_id), flag)
+        rows = queue.list_cases(conn, None if active == "All" else active, viewer=staff_id)
         if flag:
             rows = [r for r in rows if r["case_id"] in ids]
-        not_viewed = len(queue.list_cases(conn, "Not viewed"))
+        not_viewed = len(queue.list_cases(conn, "Not viewed", viewer=staff_id))
         badge = notices.count(conn, staff_id, me["role"])
         return page(request, "cases.html", me=me, rows=rows, active=active, filters=FILTERS, not_viewed=not_viewed, badge=badge,
                     flag=flag, flag_label=dashboard.FLAGS[flag][0] if flag else None, nav="cases")
@@ -92,10 +92,17 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         data = case_detail.load(conn, case_id)
         if data is None:
             raise HTTPException(404, "Unknown case")
+        case_row = conn.execute("SELECT user_id, assigned_doctor_id, status FROM CARE_CASE WHERE case_id = ?", (case_id,)).fetchone()
+        mine = actions.visible_users(conn, staff_id, clock.now().date())      # BR-010
+        if mine is not None and case_row["user_id"] not in mine and not (
+                case_row["assigned_doctor_id"] is None and case_row["status"] == "Escalated to doctor"):   # BR-011 step 4
+            raise HTTPException(403, "This mother is not in your care (spec-CLI BR-010)")
         templates = conn.execute("SELECT template_id, title FROM GUIDANCE_TEMPLATE ORDER BY title").fetchall()
         editing = next((f for f in data["flags"] if f["flag_id"] == edit), None) if me["role"] == "Doctor" else None
         return page(request, "case.html", me=me, can=actions.allowed(conn, case_id, staff_id), templates=templates,
                     error=error, editing=editing, group2=instructions.GROUP2, updated=updated,
+                    must_escalate=actions.must_escalate(conn, case_id),    # BR-012
+                    routing=actions.route_to(conn, case_row["user_id"], clock.now().date()),   # FR-026, FR-027
                     badge=notices.count(conn, staff_id, me["role"]), **data)
 
     def act(staff_id: str, case_id: str, fn, *args, **kw):

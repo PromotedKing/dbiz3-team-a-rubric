@@ -77,7 +77,9 @@ def install(conn: sqlite3.Connection, now: datetime) -> str:
         return (GESTATIONAL_DAYS - n) // 7
 
     conn.execute(tci_feed.DDL)
-    conn.execute("INSERT INTO STAFF (staff_id, full_name, role, login_account) VALUES (?, 'Trần Thu Hà', 'Doctor', 'bs.thuha'), (?, 'Phạm Thị Lan', 'Nurse', 'yt.lan')", (DOCTOR, NURSE))
+    conn.execute("""INSERT INTO STAFF (staff_id, full_name, role, login_account, availability, on_duty)
+                    VALUES (?, 'Trần Thu Hà', 'Doctor', 'bs.thuha', 'Available', 1), (?, 'Phạm Thị Lan', 'Nurse', 'yt.lan', NULL, NULL)""",
+                 (DOCTOR, NURSE))
     conn.execute("""INSERT INTO USER_ACCOUNT (user_id, tci_account_ref, full_name, phone, date_of_birth, sex, record_code, role)
                     VALUES (?, ?, 'Nguyễn Thị Mai', '0912000678', '1996-04-12', 'Female', 'TC-00200', 'Mother')""", (USER, TCI_REF))
     conn.execute("INSERT INTO NOTIFICATION_PREFERENCE (user_id, report_response, new_visit_result, appointment_reminder, watch_flag_reminder, updated_at) VALUES (?, 1, 1, 1, 0, ?)", (USER, at(116, "08:00")))

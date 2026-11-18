@@ -45,7 +45,9 @@ def lines(conn: sqlite3.Connection, staff_id: str, role: str, now: datetime) -> 
             c["escalation"] = None
         rows.sort(key=lambda c: (not c["urgent"], c["created_at"]))
         return rows
-    rows = [c for c in dashboard.cases(conn, now, doctor_id=staff_id) if c["status"] == ESCALATED]
+    # his own escalated cases, plus the fail-safe ones with no single assignee (BR-011 step 4, BR-010)
+    rows = [c for c in dashboard.cases(conn, now, viewer=staff_id)
+            if c["status"] == ESCALATED and c["assigned_doctor_id"] in (staff_id, None)]
     for c in rows:
         c["urgent"] = c["label"] == thresholds.ABOVE or c["alarm"]
         c["escalation"] = escalation(conn, c["case_id"])

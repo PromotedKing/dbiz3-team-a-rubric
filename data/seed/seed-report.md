@@ -81,8 +81,8 @@ The schema `data/schema/schema-MB360.sql` was created in an empty SQLite 3 in-me
 
 | Table | Kind | Row (primary key) | Why |
 |---|---|---|---|
+| STAFF | exceptional | staff-S04 | responsible doctor marked Away: his mothers route to the on-duty doctor (CLI BR-011 step 2) |
 | STAFF | boundary | staff-S06 | full_name and login_account exactly 100 characters (VARCHAR(100)) |
-| STAFF | exceptional | staff-S07 | doctor with no assigned mother: no case is escalated to him (CLI §10 Q10) |
 | THRESHOLD_RULE | empty | rule-TR-06 | D-15 Pending SME; glucose_context, component, combine empty (single row, not glucose) |
 | THRESHOLD_RULE | exceptional | rule-TR-07 | fetal heart rate: display-only reference range, never checked (D-12, HLT BR-005) |
 | USER_ACCOUNT | boundary | user-U06 | phone exactly 20 characters (VARCHAR(20)); gestational week 42 |
@@ -126,6 +126,8 @@ One row per value of every ENUM column (parsed from the CHECK constraints of the
 |---|---|---|---|---|
 | STAFF | `role` | Nurse | staff-S01 | — |
 | STAFF | `role` | Doctor | staff-S02 | — |
+| STAFF | `availability` | Available | staff-S02 | — |
+| STAFF | `availability` | Away | staff-S04 | — |
 | THRESHOLD_RULE | `metric` | Blood pressure | rule-TR-01 | — |
 | THRESHOLD_RULE | `metric` | Blood glucose | rule-TR-03 | — |
 | THRESHOLD_RULE | `metric` | Urine protein | rule-TR-06 | — |

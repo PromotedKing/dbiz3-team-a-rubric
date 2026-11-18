@@ -6,6 +6,7 @@ from datetime import date
 from ..alr import thresholds
 from ..alr.reports import gestational_week
 from ..clock import now
+from . import actions
 
 SYMPTOM_LABELS = {
     "Waters breaking or fluid leakage": "Waters breaking / fluid leakage",
@@ -18,9 +19,10 @@ def symptom_text(conn: sqlite3.Connection, report_id: str) -> str:
     return ", ".join(SYMPTOM_LABELS.get(r[0], r[0]) for r in rows)
 
 
-def list_cases(conn: sqlite3.Connection, status: str | None = None) -> list[dict]:
+def list_cases(conn: sqlite3.Connection, status: str | None = None, viewer: str | None = None) -> list[dict]:
+    """`viewer` applies BR-010 (D-96, proposed); left out, nothing is filtered."""
     rows = conn.execute(
-        """SELECT c.case_id, c.status, c.case_source, c.created_at, u.full_name, p.edd,
+        """SELECT c.case_id, c.status, c.case_source, c.created_at, c.user_id, c.assigned_doctor_id, u.full_name, p.edd,
                   r.report_id, r.metric, r.submitted_at, h.value, h.unit, h.glucose_context, m.text AS question,
                   m.text, m.is_risk, m.parsed_intent
            FROM CARE_CASE c
@@ -33,8 +35,12 @@ def list_cases(conn: sqlite3.Connection, status: str | None = None) -> list[dict
         (status, status),
     ).fetchall()
     today = now().date()
+    mine = actions.visible_users(conn, viewer, today) if viewer else None
     result = []
     for row in rows:
+        if mine is not None and row["user_id"] not in mine and not (      # BR-010
+                row["assigned_doctor_id"] is None and row["status"] == "Escalated to doctor"):   # BR-011 step 4
+            continue
         if row["case_source"] == "Chatbot":
             content, value, label = row["question"], None, thresholds.NOT_ASSESSED
         elif row["value"] is None:     # symptom report
