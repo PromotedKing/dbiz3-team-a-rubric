@@ -46,8 +46,7 @@ def test_status_filter_can_return_to_all(client, user_id):
     assert "hidden" not in option
 
 
-def test_instructions_link_only_when_there_are_instructions(client, db):
-    """No link to an empty S-027 under a response."""
+def test_active_instructions_render_in_a_card_after_responses(client, db):
     row = db.execute("""SELECT r.user_id, r.report_id FROM METRIC_REPORT r JOIN CARE_CASE c ON c.metric_report_id = r.report_id
                         JOIN STAFF_RESPONSE s ON s.case_id = c.case_id LIMIT 1""").fetchone()
     path = f"/m/{row['user_id']}/reports/{row['report_id']}"
@@ -55,5 +54,12 @@ def test_instructions_link_only_when_there_are_instructions(client, db):
     page = client.get(path).text
     assert "data-response" in page and "response-instructions" not in page
     db.execute("""INSERT INTO WATCH_FLAG (flag_id, user_id, visit_id, metric, flagged_by, flagged_at, note, template_id, custom_text, active)
-                  SELECT '00000000-0000-0000-0000-000000000099', ?, NULL, metric, flagged_by, flagged_at, note, template_id, custom_text, 1 FROM WATCH_FLAG LIMIT 1""", (row["user_id"],))
-    assert "response-instructions" in client.get(path).text
+                  SELECT '00000000-0000-0000-0000-000000000099', ?, NULL, metric, flagged_by, flagged_at, 'Sample instruction', template_id, custom_text, 1 FROM WATCH_FLAG LIMIT 1""", (row["user_id"],))
+    page = client.get(path).text
+    assert page.rindex("data-response") < page.index('class="card bl response-instructions"')
+    assert "Sample instruction" in page
+    assert f'href="/m/{row["user_id"]}/instructions"' not in page
+    instructions = page.split('class="card bl response-instructions"', 1)[1].split("</section>", 1)[0]
+    assert 'class="sec instruction-latest"' in instructions
+    assert f'href="/m/{row["user_id"]}/history?metric=' in instructions
+    assert f'href="/m/{row["user_id"]}/report?' not in instructions

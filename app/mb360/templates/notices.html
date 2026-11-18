@@ -9,17 +9,15 @@
   <div style="flex:1"><p class="t-body b">{{ _("My reports") }}</p><p class="t-cap">{{ _("See the status of each report") }}</p></div>
   {{ icon.chev() }}
 </a>
-<p class="t-body notice-intro">{{ _("Doctors and nurses send these after a visit or after viewing your report.") }}</p>
+<p class="t-cap">{{ _("Doctors and nurses send these after a visit or after viewing your report.") }}</p>
 <nav class="notice-tabs" aria-label="{{ _('Notifications') }}">
   <a class="{% if not unread_only %}on{% endif %}" href="/m/{{ user.user_id }}/notices{% if active %}?type={{ active | urlencode }}{% endif %}"{% if not unread_only %} aria-current="page"{% endif %}>{{ _("All") }}</a>
   <a class="{% if unread_only %}on{% endif %}" href="/m/{{ user.user_id }}/notices?unread=1{% if active %}&amp;type={{ active | urlencode }}{% endif %}"{% if unread_only %} aria-current="page"{% endif %}>{{ _("Unread") }} · {{ unread_count }}</a>
 </nav>
 <div class="notice-toolbar">
-  {% if unread_count %}
   <form method="post" action="/m/{{ user.user_id }}/notices/read-all">
-    <button class="lnk notice-read-all">{{ _("Mark all as read") }}</button>
+    <button class="lnk notice-read-all" type="submit"{% if not unread_count %} disabled{% endif %}>{{ _("Mark all as read") }}</button>
   </form>
-  {% endif %}
 <form class="notice-filter-form" method="get" action="/m/{{ user.user_id }}/notices" data-active-type="{{ active }}">
   {% if unread_only %}<input type="hidden" name="unread" value="1">{% endif %}
   <select id="notice-type" class="notice-select" aria-label="{{ _('Notification type') }}" name="type" onchange="this.form.requestSubmit()">

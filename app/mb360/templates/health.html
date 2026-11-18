@@ -1,6 +1,7 @@
 {#- S-023 Health metrics: kept (HLT FR-001); the UI package has no design for it (U3), so it uses the package's components. -#}
 {% extends "base.html" %}
 {% import "_icons.html" as icon %}
+{% import "_bits.html" as bits %}
 {% set page_title = "Health metrics" %}
 {% set back_url = "/m/" ~ user.user_id ~ "/home" %}{% set back_auto = true %}
 {% block header_actions %}
@@ -39,7 +40,7 @@
     <div class="ic40">{{ icon.clock() }}</div>
     <span class="grow"><span class="t-body b">{{ _("My reports") }}</span><br>
       <span class="t-cap">{{ _("{n} reports being handled", n=d.handling) }}</span>
-      {% if d.latest_status %}<span class="tag inf">{{ d.latest_status | t }}</span>{% endif %}</span>
+      {% if d.latest_status %}{{ bits.case_status_tag(d.latest_status) }}{% endif %}</span>
     {{ icon.chev() }}
   </a>
 </div>

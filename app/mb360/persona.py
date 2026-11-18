@@ -113,12 +113,12 @@ def install(conn: sqlite3.Connection, now: datetime) -> str:
         conn.execute("""INSERT INTO WATCH_FLAG (flag_id, user_id, visit_id, metric, flagged_by, flagged_at, note, template_id, custom_text, active)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, 1)""", (_id(f"flag/{metric}"), USER, latest_visit if n == 2 else _id("visit/20"), metric, DOCTOR, day(n), note, tpl))
 
-    def report(key, code, metric, value, unit, n, clock, symptoms, context=None) -> str:
+    def report(key, code, metric, value, unit, n, clock, symptoms, context=None, *, submitted_at=None) -> str:
         when = at(n, clock)
         rec = record(f"r/{key}", metric, "Group 2", value, unit, when, "Doctor-assigned", week_of(n), None, context) if value else None
         rid = _id(f"report/{key}")
         conn.execute("""INSERT INTO METRIC_REPORT (report_id, report_code, user_id, metric, health_metric_record_id, other_symptom_text, note, submitted_at, watch_flag_id)
-                        VALUES (?, ?, ?, ?, ?, NULL, NULL, ?, ?)""", (rid, code, USER, metric, rec, when, _id(f"flag/{metric}") if value else None))
+                        VALUES (?, ?, ?, ?, ?, NULL, NULL, ?, ?)""", (rid, code, USER, metric, rec, submitted_at or when, _id(f"flag/{metric}") if value else None))
         conn.executemany("INSERT INTO REPORT_SYMPTOM (report_id, symptom) VALUES (?, ?)", [(rid, s) for s in symptoms])
         return rid
 
@@ -147,8 +147,9 @@ def install(conn: sqlite3.Connection, now: datetime) -> str:
 
     # Yesterday: blood pressure above the threshold, escalated, the doctor answered (unread)
     follow_up = today + timedelta(days=2)
-    rep = report("bp-high", "BC-M030", "Blood pressure", "146/94", "mmHg", 1, "08:40", ["Severe headache, dizziness or blurred vision"])
-    cid = case("bp-high", "Metric report", "Escalated to doctor", at(1, "08:42"), report_id=rep, doctor=DOCTOR)
+    submitted_at = at(1, "08:42")
+    rep = report("bp-high", "BC-M030", "Blood pressure", "146/94", "mmHg", 1, "08:40", ["Severe headache, dizziness or blurred vision"], submitted_at=submitted_at)
+    cid = case("bp-high", "Metric report", "Escalated to doctor", submitted_at, report_id=rep, doctor=DOCTOR)
     history(cid, "Viewed", at(1, "08:55"), NURSE, "Nurse")
     history(cid, "Escalated to doctor", at(1, "09:00"), NURSE, "Nurse")
     respond("bp-high", cid, DOCTOR, "Doctor", BP_RESPONSE.format(follow_up=f"{follow_up:%d/%m/%Y} · 08:00"), at(1, "09:12"))
