@@ -9,17 +9,21 @@
 {% if submitted %}<div class="okbox">{{ icon.ok() }}<p class="t-body" style="color:inherit">{{ _("Report submitted") }}</p></div>{% endif %}
 <div class="card bl8">
   {% if question %}
-    <div class="sec"><p class="t-body b">{{ _("Chatbot") }}</p><span class="tag inf">{{ case.status | t }}</span></div>
+    <div class="sec"><h2 class="t-title">{{ _("Chatbot") }}</h2>{{ bits.case_status_tag(case.status) }}</div>
     <p class="t-body">{{ _("Your question:") }} {{ question.text }}</p>
     <p class="t-cap">{{ _("Sent") }} {{ question.sent_at | show_time }}</p>
   {% else %}
-    <div class="sec"><p class="t-body b">{{ _("Report code {code}", code=rep.report_code) }}</p><span class="tag inf">{{ (case.status if case else "No action needed") | t }}</span></div>
+    <div class="sec report-status-summary">
+      <h2 class="t-title">{{ hmr.metric | t if hmr else _("Symptom report") }}</h2>
+      {{ bits.case_status_tag(case.status if case else "No action needed") }}
+    </div>
+    <p class="t-cap">{{ _("Report code {code}", code=rep.report_code) }}</p>
     {% if hmr %}
-      <div class="sec"><span>{{ hmr.metric | t }}</span>{{ label_tag(label) }}</div>
-      <div class="sec"><span class="val">{{ hmr.value | t_known }}{% if hmr.unit %} {{ hmr.unit }}{% endif %}</span><span class="tag src">{{ hmr.source | t }}</span></div>
+      <div class="sec report-status-summary"><span class="val">{{ hmr.value | t_known }}{% if hmr.unit %} {{ hmr.unit }}{% endif %}</span>{{ label_tag(label) }}</div>
+      <p><span class="tag src">{{ hmr.source | t }}</span></p>
       <p class="t-cap">{{ _("Measured") }} {{ hmr.measured_at | show_time }} · {{ _("Submitted") }} {{ rep.submitted_at | show_time }}</p>
     {% else %}
-      <div class="sec"><span>{{ _("Symptom report") }}</span>{{ label_tag(label) }}</div>
+      <p>{{ label_tag(label) }}</p>
       <p class="t-cap">{{ _("Submitted") }} {{ rep.submitted_at | show_time }}</p>
     {% endif %}
     <p class="t-body">{{ _("Symptoms:") }} {{ symptoms | map("symptom_label") | map("t") | join(", ") }}{% if rep.other_symptom_text %} ({{ rep.other_symptom_text }}){% endif %}</p>
@@ -29,7 +33,7 @@
 
 {% if steps %}
 <div class="card bl">
-  <p class="t-title">{{ _("Handling progress") }}</p>
+  <h2 class="t-title">{{ _("Handling progress") }}</h2>
   <div class="steps">
     {% for s in steps %}
     <div class="st{% if s.state == 'done' %} done{% endif %}" data-step-state="{{ s.state }}">
@@ -44,16 +48,29 @@
 
 {% for r in responses %}
 <div class="card bl8" data-response>
-  <p class="t-body b">{{ r.heading | t }}</p>
+  <h2 class="t-title">{{ r.heading | t }}</h2>
   <p class="t-cap">{{ r.at }}</p>
   <p class="t-body" style="white-space:pre-line">{{ r.text }}</p>
-  {% if loop.last and has_instructions %}<a class="lnk response-instructions" href="/m/{{ user.user_id }}/instructions">{{ _("Detailed instructions from your doctor") }} ›</a>{% endif %}
 </div>
 {% endfor %}
 
+{% if instruction_cards %}
+<section class="card bl response-instructions" aria-labelledby="response-instructions-title">
+  <h2 class="t-title" id="response-instructions-title">{{ _("Current monitoring instructions") }}</h2>
+  {% for f in instruction_cards %}
+  <div class="bl8">
+    <h3 class="t-body b">{{ f.metric | t }}</h3>
+    {% if f.note %}<p class="t-body" style="white-space:pre-line">{{ f.note }}</p>{% endif %}
+    {% include "_instruction_latest.html" %}
+    <div><a class="btn so" href="/m/{{ user.user_id }}/history?metric={{ f.metric | urlencode }}">{{ _("View metric history") }}</a></div>
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+
 {% if safety_note %}
 <div class="card bd bl8">
-  <p class="t-body b">{{ _("Safety note") }}</p>
+  <h2 class="t-title">{{ _("Safety note") }}</h2>
   <p class="t-cap">{{ _("Clinical staff will view your report. If your symptoms get worse, go to the nearest hospital.") }}</p>
 </div>
 {% endif %}

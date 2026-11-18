@@ -935,3 +935,108 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Change**: one line in `cli/routes.py`; combined with the existing order "Sort: Newest" (submission time, or case creation for a chatbot case), the nurse sees the cases waiting for her, the most recent first. The doctor's default ("Escalated to doctor") and the "Needs attention" link from the Overview ("All" for that group) are unchanged.
 - **Chain**: `docs/decisions.md` D-102; `specs/spec-CLI.md` v1.8.1 §10 Q5; `screens/screen-spec-S-061.md` §4 state row and §9 Q1.
 - **Tests**: `tests/integration/test_cli_queue_page.py::test_nurse_queue_header_and_default_filter` now expects "Not viewed" and checks that "All" still lists every case. Full suite: see the pull request.
+
+## 18/11/2026: restore the notification toolbar layout (Tâm, branch `tam/notification-filter-left`)
+
+- **S-009**: reverted the temporary left-aligned filter after the user confirmed the reference layout. The filter is on the right and the mark-all-read button appears on the left when there are unread notifications.
+- **Chain**: restored `app/mb360/templates/notices.html` and `app/mb360/static/tci.css` to the layout in `screens/screen-spec-S-009.md`.
+
+## 18/11/2026: show doctor instructions below report responses (Tâm)
+
+- **S-026**: replaced the link to S-027 with a card below the final response. The card lists active instructions using the existing watch-flag data.
+- **Chain**: `screens/screen-spec-S-026.md` and `docs/ui-label-reference.md` → `app/mb360/main.py`, `app/mb360/templates/report_status.html` and `app/mb360/static/tci.css`. Updated the report-page integration test.
+
+## 18/11/2026: clarify report-status headings and add metric history (Tâm)
+
+- **S-026**: established section and metric headings, and added the latest measurement, threshold label and metric-specific history link to each inline instruction.
+- **Chain**: `screens/screen-spec-S-026.md` → `app/mb360/templates/report_status.html`, `app/mb360/templates/_instruction_latest.html`, `app/mb360/templates/instructions.html` and `app/mb360/static/tci.css`. Extended the report-page integration test.
+
+## 18/11/2026: separate assignment details and measurement time (Tâm)
+
+- **S-026 / S-027**: show a thin divider above the latest result and keep the measurement date and time together below its value.
+- **Chain**: `screens/screen-spec-S-026.md` → shared measurement markup in `app/mb360/templates/_instruction_latest.html` and layout in `app/mb360/static/tci.css`.
+
+## 18/11/2026: clarify the date doctors gave instructions (Tâm)
+
+- **S-026 / S-027**: identify the date the doctor gave each instruction and spell out day, month and year on both mother screens.
+- **Chain**: `screens/screen-spec-S-026.md`, `docs/ui-label-reference.md` → `app/mb360/ui.py` and the mother’s instruction templates.
+
+## 18/11/2026: distinguish monitoring instructions and fix history dropdowns (Tâm)
+
+- **S-026**: label the instruction card as current monitoring instructions. In the demo case, the summary and timeline share the 08:42 submission time, with measurement at 08:40 and the response at 09:12.
+- **S-025**: override the native select appearance so the metric and measurement-time dropdowns each have one chevron.
+- **Chain**: `screens/screen-spec-S-026.md`, `docs/ui-label-reference.md` → `app/mb360/templates/report_status.html`, `app/mb360/persona.py` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: remove assignment attribution from mother’s instruction cards (Tâm)
+
+- **S-026 / S-027**: removed the doctor name and assignment date from each instruction card.
+- **Chain**: both screen specs and the UI label reference → the mother’s instruction templates and shared date formatting.
+
+## 18/11/2026: add color to My reports filters (Tâm)
+
+- **S-029**: used a pale green filter bar, dark green labels, a count badge and a stronger tint for applied filters.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: refine the My reports layout (Tâm)
+
+- **S-029**: inset the filter panel, simplified the count, and compacted the report cards. Above-threshold reports have an orange border accent.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: align report results and handling statuses (Tâm)
+
+- **S-029**: aligned results and handling statuses across cards, differentiated the handling-state colors, and made details accessible from the entire card.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: try icon rows for My reports (Tâm)
+
+- **S-029**: leading type icon, compact report details and a centered trailing chevron for linked rows.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: simplify report labels (Tâm)
+
+- **S-029**: grouped the labels and used outlined measurement results and colored dots for handling states.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: remove the instructions shortcut from My reports (Tâm)
+
+- **S-029**: removed the footer link to S-027 from `app/mb360/templates/my_reports.html`.
+
+## 18/11/2026: unify tags across the mother’s report screens (Tâm)
+
+- **S-023 / S-026 / S-029**: use the shared rounded, tinted tags with the same handling colors as the notification cards.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/_bits.html`, `health.html`, `report_status.html`, `my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: keep the read-all button visible (Tâm)
+
+- **S-009**: the left-hand button stays visible and is disabled when the unread count reaches zero.
+- **Chain**: `screens/screen-spec-S-009.md` → `app/mb360/templates/notices.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: limit report titles to a single line (Tâm)
+
+- **S-029**: added width-based ellipsis while retaining the full title for assistive technology.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: match report cards and typography across screens (Tâm)
+
+- **S-029**: matched the card surface and dropdowns to S-009 and reused shared text styles.
+- **App and clinical web**: use the same Roboto fallbacks and let native controls inherit the page font. The metric-history chart also inherits the page font.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/my_reports.html`, `app/mb360/templates/history.html` and both app stylesheets.
+
+## 18/11/2026: use native system typography (Tâm)
+
+- **App, TCI and clinical web**: switched from Roboto to the native system sans-serif and removed the Google Fonts stylesheet from the page shells.
+- **Chain**: `docs/ui-label-reference.md` → `app/mb360/static/tci.css`, `app/mb360/static/staff.css` and the base, TCI, staff and album templates.
+
+## 18/11/2026: give the report filters a distinct header strip (Tâm)
+
+- **S-029**: placed the report filters in an edge-to-edge pale green strip directly below the header.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: match notification filters across mother accounts (Tâm)
+
+- **S-009 / S-029**: restored the Notifications toolbar to the page background for every mother account. The pale green filter strip appears on My reports.
+- **Chain**: `screens/screen-spec-S-009.md` → `app/mb360/templates/notices.html`, `app/mb360/templates/my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: reduce the notification introduction size (Tâm)
+
+- **S-009**: used the shared 12 px caption style for the introduction in `app/mb360/templates/notices.html` and removed the old override from `app/mb360/static/tci.css`.

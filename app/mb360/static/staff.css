@@ -27,10 +27,11 @@
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
   --header-h: 56px;
   --tabbar-h: 64px;
-  --font: Roboto, -apple-system, "SF Pro Text", "Segoe UI", sans-serif;
+  --font: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
 * { box-sizing: border-box; }
+button, input, select, textarea { font-family: inherit; }
 html { background: #E9ECEA; }
 html, body { overflow-x: clip; }
 body {

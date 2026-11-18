@@ -5,3 +5,4 @@
 {% macro logo() %}<div class="logo"><img src="/static/icon.svg" alt="" width="40" height="40"></div>{% endmacro %}
 {% macro toast(text) %}<div class="toast" role="status">{{ icon.ok(20, "#48D07C") }}<p class="t-body" style="color:#fff;flex:1">{{ text }}</p></div>{% endmacro %}
 {% macro label_tag(l) %}<span class="tag {{ 'al' if l == 'Above threshold' else 'ok' if l == 'Normal' else 'un' }}">{{ l | t }}</span>{% endmacro %}
+{% macro case_status_tag(status, id="") %}<span class="tag {{ 'un' if status in ('Resolved', 'No action needed') else 'inf' }}"{% if id %} id="{{ id }}"{% endif %}>{{ status | t }}</span>{% endmacro %}
