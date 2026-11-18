@@ -409,6 +409,12 @@ sequenceDiagram
 
 *Missing numbers are closed questions; numbers are not reused so that references stay valid.*
 
+## Clarifications
+
+### Q7: Weekly tips and Messages to Baby
+- (a) Weekly tips / reference content are removed (FR-001 and FR-007 stay Won't).
+- (b) "Messages to Baby" is kept; each message is text, at most 200 characters.
+
 ## 11. Traceability to DBIZ2
 
 | Spec section | DBIZ2 source | Location |
