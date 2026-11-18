@@ -1,5 +1,11 @@
 # Build Log
 
+## 18/11/2026: restore host appointments and foreign keys after demo reset (Hải Anh)
+
+- **Scope**: fresh demo installation clears and rebuilds host appointments even when their table already exists. Reset commits table deletion before restoring foreign key enforcement and rolls back a failed deletion before restoring it in `finally`. Existing DB reopening and D-100 onboarding/session behavior keep their existing paths.
+- **Validation**: eight server restart tests passed, including two resets, reset after an interactive booking, first-opening consent/setup and a deletion failure. A temporary demo at 18/11/2026 10:00 retained 22 visits, 286 diary entries, 109 metric records, 25 host appointments (22 completed and three confirmed) and 21 notifications after reset. Foreign key enforcement was enabled and its check was empty. Generator, data-model and active Spec Kit checks passed.
+- **Full suite**: 779 passed, zero failed, three existing xfails (one BOT accent-matching case and two D-16 valid-range cases), one existing TestClient deprecation warning.
+
 ## 15/11/2026: proposed read-only appointment screen (Hải Anh)
 
 - Proposed D-88 adds S-106 and changes the Appointment notice destination. Home and S-106 read the same host list; booking still lives in TCI. The return link is bound to the verified session.

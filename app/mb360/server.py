@@ -94,9 +94,15 @@ def service_worker():
 def reset_sample_data():
     """Empties the database and adds the sample mother again, so the first-opening flow can be shown once more."""
     conn.execute("PRAGMA foreign_keys = OFF")
-    for (name,) in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").fetchall():
-        conn.execute(f"DELETE FROM {name}")
-    conn.execute("PRAGMA foreign_keys = ON")
+    try:
+        for (name,) in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").fetchall():
+            conn.execute(f'DELETE FROM "{name}"')
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.execute("PRAGMA foreign_keys = ON")
     dbmod.load_seed(conn)
     persona.install(conn, clock.now())
     response = RedirectResponse("/tci", status_code=303)

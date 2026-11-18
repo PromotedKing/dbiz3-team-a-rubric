@@ -83,3 +83,76 @@ def test_the_reset_button_still_shows_the_first_opening(start):
     assert client.post("/showcase/reset").status_code == 303
     r = open_from_tci(client, server)
     assert r.status_code == 200 and "/tci/consent" in r.text                # S-001 state 2: consent again, on purpose
+
+
+def _demo_counts(conn):
+    tables = ("VISIT", "DIARY_ENTRY", "HEALTH_METRIC_RECORD", "TCI_HOST_APPOINTMENT", "NOTIFICATION")
+    return {
+        row["tci_account_ref"]: tuple(
+            conn.execute(f"SELECT COUNT(*) FROM {table} WHERE user_id=?", (row["user_id"],)).fetchone()[0]
+            for table in tables
+        )
+        for row in conn.execute("SELECT user_id,tci_account_ref FROM USER_ACCOUNT")
+    }
+
+
+def test_reset_restores_all_five_mothers_and_foreign_keys(start, monkeypatch):
+    from datetime import datetime
+
+    now = datetime(2026, 11, 18, 10)
+    monkeypatch.setattr(clock, "now", lambda: now)
+    server, client = start()
+    before = _demo_counts(server.conn)
+    assert tuple(map(sum, zip(*before.values()))) == (22, 286, 109, 25, 21)
+    for _ in range(2):
+        assert client.post("/showcase/reset").status_code == 303
+        assert _demo_counts(server.conn) == before
+        assert server.conn.execute("PRAGMA foreign_keys").fetchone()[0] == 1
+        assert not server.conn.execute("PRAGMA foreign_key_check").fetchall()
+        anh = server.conn.execute("SELECT user_id FROM USER_ACCOUNT WHERE tci_account_ref='tci-000133'").fetchone()[0]
+        assert server.conn.execute("SELECT COUNT(*) FROM NOTIFICATION WHERE user_id=? AND read_at IS NULL", (anh,)).fetchone()[0] == 4
+        assert not entry.has_consent(server.conn, persona.USER)
+        assert server.conn.execute("SELECT 1 FROM PREGNANCY_PROFILE WHERE user_id=?", (persona.USER,)).fetchone() is None
+    assert open_from_tci(client, server).status_code == 200
+    me = dict(server.conn.execute("SELECT * FROM USER_ACCOUNT WHERE user_id=?", (persona.USER,)).fetchone())
+    response = client.post("/tci/consent", data={k: v for k, v in me.items() if v is not None} | {"action": "agree", "agree": "on"})
+    assert response.headers["location"] == f"/m/{persona.USER}/guide"
+    assert client.get(f"/m/{persona.USER}/guide/done").headers["location"] == f"/m/{persona.USER}/setup"
+
+
+def test_reset_removes_interactive_booking_and_reinstalls_demo(start, monkeypatch):
+    from datetime import datetime
+    import html
+    import re
+
+    monkeypatch.setattr(clock, "now", lambda: datetime(2026, 11, 18, 10))
+    server, client = start()
+    before = _demo_counts(server.conn)
+    doctor = server.conn.execute("SELECT staff_id FROM STAFF WHERE full_name='Nguyễn Văn A'").fetchone()[0]
+    preview = client.post("/tci/booking", data={
+        "day": "2026-11-20", "time": "10:00", "doctor": doctor, "mode": "doctor",
+        "facility": "Bệnh viện Thu Cúc", "specialty": "Sản khoa", "reason": "Reset regression",
+    })
+    assert preview.status_code == 200
+    form = {key: html.unescape(value) for key, value in re.findall(
+        r'name="(payload|signature)" value="([^"]+)"', preview.text
+    )}
+    assert client.post("/tci/booking/confirm", data=form).status_code == 303
+    assert server.conn.execute("SELECT COUNT(*) FROM TCI_HOST_APPOINTMENT").fetchone()[0] == 26
+    assert client.post("/showcase/reset").status_code == 303
+    assert _demo_counts(server.conn) == before
+    assert server.conn.execute("SELECT COUNT(*) FROM TCI_HOST_APPOINTMENT WHERE reason='Reset regression'").fetchone()[0] == 0
+
+
+def test_reset_restores_foreign_keys_when_deletion_fails(start):
+    server, client = start()
+    server.conn.execute("""CREATE TRIGGER reject_demo_reset BEFORE DELETE ON USER_ACCOUNT
+                           BEGIN SELECT RAISE(ABORT, 'reset test failure'); END""")
+    server.conn.commit()
+    before = _demo_counts(server.conn)
+    with pytest.raises(Exception, match="reset test failure"):
+        client.post("/showcase/reset")
+    assert server.conn.execute("PRAGMA foreign_keys").fetchone()[0] == 1
+    assert not server.conn.in_transaction
+    assert _demo_counts(server.conn) == before
+    assert not server.conn.execute("PRAGMA foreign_key_check").fetchall()
