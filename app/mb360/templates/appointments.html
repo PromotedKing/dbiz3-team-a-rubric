@@ -4,7 +4,7 @@
 {% set path = "/m/" ~ user.user_id ~ "/appointments" %}
 {% set labels = {"Pending": "Chờ xác nhận", "Confirmed": "Đã xác nhận", "Cancelled": "Đã hủy", "Completed": "Đã khám"} %}
 {% block content %}
-<a href="/tci/booking?source=mb360" class="btn full">Đặt lịch khám ↗</a>
+{% include "_appointment_book_link.html" %}
 <a class="lnk t-cap" href="/tci/appointments?source=mb360">Quản lý lịch ở TCI ↗</a>
 <div class="grid2">
   <a class="btn so" href="{{ path }}" {% if not history %}aria-current="page"{% endif %}>Lịch hiện tại</a>
@@ -24,7 +24,6 @@
   {% endif %}
 </article>
 {% else %}
-<div class="card bd"><p>{{ "Mẹ chưa có lần khám nào" if history else "Mẹ chưa có lịch hẹn nào" }}</p>
-{% if not history %}<a class="btn" href="/tci/booking?source=mb360">Đặt lịch khám ↗</a>{% endif %}</div>
+<div class="card bd"><p>{{ _("No visits appointment context") if history else _("No upcoming appointment") }}</p></div>
 {% endfor %}
 {% endblock %}
