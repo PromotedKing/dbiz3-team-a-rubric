@@ -144,3 +144,10 @@ Blend the app’s dark green accent across the bottom edge and fade it upward in
 Give the greeting and due date visual prominence, align the remaining-days count with the date’s numeric baseline when space permits, and group the pregnancy week and trimester below the progress bar.
 
 Position the greeting slightly above the date block and let it enter with a short fade and upward motion when reduced motion is off.
+
+
+## Proposed D-108 — empty appointment card
+
+When no upcoming appointment exists, show the existing card surface with a calendar icon, “Chưa có lịch khám sắp tới”, latest VISIT date and calculated week or “Mẹ chưa có lần khám nào. Lịch và lịch sử khám sẽ hiện ở đây.”. Add the full-width green outline handoff “Đặt lịch khám ↗” with accessible label “Đặt lịch khám, mở ứng dụng TCI”, and the small link “Xem lịch khám ›” to S-106. Expired and cancelled appointments are treated as no upcoming appointment.
+
+Hải Anh selected preserving the populated card height and allowing a taller empty card. Both use the existing card radius, shadow and spacing. The populated card has no booking button. This proposal supersedes the earlier no-Home-booking description only for the empty state.

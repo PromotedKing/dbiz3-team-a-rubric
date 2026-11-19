@@ -1,5 +1,11 @@
 # Build Log
 
+## 19/11/2026: proposed Home empty appointment card (Hải Anh)
+
+- **Scope**: proposed D-108 replaces the small empty entry row with the existing card surface, calendar icon, latest visit context, full-width outline TCI handoff and S-106 link. Hải Anh selected preserving the populated card height and allowing the empty card to be taller. S-106 uses the shared booking link once at the top and consistent empty wording.
+- **Verification**: rendered HTML for all five mothers at 08:00 and 21:00 on 19/11/2026 in a temporary demo DB, plus the cancelled-only case. APT snapshot refreshed with the official script; generator, data-model and snapshot checks passed. Existing host identity, reminder and appointment-list logic is retained.
+- **Tests**: full suite 780 passed, no failures, three existing xfails (BOT accent matching and two D-16 ranges). Targeted TCI suite 13 passed. No browser-based visual inspection was performed.
+
 ## 18/11/2026: restore host appointments and foreign keys after demo reset (Hải Anh)
 
 - **Scope**: fresh demo installation clears and rebuilds host appointments even when their table already exists. Reset commits table deletion before restoring foreign key enforcement and rolls back a failed deletion before restoring it in `finally`. Existing DB reopening and D-100 onboarding/session behavior keep their existing paths.

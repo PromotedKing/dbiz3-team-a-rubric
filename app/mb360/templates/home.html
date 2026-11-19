@@ -51,7 +51,15 @@
   <span class="tag ok">{{ _("Today") if appointment.days == 0 else _("{n} days left", n=appointment.days) }}</span>
 </a>
 {% else %}
-<a class="card bd lnk" href="/m/{{ user.user_id }}/appointments">Lịch khám · Chưa có lịch sắp tới</a>
+<section class="card bl" style="padding:14px 16px" data-empty-appointment>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span aria-hidden="true">{{ icon.tci_feature("calendar") }}</span>
+    <h2 class="t-body b">{{ _("No upcoming appointment") }}</h2>
+  </div>
+  {% include "_appointment_empty_context.html" %}
+  {% include "_appointment_book_link.html" %}
+  <a class="lnk t-cap" href="/m/{{ user.user_id }}/appointments">{{ _("View appointments") }}</a>
+</section>
 {% endif %}
 
 <a href="/m/{{ user.user_id }}/report?metric={{ (flags[0] if flags else 'Symptom') | urlencode }}" class="btn full cta" data-report-cta>

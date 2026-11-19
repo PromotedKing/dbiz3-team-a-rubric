@@ -775,6 +775,12 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Mother app v1.0.0 (D-81) | Mother & Baby 360 will use the following information from the TCI app, with no need to sign in again: | Mẹ & Bé 360 sẽ dùng các thông tin sau từ app TCI, không cần đăng nhập lại: |
 | Mother app v1.0.0 (D-81) | Next appointment | Lịch khám kế tiếp |
 | Proposed S-106 | Appointment schedule | Lịch khám |
+| Proposed Home empty state | No upcoming appointment | Chưa có lịch khám sắp tới |
+| Proposed Home empty state | Latest visit | Lần khám gần nhất |
+| Proposed Home empty state | No visits appointment context | Mẹ chưa có lần khám nào. Lịch và lịch sử khám sẽ hiện ở đây. |
+| Proposed Home empty state | Book appointment in TCI | Đặt lịch khám, mở ứng dụng TCI |
+| Proposed Home empty state | Book appointment handoff | Đặt lịch khám ↗ |
+| Proposed Home empty state | View appointments | Xem lịch khám › |
 | Mother app v1.0.0 (D-81) | Open as another TCI account | Mở bằng tài khoản TCI khác |
 | Mother app v1.0.0 (D-81) | Sample data: everyone here is invented, and the medical wording is waiting for hospital review. | Dữ liệu mẫu: mọi tên người đều là giả, nội dung y khoa đang chờ bệnh viện duyệt. |
 | Mother app v1.0.0 (D-81) | See the timeline | Xem dòng thời gian |

@@ -1,0 +1,5 @@
+{% if d.visit_date %}
+<p class="t-cap">{{ _("Latest visit") }}: {{ d.visit_date | dmy }}{% if last_visit_week is not none %} · {{ _("Week {n}", n=last_visit_week) | lower }}{% endif %}</p>
+{% else %}
+<p class="t-cap">{{ _("No visits appointment context") }}</p>
+{% endif %}
