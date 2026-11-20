@@ -34,7 +34,7 @@
   </div>
   <svg viewBox="0 0 320 160" width="100%" role="img" aria-label="{{ _('Metric history') }} · {{ h.metric | t }}">
     <g stroke="#EEEEEE" stroke-width="1">{% for tick in h.chart.ticks %}<line x1="{{ h.chart.left }}" x2="{{ h.chart.right }}" y1="{{ tick.y }}" y2="{{ tick.y }}"/>{% endfor %}</g>
-    <g font-size="10" fill="#6F6F6F" font-family="Roboto, sans-serif">{% for tick in h.chart.ticks %}<text x="0" y="{{ tick.y + 3 }}">{{ tick.text | t_known }}</text>{% endfor %}
+    <g font-size="10" fill="#6F6F6F">{% for tick in h.chart.ticks %}<text x="0" y="{{ tick.y + 3 }}">{{ tick.text | t_known }}</text>{% endfor %}
       <text x="{{ h.chart.left }}" y="154">{{ h.rows[-1].at[:10] | dmy }}</text><text x="{{ h.chart.right }}" y="154" text-anchor="end">{{ h.rows[0].at[:10] | dmy }}</text></g>
     {% for line in h.chart.lines %}<line data-line="{{ line.kind }}" x1="{{ h.chart.left }}" x2="{{ h.chart.right }}" y1="{{ line.y }}" y2="{{ line.y }}" stroke="#C4520A" stroke-width="1.2" stroke-dasharray="4 3"/>{% endfor %}
     {% for s in h.chart.series %}

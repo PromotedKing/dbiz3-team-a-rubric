@@ -160,7 +160,7 @@ User requested a smaller, left-aligned dropdown with no visible "Loại thông b
 
 ### Toolbar alignment — 11/11/2026
 
-User requested removing the separate unread-count sentence (the Unread tab retains its badge). Place "Đánh dấu đã đọc tất cả" on the left and the type dropdown on the right of one vertically centered toolbar row. The read-all action remains shown only when unread notifications exist.
+User requested removing the separate unread-count sentence (the Unread tab retains its badge). Place "Đánh dấu đã đọc tất cả" on the left and the type dropdown on the right of one vertically centered toolbar row. Keep the read-all button visible and disable it when there are no unread notifications.
 
 ### Toolbar polish — 11/11/2026
 
@@ -176,3 +176,8 @@ User requested stronger separation from the page background. Read-all uses a mor
 Opening an Appointment notice marks it read and opens S-106 at the matching appointment where available, otherwise the current list.
 
 Proposed FR-015 adds Appointment notices for confirmed bookings and cancellations in TCI. Both open S-106 and are independent of the reminder switch.
+
+
+### Filter background — 18/11/2026
+
+Show the All/Unread tabs and filter toolbar directly on the page background for every mother account.

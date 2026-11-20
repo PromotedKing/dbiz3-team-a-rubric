@@ -16,3 +16,8 @@ S-106 is read-only. Entry points are S-008 and S-009. Other mothers' lists are d
 **Exception pending team review:** Quản lý lịch ở TCI ↗ opens the signed-in mother’s TCI list for cancellation or rebooking.
 
 Booking and cancellation notices open the corresponding host card under proposed FR-015.
+
+
+## Proposed D-108 — consistent empty states
+
+Current empty text is “Chưa có lịch khám sắp tới”. History empty text is “Mẹ chưa có lần khám nào. Lịch và lịch sử khám sẽ hiện ở đây.”. The existing top booking link uses the same full-width green outline component and accessible label as Home. Empty bodies do not repeat the booking button.

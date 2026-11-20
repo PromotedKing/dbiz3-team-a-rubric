@@ -66,7 +66,11 @@ def install(conn: sqlite3.Connection, now: datetime, *, fresh_demo: bool = False
         else:
             edd = conn.execute("SELECT edd FROM PREGNANCY_PROFILE WHERE user_id=?", (user,)).fetchone()[0]
         conn.execute(f"INSERT INTO {tci_feed.TABLE} VALUES (?, ?, ?, ?)", (user, edd, when, fixture["place"]))
-    if not tci_feed.has_appointments(conn):
+    if fresh_demo:
+        if tci_feed.has_appointments(conn):
+            conn.execute(f"DELETE FROM {tci_feed.APPOINTMENTS}")
+        tci_booking.install(conn, now)
+    elif not tci_feed.has_appointments(conn):
         tci_booking.install(conn, now)
     # PR A stored seeded slots without a reminder. Only its stable fixture IDs
     # receive the demo default; explicitly disabled user bookings stay off.

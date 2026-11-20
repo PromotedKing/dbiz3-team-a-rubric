@@ -1,5 +1,17 @@
 # Build Log
 
+## 19/11/2026: proposed Home empty appointment card (Hải Anh)
+
+- **Scope**: proposed D-108 replaces the small empty entry row with the existing card surface, calendar icon, latest visit context, full-width outline TCI handoff and S-106 link. Hải Anh selected preserving the populated card height and allowing the empty card to be taller. S-106 uses the shared booking link once at the top and consistent empty wording.
+- **Verification**: rendered HTML for all five mothers at 08:00 and 21:00 on 19/11/2026 in a temporary demo DB, plus the cancelled-only case. APT snapshot refreshed with the official script; generator, data-model and snapshot checks passed. Existing host identity, reminder and appointment-list logic is retained.
+- **Tests**: full suite 780 passed, no failures, three existing xfails (BOT accent matching and two D-16 ranges). Targeted TCI suite 13 passed. No browser-based visual inspection was performed.
+
+## 18/11/2026: restore host appointments and foreign keys after demo reset (Hải Anh)
+
+- **Scope**: fresh demo installation clears and rebuilds host appointments even when their table already exists. Reset commits table deletion before restoring foreign key enforcement and rolls back a failed deletion before restoring it in `finally`. Existing DB reopening and D-100 onboarding/session behavior keep their existing paths.
+- **Validation**: eight server restart tests passed, including two resets, reset after an interactive booking, first-opening consent/setup and a deletion failure. A temporary demo at 18/11/2026 10:00 retained 22 visits, 286 diary entries, 109 metric records, 25 host appointments (22 completed and three confirmed) and 21 notifications after reset. Foreign key enforcement was enabled and its check was empty. Generator, data-model and active Spec Kit checks passed.
+- **Full suite**: 779 passed, zero failed, three existing xfails (one BOT accent-matching case and two D-16 valid-range cases), one existing TestClient deprecation warning.
+
 ## 15/11/2026: proposed read-only appointment screen (Hải Anh)
 
 - Proposed D-88 adds S-106 and changes the Appointment notice destination. Home and S-106 read the same host list; booking still lives in TCI. The return link is bound to the verified session.
@@ -960,3 +972,219 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Numbering**: the notification decision of the branch below became D-109 (D-107 and spec-CLI v1.9.2 were given up to Ánh's pull request #50); this entry's own decision stays D-108.
 - **Chain**: `docs/decisions.md` D-108; `specs/spec-CLI.md` v1.10.0 — §10 Q22, Q24, Q26, Q27; `data/schema/schema-MB360.sql` (owner Tâm), `data/data-model-MB360.md` (owner Tâm), `data/seed/` (owner Hải Anh) — all proposed in the pull request; `docs/ui-label-reference.md` (owner Chi), 7 labels.
 - **Tests**: new `tests/unit/test_cli_must_escalate.py` (10), `tests/unit/test_cli_routing.py` (15), `tests/integration/test_cli_visibility_page.py` (6). Full suite 827 passed, 3 xfailed (806 after BR-012, 764 before this branch). `generate_seed.py --check` and `check_data_model.py` both OK.
+## 18/11/2026: restore the notification toolbar layout (Tâm, branch `tam/notification-filter-left`)
+
+- **S-009**: reverted the temporary left-aligned filter after the user confirmed the reference layout. The filter is on the right and the mark-all-read button appears on the left when there are unread notifications.
+- **Chain**: restored `app/mb360/templates/notices.html` and `app/mb360/static/tci.css` to the layout in `screens/screen-spec-S-009.md`.
+
+## 18/11/2026: show doctor instructions below report responses (Tâm)
+
+- **S-026**: replaced the link to S-027 with a card below the final response. The card lists active instructions using the existing watch-flag data.
+- **Chain**: `screens/screen-spec-S-026.md` and `docs/ui-label-reference.md` → `app/mb360/main.py`, `app/mb360/templates/report_status.html` and `app/mb360/static/tci.css`. Updated the report-page integration test.
+
+## 18/11/2026: clarify report-status headings and add metric history (Tâm)
+
+- **S-026**: established section and metric headings, and added the latest measurement, threshold label and metric-specific history link to each inline instruction.
+- **Chain**: `screens/screen-spec-S-026.md` → `app/mb360/templates/report_status.html`, `app/mb360/templates/_instruction_latest.html`, `app/mb360/templates/instructions.html` and `app/mb360/static/tci.css`. Extended the report-page integration test.
+
+## 18/11/2026: separate assignment details and measurement time (Tâm)
+
+- **S-026 / S-027**: show a thin divider above the latest result and keep the measurement date and time together below its value.
+- **Chain**: `screens/screen-spec-S-026.md` → shared measurement markup in `app/mb360/templates/_instruction_latest.html` and layout in `app/mb360/static/tci.css`.
+
+## 18/11/2026: clarify the date doctors gave instructions (Tâm)
+
+- **S-026 / S-027**: identify the date the doctor gave each instruction and spell out day, month and year on both mother screens.
+- **Chain**: `screens/screen-spec-S-026.md`, `docs/ui-label-reference.md` → `app/mb360/ui.py` and the mother’s instruction templates.
+
+## 18/11/2026: distinguish monitoring instructions and fix history dropdowns (Tâm)
+
+- **S-026**: label the instruction card as current monitoring instructions. In the demo case, the summary and timeline share the 08:42 submission time, with measurement at 08:40 and the response at 09:12.
+- **S-025**: override the native select appearance so the metric and measurement-time dropdowns each have one chevron.
+- **Chain**: `screens/screen-spec-S-026.md`, `docs/ui-label-reference.md` → `app/mb360/templates/report_status.html`, `app/mb360/persona.py` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: remove assignment attribution from mother’s instruction cards (Tâm)
+
+- **S-026 / S-027**: removed the doctor name and assignment date from each instruction card.
+- **Chain**: both screen specs and the UI label reference → the mother’s instruction templates and shared date formatting.
+
+## 18/11/2026: add color to My reports filters (Tâm)
+
+- **S-029**: used a pale green filter bar, dark green labels, a count badge and a stronger tint for applied filters.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: refine the My reports layout (Tâm)
+
+- **S-029**: inset the filter panel, simplified the count, and compacted the report cards. Above-threshold reports have an orange border accent.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: align report results and handling statuses (Tâm)
+
+- **S-029**: aligned results and handling statuses across cards, differentiated the handling-state colors, and made details accessible from the entire card.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: try icon rows for My reports (Tâm)
+
+- **S-029**: leading type icon, compact report details and a centered trailing chevron for linked rows.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: simplify report labels (Tâm)
+
+- **S-029**: grouped the labels and used outlined measurement results and colored dots for handling states.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: remove the instructions shortcut from My reports (Tâm)
+
+- **S-029**: removed the footer link to S-027 from `app/mb360/templates/my_reports.html`.
+
+## 18/11/2026: unify tags across the mother’s report screens (Tâm)
+
+- **S-023 / S-026 / S-029**: use the shared rounded, tinted tags with the same handling colors as the notification cards.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/_bits.html`, `health.html`, `report_status.html`, `my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: keep the read-all button visible (Tâm)
+
+- **S-009**: the left-hand button stays visible and is disabled when the unread count reaches zero.
+- **Chain**: `screens/screen-spec-S-009.md` → `app/mb360/templates/notices.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: limit report titles to a single line (Tâm)
+
+- **S-029**: added width-based ellipsis while retaining the full title for assistive technology.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: match report cards and typography across screens (Tâm)
+
+- **S-029**: matched the card surface and dropdowns to S-009 and reused shared text styles.
+- **App and clinical web**: use the same Roboto fallbacks and let native controls inherit the page font. The metric-history chart also inherits the page font.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/my_reports.html`, `app/mb360/templates/history.html` and both app stylesheets.
+
+## 18/11/2026: use native system typography (Tâm)
+
+- **App, TCI and clinical web**: switched from Roboto to the native system sans-serif and removed the Google Fonts stylesheet from the page shells.
+- **Chain**: `docs/ui-label-reference.md` → `app/mb360/static/tci.css`, `app/mb360/static/staff.css` and the base, TCI, staff and album templates.
+
+## 18/11/2026: give the report filters a distinct header strip (Tâm)
+
+- **S-029**: placed the report filters in an edge-to-edge pale green strip directly below the header.
+- **Chain**: `screens/screen-spec-S-029.md` → `app/mb360/templates/my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: match notification filters across mother accounts (Tâm)
+
+- **S-009 / S-029**: restored the Notifications toolbar to the page background for every mother account. The pale green filter strip appears on My reports.
+- **Chain**: `screens/screen-spec-S-009.md` → `app/mb360/templates/notices.html`, `app/mb360/templates/my_reports.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: reduce the notification introduction size (Tâm)
+
+- **S-009**: used the shared 12 px caption style for the introduction in `app/mb360/templates/notices.html` and removed the old override from `app/mb360/static/tci.css`.
+
+## 18/11/2026: simplify the due-date card illustration (Tâm, branch `tam/pregnancy-home-illustration`)
+
+- **S-008**: placed due date and pregnancy progress next to a minimal mother-and-baby illustration on a mint gradient.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/templates/home.html`, `app/mb360/static/tci.css` and `app/mb360/static/mother-baby-hero.png`.
+
+## 18/11/2026: soften and enlarge the due-date card (Tâm)
+
+- **S-008**: restored the original mint gradient, increased card height and replaced the artwork with soft, faceless silhouettes.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css` and `app/mb360/static/mother-baby-hero.png`.
+
+## 18/11/2026: make the due-date hero full width (Tâm)
+
+- **S-008**: expanded the hero to the screen edges and used layered mint and teal gradients to blend in the larger illustration.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: include the greeting in the full-width due-date hero (Tâm)
+
+- **S-008**: moved the greeting into the gradient, aligned the hero to the header and simplified the color transitions.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/templates/home.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: apply the gradient to the mother-and-baby artwork (Tâm)
+
+- **S-008**: restored the original mint background and blended the gradient artwork across the right half of the full-width hero.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css` and `app/mb360/static/mother-baby-hero.png`.
+
+## 18/11/2026: extend the home hero and round its bottom corners (Tâm)
+
+- **S-008**: set a taller mint section with rounded bottom corners and full-opacity mother-and-baby artwork at the bottom right.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css` and `app/mb360/static/mother-baby-hero.png`.
+
+## 18/11/2026: redraw the home illustration in geometric gradients (Tâm)
+
+- **S-008**: replaced the portrait-style artwork with an abstract mother-and-baby mark made of broad mint-gradient shapes.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css` and `app/mb360/static/mother-baby-hero.png`.
+
+## 18/11/2026: blend the mother-and-baby motif into the hero background (Tâm)
+
+- **S-008**: replaced the foreground image with a soft-light background layer over the original mint gradient.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/templates/home.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: make the blended home illustration more distinct (Tâm)
+
+- **S-008**: replaced the abstract motif with a clear side-profile illustration and used multiply blending to retain contrast on mint.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css` and `app/mb360/static/mother-baby-hero.png`.
+
+## 18/11/2026: keep only the mint gradient on the due-date card (Tâm)
+
+- **S-008**: removed the illustration and expanded the progress bar to the content width.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: strengthen the mint gradient on the home card (Tâm)
+
+- **S-008**: deepened the mint gradient on the due-date card in `app/mb360/static/tci.css`.
+
+## 18/11/2026: refine the home gradient and typography (Tâm)
+
+- **S-008**: increased the mint gradient contrast and aligned the greeting, due date, remaining days and pregnancy progress.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/templates/home.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: add subtle arcs to the due-date gradient (Tâm)
+
+- **S-008**: added two faint decorative arcs in the hero’s upper-right corner.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: add the app green to the home gradient (Tâm)
+
+- **S-008**: blended the supplied green swatch, matching the existing `#008C44` token, into the upper-right corner.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: use layered shapes on the due-date card (Tâm)
+
+- **S-008**: replaced the arcs with translucent geometric layers over the mint gradient.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: extend the green accent on the home hero (Tâm)
+
+- **S-008**: increased the spread of the green accent in `app/mb360/static/tci.css`.
+
+## 18/11/2026: move the strong green to the bottom of the home hero (Tâm)
+
+- **S-008**: anchored the dark green accent at the bottom right and limited its vertical spread to keep the text legible.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: spread the dark green evenly across the home hero (Tâm)
+
+- **S-008**: replaced the corner accent with a full-width gradient that fades upward from the bottom.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: give the home hero more vertical space (Tâm)
+
+- **S-008**: increased the minimum hero height by 16 px in `app/mb360/static/tci.css`.
+
+## 18/11/2026: lift and animate the home greeting (Tâm)
+
+- **S-008**: raised the greeting by 6 px and reused the entrance animation for users who allow motion.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/static/tci.css`.
+
+## 18/11/2026: group the home pregnancy information (Tâm)
+
+- **S-008**: placed the greeting above a translucent due-date and progress panel, with the two numeric readouts aligned at regular phone widths.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/templates/home.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: restore the open gradient layout (Tâm)
+
+- **S-008**: placed the due date and progress directly on the gradient again and kept the brief greeting entrance.
+- **Chain**: `screens/screen-spec-S-008.md` → `app/mb360/templates/home.html` and `app/mb360/static/tci.css`.
+
+## 18/11/2026: align the due date and countdown (Tâm)
+
+- **S-008**: aligned the date and countdown on their numeric baseline and rendered the decorative facets as inline SVG.
+- **Chain**: S-008 screen spec → home template and TCI stylesheet.

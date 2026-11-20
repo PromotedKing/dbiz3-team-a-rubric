@@ -1,0 +1,7 @@
+<div class="sec instruction-latest">
+  <div class="instruction-measurement">
+    <p class="t-cap">{{ _("Latest") }}: {% if f.latest_value %}<strong>{{ f.latest_value | t_known }}</strong>{% else %}{{ _("None yet") }}{% endif %}</p>
+    {% if f.latest_at %}<p class="t-cap instruction-measured-at">{{ f.latest_at | show_time }}</p>{% endif %}
+  </div>
+  {% if f.latest_label %}<span class="tag {{ 'al' if f.latest_label == 'Above threshold' else 'ok' if f.latest_label == 'Normal' else 'un' }}">{{ f.latest_label | t }}</span>{% endif %}
+</div>

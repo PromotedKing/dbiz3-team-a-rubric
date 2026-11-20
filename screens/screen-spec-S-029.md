@@ -154,3 +154,21 @@ To distinguish the two fields, add visible labels above the selects: "Trạng th
 ### Default option refinement — 11/11/2026
 
 User requested "Tất cả" as the first option in both dropdowns. Visible labels remain "Trạng thái" / "Chỉ số". This supersedes "Tất cả chỉ số" above; filter values and behavior are unchanged.
+
+### Filter color — 18/11/2026
+
+Use a pale green filter bar, dark green field labels and a compact green count badge. A filter with a specific selection uses a stronger green border and tint.
+
+### Page layout — 18/11/2026
+
+Group the two filters and count in an inset white panel. Reserve the stronger green tint for applied filters. In the report list, use compact cards with the type and date above the title, followed by tags and the detail link on a wrapping row. Use an orange start border for above-threshold reports.
+
+Align the measurement result at the start of the final row and the handling status at the end. Use distinct colors for handling states. Cards that open report or chatbot details expose a chevron and use the entire card as the link.
+
+Show each report in a compact row with a leading icon for its type, followed by the title, type and time, and result or handling labels. Center the detail chevron on the trailing edge of linked rows. Highlight above-threshold reports in the icon tile.
+
+Group labels at the start of the row below the timestamp. Use the shared rounded, tinted tags from the notification screen for measurement results and handling states.
+
+Keep report titles to one visible line. Show an ellipsis when the title exceeds the available width.
+
+Report rows use the same white card surface, shadow and corner radius as S-009. Put the filters in a full-width pale green strip immediately below the header, using the same dropdown styling as S-009. Report titles use the shared bold body style and filter labels use the shared bold caption style.

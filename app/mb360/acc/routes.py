@@ -144,6 +144,13 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         handling = conn.execute("SELECT COUNT(*) FROM CARE_CASE WHERE user_id = ? AND status <> 'Resolved'", (user_id,)).fetchone()[0]
         today, edd = clock.now().date(), date.fromisoformat(profile["edd"])
         week = gestational_week(edd, today)
+        health = dashboard.load(conn, user_id, clock.now())
+        last_visit_week = None
+        if health["visit_date"]:
+            try:
+                last_visit_week = gestational_week(edd, date.fromisoformat(health["visit_date"]))
+            except ValueError:
+                pass
         return page(request, "home.html", user=user, given_name=user["full_name"].split()[-1], saved=saved, today_iso=today.isoformat(),
                     week=week, week_day=weeks.day_of_week(edd, today), edd=profile["edd"], days_left=(edd - today).days,
                     progress=weeks.progress(edd, today), trimester=weeks.trimester(week),
@@ -151,7 +158,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
                     appointment=tci_feed.next_appointment(conn, user_id, clock.now()), latest_notice=notices.home_notice(conn, user_id),
                     diary_today=conn.execute("SELECT 1 FROM DIARY_ENTRY WHERE user_id = ? AND entry_date = ?",
                                              (user_id, today.isoformat())).fetchone() is not None,
-                    d=dashboard.load(conn, user_id, clock.now()))    # self-tracked cards and latest status (S-008 #8, #12 – #15)
+                    d=health, last_visit_week=last_visit_week)    # self-tracked cards and latest status (S-008 #8, #12 – #15)
 
     @app.get("/m/{user_id}/notices", response_class=HTMLResponse)
     def notices_page(request: Request, user_id: str, type: str = "", unread: bool = False):

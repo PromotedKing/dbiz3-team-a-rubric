@@ -35,7 +35,6 @@
 | 7 | "Last report: 26/09/2026 · 20:15" | Text | latest Metric Report for this metric — `measured_at` (`dd/mm/yyyy · HH:mm`) | No | — |
 | 8 | Value "150/95 mmHg" + label "Above threshold" | Text + Label | Metric Report — Value; threshold label per `spec-ALR.md` BR-004, D-14, D-17 | No | — |
 | 9 | "Doctor's note" — "[How to measure, how often]" | Text | Watch-Flag — note (written by the doctor on `S-064`, D-24, D-29) | No | — |
-| 10 | "Dr. Nguyễn Văn A · assigned 15/09/2026" | Text | Watch-Flag — flagged-by (Doctor) + assignment date | No | — |
 | 11 | "View metric history ›" link | Text (link) | `spec-HLT.md` `FR-009`; CTA D-27 | No | — |
 | 12 | "+ Report metric" button | Button | opens `S-025A` with the card's metric | No | — |
 | 13 | Second metric card — "Blood glucose" + "Doctor-assigned" | Text + Label | as #6 | No | — |
@@ -98,7 +97,7 @@ Note: the "[Empty state] …" box is a state, described in §4. The screen has n
 ## 8. Responsive and accessibility notes
 
 - Smallest supported width: `[NEEDS CLARIFICATION: not specified]`.
-- One card per column; the doctor name + assignment date line may wrap.
+- One card per column.
 - Text must be readable: value, threshold label, "Doctor-assigned" label, doctor's note.
 
 ## 9. Open questions

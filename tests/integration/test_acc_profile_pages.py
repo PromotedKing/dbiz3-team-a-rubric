@@ -73,7 +73,9 @@ def test_mark_all_and_empty_state(client, db, user_id):
     lan = user_id("tci-000123")
     r = client.post(f"/m/{lan}/notices/read-all")
     assert r.status_code == 303 and r.headers["location"] == f"/m/{lan}/notices"
-    assert "data-unread" not in client.get(f"/m/{lan}/notices").text
+    page = client.get(f"/m/{lan}/notices").text
+    assert "data-unread" not in page
+    assert 'class="lnk notice-read-all" type="submit" disabled' in page
     db.execute("DELETE FROM NOTIFICATION WHERE user_id = ?", (lan,))
     assert vi("You have no notifications.") in client.get(f"/m/{lan}/notices").text
 

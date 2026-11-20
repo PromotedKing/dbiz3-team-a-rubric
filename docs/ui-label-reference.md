@@ -10,7 +10,7 @@ Markers: **[measured]** = colour sampled from the TCI screenshots (±2–3 units
 
 ### 1. Type (5 levels)
 
-Font family: **Roboto** (fallback: -apple-system, "SF Pro Text", sans-serif) **[estimated]**. Sizes converted from the screenshots, assuming a 390 pt wide screen **[estimated]**. Only weights 400 (regular) and 700 (bold); no italics.
+Font family: the native system sans-serif (SF Pro on Apple devices). Sizes converted from the screenshots, assuming a 390 pt wide screen **[estimated]**. Only weights 400 (regular) and 700 (bold); no italics.
 
 | Level | Size | Weight | Line height | Colour | Reference in the TCI app |
 |---|---|---|---|---|---|
@@ -164,7 +164,7 @@ Valid ranges per metric are not set yet (**D-16, Pending SME**).
 
 | Item | Before (D-27) | Now (D-79) |
 |---|---|---|
-| Font | not set (wireframe: Inter) | Roboto [estimated] |
+| Font | not set (wireframe: Inter) | Native system sans-serif |
 | Type scale | 18 / 15 / 13 / 11 (4 levels) | 22 / 18 / 18 / 15 / 12 (5 levels) |
 | Primary colour | moss green `#2F6F5E` (wireframe) | TCI green `#00A651` |
 | Screen background | `#F7F8FA` | `#F5F5F5` |
@@ -775,6 +775,12 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Mother app v1.0.0 (D-81) | Mother & Baby 360 will use the following information from the TCI app, with no need to sign in again: | Mẹ & Bé 360 sẽ dùng các thông tin sau từ app TCI, không cần đăng nhập lại: |
 | Mother app v1.0.0 (D-81) | Next appointment | Lịch khám kế tiếp |
 | Proposed S-106 | Appointment schedule | Lịch khám |
+| Proposed Home empty state | No upcoming appointment | Chưa có lịch khám sắp tới |
+| Proposed Home empty state | Latest visit | Lần khám gần nhất |
+| Proposed Home empty state | No visits appointment context | Mẹ chưa có lần khám nào. Lịch và lịch sử khám sẽ hiện ở đây. |
+| Proposed Home empty state | Book appointment in TCI | Đặt lịch khám, mở ứng dụng TCI |
+| Proposed Home empty state | Book appointment handoff | Đặt lịch khám ↗ |
+| Proposed Home empty state | View appointments | Xem lịch khám › |
 | Mother app v1.0.0 (D-81) | Open as another TCI account | Mở bằng tài khoản TCI khác |
 | Mother app v1.0.0 (D-81) | Sample data: everyone here is invented, and the medical wording is waiting for hospital review. | Dữ liệu mẫu: mọi tên người đều là giả, nội dung y khoa đang chờ bệnh viện duyệt. |
 | Mother app v1.0.0 (D-81) | See the timeline | Xem dòng thời gian |
@@ -875,7 +881,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Notification filter dropdown (10/11/2026) | Notification type | Loại thông báo |
 | Notification filter dropdown (10/11/2026) | Filter | Lọc |
 | Notification dropdown review (11/11/2026) | All notifications | Tất cả thông báo |
-| Report response link (11/11/2026) | Detailed instructions from your doctor | Chỉ dẫn cụ thể của bác sĩ |
+| Instruction card below report responses (18/11/2026) | Current monitoring instructions | Chỉ dẫn theo dõi đang áp dụng |
 | Clinical notifications (D-109) | Cases waiting for a first look. | Ca đang chờ xem lần đầu. |
 | Clinical notifications (D-109) | Cases a nurse escalated to you. | Ca y tá đã chuyển cho bạn. |
 | Clinical notifications (D-109) | {n} waiting | {n} ca đang chờ |

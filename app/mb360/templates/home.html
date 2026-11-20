@@ -13,15 +13,36 @@
 {% endblock %}
 {% block content %}
 {% if saved %}{{ bits.toast(_("Metrics saved")) }}{% endif %}
-<p class="t-title">{{ _("Hello, {name}!", name=given_name) }}</p>
-
 <a href="/m/{{ user.user_id }}/timeline" class="hero hero-week" data-week-card>
-  <div style="display:flex;justify-content:space-between;align-items:flex-start">
-    <div><p class="t-cap" style="color:#212121">{{ _("Due date") }}</p><p class="t-disp">{{ edd | dmy }}</p></div>
-    {% if days_left >= 0 %}<p class="t-body" style="text-align:right"><span class="t-disp">{{ days_left }}</span> {{ _("days to go") }}</p>{% endif %}
+  <svg class="hero-week-pattern" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="hero-facet-light" x2="70%" y2="100%">
+        <stop offset=".32" stop-color="white" stop-opacity="0"/>
+        <stop offset="1" stop-color="white" stop-opacity=".22"/>
+      </linearGradient>
+      <linearGradient id="hero-facet-mint" x2="70%" y2="100%">
+        <stop stop-color="white" stop-opacity=".24"/>
+        <stop offset="1" stop-color="#dcffed" stop-opacity=".06"/>
+      </linearGradient>
+    </defs>
+    <polygon points="64,0 100,0 100,100 29,100 50,73 56,51 70,27" fill="url(#hero-facet-light)"/>
+    <polygon points="84,0 100,0 100,100 57,100 69,78 73,55 86,30" fill="url(#hero-facet-mint)"/>
+  </svg>
+  <div class="hero-week-details">
+    <h1 class="t-title">{{ _("Hello, {name}!", name=given_name) }}</h1>
+    <div class="hero-week-dates">
+      <div>
+        <p class="t-cap">{{ _("Due date") }}</p>
+        <p class="t-disp">{{ edd | dmy }}</p>
+      </div>
+      {% if days_left >= 0 %}<p class="t-cap hero-week-count"><strong>{{ days_left }}</strong> {{ _("days to go") }}</p>{% endif %}
+    </div>
+    <div class="bar"><i style="width:{{ progress }}%"></i></div>
+    <div class="hero-week-stage">
+      <p class="t-cap b">{{ _("Week {n} + {d} days", n=week, d=week_day) }}</p>
+      <p class="t-cap">{{ _(trimester) }}</p>
+    </div>
   </div>
-  <div class="bar"><i style="width:{{ progress }}%"></i></div>
-  <div class="sec"><span class="t-cap" style="color:#212121">{{ _("Week {n} + {d} days", n=week, d=week_day) }}</span><span class="t-cap" style="color:#212121">{{ _(trimester) }}</span></div>
 </a>
 
 {% if appointment %}
@@ -30,7 +51,15 @@
   <span class="tag ok">{{ _("Today") if appointment.days == 0 else _("{n} days left", n=appointment.days) }}</span>
 </a>
 {% else %}
-<a class="card bd lnk" href="/m/{{ user.user_id }}/appointments">Lịch khám · Chưa có lịch sắp tới</a>
+<section class="card bl" style="padding:14px 16px" data-empty-appointment>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span aria-hidden="true">{{ icon.tci_feature("calendar") }}</span>
+    <h2 class="t-body b">{{ _("No upcoming appointment") }}</h2>
+  </div>
+  {% include "_appointment_empty_context.html" %}
+  {% include "_appointment_book_link.html" %}
+  <a class="lnk t-cap" href="/m/{{ user.user_id }}/appointments">{{ _("View appointments") }}</a>
+</section>
 {% endif %}
 
 <a href="/m/{{ user.user_id }}/report?metric={{ (flags[0] if flags else 'Symptom') | urlencode }}" class="btn full cta" data-report-cta>

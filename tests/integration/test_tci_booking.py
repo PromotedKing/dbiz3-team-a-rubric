@@ -113,7 +113,7 @@ def test_mb360_appointments_round_trip(host, db, user_id):
         home = host.get(f"/m/{user}/home")
         if suffix != "200":
             assert path in home.text
-            assert ("Chưa có lịch sắp tới" in home.text) == (current_count == 0)
+            assert ("Chưa có lịch khám sắp tới" in home.text) == (current_count == 0)
     host.cookies.delete(entry.COOKIE)
     user = user_id("tci-000123")
     sign_in(host, db, user)
@@ -167,3 +167,52 @@ def test_booking_and_cancellation_notices_ignore_reminder_switch(host, db, user_
     anh = user_id("tci-000133")
     sign_in(host, db, anh)
     assert "Đã đặt lịch thành công" not in host.get(f"/m/{anh}/notices").text
+
+
+def test_home_empty_appointment_card_states(host, db, user_id):
+    from mb360.acc import entry
+    from mb360.alr.reports import gestational_week
+    from datetime import date
+
+    def home(ref):
+        sign_in(host, db, user_id(ref))
+        response = host.get(f"/m/{user_id(ref)}/home")
+        assert response.status_code == 200
+        return response.text
+
+    lan = user_id("tci-000123")
+    page = home("tci-000123")
+    assert 'data-empty-appointment' in page
+    assert 'aria-label="Đặt lịch khám, mở ứng dụng TCI"' in page
+    assert 'class="btn o full" href="/tci/booking?source=mb360"' in page
+    visit = db.execute("SELECT MAX(visit_date) FROM VISIT WHERE user_id=?", (lan,)).fetchone()[0]
+    edd = db.execute("SELECT edd FROM PREGNANCY_PROFILE WHERE user_id=?", (lan,)).fetchone()[0]
+    week = gestational_week(date.fromisoformat(edd), date.fromisoformat(visit))
+    assert f"Lần khám gần nhất: {date.fromisoformat(visit):%d/%m/%Y} · tuần {week}" in page
+    assert len(re.findall(r'class="tab(?: on)?"', page)) == 5
+
+    for ref in ("tci-000128", "tci-000133"):
+        page = home(ref)
+        assert 'data-appointment' in page and 'data-empty-appointment' not in page
+        assert 'aria-label="Đặt lịch khám, mở ứng dụng TCI"' not in page
+
+    anh = user_id("tci-000133")
+    db.execute(f"UPDATE {tci_booking.TABLE} SET status='Cancelled' WHERE user_id=?", (anh,))
+    db.commit()
+    page = home("tci-000133")
+    assert 'data-empty-appointment' in page
+    assert "Mẹ chưa có lần khám nào. Lịch và lịch sử khám sẽ hiện ở đây." in page
+    for tab in ("current", "history"):
+        result = host.get(f"/m/{anh}/appointments?tab={tab}")
+        assert result.text.count('aria-label="Đặt lịch khám, mở ứng dụng TCI"') == 1
+
+    db.execute(f"DELETE FROM {tci_booking.TABLE} WHERE user_id=?", (anh,))
+    db.commit()
+    assert 'data-empty-appointment' in home("tci-000133")
+    for tab, text in (("current", "Chưa có lịch khám sắp tới"), ("history", "Mẹ chưa có lần khám nào.")):
+        result = host.get(f"/m/{anh}/appointments?tab={tab}")
+        assert text in result.text
+        assert result.text.count('aria-label="Đặt lịch khám, mở ứng dụng TCI"') == 1
+
+    clock.set(NOW.replace(hour=21))
+    assert 'data-empty-appointment' in home("tci-000128")

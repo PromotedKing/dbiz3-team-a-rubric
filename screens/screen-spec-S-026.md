@@ -130,3 +130,11 @@ User requested removing the bottom "Báo cáo của tôi ›" link from the repo
 ### Instructions link placement — 11/11/2026
 
 User requested moving the instructions link directly below the response text, inside the response card, renamed "Chỉ dẫn cụ thể của bác sĩ". Show once, in the last response card, with a subtle divider; remove the standalone bottom link. Target remains S-027. No changes to clinical content or data.
+
+### Inline doctor instructions — 18/11/2026
+
+Replace the S-027 link from S-026 with one “Chỉ dẫn theo dõi đang áp dụng” card below the final response. Show each active instruction's metric and note when present. The card appears when the report has a response and the mother has an active instruction.
+
+Use second-level headings for the report summary, handling progress, responses and instructions. Within the instructions, each metric has a third-level heading, the latest reported value and measurement time when available, its threshold label when applicable, and a link to that metric's history. Reporting actions stay on S-027.
+
+Separate the instruction from the latest result with a thin divider. Show the measurement date and time together on their own line below the value.
