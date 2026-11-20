@@ -33,7 +33,7 @@ Rows marked "as `S-061` #n" are the same shared block as in the Nurse screen.
 | 1 | Logo | Image | static | No | — |
 | 2 | Sidebar: "Home" (selected), "Patients", "Settings". No guidance-template editor in the MVP (D-106) | Navigation | navigation | Yes | — |
 | 3 | Title "Cases to handle" | Header | static | No | — |
-| 4 | "Notifications (n)" button + badge | Button + badge | n = number of cases in status "Escalated to doctor" whose `assigned_doctor_id` is the signed-in doctor, plus the fail-safe cases visible to every doctor (BR-011 steps 3 and 4) — derived from Case, not stored, no read / unread state (`spec-ALR.md` FR-009, DM-32, D-68; no push / SMS — ALR-03). The notification list is not drawn (`S-059`) | No | — |
+| 4 | "Notifications (n)" button + badge | Button + badge | n = number of cases in status "Escalated to doctor" whose `assigned_doctor_id` is the signed-in doctor, plus the fail-safe cases visible to every doctor (BR-011 steps 3 and 4) — derived from Case, not stored, no read / unread state (`spec-ALR.md` FR-009, DM-32, D-68; no push / SMS — ALR-03). The notification list has no mockup but is **built** in the v1.0.0 app as `/staff/{id}/notifications`: one line per case, each naming the nurse who escalated it and when (Case Status History), the cases he has not answered yet first (D-109, proposed; `spec-CLI.md` §10 Q20) | No | — |
 | 5 | Role label "Doctor: Nguyễn Văn A ▾" | Dropdown | Staff — role + full name (`spec-CLI.md` §6, D-28) | Yes | matches the signed-in user (BR-005) |
 | 6 | Filters "Not viewed", "Viewed", "Escalated to doctor (n)", "Resolved", "All" | Toggle (chip, single select) | Case — status (D-18); count on "Escalated to doctor" | Yes | default: **"Escalated to doctor"** (CLI-02); the doctor may switch filters to view other cases, but can act only on escalated cases |
 | 7 | "Sort: Newest ▾" | Dropdown | order by submission time | No | only "Newest" `[NEEDS CLARIFICATION: does the doctor need the Priority order of the Nurse screen? §9 Q1]` |
@@ -67,7 +67,7 @@ Rows marked "as `S-061` #n" are the same shared block as in the Nurse screen.
 | 1 | Status chip | click | filters the table (`spec-CLI.md` FR-002, FR-020) | stays |
 | 2 | "Sort" | select | re-sorts the table | stays |
 | 3 | "View report ›" | click | opens the quick profile with the case's Report block (FR-006) | `S-064D` |
-| 4 | "Notifications" | click | `[NEEDS CLARIFICATION: S-059 not drawn]` | `S-059` |
+| 4 | "Notifications" | click | opens the list of the cases escalated to this doctor, with the escalating nurse and the time; the ones he has not answered yet first (D-109, proposed) | `S-059` |
 | 5 | Sidebar "Patients" / "Settings" | click | the Patients list shows his own mothers and, while on duty, the mothers of an Away doctor (BR-010) | `S-062` / `[NEEDS CLARIFICATION: no ID yet]` |
 | 6 | Role label ▾ | click | `[NEEDS CLARIFICATION: account menu not drawn]` | — |
 
@@ -102,7 +102,7 @@ Rows marked "as `S-061` #n" are the same shared block as in the Nurse screen.
 | # | Question | Blocking? | Status |
 |---|---|---|---|
 | 1 | Does the doctor need the Priority order and the "Waiting" column of the Nurse screen (`S-061` D-104)? Proposal: no, the doctor's list is already limited to escalated cases. | No | Open |
-| 2 | The web "Notifications" (`S-059`), "Patients" (`S-062`) and "Settings" screens are not drawn; list content of `S-059` (`spec-CLI.md` Q20). | No | Open |
+| 2 | The web "Notifications" (`S-059`), "Patients" (`S-062`) and "Settings" screens are not drawn. | No | Open for the mockups. List content of `S-059`: **answered** (D-109, proposed; `spec-CLI.md` §10 Q20) and built in the v1.0.0 app |
 | 3 | Which doctor receives an escalated case. | No | Resolved (D-97, proposed; `spec-CLI.md` BR-011) |
 
 ---

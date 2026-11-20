@@ -14,8 +14,9 @@ def test_report_and_nurse_actions_notify_the_mother(client, db, user_id, staff_i
     base = f"/staff/{nurse}/cases/{case}"
     client.post(f"{base}/view")
     client.post(f"{base}/guidance", data={"custom_text": "Rest and measure again in 30 minutes."})
-    client.post(f"{base}/close")
+    client.post(f"{base}/escalate")     # 150/95 is above threshold: a nurse may not close it (BR-012, D-98 proposed)
     assert len(notifications(db, u09)) == n0 + 4
+    assert db.execute("SELECT status FROM CARE_CASE WHERE case_id = ?", (case,)).fetchone()[0] == "Escalated to doctor"
 
 
 def test_escalation_from_not_viewed_notifies_once(client, db, user_id, staff_id):

@@ -1,0 +1,31 @@
+{#- S-059 "Notifications" inside the clinical web (D-109): read from the cases, nothing stored (DM-32) -#}
+{% extends "staff_base.html" %}
+{% block content %}
+<div class="clinical-overview">
+<div class="dash-head">
+  <div><h1>{{ _("Notifications") }}</h1>
+    <p class="caption">{{ _("Cases waiting for a first look.") if me.role == "Nurse" else _("Cases a nurse escalated to you.") }}</p></div>
+  <div class="caption" style="text-align:right">{{ _("Updated {time}", time=updated.strftime("%d/%m/%Y · %H:%M")) }}<br><a class="link" href="">{{ _("Refresh") }} ↻</a></div>
+</div>
+<p class="caption">{{ _("{n} waiting", n=rows | length) }} · {{ _("Shown while the case is open · nothing is marked as read") }}</p>
+
+{% if rows %}
+<section class="card panel wide">
+  <div class="notice-list">
+    {% for r in rows %}
+    <div class="notice{% if r.urgent %} urgent{% endif %}">
+      <p class="notice-head">
+        {% if r.urgent %}<span class="tag above">{{ _("Needs attention") }}</span>{% endif %}
+        {% if r.escalation %}<span class="caption">{{ _("Escalated by Nurse {name} · {time}", name=r.escalation.by, time=r.escalation.at | show_time) if r.escalation.role == "Nurse" else _("Escalated {time}", time=r.escalation.at | show_time) }}</span>
+        {% else %}<span class="caption">{{ _("Sent {time}", time=r.created_at | show_time) }}</span>{% endif %}
+      </p>
+      {% include "_case_card.html" %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% else %}
+<section class="card panel wide"><div class="empty"><p>{{ _("No notifications.") }}</p></div></section>
+{% endif %}
+</div>
+{% endblock %}

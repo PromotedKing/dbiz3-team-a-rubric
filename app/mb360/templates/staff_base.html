@@ -7,13 +7,14 @@
   <title>{{ _("Mother & Baby 360") }} · {{ _("Clinical web") }}</title>
   <link rel="stylesheet" href="/static/staff.css">
 </head>
-<body class="staff{% if nav | default('') in ['dashboard', 'board', 'cases'] %} overview-page{% endif %}{% if nav | default('') == 'board' %} board-page{% elif nav | default('') == 'cases' %} cases-page{% endif %}">
+<body class="staff{% if nav | default('') in ['dashboard', 'board', 'cases', 'notifications'] %} overview-page{% endif %}{% if nav | default('') == 'board' %} board-page{% elif nav | default('') == 'cases' %} cases-page{% endif %}">
   <header class="staff-top">
     <span class="logo">{{ icon.mb(24) }}</span>
     <span class="tci-name">{{ _("Mother & Baby 360") }} · {{ _("Clinical web") }}</span>
     {% if me %}
     <span class="who">
-      {% if badge is not none %}<a href="/staff/{{ me.staff_id }}/cases?status=Escalated%20to%20doctor" title="{{ _('Notifications') }}">{{ icon.bell() }} <span class="badge">{{ badge }}</span></a>{% endif %}
+      {#- S-059 bell (D-109): nurse → cases waiting for a first look, doctor → cases escalated to him -#}
+      {% if badge is not none %}<a class="bell{% if nav | default('') == 'notifications' %} on{% endif %}" href="/staff/{{ me.staff_id }}/notifications" title="{{ _('Notifications') }}" aria-label="{{ _('Notifications') }}">{{ icon.bell() }} <span class="badge{% if not badge %} zero{% endif %}">{{ badge }}</span></a>{% endif %}
       <span class="avatar">{{ initials(me.full_name) }}</span>
       <span>{{ _("Nurse: {name}", name=me.full_name) if me.role == "Nurse" else _("Dr. {name}", name=me.full_name) }}<br>
         <a href="/staff" class="caption">{{ _("change") }}</a></span>

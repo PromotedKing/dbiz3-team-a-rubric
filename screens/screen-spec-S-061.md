@@ -8,7 +8,7 @@
 | Priority | Should |
 | Belongs to module | `spec-CLI.md` |
 | Mockup image | `img/S-061.png` (drawn for the Nurse role) — redrawn for v1.9.0-draft: no "Notifications" button, "Waiting" column, "Sort: Priority" |
-| Status | Draft (revised 17/11/2026 — split of the Nurse and Doctor screens, D-103 – D-106 proposed; earlier: 29/09/2026 screen-spec fix #4, #9) |
+| Status | Draft (revised 17/11/2026 — split of the Nurse and Doctor screens, D-103 – D-106 proposed; "Notifications" button and its list, D-109 proposed, see element #4; earlier: 29/09/2026 screen-spec fix #4, #9) |
 
 > **v1.0.0 app (07/11/2026, D-80 – D-85):** Also opened filtered from the new Overview (`?flag=`); see the Overview and Case board in spec-CLI §7.3 (D-85).
 
@@ -33,7 +33,7 @@ Web home page for nurses: one table, at full width, combining every case created
 | 1 | Logo | Image | static | No | — |
 | 2 | Sidebar: "Home (n)" (selected), "Patients", "Settings" | Navigation | navigation; n = number of cases in status "Not viewed" (calculated, not stored) | Yes | — |
 | 3 | Title "Cases to handle" | Header | static | No | — |
-| 4 | *(Removed for the Nurse role — D-105, proposed)* "Notifications" button. Not drawn in the v1.9.0 mockup: the nurse is not always at the screen, so the signal is inside the list — the Priority order, the "Waiting" column and the count on "Home (n)". The Doctor keeps the button (`S-061D`) | — | — | — | — |
+| 4 | "Notifications (n)" button | Button + badge | Number of cases waiting for a first look (status "Not viewed") — the same cases element #6 counts and the same the sidebar's "Home (n)" shows, which is what the mockup's "Notifications (2)" shows. Derived from Case, nothing stored, no read / unread state (DM-32; no push / SMS — ALR-03). Opens the notification list, built in the v1.0.0 app as `/staff/{id}/notifications` although S-059 has no mockup; it orders the cases above threshold (Threshold Rule) or with an alarm symptom (D-73) first, then the longest wait (**D-109, proposed — Chi to confirm**; `spec-CLI.md` §10 Q5, Q20). The Doctor version is on `S-061D`. **Disagreement to settle (Ánh / Chi).** D-105 (proposed) removes this button for the Nurse and puts the signal inside the list (Priority order, "Waiting" column, "Home (n)"); D-109 (proposed) keeps it as **one more way in to the same cases**, not a replacement — both signals are built in the v1.0.0 app and do not exclude each other. The app currently shows the button; remove it here if D-105 wins. | No | — |
 | 5 | Role label "Nurse: Trần Thị B ▾" | Dropdown | Staff — role + full name (`spec-CLI.md` §6, D-28) | Yes | matches the signed-in user (BR-005) |
 | 6 | Filters "Not viewed (n)", "Viewed", "Escalated to doctor", "Resolved", "All" | Toggle (chip, single select) | Case — status (D-18); count on "Not viewed" | Yes | default: **"Not viewed"** (D-102, proposed) — the first job of the nurse is the cases nobody has seen |
 | 7 | "Sort: Priority ▾" | Dropdown | options **Priority** (default) and Newest. Priority: cases "Above threshold" and "Not viewed" first; then every other case by waiting time, longest first (SR-006) | No | one of the 2 values (D-104, proposed) |
@@ -73,7 +73,7 @@ Note: the "[Role label] …" and "[Escalate to doctor] …" boxes in the mockup 
 | 3 | "View report ›" | click | opens the quick profile with the case's Report block (FR-006) | `S-064` |
 | 4 | *(Removed — Quick notes, screen-spec fix #9)* | — | — | — |
 | 5 | *(Removed — Quick notes, screen-spec fix #9)* | — | — | — |
-| 6 | *(Removed for the Nurse role — D-105)* | — | — | — |
+| 6 | "Notifications" | click | opens the notification list of the signed-in nurse: the cases "Not viewed", above threshold or with an alarm symptom first (D-109, proposed; removed for the Nurse by D-105 — see element #4) | `S-059` |
 | 7 | Sidebar "Patients" / "Settings" | click | — | `S-062` / `[NEEDS CLARIFICATION: no ID yet]` |
 | 8 | Role label ▾ | click | `[NEEDS CLARIFICATION: account menu not drawn]` | — |
 
@@ -109,8 +109,8 @@ Note: the "[Role label] …" and "[Escalate to doctor] …" boxes in the mockup 
 | 1 | Default filter when the screen opens. | No | Decided 17/11/2026 (D-102, proposed): nurse "Not viewed", doctor "Escalated to doctor" (`spec-CLI.md` Q5) |
 | 2 | Does the nurse see all cases or only assigned cases; which escalated cases does a given doctor see. | No | Resolved (D-96, proposed; `spec-CLI.md` BR-010) — a nurse sees all cases; a doctor sees his own mothers' cases, the cases routed to him, and — while on duty — the mothers of an Away doctor (`S-061D`) |
 | 3 | Are quick notes per person or shared by the shift. | No | Resolved — not applicable: Quick notes removed (screen-spec fix #9, CLI-03) |
-| 4 | The web "Notifications" (S-059), "Patients" (S-062) and "Settings" screens are not drawn. | No | Open |
-| 5 | What does the "Notifications (n)" button show for a nurse? | No | Resolved (D-105, proposed) — the button is hidden for the Nurse role; the signal is the Priority order, the "Waiting" column and the count on "Home (n)" |
+| 4 | The web "Notifications" (S-059), "Patients" (S-062) and "Settings" screens are not drawn. | No | Open — S-059 is **built** in the v1.0.0 app for both roles (D-109, content in `spec-CLI.md` §10 Q20); a mockup is still missing. S-062 and Settings unchanged |
+| 5 | What does the "Notifications (n)" button show for a nurse? | No | **Two proposals, to settle.** D-105 (Ánh): hide the button for the Nurse; the signal is the Priority order, the "Waiting" column and the count on "Home (n)". D-109 (Trung): show it, counting the cases "Not viewed" — the same cases, one more way in, and it is what the mockup drawn for the Nurse shows. Both are built; the app shows the button. Owner: UX/UI (Chi) with Ánh |
 
 ---
 

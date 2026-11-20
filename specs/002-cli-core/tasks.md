@@ -19,7 +19,7 @@
 ### Tests first
 
 - [X] T002 [P] Seed test in `tests/seed/test_seed_cli.py`: 7 STAFF rows (4 nurses, 3 doctors); 10 CARE_CASE rows — 4 Not viewed, 1 Viewed, 1 Escalated to doctor, 4 Resolved (`data/seed/seed-report.md`); case C7 history = Not viewed (System), Viewed and Escalated to doctor at the same minute by the same nurse, Resolved by a doctor (seed scenario "ALR BR-016 / D-43")
-- [X] T003 [P] `tests/unit/test_cli_assignment.py` — D-68, R3: responsible doctor of U09 = Phạm Quốc Dũng; of U05 = Phạm Quốc Dũng (the earlier assignment ended 31/08/2026); U06 still has Phạm Quốc Dũng on 27/09/2026 (inclusive `valid_to`, §10 Q15) and none on 28/09/2026; U07 has none
+- [X] T003 [P] `tests/unit/test_cli_assignment.py` — D-68, R3: responsible doctor of U09 = Phạm Quốc Dũng; of U05 = Phạm Quốc Dũng (the earlier assignment ended 31/08/2026); U06 still has Phạm Quốc Dũng on 27/09/2026 (inclusive `valid_to`, §10 Q26 — numbered Q15 when this task was written) and none on 28/09/2026; U07 has none
 
 ### Code
 
