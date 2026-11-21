@@ -11,12 +11,13 @@ def basic(password: str) -> str:
     return "Basic " + base64.b64encode(f"nhom:{password}".encode()).decode()
 
 
-@pytest.mark.parametrize("path", ["/staff", "/staff/abc/cases", "/showcase/reset", "/tci/accounts"])
+@pytest.mark.parametrize("path", ["/showcase/reset", "/tci/accounts"])
 def test_protected_pages(path):
     assert gate.is_protected(path)
 
 
-@pytest.mark.parametrize("path", ["/", "/tci", "/tci/open", "/m/abc/home", "/static/app.js", "/staffing"])
+# /staff has its own sign-in with the same password since D-107 (T-02): no second Basic prompt
+@pytest.mark.parametrize("path", ["/", "/tci", "/tci/open", "/m/abc/home", "/static/app.js", "/staffing", "/staff", "/staff/abc/cases"])
 def test_the_mothers_pages_stay_open(path):
     assert not gate.is_protected(path)
 

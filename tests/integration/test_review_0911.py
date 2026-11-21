@@ -60,7 +60,7 @@ def test_side_panel_names_both_keys(monkeypatch):
 
 def test_no_internal_codes_on_staff_and_test_pages():
     """C3: decision and question numbers stay in the documents, not on the pages."""
-    for name in ("case.html", "staff_select.html", "tci_accounts.html", "tci_booking.html"):
+    for name in ("case.html", "staff_login.html", "tci_accounts.html", "tci_booking.html"):
         visible = re.sub(r"\{#.*?#\}", "", (TEMPLATES / name).read_text(encoding="utf-8"), flags=re.S)
         assert not re.search(r"\bD-\d\d\b|§10 Q\d|spec-[A-Z]{3}", visible), name
 

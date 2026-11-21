@@ -17,7 +17,7 @@
       {% if badge is not none and me.role == "Doctor" %}<a class="bell{% if nav | default('') == 'notifications' %} on{% endif %}" href="/staff/{{ me.staff_id }}/notifications" title="{{ _('Notifications') }}" aria-label="{{ _('Notifications') }}">{{ icon.bell() }} <span class="badge{% if not badge %} zero{% endif %}">{{ badge }}</span></a>{% endif %}
       <span class="avatar">{{ initials(me.full_name) }}</span>
       <span>{{ _("Nurse: {name}", name=me.full_name) if me.role == "Nurse" else _("Dr. {name}", name=me.full_name) }}<br>
-        <a href="/staff" class="caption">{{ _("change") }}</a></span>
+        <form class="inline" method="post" action="/staff/logout" data-sign-out><button class="link caption" style="background:none;border:0;padding:0;cursor:pointer">{{ _("Sign out") }}</button></form></span>
     </span>
     {% endif %}
   </header>

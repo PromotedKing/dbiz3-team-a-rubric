@@ -21,7 +21,7 @@ Render Web Service from `render.yaml` (why: `adr-hosting.md`; errors met: `local
 
 1. On render.com, sign in with GitHub and allow access to this repository.
 2. **New → Blueprint**, choose the repository; Render reads `render.yaml`. Apply it.
-3. Read the generated `MB360_STAFF_PASSWORD` on the service's Environment page. `/staff`, the reset button and `/tci/accounts` ask for it (any user name). Share it only inside the team.
+3. Read the generated `MB360_STAFF_PASSWORD` on the service's Environment page. The reset button and `/tci/accounts` ask for it (any user name); `/staff` is a sign-in form: the staff username (STAFF `login_account`, e.g. `nurse.tranthib`, `dr.nguyenvana`) and this password (D-107, 21/11/2026). Share it only inside the team.
 4. Chatbot with Groq, free (D-84): on https://console.groq.com/keys create a key, then on Render's **Environment** page add `GROQ_API_KEY` (never in the repository). `GROQ_MODEL` is set by `render.yaml`. Groq is used first when its key is set.
 5. Chatbot with Gemini instead (D-83): on https://aistudio.google.com/apikey click **Create API key**, then on Render's **Environment** page add `GEMINI_API_KEY` with that key (never in the repository). `GEMINI_MODEL` is set by `render.yaml`. The panel beside the phone shows which chatbot answers. To check a key on a team machine: put it in a local `.env` (git-ignored) and run `uv run python app/mb360/bot/llm.py`.
 6. Open the `https://….onrender.com` link on a phone over mobile data and run one flow. Add what fails to `local-vs-internet.md`.

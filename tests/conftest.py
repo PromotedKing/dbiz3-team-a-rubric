@@ -27,11 +27,30 @@ def db():
 
 @pytest.fixture
 def client(db):
+    """D-107: /staff/{id}/... needs a staff session. Tests written before the sign-in reach those pages as that staff
+    member, so the client signs in as the {id} of the path. Set `client.auto_sign_in = False` to test the sign-in
+    itself (tests/integration/test_cli_sign_in.py)."""
+    import re
+
     from fastapi.testclient import TestClient
 
+    from mb360.cli import signin
     from mb360.main import create_app
 
-    return TestClient(create_app(db), follow_redirects=False)
+    staff_path = re.compile(r"^/staff/([0-9a-f-]{36})(/|$)")
+
+    class StaffClient(TestClient):
+        auto_sign_in = True
+
+        def request(self, method, url, *args, **kwargs):
+            m = staff_path.match(str(url).split("?", 1)[0].replace(str(self.base_url), ""))
+            if self.auto_sign_in and m:
+                row = db.execute("SELECT role FROM STAFF WHERE staff_id = ?", (m.group(1),)).fetchone()
+                if row is not None:
+                    self.cookies.set(signin.COOKIE, signin.token(m.group(1), row["role"]))
+            return super().request(method, url, *args, **kwargs)
+
+    return StaffClient(create_app(db), follow_redirects=False)
 
 
 @pytest.fixture

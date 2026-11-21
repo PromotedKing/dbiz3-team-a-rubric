@@ -43,8 +43,10 @@ def test_empty_state_for_a_doctor_with_no_escalated_case(client, staff_id):
     assert ui.t("No notifications.") in page and ui.t("{n} waiting", n=0) in page
 
 
-def test_unknown_staff_member_gets_404(client):
-    assert client.get("/staff/00000000-0000-0000-0000-000000000000/notifications").status_code == 404
+def test_unknown_staff_member_is_sent_to_sign_in(client):
+    """D-107: an id with no session behind it never reaches a page (was 404 before the sign-in)."""
+    r = client.get("/staff/00000000-0000-0000-0000-000000000000/notifications")
+    assert r.status_code == 303 and r.headers["location"] == "/staff"
 
 
 def test_every_label_of_the_page_is_in_the_reference_table(client, db, staff_id, boundary_case):

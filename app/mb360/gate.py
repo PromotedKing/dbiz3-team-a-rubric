@@ -4,7 +4,7 @@ team machine and closed on the hosting platform, so a forgotten setting never ex
 import base64
 import secrets
 
-PROTECTED = ("/staff", "/showcase", "/tci/accounts")
+PROTECTED = ("/showcase", "/tci/accounts")     # /staff has its own sign-in with the same password since D-107 (21/11/2026)
 
 
 def is_protected(path: str) -> bool:
