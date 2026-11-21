@@ -1,9 +1,14 @@
 {% extends "staff_base.html" %}
 {% macro label_tag(l) %}<span class="tag {{ 'above' if l == 'Above threshold' else 'normal' if l == 'Normal' else '' }}">{{ l | t }}</span>{% endmacro %}
 {% block content %}
+{#- S-064 (Nurse) and S-064D (Doctor) are role views of this one page (D-103, D-107) -#}
+{% set nurse = me.role == "Nurse" %}
 <p><a class="link" href="/staff/{{ me.staff_id }}/cases">← {{ _("Cases to handle") }}</a></p>
 {% if updated %}<p class="card" role="status" data-updated style="border-left:4px solid #C4520A;margin-bottom:12px">{{ _("This case was already updated, maybe on another screen. Its current status is shown below.") }}</p>{% endif %}
 <h1 style="margin-bottom:12px">{{ _("Mother quick profile") }}</h1>
+{% if covering %}{#- S-064D 4B: the doctor on duty received this case because the responsible doctor is Away (BR-010, BR-011) -#}
+<p class="card" role="note" data-covering style="border-left:4px solid #C4520A;margin-bottom:12px">{{ _("This case was routed to you as the doctor on duty — the responsible doctor, Dr. {name}, is Away.", name=routing.responsible_name) }}</p>
+{% endif %}
 <div class="grid2">
   <div class="card">
     <div class="row"><span class="avatar">{{ initials(mother.full_name) }}</span>
@@ -12,6 +17,8 @@
     <ul class="list">
       {% if week is not none %}<li><span class="k">{{ _("Week {n}", n=week) }}</span><span class="v">{{ _("Due date") }} {{ profile.edd | show_date }}</span></li>{% endif %}
       <li><span class="k">{{ _("Last visit") }}</span><span class="v">{{ latest_visit.visit_date | show_date if latest_visit else "—" }}</span></li>
+      {#- S-064 / S-064D 4A (FR-027): the mother's responsible doctor and whether he is here -#}
+      <li data-responsible><span class="k">{{ _("Responsible doctor") }}</span><span class="v">{% if routing.responsible_name %}{{ _("Dr. {name}", name=routing.responsible_name) }}{% if routing.availability %} · {{ routing.availability | t }}{% endif %}{% else %}{{ _("No responsible doctor") }}{% endif %}</span></li>
     </ul>
   </div>
   <div class="card">
@@ -73,7 +80,7 @@
 
   {#- FR-026 / FR-027 (D-96, D-97 proposed): the nurse sees who the case would go to before she confirms;
       every reader sees the mother's responsible doctor and whether he is present. The nurse never chooses. -#}
-  {% if routing %}
+  {% if "escalate" in can %}
   <p class="caption routing{% if routing.outcome in ('none', 'unknown') %} warn{% endif %}">
     {%- if routing.outcome == "responsible" %}{{ _("Will be sent to: Dr. {name}", name=routing.responsible_name) }}
     {%- elif routing.outcome == "on_duty" %}{{ _("Will be sent to the doctor on duty · Responsible doctor: Dr. {name} (Away)", name=routing.responsible_name) }}
@@ -84,10 +91,12 @@
   <div class="actions" style="justify-content:flex-start">
     {% if "view" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/view"><button class="btn sm">{{ _("Mark as viewed") }}</button></form>{% endif %}
     {% if "escalate" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/escalate"><button class="btn sm outline">{{ _("Escalate to doctor") }}</button></form>{% endif %}
-    {% if "close" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/close"><button class="btn sm">{{ _("Close case") }}</button></form>{% endif %}
+    {% if "close" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/close"><button class="btn sm">{{ _("Close case") }}</button></form>
+    {#- S-064 #17 (BR-012, D-98): must-escalate → "Close case" disabled with its reason -#}
+    {% elif nurse and must_escalate and case.status in ("Not viewed", "Viewed") %}<button class="btn sm" disabled data-close-disabled title="{{ _('This case must be escalated to a doctor') }}">{{ _("Close case") }}</button>{% endif %}
   </div>
-  {#- BR-012 (D-98, proposed): the nurse sees why "Close case" is not there, so she escalates instead -#}
-  {% if must_escalate and me.role == "Nurse" and case.status != "Escalated to doctor" and case.status != "Resolved" %}
+  {#- BR-012 (D-98, proposed): the nurse sees why "Close case" is disabled, so she escalates instead -#}
+  {% if must_escalate and nurse and case.status != "Escalated to doctor" and case.status != "Resolved" %}
   <p class="caption">{{ _("Only a doctor can close this case: the value is above threshold. Escalate it to the doctor.") if must_escalate == "above"
       else _("Only a doctor can close this case: the chatbot marked this question as a danger sign. Escalate it to the doctor.") }}</p>
   {% endif %}
@@ -103,6 +112,7 @@
     <select name="template_id"><option value="">{{ _("Choose a guidance template ▾") }}</option>
       {% for tpl in templates %}<option value="{{ tpl.template_id }}">{{ tpl.title }}</option>{% endfor %}</select>
     <textarea name="custom_text" maxlength="1000" rows="3" style="margin-top:8px" placeholder="{{ _('Or write / edit the text…') }}"></textarea>
+    {% if nurse %}<p class="caption" data-medicine-hint>{{ _("Do not advise on medicines, vitamins or herbal products that no doctor prescribed. Use the safe template and escalate to the doctor.") }}</p>{% endif %}{#- S-064 #18A, BR-013 -#}
     <div class="actions" style="justify-content:flex-start"><button class="btn sm" style="flex:none">{{ _("Send guidance") }}</button></div>
     <p class="caption">{{ _("The mother sees the guidance on S-026. Sending guidance does not change the status.") }}</p>
     <p class="caption">{{ _("In the mother's app, lines starting with - become her to-do list, and a line “Hẹn khám: dd/mm/yyyy · HH:mm” shows as the follow-up visit.") }}</p>

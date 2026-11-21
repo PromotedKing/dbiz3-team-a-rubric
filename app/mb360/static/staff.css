@@ -451,19 +451,21 @@ form.inline { display: inline; }
 .cases-page .chips{flex-wrap:wrap;align-items:center;gap:8px;padding:0 0 16px;margin:0!important;overflow:visible}
 .cases-page .chip{height:36px;border-radius:8px;font-size:13px;border-color:#DCE3DF}
 .cases-page .chip.on{color:#24704B;background:#E6F1EA;border-color:#A9C7B5}
-.cases-page .chips>.caption{margin-left:auto}
+.cases-page .chips>.caption,.cases-page .chips>form[data-sort]{margin-left:auto}
+.cases-page .chips>form[data-sort] select{height:36px;margin:0;padding:0 32px 0 12px;font-size:13px;border-radius:8px;border-color:#DCE3DF;width:auto}
 .cases-page .table-wrap{padding:0!important;border-radius:12px;overflow-x:auto}
 .cases-page table{table-layout:fixed;min-width:1180px;width:100%;font-size:13px;line-height:20px}
 .cases-page th{padding:14px 16px;background:#F5F8F6;color:#58665E;font-size:12px;line-height:18px}
 .cases-page td{padding:16px;vertical-align:top;border-color:#E7ECE9;overflow-wrap:anywhere}
-.cases-page th:nth-child(1){width:12%}
-.cases-page th:nth-child(2){width:7%}
-.cases-page th:nth-child(3){width:10%}
-.cases-page th:nth-child(4){width:24%}
-.cases-page th:nth-child(5){width:14%}
-.cases-page th:nth-child(6){width:12%}
-.cases-page th:nth-child(7){width:13%}
-.cases-page th:nth-child(8){width:8%}
+.cases-page th:nth-child(1){width:11%}
+.cases-page th:nth-child(2){width:6%}
+.cases-page th:nth-child(3){width:9%}
+.cases-page th:nth-child(4){width:20%}
+.cases-page th:nth-child(5){width:12%}
+.cases-page th:nth-child(6){width:11%}
+.cases-page th:nth-child(7){width:11%}
+.cases-page th:nth-child(8){width:10%}
+.cases-page th:nth-child(9){width:10%}
 .cases-page td:nth-child(2){white-space:nowrap}
 .cases-page td:last-child{padding-left:8px;padding-right:8px}
 .cases-page td:last-child .link{font-size:12px;white-space:nowrap;color:#24704B}
@@ -471,7 +473,7 @@ form.inline { display: inline; }
 .cases-page td .tag.status{margin-top:0;background:#EFF3F0;color:#52675A}
 .cases-page td .tag.status.done{background:#E6F1EA;color:#24704B}
 .cases-page tbody tr:hover{background:#FAFCFA}
-@media(max-width:1100px){.board-page .board{grid-template-columns:repeat(4,minmax(260px,1fr));overflow-x:auto;padding-bottom:16px}.cases-page .chips>.caption{width:100%;margin:4px 0 0}}
+@media(max-width:1100px){.board-page .board{grid-template-columns:repeat(4,minmax(260px,1fr));overflow-x:auto;padding-bottom:16px}.cases-page .chips>.caption,.cases-page .chips>form[data-sort]{width:100%;margin:4px 0 0}}
 
 /* S-059 notifications inside the clinical web (D-109): one line per case, nothing stored */
 .staff-top .bell { position: relative; display: inline-flex; align-items: center; gap: 4px; color: inherit; }

@@ -13,8 +13,8 @@
     <span class="tci-name">{{ _("Mother & Baby 360") }} · {{ _("Clinical web") }}</span>
     {% if me %}
     <span class="who">
-      {#- S-059 bell (D-109): nurse → cases waiting for a first look, doctor → cases escalated to him -#}
-      {% if badge is not none %}<a class="bell{% if nav | default('') == 'notifications' %} on{% endif %}" href="/staff/{{ me.staff_id }}/notifications" title="{{ _('Notifications') }}" aria-label="{{ _('Notifications') }}">{{ icon.bell() }} <span class="badge{% if not badge %} zero{% endif %}">{{ badge }}</span></a>{% endif %}
+      {#- S-059 bell: the doctor keeps it — cases escalated to him (S-061D #4, D-109); the nurse has none (D-105) -#}
+      {% if badge is not none and me.role == "Doctor" %}<a class="bell{% if nav | default('') == 'notifications' %} on{% endif %}" href="/staff/{{ me.staff_id }}/notifications" title="{{ _('Notifications') }}" aria-label="{{ _('Notifications') }}">{{ icon.bell() }} <span class="badge{% if not badge %} zero{% endif %}">{{ badge }}</span></a>{% endif %}
       <span class="avatar">{{ initials(me.full_name) }}</span>
       <span>{{ _("Nurse: {name}", name=me.full_name) if me.role == "Nurse" else _("Dr. {name}", name=me.full_name) }}<br>
         <a href="/staff" class="caption">{{ _("change") }}</a></span>
@@ -25,7 +25,7 @@
   <nav class="staff-nav" aria-label="{{ _('Clinical web') }}">
     <a href="/staff/{{ me.staff_id }}/dashboard"{% if nav == "dashboard" %} class="on" aria-current="page"{% endif %}>{{ _("Overview") }}</a>
     <a href="/staff/{{ me.staff_id }}/board"{% if nav == "board" %} class="on" aria-current="page"{% endif %}>{{ _("Case board") }}</a>
-    <a href="/staff/{{ me.staff_id }}/cases"{% if nav == "cases" or nav is not defined %} class="on" aria-current="page"{% endif %}>{{ _("Case list") }}</a>
+    <a href="/staff/{{ me.staff_id }}/cases"{% if nav == "cases" or nav is not defined %} class="on" aria-current="page"{% endif %}>{{ _("Case list") }}{% if me.role == "Nurse" and badge is not none %} <span data-home-count>({{ badge }})</span>{% endif %}</a>
   </nav>
   {% endif %}
   <main>{% block content %}{% endblock %}</main>

@@ -41,12 +41,12 @@ def test_view_report_opens_the_case(client, db, staff_id, boundary_case):
     assert f'href="/staff/{nurse}/cases/{case}"' in client.get(f"/staff/{nurse}/cases").text
 
 
-def test_nurse_default_view_is_not_viewed_newest_first(client, db, staff_id):
-    """D-102: "Not viewed" combined with "Sort: Newest" — the most recent waiting case comes first."""
+def test_nurse_default_view_is_not_viewed_by_priority(client, db, staff_id):
+    """D-102 + D-104: "Not viewed" combined with "Sort: Priority" — above threshold first, then the longest wait."""
     from mb360.cli import queue
-    rows = queue.list_cases(db, "Not viewed")
-    assert [r["submitted_at"] for r in rows] == sorted((r["submitted_at"] for r in rows), reverse=True)
-    page = client.get(f"/staff/{staff_id('Trần Thị B')}/cases").text
+    nurse = staff_id("Trần Thị B")
+    rows = queue.list_cases(db, "Not viewed", viewer=nurse, order=queue.PRIORITY)
+    page = client.get(f"/staff/{nurse}/cases").text
     positions = [page.index(f'/cases/{r["case_id"]}') for r in rows]
     assert positions == sorted(positions) and len(rows) >= 2
-    assert vi("Sort: Newest") in page
+    assert vi("Sort: Priority") in page
