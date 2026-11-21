@@ -1,5 +1,14 @@
 # Build Log
 
+## 21/11/2026: split the nurse and doctor views of the clinical web (Ánh, with Claude Code)
+
+- **Scope**: builds the screens merged in PR #47 — `S-061` / `S-061D` and `S-064` / `S-064D` as role views of the same two pages (D-103, D-107): one template each, the role read from `STAFF.role`, routes `/staff/{id}/...` unchanged.
+- **Nurse (S-061, S-064)**: case list sorted "Priority" by default (D-104, SR-006 — above threshold and "Not viewed" first, then the longest wait), with "Newest" in the sort dropdown; new "Waiting" column (calculated, "—" once resolved, no limit); the "Not viewed" count next to the case-list tab (S-061 #2 "Home (n)"); **no Notifications bell** (D-105) — `/staff/{id}/notifications` sends her to her case list. Case page: "Close case" disabled with the reason "This case must be escalated to a doctor" on a must-escalate case (S-064 #17, BR-012); medicine hint under the guidance (#18A, BR-013); responsible doctor line (#4A).
+- **Doctor (S-061D, S-064D)**: keeps the bell (D-105); count on the "Escalated to doctor" chip; "Responsible doctor" column with availability and the "Covering" tag (#14, BR-010); "Sort: Newest" only (S-061D §9 Q1 still open). Case page: banner 4B when the case was routed to him as the doctor on duty; no "Will be sent to" line (a nurse-only line).
+- **Not built**: staff sign-in with a session (D-107 sign-in part) — still the demo staff selector; guidance-template editor (D-106: none in the MVP). No schema, seed or data-model change.
+- **Chain**: `screens/screen-spec-S-061.md`, `S-061D.md`, `S-064.md`, `S-064D.md` → `app/mb360/cli/queue.py`, `cli/routes.py`, `templates/cases.html`, `case.html`, `staff_base.html`, `static/staff.css`; new labels in `docs/ui-label-reference.md` (owner Chi). Downstream to update by their owners: `S-061` #4 and §9 Q5, `D-109` in `docs/decisions.md` (nurse bell removed).
+- **Tests**: new `tests/integration/test_cli_role_views.py` (16 tests); three tests that encoded the old behaviour updated, not deleted (nurse bell, nurse notification page, "Newest" default). Full suite 847 passed, 3 existing xfails. Checked in a browser at 1400 px (nurse list, doctor list, nurse case page). `start_feature.py --check` prints DRIFT for `spec-CLI.md` vs `specs/002-cli-core/spec.md` — pre-existing on main (PR #47), not refreshed here.
+
 ## 19/11/2026: proposed Home empty appointment card (Hải Anh)
 
 - **Scope**: proposed D-108 replaces the small empty entry row with the existing card surface, calendar icon, latest visit context, full-width outline TCI handoff and S-106 link. Hải Anh selected preserving the populated card height and allowing the empty card to be taller. S-106 uses the shared booking link once at the top and consistent empty wording.

@@ -58,6 +58,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
     def staff_notifications(request: Request, staff_id: str):
         """S-059 inside the clinical web (D-109, ALR-03): read from the cases, nothing stored (DM-32)."""
         me = staff(staff_id)
+        if me["role"] == "Nurse":     # D-105: no Notifications for the nurse — her signal is the Priority list (D-104)
+            return RedirectResponse(f"/staff/{staff_id}/cases", status_code=303)
         return page(request, "staff_notices.html", me=me, rows=notices.lines(conn, staff_id, me["role"], clock.now()),
                     badge=notices.count(conn, staff_id, me["role"]), nav="notifications", updated=clock.now())
 
@@ -70,21 +72,26 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
                     sources=dashboard.SOURCES, badge=notices.count(conn, staff_id, me["role"]), nav="board")
 
     @app.get("/staff/{staff_id}/cases", response_class=HTMLResponse)
-    def cases(request: Request, staff_id: str, status: str = "", flag: str = ""):
+    def cases(request: Request, staff_id: str, status: str = "", flag: str = "", sort: str = ""):
+        """S-061 (nurse) and S-061D (doctor): one page, the role view comes from STAFF.role (D-103, D-107)."""
         me = staff(staff_id)
+        # D-104: the nurse sorts by "Priority" (default) or "Newest"; the doctor only "Newest" (S-061D #7, §9 Q1 open)
+        order = (sort if sort in (queue.PRIORITY, queue.NEWEST) else queue.PRIORITY) if me["role"] == "Nurse" else queue.NEWEST
         # Default filter: doctor "Escalated to doctor" (CLI-02); nurse "Not viewed", the cases waiting for her (D-102, spec-CLI §10 Q5)
         active = status if status in FILTERS else ("Escalated to doctor" if me["role"] == "Doctor" else "Not viewed")
         flag = flag if flag in dashboard.FLAGS else ""
         if flag:                               # opened from "Needs attention" on the dashboard: every open case of that group
             active = "All"
             ids = dashboard.flagged_ids(dashboard.cases(conn, clock.now(), viewer=staff_id), flag)
-        rows = queue.list_cases(conn, None if active == "All" else active, viewer=staff_id)
+        rows = queue.list_cases(conn, None if active == "All" else active, viewer=staff_id, order=order)
         if flag:
             rows = [r for r in rows if r["case_id"] in ids]
-        not_viewed = len(queue.list_cases(conn, "Not viewed", viewer=staff_id))
+        # the count sits on the role's own chip: nurse "Not viewed (n)" (S-061 #6), doctor "Escalated to doctor (n)" (S-061D #6)
+        counted = "Escalated to doctor" if me["role"] == "Doctor" else "Not viewed"
         badge = notices.count(conn, staff_id, me["role"])
-        return page(request, "cases.html", me=me, rows=rows, active=active, filters=FILTERS, not_viewed=not_viewed, badge=badge,
-                    flag=flag, flag_label=dashboard.FLAGS[flag][0] if flag else None, nav="cases")
+        return page(request, "cases.html", me=me, rows=rows, active=active, filters=FILTERS, counted=counted,
+                    count=len(queue.list_cases(conn, counted, viewer=staff_id)), badge=badge, order=order,
+                    sorts=(queue.PRIORITY, queue.NEWEST), flag=flag, flag_label=dashboard.FLAGS[flag][0] if flag else None, nav="cases")
 
     @app.get("/staff/{staff_id}/cases/{case_id}", response_class=HTMLResponse)
     def case_page(request: Request, staff_id: str, case_id: str, error: str = "", edit: str = "", updated: int = 0):
@@ -103,6 +110,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
                     error=error, editing=editing, group2=instructions.GROUP2, updated=updated,
                     must_escalate=actions.must_escalate(conn, case_id),    # BR-012
                     routing=actions.route_to(conn, case_row["user_id"], clock.now().date()),   # FR-026, FR-027
+                    covering=me["role"] == "Doctor" and case_row["assigned_doctor_id"] == staff_id   # S-064D 4B
+                    and actions.responsible_doctor(conn, case_row["user_id"], clock.now().date()) not in (None, staff_id),
                     badge=notices.count(conn, staff_id, me["role"]), **data)
 
     def act(staff_id: str, case_id: str, fn, *args, **kw):

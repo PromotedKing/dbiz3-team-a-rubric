@@ -897,6 +897,17 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Case routing (D-96, D-97) | Will be sent to: Dr. {name} · Doctor availability unknown | Sẽ gửi tới: BS. {name} · Chưa rõ bác sĩ có mặt hay không |
 | Case routing (D-96, D-97) | No doctor available: the case is visible to all doctors | Không có bác sĩ nào nhận: ca này hiện với tất cả bác sĩ |
 | Case routing (D-96, D-97) | This mother is not in your care (spec-CLI BR-010) | Mẹ này không thuộc danh sách bạn phụ trách |
+| Nurse / doctor screens (D-103 – D-105) | Sort | Sắp xếp |
+| Nurse / doctor screens (D-103 – D-105) | Sort: Priority | Sắp xếp: Ưu tiên |
+| Nurse / doctor screens (D-103 – D-105) | Waiting | Chờ bao lâu |
+| Nurse / doctor screens (D-103 – D-105) | Responsible doctor | Bác sĩ phụ trách |
+| Nurse / doctor screens (D-103 – D-105) | No responsible doctor | Chưa có bác sĩ phụ trách |
+| Nurse / doctor screens (D-103 – D-105) | Available | Có mặt |
+| Nurse / doctor screens (D-103 – D-105) | Away | Vắng |
+| Nurse / doctor screens (D-103 – D-105) | Covering | Trực thay |
+| Nurse / doctor screens (D-103 – D-105) | This case was routed to you as the doctor on duty — the responsible doctor, Dr. {name}, is Away. | Ca này được chuyển cho bạn vì bạn là bác sĩ đang trực — bác sĩ phụ trách, BS. {name}, đang vắng. |
+| Nurse / doctor screens (D-103 – D-105) | This case must be escalated to a doctor | Ca này phải chuyển cho bác sĩ |
+| Nurse / doctor screens (D-103 – D-105) | Do not advise on medicines, vitamins or herbal products that no doctor prescribed. Use the safe template and escalate to the doctor. | Không tư vấn về thuốc, vitamin hay thảo dược mà bác sĩ chưa kê. Hãy dùng mẫu an toàn và chuyển ca cho bác sĩ. |
 
 
 ## Proposed S-106 labels
