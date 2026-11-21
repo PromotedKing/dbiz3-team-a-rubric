@@ -47,8 +47,10 @@ def test_waiting_column_shows_hours_and_minutes_and_a_dash_when_resolved(client,
     nurse = staff_id("Trần Thị B")
     page = client.get(f"/staff/{nurse}/cases", params={"status": "All"}).text
     assert f"<th>{ui.t('Waiting')}</th>" in page
-    # seed: symptom case of Lan submitted 27/09/2026 09:05, the clock is 10:00 → 55 minutes
-    assert ui.t("{h} h {m} min", h=0, m=55) in page
+    # seed: symptom case of Lan submitted 27/09/2026 09:05, the clock is 10:00 → 55 minutes, no "0 h"
+    assert ui.t("{m} min", m=55) in page and ui.t("{h} h {m} min", h=0, m=55) not in page
+    # Mai's case submitted 26/09/2026 18:05 → hours past a day stay in hours, as the S-061 mockup ("26 h 47 min")
+    assert ui.t("{h} h {m} min", h=15, m=55) in page
     assert '<td data-waiting="">—</td>' in page                    # a resolved case has no waiting time
 
 

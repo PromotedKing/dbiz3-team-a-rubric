@@ -900,6 +900,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Nurse / doctor screens (D-103 – D-105) | Sort | Sắp xếp |
 | Nurse / doctor screens (D-103 – D-105) | Sort: Priority | Sắp xếp: Ưu tiên |
 | Nurse / doctor screens (D-103 – D-105) | Waiting | Chờ bao lâu |
+| Nurse / doctor screens (D-103 – D-105) | {m} min | {m} phút |
 | Nurse / doctor screens (D-103 – D-105) | Responsible doctor | Bác sĩ phụ trách |
 | Nurse / doctor screens (D-103 – D-105) | No responsible doctor | Chưa có bác sĩ phụ trách |
 | Nurse / doctor screens (D-103 – D-105) | Available | Có mặt |

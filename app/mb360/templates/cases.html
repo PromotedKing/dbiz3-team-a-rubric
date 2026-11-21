@@ -35,7 +35,7 @@
     <td>{{ r.value | t_known or "—" }} <span class="tag {{ 'above' if r.label == 'Above threshold' else 'normal' if r.label == 'Normal' else '' }}">{{ r.label | t }}</span></td>
     <td>{{ r.submitted_at | show_time }}</td>
     {% if nurse %}
-    <td data-waiting="{{ r.waiting if r.waiting is not none else '' }}">{% if r.waiting is not none %}{{ _("{h} h {m} min", h=r.waiting // 60, m=r.waiting % 60) }}{% else %}—{% endif %}</td>
+    <td data-waiting="{{ r.waiting if r.waiting is not none else '' }}">{% if r.waiting is none %}—{% elif r.waiting < 60 %}{{ _("{m} min", m=r.waiting) }}{% else %}{{ _("{h} h {m} min", h=r.waiting // 60, m=r.waiting % 60) }}{% endif %}</td>
     {% else %}
     <td>{% if r.responsible %}{{ _("Dr. {name}", name=r.responsible.name) }}{% if r.responsible.availability %} · <strong>{{ r.responsible.availability | t }}</strong>{% endif %}
       {% if r.covering %}<br><span class="tag source" data-covering>{{ _("Covering") }}</span>{% endif %}

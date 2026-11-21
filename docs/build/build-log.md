@@ -7,6 +7,7 @@
 - **Doctor (S-061D, S-064D)**: keeps the bell (D-105); count on the "Escalated to doctor" chip; "Responsible doctor" column with availability and the "Covering" tag (#14, BR-010); "Sort: Newest" only (S-061D §9 Q1 still open). Case page: banner 4B when the case was routed to him as the doctor on duty; no "Will be sent to" line (a nurse-only line).
 - **Not built**: staff sign-in with a session (D-107 sign-in part) — still the demo staff selector; guidance-template editor (D-106: none in the MVP). No schema, seed or data-model change.
 - **Chain**: `screens/screen-spec-S-061.md`, `S-061D.md`, `S-064.md`, `S-064D.md` → `app/mb360/cli/queue.py`, `cli/routes.py`, `templates/cases.html`, `case.html`, `staff_base.html`, `static/staff.css`; new labels in `docs/ui-label-reference.md` (owner Chi). Downstream to update by their owners: `S-061` #4 and §9 Q5, `D-109` in `docs/decisions.md` (nurse bell removed).
+- **Waiting format**: under one hour "55 min" (no "0 h"); above, hours and minutes even past a day, as the S-061 mockup ("26 h 47 min").
 - **Tests**: new `tests/integration/test_cli_role_views.py` (16 tests); three tests that encoded the old behaviour updated, not deleted (nurse bell, nurse notification page, "Newest" default). Full suite 847 passed, 3 existing xfails. Checked in a browser at 1400 px (nurse list, doctor list, nurse case page). `start_feature.py --check` prints DRIFT for `spec-CLI.md` vs `specs/002-cli-core/spec.md` — pre-existing on main (PR #47), not refreshed here.
 
 ## 19/11/2026: proposed Home empty appointment card (Hải Anh)
