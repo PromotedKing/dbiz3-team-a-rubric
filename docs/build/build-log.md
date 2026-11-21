@@ -1,5 +1,13 @@
 # Build Log
 
+## 21/11/2026: split of the nurse and doctor case list, T-01 (Ánh, with Claude)
+
+- **Scope**: code for the merged specs of PR #47 (S-061, S-064, S-061D, S-064D; D-103 to D-106) on top of `main` at PR #48. Nurse list: sort "Priority" by default (above threshold and not viewed first, then longest waiting; resolved last), a "Waiting" column and the count `(n)` of "Not viewed" on the nurse's "Case list" tab (D-104). Doctor list: "Responsible doctor" column with Available / Away and the "Covering" tag (S-061D #14). The Nurse role has no "Notifications" button and no Notifications page; the Doctor keeps both (D-105). One page per screen, the content changes with the role, `/staff/{id}/...` routes unchanged (D-103). Visibility, routing and must-escalate (BR-010 to BR-012) were already on `main` and are untouched.
+- **Open decision**: D-105 and D-109 (PR #48) disagree about the nurse's bell (checklist T-04). The bell removal is its own commit (`the Nurse role has no Notifications button or screen`); drop that commit if the team keeps D-109. The nurse code in `app/mb360/cli/notices.py` is left in place.
+- **Not done here**: staff sign-in by username and shared password, HTTP 403 for another staff member's `{id}` (E-4, E-5, D-107) — checklist T-02.
+- **Tests**: full suite 842 passed, no failures, three existing xfails. Two existing tests that assumed the old default order "Newest" (`test_cli_loop`, `test_cli_queue_page`) now ask for `sort=Newest`; the nurse bell tests in `test_cli_notices_page.py` now assert there is no nurse bell. New: `test_cli_priority.py`, `test_cli_priority_page.py`, `test_cli_doctor_list_column.py`. No browser-based visual check was done.
+- **Chain**: `screens/screen-spec-S-061.md`, `screen-spec-S-061D.md` → `app/mb360/cli/queue.py`, `routes.py`, `templates/cases.html`, `templates/staff_base.html`; labels in `docs/ui-label-reference.md`. No data-model, schema or seed change.
+
 ## 19/11/2026: proposed Home empty appointment card (Hải Anh)
 
 - **Scope**: proposed D-108 replaces the small empty entry row with the existing card surface, calendar icon, latest visit context, full-width outline TCI handoff and S-106 link. Hải Anh selected preserving the populated card height and allowing the empty card to be taller. S-106 uses the shared booking link once at the top and consistent empty wording.

@@ -24,6 +24,11 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         return row
 
     def page(request: Request, name: str, **ctx) -> HTMLResponse:
+        me = ctx.get("me")
+        if me is not None and me["role"] == "Nurse":
+            ctx["badge"] = None      # D-105: the Nurse role has no "Notifications" button; the Doctor keeps it
+            # S-061 #2 "Home (n)": cases "Not viewed", calculated, not stored (D-104)
+            ctx.setdefault("home_count", conn.execute("SELECT COUNT(*) FROM CARE_CASE WHERE status = 'Not viewed'").fetchone()[0])
         return TEMPLATES.TemplateResponse(request, name, ctx)
 
     @app.get("/staff", response_class=HTMLResponse)
@@ -58,6 +63,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
     def staff_notifications(request: Request, staff_id: str):
         """S-059 inside the clinical web (D-109, ALR-03): read from the cases, nothing stored (DM-32)."""
         me = staff(staff_id)
+        if me["role"] == "Nurse":      # D-105: no Notifications screen for the Nurse
+            raise HTTPException(404, "The Nurse role has no Notifications screen (D-105)")
         return page(request, "staff_notices.html", me=me, rows=notices.lines(conn, staff_id, me["role"], clock.now()),
                     badge=notices.count(conn, staff_id, me["role"]), nav="notifications", updated=clock.now())
 
@@ -70,7 +77,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
                     sources=dashboard.SOURCES, badge=notices.count(conn, staff_id, me["role"]), nav="board")
 
     @app.get("/staff/{staff_id}/cases", response_class=HTMLResponse)
-    def cases(request: Request, staff_id: str, status: str = "", flag: str = ""):
+    def cases(request: Request, staff_id: str, status: str = "", flag: str = "", sort: str = ""):
         me = staff(staff_id)
         # Default filter: doctor "Escalated to doctor" (CLI-02); nurse "Not viewed", the cases waiting for her (D-102, spec-CLI §10 Q5)
         active = status if status in FILTERS else ("Escalated to doctor" if me["role"] == "Doctor" else "Not viewed")
@@ -78,12 +85,15 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         if flag:                               # opened from "Needs attention" on the dashboard: every open case of that group
             active = "All"
             ids = dashboard.flagged_ids(dashboard.cases(conn, clock.now(), viewer=staff_id), flag)
-        rows = queue.list_cases(conn, None if active == "All" else active, viewer=staff_id)
+        # Sort: nurse "Priority" (default) or "Newest" (D-104); the doctor's list stays "Newest" (S-061D #7, §9 Q1 open)
+        order = "Newest" if me["role"] == "Doctor" else (sort if sort in queue.SORTS else "Priority")
+        rows = queue.list_cases(conn, None if active == "All" else active, viewer=staff_id, sort=order)
         if flag:
             rows = [r for r in rows if r["case_id"] in ids]
         not_viewed = len(queue.list_cases(conn, "Not viewed", viewer=staff_id))
         badge = notices.count(conn, staff_id, me["role"])
         return page(request, "cases.html", me=me, rows=rows, active=active, filters=FILTERS, not_viewed=not_viewed, badge=badge,
+                    sort=order, sorts=queue.SORTS,
                     flag=flag, flag_label=dashboard.FLAGS[flag][0] if flag else None, nav="cases")
 
     @app.get("/staff/{staff_id}/cases/{case_id}", response_class=HTMLResponse)

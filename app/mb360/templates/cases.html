@@ -7,12 +7,15 @@
   {% for f in filters %}
   <a class="chip{% if f == active %} on{% endif %}" href="/staff/{{ me.staff_id }}/cases?status={{ f | urlencode }}">{{ f | t }}{% if f == "Not viewed" %} ({{ not_viewed }}){% endif %}</a>
   {% endfor %}
-  <span class="caption" style="align-self:center">{{ _("Sort: Newest") }}</span>
+  {% if me.role == "Nurse" %}
+  <span class="caption" style="align-self:center;margin-left:auto">{{ _("Sort:") }}
+    {% for o in sorts %}<a class="chip sm{% if o == sort %} on{% endif %}" data-sort="{{ o }}" href="/staff/{{ me.staff_id }}/cases?status={{ active | urlencode }}&sort={{ o }}">{{ ("Priority" if o == "Priority" else "Newest") | t }}</a>{% endfor %}</span>
+  {% else %}<span class="caption" style="align-self:center">{{ _("Sort: Newest") }}</span>{% endif %}
 </div>
 {% if rows %}
 <div class="card table-wrap" style="padding:4px 8px">
 <table data-active-filter="{{ active }}">
-  <tr><th>{{ _("Mother") }}</th><th>{{ _("Gestational age") }}</th><th>{{ _("Case source") }}</th><th>{{ _("Content") }}</th><th>{{ _("Value") }}</th><th>{{ _("Submitted at") }}</th><th>{{ _("Status") }}</th><th></th></tr>
+  <tr><th>{{ _("Mother") }}</th><th>{{ _("Gestational age") }}</th><th>{{ _("Case source") }}</th><th>{{ _("Content") }}</th><th>{{ _("Value") }}</th><th>{{ _("Submitted at") }}</th>{% if me.role == "Nurse" %}<th>{{ _("Waiting") }}</th>{% else %}<th>{{ _("Responsible doctor") }}</th>{% endif %}<th>{{ _("Status") }}</th><th></th></tr>
   {% for r in rows %}
   <tr{% if r.label == 'Above threshold' %} class="above-row"{% endif %}>
     <td><strong>{{ r.mother }}</strong></td>
@@ -21,6 +24,8 @@
     <td>{{ r.content | t_list if r.case_source == "Symptom" else (r.content | t if r.case_source == "Metric report" else r.content) }}</td>
     <td>{{ r.value | t_known or "—" }} <span class="tag {{ 'above' if r.label == 'Above threshold' else 'normal' if r.label == 'Normal' else '' }}">{{ r.label | t }}</span></td>
     <td>{{ r.submitted_at | show_time }}</td>
+    {% if me.role == "Nurse" %}<td data-waiting>{% if r.waiting %}{{ _("{d} d {h} h", d=r.waiting.days, h=r.waiting.hours) if r.waiting.days else (_("{h} h {m} min", h=r.waiting.hours, m=r.waiting.minutes) if r.waiting.hours else _("{m} min", m=r.waiting.minutes)) }}{% else %}—{% endif %}</td>
+    {% else %}<td data-responsible>{% if r.responsible.name %}{{ _("Dr. {name}", name=r.responsible.name) }} · {{ (r.responsible.availability or "Availability unknown") | t }}{% else %}{{ _("No responsible doctor") }}{% endif %}{% if r.covering %} <span class="tag source" data-covering>{{ _("Covering") }}</span>{% endif %}</td>{% endif %}
     <td><span class="tag status{% if r.status == 'Resolved' %} done{% endif %}">{{ r.status | t }}</span></td>
     <td><a class="link" href="/staff/{{ me.staff_id }}/cases/{{ r.case_id }}">{{ _("View report") }} ›</a></td>
   </tr>

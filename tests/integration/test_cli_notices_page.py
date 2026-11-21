@@ -5,13 +5,13 @@ from mb360.cli import actions
 from tests.cli_helpers import NOW
 
 
-def test_nurse_sees_the_bell_with_the_first_look_queue(client, db, staff_id):
-    """S-061 #4 for the nurse was [NEEDS CLARIFICATION] before D-109: she had no bell at all."""
+def test_nurse_has_no_bell_on_any_page(client, db, staff_id):
+    """D-105: the Nurse role has no "Notifications" button — the signal is the Priority order, the Waiting column
+    and the count on Home (n) (D-104). The Doctor keeps the bell."""
     nurse = staff_id("Trần Thị B")
-    waiting = db.execute("SELECT COUNT(*) FROM CARE_CASE WHERE status = 'Not viewed'").fetchone()[0]
-    page = client.get(f"/staff/{nurse}/dashboard").text
-    assert f'href="/staff/{nurse}/notifications"' in page
-    assert f'<span class="badge">{waiting}</span>' in page
+    for path in ("dashboard", "board", "cases"):
+        page = client.get(f"/staff/{nurse}/{path}").text
+        assert 'class="bell' not in page and f"/staff/{nurse}/notifications" not in page, path
 
 
 def test_doctor_bell_opens_the_notifications_page(client, db, staff_id):
@@ -20,13 +20,8 @@ def test_doctor_bell_opens_the_notifications_page(client, db, staff_id):
     assert f'href="/staff/{doctor}/notifications"' in page and '<span class="badge">1</span>' in page
 
 
-def test_nurse_page_lists_the_cases_waiting_in_vietnamese(client, db, staff_id):
-    nurse = staff_id("Trần Thị B")
-    page = client.get(f"/staff/{nurse}/notifications").text
-    assert ui.t("Cases waiting for a first look.") in page
-    assert ui.t("Cases a nurse escalated to you.") not in page
-    for case_id in [r[0] for r in db.execute("SELECT case_id FROM CARE_CASE WHERE status = 'Not viewed'")]:
-        assert f'data-case="{case_id}"' in page
+def test_nurse_has_no_notifications_page(client, staff_id):
+    assert client.get(f"/staff/{staff_id('Trần Thị B')}/notifications").status_code == 404
 
 
 def test_doctor_page_names_the_nurse_who_escalated(client, db, staff_id, boundary_case):
@@ -51,6 +46,6 @@ def test_every_label_of_the_page_is_in_the_reference_table(client, db, staff_id,
     """D-79: no English text slips onto the screen (ui.MISSING is what the table does not have)."""
     ui.MISSING.clear()
     actions.escalate(db, boundary_case, staff_id("Trần Thị B"), NOW)
-    for sid in [r[0] for r in db.execute("SELECT staff_id FROM STAFF")]:
+    for sid in [r[0] for r in db.execute("SELECT staff_id FROM STAFF WHERE role = 'Doctor'")]:   # the Nurse has none (D-105)
         assert client.get(f"/staff/{sid}/notifications").status_code == 200
     assert ui.MISSING == set()

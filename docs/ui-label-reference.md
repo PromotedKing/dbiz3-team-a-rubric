@@ -897,6 +897,18 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Case routing (D-96, D-97) | Will be sent to: Dr. {name} · Doctor availability unknown | Sẽ gửi tới: BS. {name} · Chưa rõ bác sĩ có mặt hay không |
 | Case routing (D-96, D-97) | No doctor available: the case is visible to all doctors | Không có bác sĩ nào nhận: ca này hiện với tất cả bác sĩ |
 | Case routing (D-96, D-97) | This mother is not in your care (spec-CLI BR-010) | Mẹ này không thuộc danh sách bạn phụ trách |
+| Nurse case list, D-104 (21/11/2026) | Sort: | Sắp xếp: |
+| Nurse case list, D-104 (21/11/2026) | Priority | Ưu tiên |
+| Nurse case list, D-104 (21/11/2026) | Newest | Mới nhất |
+| Nurse case list, D-104 (21/11/2026) | Waiting | Chờ |
+| Nurse case list, D-104 (21/11/2026) | {d} d {h} h | {d} ngày {h} giờ |
+| Nurse case list, D-104 (21/11/2026) | {m} min | {m} phút |
+| Doctor case list, S-061D #14 (21/11/2026) | Responsible doctor | Bác sĩ phụ trách |
+| Doctor case list, S-061D #14 (21/11/2026) | Available | Có mặt |
+| Doctor case list, S-061D #14 (21/11/2026) | Away | Vắng mặt |
+| Doctor case list, S-061D #14 (21/11/2026) | Availability unknown | Chưa rõ có mặt hay không |
+| Doctor case list, S-061D #14 (21/11/2026) | No responsible doctor | Chưa có bác sĩ phụ trách |
+| Doctor case list, S-061D #14 (21/11/2026) | Covering | Trực thay |
 
 
 ## Proposed S-106 labels
