@@ -901,6 +901,14 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Nurse / doctor screens (D-103 – D-105) | Sort: Priority | Sắp xếp: Ưu tiên |
 | Nurse / doctor screens (D-103 – D-105) | Waiting | Chờ bao lâu |
 | Nurse / doctor screens (D-103 – D-105) | {m} min | {m} phút |
+| Staff sign-in (D-107; S-054 / S-060, no mockup — Chi to confirm) | Clinical staff sign-in | Đăng nhập nhân viên y tế |
+| Staff sign-in (D-107; S-054 / S-060, no mockup — Chi to confirm) | Username | Tên đăng nhập |
+| Staff sign-in (D-107; S-054 / S-060, no mockup — Chi to confirm) | Password | Mật khẩu |
+| Staff sign-in (D-107; S-054 / S-060, no mockup — Chi to confirm) | Sign in | Đăng nhập |
+| Staff sign-in (D-107; S-054 / S-060, no mockup — Chi to confirm) | Sign out | Đăng xuất |
+| Staff sign-in (D-107; S-054 / S-060, no mockup — Chi to confirm) | Wrong username or password. | Sai tên đăng nhập hoặc mật khẩu. |
+| Staff sign-in (D-107; S-054 / S-060, no mockup — Chi to confirm) | Use the shared team password. Nurse or doctor is read from your account. | Dùng mật khẩu chung của nhóm. Vai y tá hay bác sĩ lấy theo tài khoản của bạn. |
+| Staff sign-in (D-107; S-054 / S-060, no mockup — Chi to confirm) | This page belongs to another staff member. | Trang này thuộc về nhân viên khác. |
 | Nurse / doctor screens (D-103 – D-105) | Responsible doctor | Bác sĩ phụ trách |
 | Nurse / doctor screens (D-103 – D-105) | No responsible doctor | Chưa có bác sĩ phụ trách |
 | Nurse / doctor screens (D-103 – D-105) | Available | Có mặt |
