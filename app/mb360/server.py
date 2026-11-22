@@ -11,6 +11,7 @@ from . import clock, gate, persona, serial, ui
 from . import db as dbmod
 from .acc import entry
 from .bot import llm
+from .cli import signin
 from .main import create_app
 
 STATIC = Path(__file__).parent / "static"
@@ -32,6 +33,7 @@ STAFF_PASSWORD = os.environ.get("MB360_STAFF_PASSWORD")
 
 clock.use_live()
 entry.SECURE_COOKIE = HOSTED
+signin.PASSWORD, signin.HOSTED, signin.SECURE_COOKIE = STAFF_PASSWORD, HOSTED, HOSTED   # D-107: staff sign-in, same password as D-82
 llm.use_fallback(llm.LocalAnswers)
 ui.SHOWCASE = True
 conn = _open()

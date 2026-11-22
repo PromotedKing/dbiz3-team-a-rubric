@@ -9,7 +9,8 @@ def test_staff_page_opens_the_dashboard(client, staff_id):
     nurse = staff_id("Trần Thị B")
     r = client.get(f"/staff/{nurse}")
     assert r.status_code == 303 and r.headers["location"] == f"/staff/{nurse}/dashboard"
-    assert f'href="/staff/{nurse}/dashboard"' in client.get("/staff").text
+    r = client.get("/staff")           # D-107: signed in, the sign-in page sends her to her own dashboard
+    assert r.status_code == 303 and r.headers["location"] == f"/staff/{nurse}/dashboard"
 
 
 def test_dashboard_counts_match_the_cases(client, db, staff_id):

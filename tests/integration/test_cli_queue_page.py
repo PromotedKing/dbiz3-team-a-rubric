@@ -3,10 +3,12 @@ from tests.cli_helpers import case_by_code
 from tests.integration.helpers import vi
 
 
-def test_staff_selector_lists_the_seed_staff(client):
+def test_staff_page_is_a_sign_in_form_not_a_list_of_staff(client):
+    """D-107 (T-02): /staff no longer lists the seed staff to pick from."""
     page = client.get("/staff").text
+    assert "data-staff-login" in page
     for name in ("Trần Thị B", "Hoàng Thị Yến", "Lê Thị Hạnh", "Nguyễn Văn A", "Phạm Quốc Dũng", "Vũ Minh Hải"):
-        assert name in page
+        assert name not in page
 
 
 def test_nurse_queue_header_and_default_filter(client, db, staff_id):

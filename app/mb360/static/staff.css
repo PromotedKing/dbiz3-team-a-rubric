@@ -180,7 +180,7 @@ a.card:active { background: #FAFAFA; }
 /* ---------- Forms ---------- */
 label, .field-label { display: block; margin: 14px 0 6px; font-weight: 700; }
 label.check, label.radio { display: flex; align-items: center; gap: 10px; margin: 8px 0; font-weight: 400; }
-input[type=text], input:not([type]), input[type=date], input[type=datetime-local], input[type=number], select, textarea {
+input[type=text], input[type=password], input:not([type]), input[type=date], input[type=datetime-local], input[type=number], select, textarea {
   width: 100%; min-height: 48px; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-button);
   background: var(--color-surface); color: var(--color-text-primary); font: 400 15px/20px var(--font);
 }
