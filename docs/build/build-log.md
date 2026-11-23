@@ -1,5 +1,17 @@
 # Build Log
 
+## 23/11/2026: nurse screen redesign (Ánh & Chi)
+
+- **Scope**: Redesign of the nurse queue (S-061) and nurse case detail (S-064) on the clinical web.
+  * Extracted shared constants, urgency levels, thresholds, and waiting-time SLA calculation into `app/mb360/cli/urgency.py` (`STATUS_NOT_VIEWED`, `STATUS_VIEWED`, `STATUS_ESCALATED`, `STATUS_RESOLVED`, `URGENCY_CRITICAL`, `URGENCY_WARNING`, `URGENCY_NORMAL`). Trung and doctor screens can reuse this shared module directly.
+  * Queue screen (S-061): 4 tabs with real-time counts (Chưa xem, Đã xem, Đã chuyển, Đã xử lý), defaulting to "Chưa xem". Priority sort: critical / above-threshold cases first, then longest waiting first. Card layout with left color band (red for critical, yellow for warning, gray/green for normal), line 1 (mother + gestational week/postpartum days + "Bác sĩ trả về" tag if returned), line 2 (main symptom + waiting time, turning red when overdue). Mother name search bar with live filtering. Notification bell removed for nurses per D-105 decision.
+  * Case detail screen (S-064): top banner with large urgency badge, main symptom, and waiting time; sticky action bar; only 1 latest metric value displayed (above-threshold highlighted in bold red with arrow `↑`, normal in muted gray); collapsible mother & baby profile; detailed handling history timeline (who viewed, escalated, guided, closed, and when).
+  * State-based action flow: Not viewed (Mark as viewed / Escalate to doctor), Viewed (Escalate to doctor / Send guidance / Close case if not must-escalate), Escalated to doctor (Remind doctor), Resolved (Reopen case).
+  * Escalation form: automatic routing to responsible/on-duty doctor (nurse does not choose doctor name), predefined reason dropdown + note.
+  * Guidance form: doctor-approved guidance templates only with safety warning prohibiting unprescribed medicine/vitamins.
+  * Preserved doctor views (`S-061D`, `S-064D`) and all existing routes without duplication.
+- **Verification**: Dedicated test suite in `tests/integration/test_nurse_screen_redesign.py`. Full test suite passed (836 passed, 3 pre-existing xfailed, 0 failures).
+
 ## 19/11/2026: proposed Home empty appointment card (Hải Anh)
 
 - **Scope**: proposed D-108 replaces the small empty entry row with the existing card surface, calendar icon, latest visit context, full-width outline TCI handoff and S-106 link. Hải Anh selected preserving the populated card height and allowing the empty card to be taller. S-106 uses the shared booking link once at the top and consistent empty wording.

@@ -5,13 +5,11 @@ from mb360.cli import actions
 from tests.cli_helpers import NOW
 
 
-def test_nurse_sees_the_bell_with_the_first_look_queue(client, db, staff_id):
-    """S-061 #4 for the nurse was [NEEDS CLARIFICATION] before D-109: she had no bell at all."""
+def test_nurse_has_no_bell_by_d105(client, db, staff_id):
+    """D-105: The nurse has no bell notification; priority order in queue replaces the bell."""
     nurse = staff_id("Trần Thị B")
-    waiting = db.execute("SELECT COUNT(*) FROM CARE_CASE WHERE status = 'Not viewed'").fetchone()[0]
     page = client.get(f"/staff/{nurse}/dashboard").text
-    assert f'href="/staff/{nurse}/notifications"' in page
-    assert f'<span class="badge">{waiting}</span>' in page
+    assert f'href="/staff/{nurse}/notifications"' not in page
 
 
 def test_doctor_bell_opens_the_notifications_page(client, db, staff_id):

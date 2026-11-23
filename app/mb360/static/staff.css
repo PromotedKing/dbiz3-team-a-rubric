@@ -482,3 +482,12 @@ form.inline { display: inline; }
 .notice.urgent { border-left-color: var(--status-alert-fg); }
 .notice-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 6px; }
 .notice-head .caption { margin: 0; }
+
+/* Nurse redesign (S-061 & S-064 redesign by Ánh & Chi) */
+.nurse-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08)!important; }
+.nurse-sticky-actions { backdrop-filter: blur(8px); }
+.nurse-tabs .chip.on { background: #E6F1EA; color: #24704B; border-color: #A9C7B5; font-weight: 700; }
+@media (max-width: 600px) {
+  .nurse-card-row1, .nurse-card-row2 { flex-direction: column; align-items: flex-start!important; }
+  .nurse-sticky-actions { flex-direction: column; align-items: stretch!important; }
+}

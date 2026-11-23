@@ -7,9 +7,20 @@ import uuid
 from datetime import date, datetime
 
 from ..alr import notifications, thresholds
+from .urgency import (
+    STATUS_ESCALATED,
+    STATUS_NOT_VIEWED,
+    STATUS_RESOLVED,
+    STATUS_VIEWED,
+)
 
 DB_TIME = "%Y-%m-%d %H:%M"
-NOT_VIEWED, VIEWED, ESCALATED, RESOLVED = "Not viewed", "Viewed", "Escalated to doctor", "Resolved"
+NOT_VIEWED, VIEWED, ESCALATED, RESOLVED = (
+    STATUS_NOT_VIEWED,
+    STATUS_VIEWED,
+    STATUS_ESCALATED,
+    STATUS_RESOLVED,
+)
 
 
 class ActionError(Exception):
@@ -179,7 +190,8 @@ def route_to(conn: sqlite3.Connection, user_id: str, today: date) -> dict:
     return out                                                # step 4: Away and nobody on duty
 
 
-def escalate(conn: sqlite3.Connection, case_id: str, staff_id: str, now: datetime) -> str | None:
+def escalate(conn: sqlite3.Connection, case_id: str, staff_id: str, now: datetime,
+             reason: str | None = None, note: str | None = None) -> str | None:
     """Returns the receiving doctor, or None in the fail-safe case of BR-011 (visible to every doctor)."""
     role, case = _check(conn, case_id, staff_id, "escalate", nurse_only=True)
     doctor = route_to(conn, case["user_id"], now.date())["doctor"]
@@ -190,9 +202,53 @@ def escalate(conn: sqlite3.Connection, case_id: str, staff_id: str, now: datetim
             _history(conn, case_id, VIEWED, staff_id, role, at)
         conn.execute("UPDATE CARE_CASE SET status = ?, assigned_doctor_id = ? WHERE case_id = ?", (ESCALATED, doctor, case_id))
         _history(conn, case_id, ESCALATED, staff_id, role, at)
+        if reason or note:
+            txt = f"Lý do chuyển: {reason or 'Không có'}" + (f" · Ghi chú: {note}" if note else "")
+            conn.execute(
+                """INSERT INTO STAFF_RESPONSE (response_id, case_id, responder_id, responder_role, template_id, custom_text, sent_at)
+                   VALUES (?, ?, ?, ?, NULL, ?, ?)""",
+                (str(uuid.uuid4()), case_id, staff_id, role, txt, at),
+            )
         notifications.notify(conn, case_id, ESCALATED, now)   # one notification per action (§10 Q23)
         return doctor
     return _run(conn, write)
+
+
+def remind_doctor(conn: sqlite3.Connection, case_id: str, staff_id: str, now: datetime) -> str:
+    role = staff_role(conn, staff_id)
+    case = _case(conn, case_id)
+    if case["status"] != ESCALATED:
+        raise ActionError(409, "Can only remind for escalated cases")
+    at = now.strftime(DB_TIME)
+    response_id = str(uuid.uuid4())
+
+    def write():
+        conn.execute(
+            """INSERT INTO STAFF_RESPONSE (response_id, case_id, responder_id, responder_role, template_id, custom_text, sent_at)
+               VALUES (?, ?, ?, ?, NULL, ?, ?)""",
+            (response_id, case_id, staff_id, role, "[Nhắc nhở] Y tá nhắc bác sĩ xử lý ca", at),
+        )
+        return response_id
+    return _run(conn, write)
+
+
+def reopen_case(conn: sqlite3.Connection, case_id: str, staff_id: str, now: datetime) -> None:
+    role = staff_role(conn, staff_id)
+    case = _case(conn, case_id)
+    if case["status"] != RESOLVED:
+        raise ActionError(409, "Only a resolved case can be reopened")
+    at = now.strftime(DB_TIME)
+
+    def write():
+        conn.execute(
+            "UPDATE CARE_CASE SET status = ?, closed_at = NULL, closed_by = NULL WHERE case_id = ?",
+            (NOT_VIEWED, case_id),
+        )
+        conn.execute(
+            "UPDATE CASE_STATUS_HISTORY SET changed_at = ?, changed_by = ?, role = ? WHERE case_id = ? AND status = ?",
+            (at, staff_id, role, case_id, NOT_VIEWED),
+        )
+    _run(conn, write)
 
 
 def close_case(conn: sqlite3.Connection, case_id: str, staff_id: str, now: datetime) -> None:

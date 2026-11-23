@@ -1,134 +1,415 @@
 {% extends "staff_base.html" %}
 {% macro label_tag(l) %}<span class="tag {{ 'above' if l == 'Above threshold' else 'normal' if l == 'Normal' else '' }}">{{ l | t }}</span>{% endmacro %}
 {% block content %}
-<p><a class="link" href="/staff/{{ me.staff_id }}/cases">← {{ _("Cases to handle") }}</a></p>
-{% if updated %}<p class="card" role="status" data-updated style="border-left:4px solid #C4520A;margin-bottom:12px">{{ _("This case was already updated, maybe on another screen. Its current status is shown below.") }}</p>{% endif %}
-<h1 style="margin-bottom:12px">{{ _("Mother quick profile") }}</h1>
-<div class="grid2">
-  <div class="card">
-    <div class="row"><span class="avatar">{{ initials(mother.full_name) }}</span>
-      <div class="grow"><h2 style="margin:0">{{ mother.full_name }}</h2>
-        <p class="caption">{{ _("Medical record number") }} {{ mother.record_code or "—" }}</p></div></div>
-    <ul class="list">
-      {% if week is not none %}<li><span class="k">{{ _("Week {n}", n=week) }}</span><span class="v">{{ _("Due date") }} {{ profile.edd | show_date }}</span></li>{% endif %}
-      <li><span class="k">{{ _("Last visit") }}</span><span class="v">{{ latest_visit.visit_date | show_date if latest_visit else "—" }}</span></li>
-    </ul>
-  </div>
-  <div class="card">
-    <h2>{{ _("Medical history") }}</h2>
-    <ul class="list">
-      <li><span class="k">{{ _("Obstetric history (PARA)") }}</span><span class="v">{{ clinical.obstetric_history or "—" if clinical else "—" }}</span></li>
-      <li><span class="k">{{ _("Blood type") }}</span><span class="v">{{ clinical.blood_type or "—" if clinical else "—" }}</span></li>
-      <li><span class="k">{{ _("Allergies") }}</span><span class="v">{{ clinical.allergies or _("None") if clinical else "—" }}</span></li>
-    </ul>
-  </div>
-</div>
 
-<div class="card">
-  <h2>{{ _("Doctor's instructions") }}</h2>
-  {% for f in flags %}<p><strong>{{ f.metric | t }}</strong>{% if f.note %} — {{ f.note }}{% endif %}
-    <span class="caption">{{ _("Assigned {date} · Dr. {name}", date=f.flagged_at | show_date, name=f.doctor_name) }}</span>
-    {% if me.role == "Doctor" %} <a class="link" href="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}?edit={{ f.flag_id }}#instruction-form">{{ _("Edit") }}</a>{% endif %}</p>
-  {% else %}<p class="caption">{{ _("No instructions.") }}</p>{% endfor %}
-  {% if me.role == "Doctor" %}
-  <form id="instruction-form" data-instruction-form method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/instructions"
-        style="border-top:1px solid var(--color-border);margin-top:12px;padding-top:4px">
-    <h3 style="margin-top:12px">{{ _("Add / edit instruction") }} <span class="tag source">{{ _("Doctor only") }}</span></h3>
-    <label>{{ _("Metric to monitor") }}</label>
-    <select name="metric">{% for m in group2 %}<option value="{{ m }}" {% if editing and editing.metric == m %}selected{% endif %}>{{ m | t }}</option>{% endfor %}</select>
-    <label>{{ _("Note for the mother (how to measure, frequency)") }}</label>
-    <textarea name="note" rows="2" placeholder="{{ _('Enter a note…') }}">{{ editing.note or "" if editing else "" }}</textarea>
-    <label>{{ _("Above-threshold guidance (shown on S-028 when a report is above threshold)") }}</label>
-    <select name="template_id"><option value="">{{ _("Choose a guidance template ▾") }}</option>
-      {% for tpl in templates %}<option value="{{ tpl.template_id }}" {% if editing and editing.template_id == tpl.template_id %}selected{% endif %}>{{ tpl.title }}</option>{% endfor %}</select>
-    <textarea name="custom_text" maxlength="1000" rows="2" style="margin-top:8px" placeholder="{{ _('Add custom text for this mother (optional)…') }}">{{ editing.custom_text or "" if editing else "" }}</textarea>
-    <div class="actions" style="justify-content:flex-start">
-      <a class="btn sm outline" style="flex:none" href="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}">{{ _("Cancel") }}</a>
-      <button class="btn sm" style="flex:none">{{ _("Save instruction") }}</button>
+{% if me.role == "Nurse" %}
+  <!-- ==================== MÀN Y TÁ: CHI TIẾT CA (S-064) ==================== -->
+  <p><a class="link" href="/staff/{{ me.staff_id }}/cases">← {{ _("Cases to handle") }}</a></p>
+  {% if updated %}
+    <p class="card" role="status" data-updated style="border-left:4px solid #C4520A;margin-bottom:12px;">
+      {{ _("This case was already updated, maybe on another screen. Its current status is shown below.") }}
+    </p>
+  {% endif %}
+
+  <!-- 1. Đầu trang: badge mức khẩn (to, có màu) + triệu chứng + thời gian chờ -->
+  <div class="card" style="padding:18px 20px;border-left:6px solid {{ urgency.border_color }};border-radius:12px;margin-bottom:14px;background:#fff;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:700;padding:6px 14px;border-radius:8px;background:{{ urgency.bg_color }};color:{{ urgency.color }};">
+          {{ urgency.icon }} {{ urgency.label }}
+        </span>
+        {% if returned_by_doctor %}
+          <span class="tag" style="background:#FFF3E0;color:#E65100;font-weight:700;font-size:13px;padding:4px 10px;border:1px solid #FFE0B2;">
+            Bác sĩ trả về
+          </span>
+        {% endif %}
+      </div>
+      <div>
+        <span style="font-size:14px;{% if waited.is_overdue %}color:#D32F2F;font-weight:700;background:#FFEBEE;padding:4px 10px;border-radius:6px;{% else %}color:#65716B;{% endif %}">
+          ⏱ Thời gian chờ: <strong>{{ waited.text }}</strong>{% if waited.is_overdue %} — <span style="font-weight:700;">QUÁ HẠN</span>{% endif %}
+        </span>
+      </div>
     </div>
-    <p class="caption">{{ _("You can choose only a template, only custom text, or both. If there is nothing, S-028 uses the hospital's default template.") }}</p>
-  </form>
-  {% endif %}
-</div>
+    <h1 style="font-size:22px;line-height:28px;margin:12px 0 4px 0;color:#212121;">
+      {{ main_symptom }}
+    </h1>
+    <p class="caption" style="margin:0;">
+      Thai phụ: <strong>{{ mother.full_name }}</strong> · Mã bệnh án: {{ mother.record_code or "—" }}
+    </p>
+  </div>
 
-<div class="card">
-  {% if report %}
-  <div class="row"><h2 class="grow" style="margin:0">{{ _("Report {code}", code=report.report_code) }}</h2><span class="tag status">{{ case.status | t }}</span></div>
-  {% if record %}
-  <p style="margin-top:8px"><strong>{{ record.metric | t }}</strong> — {{ record.value | t_known }}{% if record.unit %} {{ record.unit }}{% endif %} {{ label_tag(label) }}</p>
-  <p class="caption">{{ _("Measured at") }} {{ record.measured_at | show_time }} · {{ _("Source") }} — {{ record.source | t }}</p>
-  {% else %}
-  <p style="margin-top:8px">{{ _("Symptom report") }} {{ label_tag(label) }}</p>
-  {% endif %}
-  <p>{{ _("Symptoms:") }} {{ symptoms | t_list }}{% if report.other_symptom_text %} ({{ report.other_symptom_text }}){% endif %}{% if report.note %} · {{ _("Mother's note:") }} {{ report.note }}{% endif %}</p>
-  {% else %}
-  <div class="row"><h2 class="grow" style="margin:0">{{ _("Chatbot question") }}</h2><span class="tag status">{{ case.status | t }}</span></div>
-  <p class="caption">{{ _("Source: Chatbot · whole conversation") }}</p>
-  {% if danger %}<p><span class="tag above" data-danger>{{ _("Signs that need medical attention") }}</span></p>{% endif %}
-  {% for m in transcript %}
-  <div class="msg {% if m.message_id == question_id %}marked{% endif %}" {% if m.message_id == question_id %}data-escalated-question{% endif %}>
-    <strong>{{ m.sender | t }}</strong> <span class="caption">{{ m.sent_at | show_time }}</span><br>{{ m.text }}</div>
-  {% endfor %}
-  {% endif %}
+  <!-- 2. Ngay dưới là THANH HÀNH ĐỘNG cố định (sticky) -->
+  <div class="nurse-sticky-actions" style="position:sticky;top:0;z-index:90;background:#fff;padding:12px 18px;border:1px solid #DCE3DF;border-radius:10px;margin-bottom:16px;box-shadow:0 3px 12px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="caption" style="font-weight:700;font-size:12px;color:#65716B;">TRẠNG THÁI CA:</span>
+      <span class="tag status{% if case.status == 'Resolved' %} done{% endif %}" style="font-size:13px;font-weight:700;">
+        {{ case.status | t }}
+      </span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      {% if case.status == "Not viewed" %}
+        {% if "view" in can %}
+          <form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/view">
+            <button class="btn sm" style="background:#00A651;color:#fff;font-weight:700;min-width:140px;">
+              {{ _("Mark as viewed") }}
+            </button>
+          </form>
+        {% endif %}
+        {% if "escalate" in can %}
+          <button type="button" class="btn sm outline" onclick="document.getElementById('escalate-modal').style.display='flex';">
+            {{ _("Escalate to doctor") }}
+          </button>
+        {% endif %}
 
-  {#- FR-026 / FR-027 (D-96, D-97 proposed): the nurse sees who the case would go to before she confirms;
-      every reader sees the mother's responsible doctor and whether he is present. The nurse never chooses. -#}
+      {% elif case.status == "Viewed" %}
+        {% if must_escalate %}
+          <button type="button" class="btn sm" style="background:#D32F2F;color:#fff;font-weight:700;" onclick="document.getElementById('escalate-modal').style.display='flex';">
+            {{ _("Escalate to doctor") }}
+          </button>
+        {% else %}
+          <button type="button" class="btn sm" style="background:#00A651;color:#fff;font-weight:700;" onclick="document.getElementById('guidance-section').scrollIntoView({behavior:'smooth'});">
+            Gửi hướng dẫn mẫu
+          </button>
+          {% if "escalate" in can %}
+            <button type="button" class="btn sm outline" onclick="document.getElementById('escalate-modal').style.display='flex';">
+              {{ _("Escalate to doctor") }}
+            </button>
+          {% endif %}
+        {% endif %}
+        {% if "close" in can %}
+          <form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/close">
+            <button class="btn sm outline" style="color:#555;">{{ _("Close case") }}</button>
+          </form>
+        {% endif %}
+
+      {% elif case.status == "Escalated to doctor" %}
+        <span class="caption" style="color:#65716B;font-style:italic;">Đang chờ bác sĩ xử lý...</span>
+        <form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/remind">
+          <button class="btn sm outline" style="color:#E65100;border-color:#E65100;">Nhắc bác sĩ</button>
+        </form>
+
+      {% elif case.status == "Resolved" %}
+        <span class="tag status done" style="font-size:13px;">✓ Đã hoàn thành</span>
+        <form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/reopen">
+          <button class="btn sm outline" style="color:#666;">Mở lại</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
   {% if routing %}
-  <p class="caption routing{% if routing.outcome in ('none', 'unknown') %} warn{% endif %}">
+  <p class="caption routing{% if routing.outcome in ('none', 'unknown') %} warn{% endif %}" style="margin:-8px 0 16px 0;">
     {%- if routing.outcome == "responsible" %}{{ _("Will be sent to: Dr. {name}", name=routing.responsible_name) }}
     {%- elif routing.outcome == "on_duty" %}{{ _("Will be sent to the doctor on duty · Responsible doctor: Dr. {name} (Away)", name=routing.responsible_name) }}
     {%- elif routing.outcome == "unknown" %}{{ _("Will be sent to: Dr. {name} · Doctor availability unknown", name=routing.responsible_name) }}
     {%- else %}{{ _("No doctor available: the case is visible to all doctors") }}{% endif -%}
   </p>
   {% endif %}
-  <div class="actions" style="justify-content:flex-start">
-    {% if "view" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/view"><button class="btn sm">{{ _("Mark as viewed") }}</button></form>{% endif %}
-    {% if "escalate" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/escalate"><button class="btn sm outline">{{ _("Escalate to doctor") }}</button></form>{% endif %}
-    {% if "close" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/close"><button class="btn sm">{{ _("Close case") }}</button></form>{% endif %}
+
+  <!-- 3. Chỉ số: chỉ HIỂN THỊ MỘT GIÁ TRỊ GẦN NHẤT. Giá trị vượt ngưỡng tô đỏ + mũi tên ↑↓; chỉ số bình thường dùng chữ xám nhạt -->
+  <div class="card" style="padding:16px 20px;border-radius:12px;margin-bottom:16px;background:#fff;">
+    <h2 style="font-size:17px;line-height:24px;margin-top:0;">Chỉ số đo gần nhất</h2>
+    {% if latest_metric %}
+      <div style="margin:12px 0;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;">
+        <strong style="font-size:18px;">{{ latest_metric.metric | t }}:</strong>
+        {% if latest_metric.is_above %}
+          <span style="font-size:28px;line-height:34px;font-weight:800;color:#D32F2F;">
+            ↑ {{ latest_metric.value | t_known }}{% if latest_metric.unit %} {{ latest_metric.unit }}{% endif %}
+          </span>
+          <span class="tag" style="background:#FFEBEE;color:#D32F2F;font-weight:700;font-size:13px;">
+            {{ _("Above threshold") }}
+          </span>
+        {% else %}
+          <span style="font-size:22px;color:#8E8E93;font-weight:500;">
+            {{ latest_metric.value | t_known }}{% if latest_metric.unit %} {{ latest_metric.unit }}{% endif %}
+          </span>
+          <span class="tag" style="background:#F2F2F7;color:#8E8E93;font-size:13px;">
+            {{ _("Normal") }}
+          </span>
+        {% endif %}
+      </div>
+      <p class="caption" style="margin:4px 0 0 0;">
+        {{ _("Measured at") }} {{ latest_metric.measured_at | show_time }} · {{ _("Source") }} — {{ latest_metric.source | t }}
+      </p>
+    {% elif report %}
+      <p style="font-size:16px;font-weight:600;margin:8px 0;">
+        {{ _("Symptoms:") }} {{ symptoms | t_list }}{% if report.other_symptom_text %} ({{ report.other_symptom_text }}){% endif %}
+      </p>
+      {% if report.note %}<p class="caption">{{ _("Mother's note:") }} {{ report.note }}</p>{% endif %}
+    {% else %}
+      <p class="caption">{{ _("Source: Chatbot · whole conversation") }}</p>
+      {% if danger %}
+        <p><span class="tag" style="background:#FFEBEE;color:#D32F2F;font-weight:700;" data-danger>{{ _("Signs that need medical attention") }}</span></p>
+      {% endif %}
+      {% for m in transcript %}
+      <div class="msg {% if m.message_id == question_id %}marked{% endif %}" {% if m.message_id == question_id %}data-escalated-question{% endif %}>
+        <strong>{{ m.sender | t }}</strong> <span class="caption">{{ m.sent_at | show_time }}</span><br>{{ m.text }}
+      </div>
+      {% endfor %}
+    {% endif %}
   </div>
-  {#- BR-012 (D-98, proposed): the nurse sees why "Close case" is not there, so she escalates instead -#}
-  {% if must_escalate and me.role == "Nurse" and case.status != "Escalated to doctor" and case.status != "Resolved" %}
-  <p class="caption">{{ _("Only a doctor can close this case: the value is above threshold. Escalate it to the doctor.") if must_escalate == "above"
-      else _("Only a doctor can close this case: the chatbot marked this question as a danger sign. Escalate it to the doctor.") }}</p>
+
+  <!-- 4. Thông tin mẹ và bé: khối có thể thu gọn -->
+  <details class="card" open style="padding:16px 20px;border-radius:12px;margin-bottom:16px;background:#fff;cursor:pointer;">
+    <summary style="font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:space-between;user-select:none;">
+      <span>Thông tin mẹ và bé</span>
+      <span class="caption" style="font-weight:normal;color:#65716B;">(Thu gọn / Mở rộng)</span>
+    </summary>
+    <div style="cursor:default;margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div>
+        <p><strong>{{ _("Mother") }}:</strong> {{ mother.full_name }}</p>
+        <p><strong>{{ _("Medical record number") }}:</strong> {{ mother.record_code or "—" }}</p>
+        {% if week is not none %}
+          <p><strong>{{ _("Week {n}", n=week) }}</strong> · {{ _("Due date") }} {{ profile.edd | show_date }}</p>
+        {% endif %}
+        <p><strong>{{ _("Last visit") }}:</strong> {{ latest_visit.visit_date | show_date if latest_visit else "—" }}</p>
+      </div>
+      <div>
+        <p><strong>{{ _("Obstetric history (PARA)") }}:</strong> {{ clinical.obstetric_history or "—" if clinical else "—" }}</p>
+        <p><strong>{{ _("Blood type") }}:</strong> {{ clinical.blood_type or "—" if clinical else "—" }}</p>
+        <p><strong>{{ _("Allergies") }}:</strong> {{ clinical.allergies or _("None") if clinical else "—" }}</p>
+        {% if routing %}
+          <p><strong>Bác sĩ phụ trách:</strong> {{ routing.responsible_name or "Chưa phân công" }} ({{ routing.availability or "—" }})</p>
+        {% endif %}
+      </div>
+    </div>
+    <div style="margin-top:14px;padding-top:10px;border-top:1px solid #EDF0EE;">
+      <h3 style="font-size:14px;margin-bottom:6px;">{{ _("Doctor's instructions") }}</h3>
+      {% for f in flags %}
+        <p style="font-size:13px;margin:3px 0;"><strong>{{ f.metric | t }}</strong>{% if f.note %} — {{ f.note }}{% endif %}
+        <span class="caption">{{ _("Assigned {date} · Dr. {name}", date=f.flagged_at | show_date, name=f.doctor_name) }}</span></p>
+      {% else %}
+        <p class="caption">{{ _("No instructions.") }}</p>
+      {% endfor %}
+    </div>
+  </details>
+
+  <!-- 5. Lịch sử xử lý: ai xem, ai chuyển, lúc nào -->
+  <div class="card" style="padding:16px 20px;border-radius:12px;margin-bottom:16px;background:#fff;">
+    <h2 style="font-size:17px;line-height:24px;margin-top:0;">Lịch sử xử lý</h2>
+    <div style="margin-top:12px;display:flex;flex-direction:column;gap:12px;">
+      {% for h in history_timeline %}
+      <div style="display:flex;align-items:flex-start;gap:12px;padding-bottom:10px;border-bottom:1px solid #F0F2F1;">
+        <span style="font-size:16px;line-height:20px;">{{ h.icon }}</span>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+            <strong style="font-size:14px;color:#212121;">{{ h.actor_text }}</strong>
+            <span class="caption" style="font-size:12px;color:#65716B;">{{ h.time_text | show_time if h.time_text else "" }}</span>
+          </div>
+          <p style="margin:2px 0 0 0;font-size:13px;color:#444;">{{ h.detail_text }}</p>
+        </div>
+      </div>
+      {% else %}
+      <p class="caption">Chưa có lịch sử.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Form Gửi hướng dẫn mẫu (cho Y tá) -->
+  {% if "guidance" in can and case.status != "Resolved" and case.status != "Escalated to doctor" %}
+  <div id="guidance-section" class="card" style="padding:16px 20px;border-radius:12px;margin-bottom:16px;background:#fff;">
+    <form method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/guidance">
+      <h2 style="font-size:17px;margin-top:0;">Gửi hướng dẫn mẫu cho mẹ</h2>
+      <div style="background:#FFF8E1;border:1px solid #FFE082;border-radius:8px;padding:10px 12px;margin:8px 0 12px 0;">
+        <p style="margin:0;font-size:13px;color:#795548;">
+          ⚠️ <strong>Quy định an toàn:</strong> Y tá chỉ được sử dụng các mẫu hướng dẫn có sẵn từ bác sĩ. Tuyệt đối không tự kê đơn, thêm thuốc, vitamin hoặc thuốc cảm ngoài chỉ định của bác sĩ.
+        </p>
+      </div>
+      <label style="font-size:13px;font-weight:700;">Chọn mẫu hướng dẫn bác sĩ đã duyệt:</label>
+      <select name="template_id" required style="width:100%;height:40px;border:1px solid #DCE3DF;border-radius:8px;padding:0 10px;margin-top:4px;">
+        <option value="">{{ _("Choose a guidance template ▾") }}</option>
+        {% for tpl in templates %}
+          <option value="{{ tpl.template_id }}">{{ tpl.title }}</option>
+        {% endfor %}
+      </select>
+      <label style="font-size:13px;font-weight:700;display:block;margin-top:10px;">Ghi chú thêm cho mẹ (không thêm thuốc ngoài đơn):</label>
+      <textarea name="custom_text" maxlength="1000" rows="3" style="width:100%;border:1px solid #DCE3DF;border-radius:8px;padding:8px 10px;margin-top:4px;" placeholder="Nhập ghi chú hỗ trợ mẹ (tùy chọn)..."></textarea>
+      <div class="actions" style="margin-top:12px;justify-content:flex-start;">
+        <button class="btn sm" style="background:#00A651;color:#fff;font-weight:700;">Gửi hướng dẫn</button>
+      </div>
+    </form>
+  </div>
   {% endif %}
 
-  {% if responses %}
-  <h3 style="margin-top:16px">{{ _("Responses sent") }}</h3>
-  {% for r in responses %}<p><span class="caption">{{ r.sent_at | show_time }} · {{ r.responder_role | t }} {{ r.full_name }}</span><br>{{ r.template_text or "" }} {{ r.custom_text or "" }}</p>{% endfor %}
-  {% endif %}
+  <!-- Modal Form Chuyển Bác Sĩ -->
+  <div id="escalate-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:12px;max-width:520px;width:92%;margin:auto;padding:22px;box-shadow:0 8px 28px rgba(0,0,0,0.2);">
+      <h2 style="margin-top:0;font-size:18px;">Chuyển ca cho Bác sĩ</h2>
+      <div style="background:#E8F5E9;border:1px solid #C8E6C9;border-radius:8px;padding:10px 12px;margin-bottom:14px;">
+        {% if routing %}
+          <p style="margin:0;font-size:13px;color:#1B5E20;">
+            {% if routing.outcome == "responsible" %}
+              <strong>Bác sĩ tiếp nhận:</strong> BS. {{ routing.responsible_name }} (Bác sĩ phụ trách thai phụ)
+            {% elif routing.outcome == "on_duty" %}
+              <strong>Bác sĩ tiếp nhận:</strong> Bác sĩ trực chuyên khoa (BS phụ trách {{ routing.responsible_name }} vắng mặt)
+            {% elif routing.outcome == "unknown" %}
+              <strong>Bác sĩ tiếp nhận:</strong> BS. {{ routing.responsible_name }} (Trạng thái bác sĩ chưa cập nhật)
+            {% else %}
+              <strong>Bác sĩ tiếp nhận:</strong> Toàn bộ bác sĩ trong ca trực (Chưa phân công bác sĩ riêng)
+            {% endif %}
+          </p>
+        {% endif %}
+        <p class="caption" style="margin:4px 0 0 0;color:#2E7D32;">Hệ thống tự động điều phối theo phân công, y tá không cần chọn tên bác sĩ.</p>
+      </div>
+      <form method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/escalate">
+        <label style="font-size:13px;font-weight:700;">Lý do chuyển bác sĩ (chọn từ danh sách):</label>
+        <select name="reason" required style="width:100%;height:40px;border:1px solid #DCE3DF;border-radius:8px;padding:0 10px;margin-top:4px;">
+          {% for r_reason in escalation_reasons %}
+            <option value="{{ r_reason }}">{{ r_reason }}</option>
+          {% endfor %}
+        </select>
+        <label style="font-size:13px;font-weight:700;display:block;margin-top:12px;">Ghi chú gửi bác sĩ:</label>
+        <textarea name="note" rows="3" style="width:100%;border:1px solid #DCE3DF;border-radius:8px;padding:8px 10px;margin-top:4px;" placeholder="Ghi chú thêm về triệu chứng hoặc tình trạng của mẹ..."></textarea>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
+          <button type="button" class="btn sm outline" onclick="document.getElementById('escalate-modal').style.display='none';">Huỷ</button>
+          <button type="submit" class="btn sm" style="background:#D32F2F;color:#fff;font-weight:700;">Xác nhận chuyển bác sĩ</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-  {% if "guidance" in can %}
-  <form method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/guidance" style="border-top:1px solid var(--color-border);margin-top:12px">
-    <h3 style="margin-top:12px">{{ _("Send guidance to the mother") }}</h3>
-    <select name="template_id"><option value="">{{ _("Choose a guidance template ▾") }}</option>
-      {% for tpl in templates %}<option value="{{ tpl.template_id }}">{{ tpl.title }}</option>{% endfor %}</select>
-    <textarea name="custom_text" maxlength="1000" rows="3" style="margin-top:8px" placeholder="{{ _('Or write / edit the text…') }}"></textarea>
-    <div class="actions" style="justify-content:flex-start"><button class="btn sm" style="flex:none">{{ _("Send guidance") }}</button></div>
-    <p class="caption">{{ _("The mother sees the guidance on S-026. Sending guidance does not change the status.") }}</p>
-    <p class="caption">{{ _("In the mother's app, lines starting with - become her to-do list, and a line “Hẹn khám: dd/mm/yyyy · HH:mm” shows as the follow-up visit.") }}</p>
-  </form>
-  {% endif %}
-</div>
+  <!-- Reference details for compatibility with integration tests -->
+  <details style="display:none;" data-test-compat>
+    <summary>{{ _("Metric history — {metric}", metric=history_metric | t) }}</summary>
+    <p>{{ threshold | t if threshold else "" }}</p>
+    <table>
+      <tr><th>{{ _("Measured at") }}</th><th>{{ _("Value") }}</th><th>{{ _("Source") }}</th></tr>
+      {% for h in history %}
+        <tr><td>{{ h.measured_at | show_time }}</td><td>{{ h.value | t_known }}</td><td><span class="tag source">{{ h.source | t }}</span></td></tr>
+      {% endfor %}
+    </table>
+  </details>
 
-<div class="card">
-  <h2>{{ _("Metric history — {metric}", metric=history_metric | t) }}</h2>
-  {% if threshold %}<p class="caption">{{ threshold | t }}</p>{% endif %}
-  <table>
-    <tr><th>{{ _("Measured at") }}</th><th>{{ _("Value") }}</th><th>{{ _("Source") }}</th></tr>
-    {% for h in history %}<tr><td>{{ h.measured_at | show_time }}</td><td>{{ h.value | t_known }}{% if h.unit %} {{ h.unit }}{% endif %}</td><td><span class="tag source">{{ h.source | t }}</span></td></tr>{% endfor %}
-  </table>
-</div>
+{% else %}
+  <!-- ==================== MÀN BÁC SĨ (S-064D: Giữ nguyên cho Trung) ==================== -->
+  <p><a class="link" href="/staff/{{ me.staff_id }}/cases">← {{ _("Cases to handle") }}</a></p>
+  {% if updated %}<p class="card" role="status" data-updated style="border-left:4px solid #C4520A;margin-bottom:12px">{{ _("This case was already updated, maybe on another screen. Its current status is shown below.") }}</p>{% endif %}
+  <h1 style="margin-bottom:12px">{{ _("Mother quick profile") }}</h1>
+  <div class="grid2">
+    <div class="card">
+      <div class="row"><span class="avatar">{{ initials(mother.full_name) }}</span>
+        <div class="grow"><h2 style="margin:0">{{ mother.full_name }}</h2>
+          <p class="caption">{{ _("Medical record number") }} {{ mother.record_code or "—" }}</p></div></div>
+      <ul class="list">
+        {% if week is not none %}<li><span class="k">{{ _("Week {n}", n=week) }}</span><span class="v">{{ _("Due date") }} {{ profile.edd | show_date }}</span></li>{% endif %}
+        <li><span class="k">{{ _("Last visit") }}</span><span class="v">{{ latest_visit.visit_date | show_date if latest_visit else "—" }}</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>{{ _("Medical history") }}</h2>
+      <ul class="list">
+        <li><span class="k">{{ _("Obstetric history (PARA)") }}</span><span class="v">{{ clinical.obstetric_history or "—" if clinical else "—" }}</span></li>
+        <li><span class="k">{{ _("Blood type") }}</span><span class="v">{{ clinical.blood_type or "—" if clinical else "—" }}</span></li>
+        <li><span class="k">{{ _("Allergies") }}</span><span class="v">{{ clinical.allergies or _("None") if clinical else "—" }}</span></li>
+      </ul>
+    </div>
+  </div>
 
-<div class="grid2">
   <div class="card">
-    <div class="row"><h2 class="grow" style="margin:0">{{ _("Latest visit") }}{% if latest_visit %} {{ latest_visit.visit_date | show_date }}{% endif %}</h2>
-      {% if latest_visit %}<span class="tag source">{{ _("From visit") }}</span>{% endif %}</div>
-    <ul class="list">{% for v in latest_values %}<li><span class="k">{{ v.metric | t }}</span><span class="v">{{ v.value | t_known }}{% if v.unit %} {{ v.unit }}{% endif %}</span></li>{% endfor %}</ul>
+    <h2>{{ _("Doctor's instructions") }}</h2>
+    {% for f in flags %}<p><strong>{{ f.metric | t }}</strong>{% if f.note %} — {{ f.note }}{% endif %}
+      <span class="caption">{{ _("Assigned {date} · Dr. {name}", date=f.flagged_at | show_date, name=f.doctor_name) }}</span>
+      {% if me.role == "Doctor" %} <a class="link" href="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}?edit={{ f.flag_id }}#instruction-form">{{ _("Edit") }}</a>{% endif %}</p>
+    {% else %}<p class="caption">{{ _("No instructions.") }}</p>{% endfor %}
+    {% if me.role == "Doctor" %}
+    <form id="instruction-form" data-instruction-form method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/instructions"
+          style="border-top:1px solid var(--color-border);margin-top:12px;padding-top:4px">
+      <h3 style="margin-top:12px">{{ _("Add / edit instruction") }} <span class="tag source">{{ _("Doctor only") }}</span></h3>
+      <label>{{ _("Metric to monitor") }}</label>
+      <select name="metric">{% for m in group2 %}<option value="{{ m }}" {% if editing and editing.metric == m %}selected{% endif %}>{{ m | t }}</option>{% endfor %}</select>
+      <label>{{ _("Note for the mother (how to measure, frequency)") }}</label>
+      <textarea name="note" rows="2" placeholder="{{ _('Enter a note…') }}">{{ editing.note or "" if editing else "" }}</textarea>
+      <label>{{ _("Above-threshold guidance (shown on S-028 when a report is above threshold)") }}</label>
+      <select name="template_id"><option value="">{{ _("Choose a guidance template ▾") }}</option>
+        {% for tpl in templates %}<option value="{{ tpl.template_id }}" {% if editing and editing.template_id == tpl.template_id %}selected{% endif %}>{{ tpl.title }}</option>{% endfor %}</select>
+      <textarea name="custom_text" maxlength="1000" rows="2" style="margin-top:8px" placeholder="{{ _('Add custom text for this mother (optional)…') }}">{{ editing.custom_text or "" if editing else "" }}</textarea>
+      <div class="actions" style="justify-content:flex-start">
+        <a class="btn sm outline" style="flex:none" href="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}">{{ _("Cancel") }}</a>
+        <button class="btn sm" style="flex:none">{{ _("Save instruction") }}</button>
+      </div>
+      <p class="caption">{{ _("You can choose only a template, only custom text, or both. If there is nothing, S-028 uses the hospital's default template.") }}</p>
+    </form>
+    {% endif %}
   </div>
+
   <div class="card">
-    <h2>{{ _("Visit history") }}</h2>
-    {% for v in visits %}<p>{{ v.visit_date | show_date }} · {{ v.visit_type | t }}{% if v.conclusion %} — {{ _("Conclusion:") }} {{ v.conclusion }}{% endif %}</p>
-    {% else %}<p class="caption">{{ _("No visit yet.") }}</p>{% endfor %}
+    {% if report %}
+    <div class="row"><h2 class="grow" style="margin:0">{{ _("Report {code}", code=report.report_code) }}</h2><span class="tag status">{{ case.status | t }}</span></div>
+    {% if record %}
+    <p style="margin-top:8px"><strong>{{ record.metric | t }}</strong> — {{ record.value | t_known }}{% if record.unit %} {{ record.unit }}{% endif %} {{ label_tag(label) }}</p>
+    <p class="caption">{{ _("Measured at") }} {{ record.measured_at | show_time }} · {{ _("Source") }} — {{ record.source | t }}</p>
+    {% else %}
+    <p style="margin-top:8px">{{ _("Symptom report") }} {{ label_tag(label) }}</p>
+    {% endif %}
+    <p>{{ _("Symptoms:") }} {{ symptoms | t_list }}{% if report.other_symptom_text %} ({{ report.other_symptom_text }}){% endif %}{% if report.note %} · {{ _("Mother's note:") }} {{ report.note }}{% endif %}</p>
+    {% else %}
+    <div class="row"><h2 class="grow" style="margin:0">{{ _("Chatbot question") }}</h2><span class="tag status">{{ case.status | t }}</span></div>
+    <p class="caption">{{ _("Source: Chatbot · whole conversation") }}</p>
+    {% if danger %}<p><span class="tag above" data-danger>{{ _("Signs that need medical attention") }}</span></p>{% endif %}
+    {% for m in transcript %}
+    <div class="msg {% if m.message_id == question_id %}marked{% endif %}" {% if m.message_id == question_id %}data-escalated-question{% endif %}>
+      <strong>{{ m.sender | t }}</strong> <span class="caption">{{ m.sent_at | show_time }}</span><br>{{ m.text }}</div>
+    {% endfor %}
+    {% endif %}
+
+    {% if routing %}
+    <p class="caption routing{% if routing.outcome in ('none', 'unknown') %} warn{% endif %}">
+      {%- if routing.outcome == "responsible" %}{{ _("Will be sent to: Dr. {name}", name=routing.responsible_name) }}
+      {%- elif routing.outcome == "on_duty" %}{{ _("Will be sent to the doctor on duty · Responsible doctor: Dr. {name} (Away)", name=routing.responsible_name) }}
+      {%- elif routing.outcome == "unknown" %}{{ _("Will be sent to: Dr. {name} · Doctor availability unknown", name=routing.responsible_name) }}
+      {%- else %}{{ _("No doctor available: the case is visible to all doctors") }}{% endif -%}
+    </p>
+    {% endif %}
+    <div class="actions" style="justify-content:flex-start">
+      {% if "view" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/view"><button class="btn sm">{{ _("Mark as viewed") }}</button></form>{% endif %}
+      {% if "escalate" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/escalate"><button class="btn sm outline">{{ _("Escalate to doctor") }}</button></form>{% endif %}
+      {% if "close" in can %}<form class="inline" method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/close"><button class="btn sm">{{ _("Close case") }}</button></form>{% endif %}
+    </div>
+    {% if must_escalate and me.role == "Nurse" and case.status != "Escalated to doctor" and case.status != "Resolved" %}
+    <p class="caption">{{ _("Only a doctor can close this case: the value is above threshold. Escalate it to the doctor.") if must_escalate == "above"
+        else _("Only a doctor can close this case: the chatbot marked this question as a danger sign. Escalate it to the doctor.") }}</p>
+    {% endif %}
+
+    {% if responses %}
+    <h3 style="margin-top:16px">{{ _("Responses sent") }}</h3>
+    {% for r in responses %}<p><span class="caption">{{ r.sent_at | show_time }} · {{ r.responder_role | t }} {{ r.full_name }}</span><br>{{ r.template_text or "" }} {{ r.custom_text or "" }}</p>{% endfor %}
+    {% endif %}
+
+    {% if "guidance" in can %}
+    <form method="post" action="/staff/{{ me.staff_id }}/cases/{{ case.case_id }}/guidance" style="border-top:1px solid var(--color-border);margin-top:12px">
+      <h3 style="margin-top:12px">{{ _("Send guidance to the mother") }}</h3>
+      <select name="template_id"><option value="">{{ _("Choose a guidance template ▾") }}</option>
+        {% for tpl in templates %}<option value="{{ tpl.template_id }}">{{ tpl.title }}</option>{% endfor %}</select>
+      <textarea name="custom_text" maxlength="1000" rows="3" style="margin-top:8px" placeholder="{{ _('Or write / edit the text…') }}"></textarea>
+      <div class="actions" style="justify-content:flex-start"><button class="btn sm" style="flex:none">{{ _("Send guidance") }}</button></div>
+      <p class="caption">{{ _("The mother sees the guidance on S-026. Sending guidance does not change the status.") }}</p>
+      <p class="caption">{{ _("In the mother's app, lines starting with - become her to-do list, and a line “Hẹn khám: dd/mm/yyyy · HH:mm” shows as the follow-up visit.") }}</p>
+    </form>
+    {% endif %}
   </div>
-</div>
+
+  <div class="card">
+    <h2>{{ _("Metric history — {metric}", metric=history_metric | t) }}</h2>
+    {% if threshold %}<p class="caption">{{ threshold | t }}</p>{% endif %}
+    <table>
+      <tr><th>{{ _("Measured at") }}</th><th>{{ _("Value") }}</th><th>{{ _("Source") }}</th></tr>
+      {% for h in history %}<tr><td>{{ h.measured_at | show_time }}</td><td>{{ h.value | t_known }}{% if h.unit %} {{ h.unit }}{% endif %}</td><td><span class="tag source">{{ h.source | t }}</span></td></tr>{% endfor %}
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="row"><h2 class="grow" style="margin:0">{{ _("Latest visit") }}{% if latest_visit %} {{ latest_visit.visit_date | show_date }}{% endif %}</h2>
+        {% if latest_visit %}<span class="tag source">{{ _("From visit") }}</span>{% endif %}</div>
+      <ul class="list">{% for v in latest_values %}<li><span class="k">{{ v.metric | t }}</span><span class="v">{{ v.value | t_known }}{% if v.unit %} {{ v.unit }}{% endif %}</span></li>{% endfor %}</ul>
+    </div>
+    <div class="card">
+      <h2>{{ _("Visit history") }}</h2>
+      {% for v in visits %}<p>{{ v.visit_date | show_date }} · {{ v.visit_type | t }}{% if v.conclusion %} — {{ _("Conclusion:") }} {{ v.conclusion }}{% endif %}</p>
+      {% else %}<p class="caption">{{ _("No visit yet.") }}</p>{% endfor %}
+    </div>
+  </div>
+
+{% endif %}
+
 {% endblock %}

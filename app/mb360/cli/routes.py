@@ -70,7 +70,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
                     sources=dashboard.SOURCES, badge=notices.count(conn, staff_id, me["role"]), nav="board")
 
     @app.get("/staff/{staff_id}/cases", response_class=HTMLResponse)
-    def cases(request: Request, staff_id: str, status: str = "", flag: str = ""):
+    def cases(request: Request, staff_id: str, status: str = "", flag: str = "", q: str = ""):
         me = staff(staff_id)
         # Default filter: doctor "Escalated to doctor" (CLI-02); nurse "Not viewed", the cases waiting for her (D-102, spec-CLI §10 Q5)
         active = status if status in FILTERS else ("Escalated to doctor" if me["role"] == "Doctor" else "Not viewed")
@@ -78,13 +78,15 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         if flag:                               # opened from "Needs attention" on the dashboard: every open case of that group
             active = "All"
             ids = dashboard.flagged_ids(dashboard.cases(conn, clock.now(), viewer=staff_id), flag)
-        rows = queue.list_cases(conn, None if active == "All" else active, viewer=staff_id)
+        sort = "priority" if me["role"] == "Nurse" else "newest"
+        rows = queue.list_cases(conn, None if active == "All" else active, viewer=staff_id, sort=sort, q=q)
         if flag:
             rows = [r for r in rows if r["case_id"] in ids]
-        not_viewed = len(queue.list_cases(conn, "Not viewed", viewer=staff_id))
+        counts = queue.status_counts(conn, viewer=staff_id)
+        not_viewed = counts.get("Not viewed", 0)
         badge = notices.count(conn, staff_id, me["role"])
         return page(request, "cases.html", me=me, rows=rows, active=active, filters=FILTERS, not_viewed=not_viewed, badge=badge,
-                    flag=flag, flag_label=dashboard.FLAGS[flag][0] if flag else None, nav="cases")
+                    flag=flag, flag_label=dashboard.FLAGS[flag][0] if flag else None, nav="cases", counts=counts, q=q)
 
     @app.get("/staff/{staff_id}/cases/{case_id}", response_class=HTMLResponse)
     def case_page(request: Request, staff_id: str, case_id: str, error: str = "", edit: str = "", updated: int = 0):
@@ -121,8 +123,19 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
         return act(staff_id, case_id, actions.mark_viewed)
 
     @app.post("/staff/{staff_id}/cases/{case_id}/escalate")
-    def escalate(staff_id: str, case_id: str):
-        return act(staff_id, case_id, actions.escalate)
+    async def escalate(request: Request, staff_id: str, case_id: str):
+        form = await request.form()
+        reason = form.get("reason")
+        note = form.get("note")
+        return act(staff_id, case_id, actions.escalate, reason=reason, note=note)
+
+    @app.post("/staff/{staff_id}/cases/{case_id}/remind")
+    def remind(staff_id: str, case_id: str):
+        return act(staff_id, case_id, actions.remind_doctor)
+
+    @app.post("/staff/{staff_id}/cases/{case_id}/reopen")
+    def reopen(staff_id: str, case_id: str):
+        return act(staff_id, case_id, actions.reopen_case)
 
     @app.post("/staff/{staff_id}/cases/{case_id}/close")
     def close(staff_id: str, case_id: str):
