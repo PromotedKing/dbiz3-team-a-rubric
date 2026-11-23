@@ -14,17 +14,14 @@
       <form method="get" action="/staff/{{ me.staff_id }}/cases" style="display:flex;gap:8px;">
         <input type="hidden" name="status" value="{{ active }}">
         {% if flag %}<input type="hidden" name="flag" value="{{ flag }}">{% endif %}
-        <input type="text" id="nurse-mother-search" name="q" value="{{ q or '' }}" placeholder="🔍 Tìm kiếm theo tên mẹ..."
-               class="inp" style="width:100%;height:38px;padding:8px 12px;border:1px solid #DCE3DF;border-radius:8px;font-size:14px;background:#fff;">
+        <input type="text" id="nurse-mother-search" name="q" value="{{ q or '' }}" placeholder="🔍 Tìm kiếm theo tên mẹ..." class="inp" style="width:100%;height:38px;padding:8px 12px;border:1px solid #DCE3DF;border-radius:8px;font-size:14px;background:#fff;">
         {% if q %}<a href="/staff/{{ me.staff_id }}/cases?status={{ active | urlencode }}" class="btn sm outline" style="height:38px;white-space:nowrap;">Xoá</a>{% endif %}
       </form>
     </div>
   </div>
 
   {% if flag %}
-    <p class="filter-note" data-flag="{{ flag }}" style="margin-bottom:12px;">
-      {{ _("Showing: {group}", group=_(flag_label)) }} · <a class="link" href="/staff/{{ me.staff_id }}/cases">{{ _("Show all") }}</a>
-    </p>
+  <p class="filter-note" data-flag="{{ flag }}" style="margin-bottom:12px;">{{ _("Showing: {group}", group=_(flag_label)) }} · <a class="link" href="/staff/{{ me.staff_id }}/cases">{{ _("Show all") }}</a></p>
   {% endif %}
 
   <!-- 4 Tab kèm số đếm: Chưa xem · Đã xem · Đã chuyển · Đã xử lý -->
@@ -36,82 +33,66 @@
       ("Resolved", "Đã xử lý")
     ] %}
     {% for tab_key, tab_label in nurse_tabs %}
-      <a class="chip{% if tab_key == active %} on{% endif %}"
-         href="/staff/{{ me.staff_id }}/cases?status={{ tab_key | urlencode }}"
-         style="height:38px;padding:0 14px;font-weight:{% if tab_key == active %}700{% else %}500{% endif %};">
-        {{ tab_label }} ({{ counts[tab_key] if counts else 0 }})
-      </a>
+    <a class="chip{% if tab_key == active %} on{% endif %}" href="/staff/{{ me.staff_id }}/cases?status={{ tab_key | urlencode }}" style="height:38px;padding:0 14px;font-weight:{% if tab_key == active %}700{% else %}500{% endif %};">{{ tab_label }} ({{ counts[tab_key] if counts else 0 }})</a>
     {% endfor %}
     {% if active == "All" %}
-      <a class="chip on" href="/staff/{{ me.staff_id }}/cases?status=All" style="height:38px;padding:0 14px;font-weight:700;">Tất cả</a>
+    <a class="chip on" href="/staff/{{ me.staff_id }}/cases?status=All" style="height:38px;padding:0 14px;font-weight:700;">Tất cả</a>
     {% endif %}
     <span class="caption" style="margin-left:auto;align-self:center;">Sắp xếp: Ưu tiên (Khẩn & Chờ lâu)</span>
   </div>
 
   {% if rows %}
-    <div class="nurse-queue-list" data-active-filter="{{ active }}" style="display:flex;flex-direction:column;gap:12px;">
-      {% for r in rows %}
-      <div class="nurse-card" data-mother-name="{{ r.mother }}"
-           style="background:#fff;border:1px solid #E1E7E3;border-left:6px solid {{ r.urgency.border_color }};border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:all 0.15s ease;">
-        <!-- Dòng 1: Tên mẹ + Tuần thai / Ngày sau sinh + Badge mức khẩn -->
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <strong style="font-size:16px;color:#212121;">{{ r.mother }}</strong>
-            {% if r.returned_by_doctor %}
-              <span class="tag" style="background:#FFF3E0;color:#E65100;font-weight:700;font-size:11px;padding:2px 8px;border-radius:4px;border:1px solid #FFE0B2;">
-                Bác sĩ trả về
-              </span>
-            {% endif %}
-            <span class="caption" style="font-size:13px;color:#53615A;background:#F0F4F2;padding:2px 8px;border-radius:4px;">
-              {{ r.stage_text }}
-            </span>
-          </div>
-          <div>
-            {% if r.danger %}
-              <span class="tag" style="background:#FFEBEE;color:#D32F2F;font-weight:700;font-size:11px;margin-right:6px;" data-danger>{{ _("Signs that need medical attention") }}</span>
-            {% endif %}
-            <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px;background:{{ r.urgency.bg_color }};color:{{ r.urgency.color }};">
-              {{ r.urgency.icon }} {{ r.urgency.label }}
-            </span>
-          </div>
+  <div class="nurse-queue-list" data-active-filter="{{ active }}" style="display:flex;flex-direction:column;gap:12px;">
+    {% for r in rows %}
+    <div class="nurse-card" data-mother-name="{{ r.mother }}" style="background:#fff;border:1px solid #E1E7E3;border-left:6px solid {{ r.urgency.border_color }};border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:all 0.15s ease;">
+      <!-- Dòng 1: Tên mẹ + Tuần thai / Ngày sau sinh + Badge mức khẩn -->
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <strong style="font-size:16px;color:#212121;">{{ r.mother }}</strong>
+          {% if r.returned_by_doctor %}
+          <span class="tag" style="background:#FFF3E0;color:#E65100;font-weight:700;font-size:11px;padding:2px 8px;border-radius:4px;border:1px solid #FFE0B2;">Bác sĩ trả về</span>
+          {% endif %}
+          <span class="caption" style="font-size:13px;color:#53615A;background:#F0F4F2;padding:2px 8px;border-radius:4px;">{{ r.stage_text }}</span>
         </div>
-
-        <!-- Dòng 2: Triệu chứng chính + Thời gian chờ (chuyển đỏ khi quá hạn) -->
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-          <div style="font-size:14px;color:#333;flex:1;min-width:200px;">
-            <span style="font-weight:600;">{{ r.main_symptom }}</span>
-            {% if r.value %}
-              · <span style="font-size:14px;{% if r.label == 'Above threshold' %}color:#D32F2F;font-weight:700;{% else %}color:#666;{% endif %}">{{ r.value }}</span>
-            {% endif %}
-          </div>
-          <div style="display:flex;align-items:center;gap:14px;">
-            <span style="font-size:13px;{% if r.waited.is_overdue %}color:#D32F2F;font-weight:700;background:#FFEBEE;padding:2px 8px;border-radius:4px;{% else %}color:#65716B;{% endif %}">
-              ⏱ Chờ {{ r.waited.text }}{% if r.waited.is_overdue %} (Quá hạn){% endif %}
-            </span>
-            <a class="link" href="/staff/{{ me.staff_id }}/cases/{{ r.case_id }}"
-               style="font-size:13px;font-weight:700;color:#00A651;white-space:nowrap;padding:4px 8px;border:1px solid #C8E6C9;border-radius:6px;background:#F1F8E9;">
-              {{ _("View report") }} ›
-            </a>
-          </div>
+        <div>
+          {% if r.danger %}
+          <span class="tag" style="background:#FFEBEE;color:#D32F2F;font-weight:700;font-size:11px;margin-right:6px;" data-danger>{{ _("Signs that need medical attention") }}</span>
+          {% endif %}
+          <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px;background:{{ r.urgency.bg_color }};color:{{ r.urgency.color }};">{{ r.urgency.icon }} {{ r.urgency.label }}</span>
         </div>
       </div>
-      {% endfor %}
+
+      <!-- Dòng 2: Triệu chứng chính + Thời gian chờ (chuyển đỏ khi quá hạn) -->
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <div style="font-size:14px;color:#333;flex:1;min-width:200px;">
+          <span style="font-weight:600;">{{ r.main_symptom }}</span>
+          {% if r.value %}
+          · <span style="font-size:14px;{% if r.label == 'Above threshold' %}color:#D32F2F;font-weight:700;{% else %}color:#666;{% endif %}">{{ r.value }}</span>
+          {% endif %}
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <span style="font-size:13px;{% if r.waited.is_overdue %}color:#D32F2F;font-weight:700;background:#FFEBEE;padding:2px 8px;border-radius:4px;{% else %}color:#65716B;{% endif %}">⏱ Chờ {{ r.waited.text }}{% if r.waited.is_overdue %} (Quá hạn){% endif %}</span>
+          <a class="link" href="/staff/{{ me.staff_id }}/cases/{{ r.case_id }}" style="font-size:13px;font-weight:700;color:#00A651;white-space:nowrap;padding:4px 8px;border:1px solid #C8E6C9;border-radius:6px;background:#F1F8E9;">{{ _("View report") }} ›</a>
+        </div>
+      </div>
     </div>
+    {% endfor %}
+  </div>
   {% else %}
-    <div class="empty" data-active-filter="{{ active }}" style="text-align:center;padding:48px 16px;background:#fff;border-radius:12px;border:1px solid #E1E7E3;">
-      <p style="font-size:16px;color:#65716B;">{{ _("No cases to handle.") }}</p>
-    </div>
+  <div class="empty" data-active-filter="{{ active }}" style="text-align:center;padding:48px 16px;background:#fff;border-radius:12px;border:1px solid #E1E7E3;">
+    <p style="font-size:16px;color:#65716B;">{{ _("No cases to handle.") }}</p>
+  </div>
   {% endif %}
 
   <!-- Client-side instant search -->
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
       var s = document.getElementById("nurse-mother-search");
       if (!s) return;
-      s.addEventListener("input", function() {
+      s.addEventListener("input", function () {
         var q = this.value.trim().toLowerCase();
         var cards = document.querySelectorAll(".nurse-card");
-        cards.forEach(function(card) {
+        cards.forEach(function (card) {
           var name = (card.getAttribute("data-mother-name") || "").toLowerCase();
           card.style.display = name.indexOf(q) !== -1 ? "" : "none";
         });
@@ -131,21 +112,21 @@
   </div>
   {% if rows %}
   <div class="card table-wrap" style="padding:4px 8px">
-  <table data-active-filter="{{ active }}">
-    <tr><th>{{ _("Mother") }}</th><th>{{ _("Gestational age") }}</th><th>{{ _("Case source") }}</th><th>{{ _("Content") }}</th><th>{{ _("Value") }}</th><th>{{ _("Submitted at") }}</th><th>{{ _("Status") }}</th><th></th></tr>
-    {% for r in rows %}
-    <tr{% if r.label == 'Above threshold' %} class="above-row"{% endif %}>
-      <td><strong>{{ r.mother }}</strong></td>
-      <td>{% if r.week is not none %}{{ _("Week {n}", n=r.week) }}{% endif %}</td>
-      <td>{{ r.case_source | t }}{% if r.danger %} <span class="tag above" data-danger>{{ _("Signs that need medical attention") }}</span>{% endif %}</td>
-      <td>{{ r.content | t_list if r.case_source == "Symptom" else (r.content | t if r.case_source == "Metric report" else r.content) }}</td>
-      <td>{{ r.value | t_known or "—" }} <span class="tag {{ 'above' if r.label == 'Above threshold' else 'normal' if r.label == 'Normal' else '' }}">{{ r.label | t }}</span></td>
-      <td>{{ r.submitted_at | show_time }}</td>
-      <td><span class="tag status{% if r.status == 'Resolved' %} done{% endif %}">{{ r.status | t }}</span></td>
-      <td><a class="link" href="/staff/{{ me.staff_id }}/cases/{{ r.case_id }}">{{ _("View report") }} ›</a></td>
-    </tr>
-    {% endfor %}
-  </table>
+    <table data-active-filter="{{ active }}">
+      <tr><th>{{ _("Mother") }}</th><th>{{ _("Gestational age") }}</th><th>{{ _("Case source") }}</th><th>{{ _("Content") }}</th><th>{{ _("Value") }}</th><th>{{ _("Submitted at") }}</th><th>{{ _("Status") }}</th><th></th></tr>
+      {% for r in rows %}
+      <tr{% if r.label == 'Above threshold' %} class="above-row"{% endif %}>
+        <td><strong>{{ r.mother }}</strong></td>
+        <td>{% if r.week is not none %}{{ _("Week {n}", n=r.week) }}{% endif %}</td>
+        <td>{{ r.case_source | t }}{% if r.danger %} <span class="tag above" data-danger>{{ _("Signs that need medical attention") }}</span>{% endif %}</td>
+        <td>{{ r.content | t_list if r.case_source == "Symptom" else (r.content | t if r.case_source == "Metric report" else r.content) }}</td>
+        <td>{{ r.value | t_known or "—" }} <span class="tag {{ 'above' if r.label == 'Above threshold' else 'normal' if r.label == 'Normal' else '' }}">{{ r.label | t }}</span></td>
+        <td>{{ r.submitted_at | show_time }}</td>
+        <td><span class="tag status{% if r.status == 'Resolved' %} done{% endif %}">{{ r.status | t }}</span></td>
+        <td><a class="link" href="/staff/{{ me.staff_id }}/cases/{{ r.case_id }}">{{ _("View report") }} ›</a></td>
+      </tr>
+      {% endfor %}
+    </table>
   </div>
   {% else %}
   <div class="empty" data-active-filter="{{ active }}"><p>{{ _("No cases to handle.") }}</p></div>
