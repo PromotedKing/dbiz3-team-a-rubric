@@ -1,5 +1,13 @@
 # Build Log
 
+## 24/11/2026: two-column case page for the nurse and the doctor (Ánh and Chi, with Claude)
+
+- **Scope**: look of `S-064` / `S-064D` only (D-103, one page for both roles). The case and what to do with it are on the left (report, "Mark as viewed" / "Escalate to doctor" / "Close case", guidance, the doctor's instruction form); the mother's context is on the right (latest visit, doctor's instructions, medical history, metric history, visit history). Header: mother's name, record code, week, due date, responsible doctor. A case above threshold or with an alarm symptom gets the existing alert colour on the report card; a mother's other open cases are counted with a link (new label "Other open cases of this mother: {n}"). The case board card no longer breaks a tag or a name in the middle (CSS only).
+- **Replaces PR #59** (`anh-chi/nurse-screen-redesign`), which conflicted with the merged T-01 (PR #56) in 9 files and was rebuilt from `main`. Taken from it: the layout idea only. **Left out on purpose**: any overdue / SLA minutes and red-on-overdue (S-061 #13A, D-85: waiting time is shown, never judged), a three-level urgency of its own (the label reference allows 3 labels, a critical level only if the team decides), `reopen_case` (would UPDATE `CASE_STATUS_HISTORY`, which is append-only), "remind the doctor", the escalation reason and note written into `STAFF_RESPONSE` (the mother reads that table; a reason needs PRD → spec → data model first), the nurse list as cards (S-061 defines the columns), hiding the bell again (D-105 already done by T-01; the D-109 / T-04 conflict stays open for the team).
+- **Not changed**: routes, actions, rules (BR-010, BR-011, BR-012, BR-013), schema, seed, specs. No hard-coded text: every label is in `docs/ui-label-reference.md`.
+- **Chain**: `screens/screen-spec-S-064.md` / `S-064D.md` (layout of the mockup to be redrawn by the owners) → `templates/case.html`, `cli/case_detail.py` (reads `alarm` and the mother's other open cases, nothing stored), `static/staff.css`.
+- **Tests**: new `tests/integration/test_cli_case_layout.py` (4 tests). Full suite 851 passed, 3 existing xfails.
+
 ## 21/11/2026: split the nurse and doctor views of the clinical web (Ánh, with Claude Code)
 
 - **Scope**: builds the screens merged in PR #47 — `S-061` / `S-061D` and `S-064` / `S-064D` as role views of the same two pages (D-103, D-107): one template each, the role read from `STAFF.role`, routes `/staff/{id}/...` unchanged.

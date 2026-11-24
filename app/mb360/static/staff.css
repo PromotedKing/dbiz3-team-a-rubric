@@ -484,3 +484,29 @@ form.inline { display: inline; }
 .notice.urgent { border-left-color: var(--status-alert-fg); }
 .notice-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 6px; }
 .notice-head .caption { margin: 0; }
+
+/* Nurse / doctor case page: the case and its actions on the left, the mother's context on the right (look only, D-103) */
+.case-head { margin: 0 0 16px; }
+.case-head h1 { font-size: 24px; line-height: 32px; }
+.case-head .caption { margin: 2px 0 0; }
+.case-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); gap: 16px; align-items: start; }
+.case-main, .case-side { min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.case-grid .card { margin: 0; }
+.case-grid .card h2 { font-size: 16px; line-height: 22px; }
+.case-report.urgent { border: 1px solid #F6CBAE; border-left: 4px solid var(--status-alert-fg); }
+.case-key { font-size: 18px; line-height: 26px; margin: 12px 0 2px; }
+.case-key strong { font-weight: 700; }
+.case-actions .btn { flex: none; }
+.case-actions { align-items: center; }
+.case-sep { border-top: 1px solid var(--color-border); margin-top: 16px; padding-top: 4px; }
+.case-side .list > li { padding: 10px 0; }
+.case-side table { font-size: 13px; }
+@media (max-width: 900px) { .case-grid { grid-template-columns: 1fr; } }
+
+/* Case board cards: names and tags never break in the middle of a word or a pill (S-0xx board, D-85) */
+.kcard .tag { white-space: nowrap; flex: none; }
+.kcard .kname { overflow-wrap: anywhere; line-height: 20px; }
+.kcard .kline { align-items: flex-start; }
+.kcard .kline > b { overflow-wrap: anywhere; font-size: 15px; line-height: 20px; }
+.kcard.above { background: #FFFBF8; }
+.kfoot > span:first-child { min-width: 0; overflow-wrap: anywhere; }

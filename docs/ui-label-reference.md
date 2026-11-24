@@ -909,6 +909,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Nurse / doctor screens (D-103 – D-105) | This case was routed to you as the doctor on duty — the responsible doctor, Dr. {name}, is Away. | Ca này được chuyển cho bạn vì bạn là bác sĩ đang trực — bác sĩ phụ trách, BS. {name}, đang vắng. |
 | Nurse / doctor screens (D-103 – D-105) | This case must be escalated to a doctor | Ca này phải chuyển cho bác sĩ |
 | Nurse / doctor screens (D-103 – D-105) | Do not advise on medicines, vitamins or herbal products that no doctor prescribed. Use the safe template and escalate to the doctor. | Không tư vấn về thuốc, vitamin hay thảo dược mà bác sĩ chưa kê. Hãy dùng mẫu an toàn và chuyển ca cho bác sĩ. |
+| Nurse / doctor screens (D-103 – D-105) | Other open cases of this mother: {n} | Mẹ này còn {n} ca đang mở khác |
 
 
 ## Proposed S-106 labels
