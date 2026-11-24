@@ -1198,3 +1198,8 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 
 - **S-008**: aligned the date and countdown on their numeric baseline and rendered the decorative facets as inline SVG.
 - **Chain**: S-008 screen spec → home template and TCI stylesheet.
+
+## 24/11/2026: settle the nurse bell — D-109 follows D-105 (Trung)
+
+- **T-04**: §10 Q5 of `spec-CLI.md` was open between D-105 (no "Notifications" button for the Nurse) and D-109 (a bell for her as well). The code has followed D-105 since PR #56, so the documents now say the same: D-109 is revised to the Doctor only, S-061 element #4 and §9 Q5 are resolved, and the spec goes to v1.10.1. No code change.
+- **Chain**: `docs/decisions.md` (D-105, D-109) → `specs/spec-CLI.md` §7.2, §7.4, §10 Q5, Q25 and `screens/screen-spec-S-061.md` #4, #6, §9 Q4, Q5.
