@@ -13,6 +13,9 @@ from . import actions, case_detail, dashboard, instructions, notices, queue
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
 ui.install(TEMPLATES)
+# Look only: one colour family per stage of a case, the same on the overview, the board, the list and the case page
+STATUS_CLASS = {"Not viewed": "s-new", "Viewed": "s-seen", "Escalated to doctor": "s-esc", "Resolved": "s-done"}
+TEMPLATES.env.filters["status_class"] = lambda status: STATUS_CLASS.get(status, "")
 FILTERS = ["Not viewed", "Viewed", "Escalated to doctor", "Resolved", "All"]
 
 

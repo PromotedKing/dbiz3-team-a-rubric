@@ -56,6 +56,10 @@ The tagline under the logo ("Lifelong health care for you!") is Body 15/400 in `
 | `color-status-unrated` | `#EEEEEE` / `#6F6F6F` | threshold label "Not assessed" |
 | `color-error` | `#D64545` | network error, input error |
 | `color-info` | `#3B7DD8` | neutral information |
+| `color-status-urgent` | `#FDECEC` / `#B3261E` (strip `#D32F2F`) | clinical web only (23/11 review): "Above threshold" and alarm symptoms on the overview, board, list and case page — a case that needs a look first |
+| `color-stage-nurse` | `#FFF4DB` / `#8A5300` (strip `#E3A008`) | clinical web only: case waiting for the nurse ("Not viewed", "Viewed") |
+| `color-stage-doctor` | `#E7F0FB` / `#1F5FBF` (strip `#3B7DD8`) | clinical web only: case waiting for the doctor ("Escalated to doctor") |
+| `color-stage-done` | `#E6F6EC` / `#00873F` (strip `#00A651`) | clinical web only: case done ("Resolved") |
 
 Do not use `color-accent` as a solid background for "Above threshold", so that it is not confused with the hotline / promotion buttons. Colour only supplements the text of a label, never replaces it.
 
@@ -106,7 +110,7 @@ Two card styles: **floating card** (white, `shadow-card`, no border) on a `color
 
 ### 6. Threshold labels
 
-Only 3 labels: **Normal** · **Above threshold** · **Not assessed** (D-17), Caption 12/700, `radius-tag`, colours of §2.3. Red only if the team decides to add a critical level.
+Only 3 labels: **Normal** · **Above threshold** · **Not assessed** (D-17), Caption 12/700, `radius-tag`, colours of §2.3. Red only if the team decides to add a critical level. **Decided 23/11 (review of the clinical web): on the clinical web (nurse and doctor) "Above threshold" and alarm symptoms are red (`color-status-urgent`), and each stage of a case has its own colour (§2.3); the mother's app is unchanged. Still 3 labels, no new level, and the colour never replaces the text.**
 
 ### 7. Data source labels
 
@@ -910,6 +914,11 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Nurse / doctor screens (D-103 – D-105) | This case must be escalated to a doctor | Ca này phải chuyển cho bác sĩ |
 | Nurse / doctor screens (D-103 – D-105) | Do not advise on medicines, vitamins or herbal products that no doctor prescribed. Use the safe template and escalate to the doctor. | Không tư vấn về thuốc, vitamin hay thảo dược mà bác sĩ chưa kê. Hãy dùng mẫu an toàn và chuyển ca cho bác sĩ. |
 | Nurse / doctor screens (D-103 – D-105) | Other open cases of this mother: {n} | Mẹ này còn {n} ca đang mở khác |
+| Nurse / doctor screens (D-103 – D-105) | Open case | Mở ca |
+| Nurse / doctor screens (D-103 – D-105) | Red: above threshold, alarm symptoms | Đỏ: vượt ngưỡng, có triệu chứng báo động |
+| Nurse / doctor screens (D-103 – D-105) | Amber: waiting for the nurse | Vàng: đang chờ y tá xử lý |
+| Nurse / doctor screens (D-103 – D-105) | Blue: waiting for the doctor | Xanh dương: chờ bác sĩ |
+| Nurse / doctor screens (D-103 – D-105) | Green: done | Xanh lá: đã xong |
 
 
 ## Proposed S-106 labels

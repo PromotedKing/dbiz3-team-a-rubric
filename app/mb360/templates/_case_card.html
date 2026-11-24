@@ -1,15 +1,18 @@
-{#- One case on the board or the dashboard; the whole card opens the case -#}
-<a class="kcard{% if r.label == 'Above threshold' %} above{% endif %}" href="/staff/{{ me.staff_id }}/cases/{{ r.case_id }}" data-case="{{ r.case_id }}">
+{#- One case on the board or the dashboard; the whole card opens the case. Colour = the stage of the case (amber: nurse, blue: doctor, green: done); red = above threshold or an alarm sign -#}
+{% set urgent = r.status != "Resolved" and (r.label == "Above threshold" or r.alarm) %}
+<a class="kcard {{ r.status | status_class }}{% if urgent %} urgent{% endif %}{% if r.label == 'Above threshold' %} above{% endif %}" href="/staff/{{ me.staff_id }}/cases/{{ r.case_id }}" data-case="{{ r.case_id }}">
+  <span class="ktop"><span class="tag source">{{ r.case_source | t }}</span>{% if urgent and not r.danger and r.label != "Above threshold" %}<span class="tag above">{{ _("Alarm symptoms") }}</span>{% endif %}</span>
   <span class="kname">{{ r.mother }}</span>
   <span class="caption">{{ r.record_code or "—" }}{% if r.week is not none %} · {{ _("Week {n}", n=r.week) }}{% endif %}</span>
   <span class="kline">
     {% if r.case_source == "Metric report" %}<b>{{ r.content | t }} {{ r.value | t_known }}</b> <span class="tag {{ 'above' if r.label == 'Above threshold' else 'normal' }}">{{ r.label | t }}</span>
     {% elif r.case_source == "Symptom" %}<b>{{ r.content | t_list }}</b>
-    {% else %}<span class="tag source">{{ _("Chatbot") }}</span>{% if r.danger %} <span class="tag above" data-danger>{{ _("Signs that need medical attention") }}</span>{% endif %} {{ r.content | truncate(70) }}{% endif %}
+    {% else %}{% if r.danger %}<span class="tag above" data-danger>{{ _("Signs that need medical attention") }}</span> {% endif %}{{ r.content | truncate(70) }}{% endif %}
   </span>
   {% if r.with_symptoms %}<span class="caption">{{ _("With:") }} {{ r.with_symptoms | t_list }}</span>{% endif %}
   <span class="kfoot">
-    <span>{% if r.alarm %}<span class="dot-alarm" title="{{ _('Alarm symptoms') }}"></span>{% endif %}{{ r.doctor and _("Dr. {name}", name=r.doctor) or (_("Nurse handling") if r.status != "Resolved" else "") }}</span>
+    <span class="kowner">{% if r.alarm and not urgent and r.status != "Resolved" %}<span class="dot-alarm" title="{{ _('Alarm symptoms') }}"></span>{% endif %}{{ r.doctor and _("Dr. {name}", name=r.doctor) or (_("Nurse handling") if r.status != "Resolved" else "") }}</span>
     <span class="caption">{% if r.waited %}{{ _("waiting {d}d {h}h", d=r.waited.days, h=r.waited.hours) if r.waited.days else _("waiting {h}h {m}m", h=r.waited.hours, m=r.waited.minutes) }}{% else %}{{ r.created_at | show_time }}{% endif %}</span>
   </span>
+  <span class="kbtn">{{ _("Open case") }} ›</span>
 </a>

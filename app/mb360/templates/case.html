@@ -24,7 +24,7 @@
 
 <section class="card case-report{% if urgent %} urgent{% endif %}">
   {% if report %}
-  <div class="row"><h2 class="grow" style="margin:0">{{ _("Report {code}", code=report.report_code) }}</h2><span class="tag status">{{ case.status | t }}</span></div>
+  <div class="row"><h2 class="grow" style="margin:0">{{ _("Report {code}", code=report.report_code) }}</h2><span class="tag status {{ case.status | status_class }}">{{ case.status | t }}</span></div>
   {% if record %}
   <p class="case-key"><strong>{{ record.metric | t }}</strong> — {{ record.value | t_known }}{% if record.unit %} {{ record.unit }}{% endif %} {{ label_tag(label) }}</p>
   <p class="caption">{{ _("Measured at") }} {{ record.measured_at | show_time }} · {{ _("Source") }} — {{ record.source | t }}</p>
@@ -33,7 +33,7 @@
   {% endif %}
   <p>{% if alarm %}<span class="tag above">{{ _("Alarm symptoms") }}</span> {% endif %}{{ _("Symptoms:") }} {{ symptoms | t_list }}{% if report.other_symptom_text %} ({{ report.other_symptom_text }}){% endif %}{% if report.note %} · {{ _("Mother's note:") }} {{ report.note }}{% endif %}</p>
   {% else %}
-  <div class="row"><h2 class="grow" style="margin:0">{{ _("Chatbot question") }}</h2><span class="tag status">{{ case.status | t }}</span></div>
+  <div class="row"><h2 class="grow" style="margin:0">{{ _("Chatbot question") }}</h2><span class="tag status {{ case.status | status_class }}">{{ case.status | t }}</span></div>
   <p class="caption">{{ _("Source: Chatbot · whole conversation") }}</p>
   {% if danger %}<p><span class="tag above" data-danger>{{ _("Signs that need medical attention") }}</span></p>{% endif %}
   {% for m in transcript %}
@@ -139,14 +139,15 @@
   </ul>
 </section>
 
-<section class="card">
-  <h2>{{ _("Metric history — {metric}", metric=history_metric | t) }}</h2>
+{#- Nurse: the one latest value is in the report on the left, the whole history is one click away; doctor: the trend stays open (S-064 vs S-064D) -#}
+<{{ "details" if nurse else "section" }} class="card"{% if nurse %} data-history-collapsed{% endif %}>
+  {% if nurse %}<summary><h2 style="display:inline">{{ _("Metric history — {metric}", metric=history_metric | t) }}</h2></summary>{% else %}<h2>{{ _("Metric history — {metric}", metric=history_metric | t) }}</h2>{% endif %}
   {% if threshold %}<p class="caption">{{ threshold | t }}</p>{% endif %}
   <table>
     <tr><th>{{ _("Measured at") }}</th><th>{{ _("Value") }}</th><th>{{ _("Source") }}</th></tr>
     {% for h in history %}<tr><td>{{ h.measured_at | show_time }}</td><td>{{ h.value | t_known }}{% if h.unit %} {{ h.unit }}{% endif %}</td><td><span class="tag source">{{ h.source | t }}</span></td></tr>{% endfor %}
   </table>
-</section>
+</{{ "details" if nurse else "section" }}>
 
 <section class="card">
   <h2>{{ _("Visit history") }}</h2>

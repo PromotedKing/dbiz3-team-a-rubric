@@ -510,3 +510,102 @@ form.inline { display: inline; }
 .kcard .kline > b { overflow-wrap: anywhere; font-size: 15px; line-height: 20px; }
 .kcard.above { background: #FFFBF8; }
 .kfoot > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+
+/* Clinical web colour (23/11 review): a case's stage and urgency are read at a glance. Look only; the text always says the same.
+   red = above threshold / alarm · amber = waiting for the nurse · blue = waiting for the doctor · green = done (docs/ui-label-reference.md §2.3) */
+.staff {
+  --urgent-bg: #FDECEC; --urgent-fg: #B3261E; --urgent-strip: #D32F2F;
+  --nurse-bg: #FFF4DB;  --nurse-fg: #8A5300;  --nurse-strip: #E3A008;
+  --doctor-bg: #E7F0FB; --doctor-fg: #1F5FBF; --doctor-strip: #3B7DD8;
+  --done-bg: #E6F6EC;   --done-fg: #00873F;   --done-strip: #00A651;
+}
+.staff .tag.above { background: var(--urgent-bg); color: var(--urgent-fg); }
+.staff .tag.status.s-new, .staff .tag.status.s-seen { background: var(--nurse-bg); color: var(--nurse-fg); }
+.staff .tag.status.s-esc { background: var(--doctor-bg); color: var(--doctor-fg); }
+.staff .tag.status.s-done { background: var(--done-bg); color: var(--done-fg); }
+.staff .case-report.urgent { background: #FFFBFA; border-color: #F3C2BE; border-left-color: var(--urgent-strip); }
+.staff .case-report.urgent .case-key { color: var(--urgent-fg); }
+.staff .msg.marked { background: var(--urgent-bg); }
+
+/* Case cards (overview "Handle next" and the board) */
+.kcard { border-left: 5px solid var(--color-border); gap: 6px; }
+.kcard.s-new, .kcard.s-seen { border-left-color: var(--nurse-strip); }
+.kcard.s-esc { border-left-color: var(--doctor-strip); }
+.kcard.s-done { border-left-color: var(--done-strip); }
+.kcard.urgent { border-left-color: var(--urgent-strip); background: #FFFBFA; }
+.kcard.urgent .kname { color: var(--urgent-fg); }
+.kcard .ktop { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.kcard .kname { font-size: 16px; font-weight: 700; }
+.kcard .kline { font-size: 15px; }
+.kcard .kowner { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+.kcard.s-new .kowner, .kcard.s-seen .kowner { background: var(--nurse-bg); color: var(--nurse-fg); }
+.kcard.s-esc .kowner { background: var(--doctor-bg); color: var(--doctor-fg); }
+.kcard .kowner:empty { display: none; }
+.kcard .kbtn { align-self: flex-start; margin-top: 6px; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--color-border); font-size: 13px; font-weight: 700; color: var(--color-text-primary); background: #fff; }
+.kcard.s-new .kbtn, .kcard.s-seen .kbtn { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+.kcard.urgent.s-new .kbtn, .kcard.urgent.s-seen .kbtn { background: var(--urgent-strip); border-color: var(--urgent-strip); }
+.kcard:hover { border-color: var(--color-primary); }
+.kcard.urgent:hover { border-color: var(--urgent-strip); }
+.kcard .kfoot { border-top: 0; padding-top: 0; }
+
+/* Overview: top strip and number in the colour of the group, then the stacked bar and the key */
+.clinical-overview .kpi { border-top: 4px solid var(--color-border); }
+.clinical-overview .kpi.ok { border-top-color: var(--done-strip); }
+.clinical-overview .kpi.ok .kpi-num { color: var(--done-fg); }
+.clinical-overview .kpi.warn { border-top-color: var(--nurse-strip); }
+.clinical-overview .kpi.warn .kpi-num { color: var(--nurse-fg); }
+.clinical-overview .kpi.alert { border-top: 4px solid var(--urgent-strip); }
+.clinical-overview .kpi.alert .kpi-num { color: var(--urgent-fg); }
+.clinical-overview .kpi.info { border-top-color: var(--doctor-strip); }
+.clinical-overview .kpi.info .kpi-num { color: var(--doctor-fg); }
+.clinical-overview .kpi-num { font-size: 38px; line-height: 42px; }
+.stack { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: #EDF1EE; margin: 0 0 12px; }
+.stack i { display: block; height: 100%; }
+.clinical-overview .bar i.st-1, .stack i.st-1 { background: var(--nurse-strip); }
+.clinical-overview .bar i.st-2, .stack i.st-2 { background: #F2CF7A; }
+.clinical-overview .bar i.st-3, .stack i.st-3 { background: var(--doctor-strip); }
+.clinical-overview .bar i.st-4, .stack i.st-4 { background: var(--done-strip); }
+.clinical-overview .bar .fl-above, .clinical-overview .bar .fl-alarm { background: var(--urgent-strip); }
+.clinical-overview .bar .fl-unanswered { background: var(--nurse-strip); }
+.clinical-overview .bar .fl-doctor { background: var(--doctor-strip); }
+.clinical-overview .bar .fl-chatbot { background: #9AA5B1; }
+.clinical-overview .bar { height: 8px; }
+.color-key { display: flex; flex-wrap: wrap; gap: 8px 20px; list-style: none; margin: 0; padding: 12px 0 0; font-size: 12px; line-height: 18px; color: #53615A; }
+.color-key li { display: flex; align-items: center; gap: 6px; }
+.color-key i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.color-key .k-red { background: var(--urgent-strip); } .color-key .k-amber { background: var(--nurse-strip); }
+.color-key .k-blue { background: var(--doctor-strip); } .color-key .k-green { background: var(--done-strip); }
+
+/* Board: the column head carries the stage colour */
+.board-page .col { border-top-width: 4px; }
+.board-page .st-col-1 { border-top-color: var(--nurse-strip); }
+.board-page .st-col-2 { border-top-color: #F2CF7A; }
+.board-page .st-col-3 { border-top-color: var(--doctor-strip); }
+.board-page .st-col-4 { border-top-color: var(--done-strip); }
+.board-page .st-col-1 .count { background: var(--nurse-bg); color: var(--nurse-fg); border-color: #F2CF7A; }
+.board-page .st-col-3 .count { background: var(--doctor-bg); color: var(--doctor-fg); border-color: #B7D0F2; }
+.board-page .st-col-4 .count { background: var(--done-bg); color: var(--done-fg); border-color: #B5E0C6; }
+
+/* Case list: the first cell carries the stage colour, red wins */
+.cases-page tbody tr td:first-child, .cases-page tr td:first-child { box-shadow: inset 5px 0 0 var(--color-border); }
+.cases-page tr.s-new td:first-child, .cases-page tr.s-seen td:first-child { box-shadow: inset 5px 0 0 var(--nurse-strip); }
+.cases-page tr.s-esc td:first-child { box-shadow: inset 5px 0 0 var(--doctor-strip); }
+.cases-page tr.s-done td:first-child { box-shadow: inset 5px 0 0 var(--done-strip); }
+.cases-page tr.urgent td:first-child { box-shadow: inset 5px 0 0 var(--urgent-strip); }
+.cases-page tr.urgent { background: #FFFBFA; }
+.cases-page td .tag.status.s-new, .cases-page td .tag.status.s-seen { background: var(--nurse-bg); color: var(--nurse-fg); }
+.cases-page td .tag.status.s-esc { background: var(--doctor-bg); color: var(--doctor-fg); }
+.cases-page td .tag.status.s-done { background: var(--done-bg); color: var(--done-fg); }
+.cases-page td .tag.above { background: var(--urgent-bg); color: var(--urgent-fg); }
+.case-grid details.card > summary { cursor: pointer; list-style: none; }
+.case-grid details.card > summary::after { content: " ▾"; color: var(--color-text-secondary); }
+.case-grid details.card[open] > summary { margin-bottom: 8px; }
+.case-actions > * { flex: none; }
+
+/* Overview layout: row 2 = Handle next | Needs attention, row 3 = Where cases stand | By source; the next cases are a list, not a grid */
+.clinical-overview .work-panels{align-items:start}
+.clinical-overview .next-grid{grid-template-columns:1fr!important;gap:10px}
+.clinical-overview .next-grid .kcard{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:16px;row-gap:4px;align-items:start}
+.clinical-overview .next-grid .kcard>*{grid-column:1}
+.clinical-overview .next-grid .kcard>.kfoot{margin-top:4px;padding-top:6px}
+.clinical-overview .next-grid .kcard>.kbtn{grid-column:2;grid-row:1/span 6;align-self:center}
