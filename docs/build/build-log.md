@@ -1198,3 +1198,8 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 
 - **S-008**: aligned the date and countdown on their numeric baseline and rendered the decorative facets as inline SVG.
 - **Chain**: S-008 screen spec → home template and TCI stylesheet.
+
+## 24/11/2026: refresh the 002-cli-core snapshot (Trung)
+
+- **T-05**: `tools/start_feature.py --check` reported DRIFT because `specs/spec-CLI.md` has moved to v1.10.0 since the snapshot was taken (PR #43 merged D-96 – D-99, then v1.9.1 – v1.10.0 followed). Re-copied the source into the feature folder; `--check` now reports OK. Plan and tasks of the feature were written against the old spec and still need a reading.
+- **Chain**: `specs/spec-CLI.md` → `specs/002-cli-core/spec.md`.
