@@ -1198,3 +1198,8 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 
 - **S-008**: aligned the date and countdown on their numeric baseline and rendered the decorative facets as inline SVG.
 - **Chain**: S-008 screen spec → home template and TCI stylesheet.
+
+## 24/11/2026: hide the boundary nurse on the demo build (Trung)
+
+- **T-06**: the seed keeps the 100-character nurse (S06) for the length tests; the demo picker at `/staff` leaves her out when `ui.SHOWCASE` is set, so that a tester never reads the "sample text" padding. One new test covers both builds.
+- **Chain**: `data/seed/seed-report.md` (S06, boundary) → `app/mb360/cli/routes.py` and `tests/integration/test_cli_queue_page.py`.

@@ -1,4 +1,5 @@
 """T009 — US-1 #1 - #4, US-2 #1, BR-005 (S-061 "Cases to handle")."""
+from mb360 import ui
 from tests.cli_helpers import case_by_code
 from tests.integration.helpers import vi
 
@@ -7,6 +8,16 @@ def test_staff_selector_lists_the_seed_staff(client):
     page = client.get("/staff").text
     for name in ("Trần Thị B", "Hoàng Thị Yến", "Lê Thị Hạnh", "Nguyễn Văn A", "Phạm Quốc Dũng", "Vũ Minh Hải"):
         assert name in page
+
+
+def test_staff_selector_hides_the_boundary_nurse_on_the_demo_build(client, monkeypatch):
+    """T-06: the 100-character boundary nurse (seed S06) stays in the test build and leaves the demo picker, so that a
+    tester never reads her padding. The tests build the plain app, where ui.SHOWCASE is False."""
+    assert "Nguyễn Thị Minh Châu" in client.get("/staff").text
+    monkeypatch.setattr(ui, "SHOWCASE", True)
+    demo = client.get("/staff").text
+    assert "Nguyễn Thị Minh Châu" not in demo and "sample text" not in demo
+    assert "Hoàng Thị Yến" in demo                                        # the ordinary nurses stay
 
 
 def test_nurse_queue_header_and_default_filter(client, db, staff_id):

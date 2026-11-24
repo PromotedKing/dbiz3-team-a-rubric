@@ -14,6 +14,10 @@ from . import actions, case_detail, dashboard, instructions, notices, queue
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
 ui.install(TEMPLATES)
 FILTERS = ["Not viewed", "Viewed", "Escalated to doctor", "Resolved", "All"]
+# T-06: the boundary nurse of the seed (S06 in data/seed/seed-report.md) carries this filler so that her name and her
+# login account are exactly 100 characters. The row stays in the seed for the tests; the demo build (ui.SHOWCASE, that
+# is mb360.server and the hosted app) leaves her out of the picker, so that a tester never meets the padding.
+BOUNDARY_FILLER = " sample text"
 
 
 def register(app: FastAPI, conn: sqlite3.Connection) -> None:
@@ -29,6 +33,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
     @app.get("/staff", response_class=HTMLResponse)
     def staff_select(request: Request):
         rows = conn.execute("SELECT staff_id, full_name, role FROM STAFF ORDER BY role DESC, full_name").fetchall()
+        if ui.SHOWCASE:
+            rows = [row for row in rows if BOUNDARY_FILLER not in row["full_name"]]
         return page(request, "staff_select.html", staff_rows=rows)
 
     def filters(source: str, start: str, end: str) -> dict:
