@@ -10,7 +10,7 @@
 <p class="caption">{{ _("{n} cases in this view", n=s.total) }}</p>
 
 <div class="kpis">
-  <a class="kpi" href="/staff/{{ me.staff_id }}/board"><span class="kpi-mark"></span><span class="kpi-name">{{ _("Open cases") }}</span><span class="kpi-num">{{ s.open }}</span><span class="caption">{{ _("From sent to resolved") }}</span></a>
+  <a class="kpi ok" href="/staff/{{ me.staff_id }}/board"><span class="kpi-mark"></span><span class="kpi-name">{{ _("Open cases") }}</span><span class="kpi-num">{{ s.open }}</span><span class="caption">{{ _("From sent to resolved") }}</span></a>
   <a class="kpi warn" href="/staff/{{ me.staff_id }}/cases?status=Not%20viewed"><span class="kpi-mark"></span><span class="kpi-name">{{ _("Not viewed") }}</span><span class="kpi-num">{{ s.not_viewed }}</span>
     <span class="caption">{% if s.oldest %}{{ _("Waiting longest: {d}d {h}h", d=s.oldest.days, h=s.oldest.hours) if s.oldest.days else _("Waiting longest: {h}h {m}m", h=s.oldest.hours, m=s.oldest.minutes) }}{% else %}{{ _("Nothing waiting") }}{% endif %}</span></a>
   <a class="kpi alert" href="/staff/{{ me.staff_id }}/cases?flag=above"><span class="kpi-mark"></span><span class="kpi-name">{{ _("Above threshold, open") }}</span><span class="kpi-num">{{ s.above_open }}</span></a>
@@ -18,15 +18,13 @@
     <span class="caption">{% if s.mine is not none %}{{ _("{n} assigned to me", n=s.mine) }}{% else %}{{ _("Waiting for a doctor's decision") }}{% endif %}</span></a>
 </div>
 
-<div class="panels">
+<div class="panels work-panels">
   <section class="card panel">
-    <h2>{{ _("Where cases stand") }}</h2>
-    <p class="caption">{{ _("Current status · same columns as the case board") }}</p>
-    {% for b in s.by_status %}
-    <a class="bar-row" href="/staff/{{ me.staff_id }}/cases?status={{ b.status | urlencode }}" data-status="{{ b.status }}">
-      <span class="bar-name">{{ b.status | t }}</span><span class="bar"><i class="st-{{ loop.index }}" style="width:{{ b.width }}%"></i></span><span class="bar-num">{{ b.count }}</span>
-    </a>
-    {% endfor %}
+    <div class="sec-head"><h2>{{ _("Handle next") }}</h2><a class="link" href="/staff/{{ me.staff_id }}/cases">{{ _("See all cases") }} ›</a></div>
+    <p class="caption">{{ _("Not viewed first, above threshold first, then the oldest") }}</p>
+    <div class="next-grid">
+      {% for r in s.latest_open %}{% include "_case_card.html" %}{% else %}<p class="caption">{{ _("No open cases.") }}</p>{% endfor %}
+    </div>
   </section>
   <section class="card panel">
     <div class="sec-head"><h2>{{ _("Needs attention") }}</h2><a class="btn sm outline" href="/staff/{{ me.staff_id }}/board">{{ _("Open the board") }}</a></div>
@@ -39,20 +37,29 @@
   </section>
 </div>
 
-<div class="panels work-panels">
-  <section class="card panel wide">
-    <div class="sec-head"><h2>{{ _("Handle next") }}</h2><a class="link" href="/staff/{{ me.staff_id }}/cases">{{ _("See all cases") }} ›</a></div>
-    <p class="caption">{{ _("Not viewed first, above threshold first, then the oldest") }}</p>
-    <div class="next-grid">
-      {% for r in s.latest_open %}{% include "_case_card.html" %}{% else %}<p class="caption">{{ _("No open cases.") }}</p>{% endfor %}
-    </div>
+<div class="panels">
+  <section class="card panel">
+    <h2>{{ _("Where cases stand") }}</h2>
+    <p class="caption">{{ _("Current status · same columns as the case board") }}</p>
+    <div class="stack" role="img" aria-label="{{ _('Where cases stand') }}">{% for b in s.by_status %}{% if b.count %}<i class="st-{{ loop.index }}" style="width:{{ (b.count * 100 / s.total) | round(1) }}%"></i>{% endif %}{% endfor %}</div>
+    {% for b in s.by_status %}
+    <a class="bar-row" href="/staff/{{ me.staff_id }}/cases?status={{ b.status | urlencode }}" data-status="{{ b.status }}">
+      <span class="bar-name">{{ b.status | t }}</span><span class="bar"><i class="st-{{ loop.index }}" style="width:{{ b.width }}%"></i></span><span class="bar-num">{{ b.count }}</span>
+    </a>
+    {% endfor %}
   </section>
-  <section class="card panel narrow">
+  <section class="card panel">
     <h2>{{ _("By source") }}</h2>
     {% for b in s.by_source %}<div class="kv-row"><span>{{ b.source | t }}</span><b>{{ b.count }}</b></div>{% endfor %}
   </section>
 </div>
 
+<ul class="color-key" data-color-key>
+  <li><i class="k-red"></i>{{ _("Red: above threshold, alarm symptoms") }}</li>
+  <li><i class="k-amber"></i>{{ _("Amber: waiting for the nurse") }}</li>
+  <li><i class="k-blue"></i>{{ _("Blue: waiting for the doctor") }}</li>
+  <li><i class="k-green"></i>{{ _("Green: done") }}</li>
+</ul>
 
 </div>
 {% endblock %}

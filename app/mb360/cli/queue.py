@@ -74,6 +74,7 @@ def list_cases(conn: sqlite3.Connection, status: str | None = None, viewer: str 
            WHERE (? IS NULL OR c.status = ?)""",
         (status, status),
     ).fetchall()
+    from .dashboard import ALARM_SYMPTOMS     # local import: dashboard imports this module
     at = now()
     today = at.date()
     mine = actions.visible_users(conn, viewer, today) if viewer else None
@@ -92,12 +93,14 @@ def list_cases(conn: sqlite3.Connection, status: str | None = None, viewer: str 
             content = row["metric"]
             value = f"{row['value']} {row['unit']}" if row["unit"] else row["value"]
             label = thresholds.evaluate(conn, row["metric"], row["value"], row["glucose_context"])
+        danger = row["case_source"] == "Chatbot" and danger_of(row)       # D-101: the bot's danger flag
+        symptoms = {r[0] for r in conn.execute("SELECT symptom FROM REPORT_SYMPTOM WHERE report_id = ?", (row["report_id"],))} if row["report_id"] else set()
         result.append({
             "case_id": row["case_id"], "mother": row["full_name"], "status": row["status"],
             "week": gestational_week(date.fromisoformat(row["edd"]), today) if row["edd"] else None,
             "case_source": row["case_source"], "content": content, "value": value, "label": label,
             "submitted_at": row["submitted_at"] or row["created_at"],
-            "danger": row["case_source"] == "Chatbot" and danger_of(row),       # D-101: the bot's danger flag
+            "danger": danger, "alarm": bool(ALARM_SYMPTOMS & symptoms) or danger,     # same test as the dashboard flag "Alarm symptoms" (PRD M3, D-73)
             "waiting": waiting_minutes(row["submitted_at"] or row["created_at"], row["status"], at),
         })
         if me is not None and me["role"] == "Doctor":      # S-061D #14: whose mother, and is he here

@@ -27,7 +27,8 @@
 <table data-active-filter="{{ active }}">
   <tr><th>{{ _("Mother") }}</th><th>{{ _("Gestational age") }}</th><th>{{ _("Case source") }}</th><th>{{ _("Content") }}</th><th>{{ _("Value") }}</th><th>{{ _("Submitted at") }}</th>{% if nurse %}<th>{{ _("Waiting") }}</th>{% else %}<th>{{ _("Responsible doctor") }}</th>{% endif %}<th>{{ _("Status") }}</th><th></th></tr>
   {% for r in rows %}
-  <tr{% if r.label == 'Above threshold' %} class="above-row"{% endif %}>
+  {% set urgent = r.status != "Resolved" and (r.label == "Above threshold" or r.alarm) %}
+  <tr class="{{ r.status | status_class }}{% if r.label == 'Above threshold' %} above-row{% endif %}{% if urgent %} urgent{% endif %}">
     <td><strong>{{ r.mother }}</strong></td>
     <td>{% if r.week is not none %}{{ _("Week {n}", n=r.week) }}{% endif %}</td>
     <td>{{ r.case_source | t }}{% if r.danger %} <span class="tag above" data-danger>{{ _("Signs that need medical attention") }}</span>{% endif %}</td>
@@ -41,7 +42,7 @@
       {% if r.covering %}<br><span class="tag source" data-covering>{{ _("Covering") }}</span>{% endif %}
       {% else %}{{ _("No responsible doctor") }}{% endif %}</td>
     {% endif %}
-    <td><span class="tag status{% if r.status == 'Resolved' %} done{% endif %}">{{ r.status | t }}</span></td>
+    <td><span class="tag status {{ r.status | status_class }}{% if r.status == 'Resolved' %} done{% endif %}">{{ r.status | t }}</span></td>
     <td><a class="link" href="/staff/{{ me.staff_id }}/cases/{{ r.case_id }}">{{ _("View report") }} ›</a></td>
   </tr>
   {% endfor %}

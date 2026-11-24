@@ -6,6 +6,7 @@ from datetime import date
 from ..alr import thresholds
 from ..alr.reports import gestational_week
 from ..clock import now
+from .dashboard import ALARM_SYMPTOMS
 from .queue import symptom_text
 
 
@@ -24,12 +25,14 @@ def load(conn: sqlite3.Connection, case_id: str) -> dict | None:
 
     report = record = None
     symptoms = ""
+    raw_symptoms: list[str] = []
     label = thresholds.NOT_ASSESSED
     transcript = []
     question_id = case["chat_message_id"]
     if case["metric_report_id"]:
         report = conn.execute("SELECT * FROM METRIC_REPORT WHERE report_id = ?", (case["metric_report_id"],)).fetchone()
         symptoms = symptom_text(conn, report["report_id"])
+        raw_symptoms = [r[0] for r in conn.execute("SELECT symptom FROM REPORT_SYMPTOM WHERE report_id = ?", (report["report_id"],))]
         if report["health_metric_record_id"]:
             record = conn.execute("SELECT * FROM HEALTH_METRIC_RECORD WHERE record_id = ?",
                                   (report["health_metric_record_id"],)).fetchone()
@@ -51,8 +54,14 @@ def load(conn: sqlite3.Connection, case_id: str) -> dict | None:
     latest_visit = visits[0] if visits else None
     latest_values = conn.execute("SELECT * FROM HEALTH_METRIC_RECORD WHERE visit_id = ? ORDER BY metric",
                                  (latest_visit["visit_id"],)).fetchall() if latest_visit else []
+    danger = bool(question_id) and danger_of(conn.execute("SELECT * FROM CHAT_MESSAGE WHERE message_id = ?", (question_id,)).fetchone())
+    # Look only, no new rule: the same tests as the dashboard flags (above threshold from THRESHOLD_RULE, PRD M3 alarm list, D-101 danger flag)
+    alarm = bool(ALARM_SYMPTOMS.intersection(raw_symptoms)) or danger
+    other_cases = conn.execute(
+        """SELECT case_id FROM CARE_CASE WHERE user_id = ? AND case_id != ? AND status != 'Resolved'
+           ORDER BY created_at""", (uid, case_id)).fetchall()
     return {"case": case, "mother": mother, "profile": profile, "clinical": clinical, "week": week, "flags": flags,
             "report": report, "record": record, "symptoms": symptoms, "label": label, "transcript": transcript,
-            "question_id": question_id, "danger": bool(question_id) and danger_of(
-                conn.execute("SELECT * FROM CHAT_MESSAGE WHERE message_id = ?", (question_id,)).fetchone()), "history_metric": metric, "history": history, "threshold": threshold,
+            "question_id": question_id, "danger": danger, "alarm": alarm, "other_cases": [r["case_id"] for r in other_cases],
+            "history_metric": metric, "history": history, "threshold": threshold,
             "responses": responses, "visits": visits, "latest_visit": latest_visit, "latest_values": latest_values}
