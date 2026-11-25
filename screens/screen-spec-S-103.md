@@ -44,6 +44,7 @@ The mother's profile page in the sub-app: basic information taken from the TCI a
 | 12 | Row "Support — TCI app ↗ ›" | List item | opens the TCI app support page (FAQ, Locations, Feedback, Terms) | No | — |
 | 13 | "Version 1.1.0" | Text | sub-app version | No | — |
 | 14 | 5-tab bar, "Profile" selected | Toggle (tab) | navigation (D-27) | Yes | — |
+| 15 | Language setting with a button for the other language | Setting / Button | Browser preference: Vietnamese or English; applies across the mother-side app (FR-029, D-110 proposed) | Yes | default Vietnamese; no account or pregnancy data changes |
 
 **State 2 — "Hospital record link" bottom sheet** (no new Screen ID — D-39)
 
@@ -85,6 +86,7 @@ Note: the boxes "[Support] … [Edit profile] … [Link] …" and "[Pending link
 | 8 | ← | tap | — | `S-008` |
 | 9 | ✕ | tap | asks for confirmation to close the sub-app | `S-083` |
 | 10 | Tab | tap | — | `S-008` / `S-023` / TCI app / `S-031` / `S-103` |
+| 11 | Language button | tap | saves the selected language in the browser and returns to the current page in that language | stays |
 
 ## 6. Screen-level rules
 
@@ -95,6 +97,7 @@ Note: the boxes "[Support] … [Edit profile] … [Link] …" and "[Pending link
 | SR-003 | When "Pending link", the medical record number is not shown; the request date is shown. | Wireframe annotation |
 | SR-003a | In the MVP the hospital record link is simulated with seed data: "Linked" / "Pending link" are set by the seed; there is no link-error state and no "Retry". | ACC-01; screen-spec fix #8 |
 | SR-004 | "Support" is a handoff to the TCI app; there is no screen in the sub-app. | D-39 |
+| SR-005 | The language button switches the mother-side interface between Vietnamese and English and persists the browser preference. Vietnamese is the default. User-authored and clinical free text remains as written. | D-110 proposed; ACC FR-029 |
 
 ## 7. Linked requirements
 
@@ -104,6 +107,7 @@ Note: the boxes "[Support] … [Edit profile] … [Link] …" and "[Pending link
 | FR-017, FR-018 | Loads profile information |
 | FR-023 | Displays the read-only profile |
 | FR-024 | Entry to `S-011` |
+| FR-029 | Language preference for the mother-side app |
 
 ## 8. Responsive and accessibility notes
 

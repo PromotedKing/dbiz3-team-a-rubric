@@ -20,7 +20,7 @@ Web home page for nurses: one table, at full width, combining every case created
 
 **Shown when:** a nurse signs in on the web (`S-054`, not drawn) or clicks "Home" in the sidebar.
 
-**The user leaves this screen when:** they click "View report ›" on a row (→ `S-064`), "Patients" (`S-062`, not drawn) or "Settings" (not drawn).
+**The user leaves this screen when:** they click "View report ›" on a row (→ `S-064`), "Patients" (`S-062`, not drawn) or "Settings" (not drawn). The shared clinical header includes a language button for Vietnamese / English (FR-028, D-110 proposed).
 
 ## 2. Mockup
 
@@ -49,6 +49,7 @@ Web home page for nurses: one table, at full width, combining every case created
 | 16 | Empty state "No cases to handle." | Empty state | when the filter has no cases | — | — |
 | 17 | *(Removed — screen-spec fix #9, CLI-03)* "Quick notes" panel — not drawn and not built (not in MVP v8; `spec-CLI.md` FR-011 Won't) | — | — | — | — |
 | 18 | *(Removed — screen-spec fix #9)* "Write a note…" field + "Auto-saved" | — | — | — | — |
+| 19 | Language button in the shared header | Button | Browser preference; switches the clinical web between Vietnamese and English (D-110 proposed) | Yes | target language named accessibly; Vietnamese default |
 
 Note: the "[Role label] …" and "[Escalate to doctor] …" boxes in the mockup are annotations, described in §6. The mother names in the mockup are sample data.
 
@@ -76,6 +77,7 @@ Note: the "[Role label] …" and "[Escalate to doctor] …" boxes in the mockup 
 | 6 | "Notifications" | click | opens the notification list of the signed-in nurse: the cases "Not viewed", above threshold or with an alarm symptom first (D-109, proposed; removed for the Nurse by D-105 — see element #4) | `S-059` |
 | 7 | Sidebar "Patients" / "Settings" | click | — | `S-062` / `[NEEDS CLARIFICATION: no ID yet]` |
 | 8 | Role label ▾ | click | `[NEEDS CLARIFICATION: account menu not drawn]` | — |
+| 9 | Language button | click | saves the browser preference and renders this screen in the selected language | stays |
 
 ## 6. Screen-level rules
 
@@ -96,6 +98,7 @@ Note: the "[Role label] …" and "[Escalate to doctor] …" boxes in the mockup 
 | FR-002, FR-020 | Case table, filtering by status, Priority order, "Waiting" column |
 | FR-006 | "View report ›" opens `S-064` |
 | FR-008 (`spec-ALR.md`) | "Not viewed" queue |
+| FR-028 (`spec-CLI.md`) | Shared clinical-web language preference |
 
 ## 8. Responsive and accessibility notes
 

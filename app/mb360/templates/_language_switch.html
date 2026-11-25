@@ -1,0 +1,8 @@
+{% set next_language = "en" if language() == "vi" else "vi" %}
+<form method="post" action="/language" class="language-switch">
+  <input type="hidden" name="return_to" value="{{ request.url.path }}{% if request.url.query %}?{{ request.url.query }}{% endif %}">
+  <button type="submit" name="language" value="{{ next_language }}" class="language-switch-button"
+    aria-label="{{ _("Switch language to {language}", language=_("English") if next_language == "en" else _("Vietnamese")) }}">
+    {{ _("English") if next_language == "en" else _("Vietnamese") }}
+  </button>
+</form>

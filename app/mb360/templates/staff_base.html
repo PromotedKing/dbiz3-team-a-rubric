@@ -1,6 +1,6 @@
 {% import "_icons.html" as icon %}
 <!doctype html>
-<html lang="vi">
+<html lang="{{ language() }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,6 +20,7 @@
         <a href="/staff" class="caption">{{ _("change") }}</a></span>
     </span>
     {% endif %}
+    {% include "_language_switch.html" %}
   </header>
   {% if me %}
   <nav class="staff-nav" aria-label="{{ _('Clinical web') }}">

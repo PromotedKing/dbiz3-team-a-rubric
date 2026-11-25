@@ -1,7 +1,7 @@
 {#- Simulated TCI host app (stand-in for the Thu Cuc patient app; spec-ACC §10 Q9); design: screens/ui-final Màn 1. Not part of the sub-app. -#}
 {% import "_icons.html" as icon %}
 <!doctype html>
-<html lang="vi"{% if showcase() %} data-sw="1"{% endif %}>
+<html lang="{{ language() }}"{% if showcase() %} data-sw="1"{% endif %}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">

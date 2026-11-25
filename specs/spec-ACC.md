@@ -4,9 +4,9 @@
 |---|---|
 | Module ID | `ACC` |
 | Module name | Onboarding & Session (sub-app within the TCI app; formerly "Onboarding & Pregnancy Profile", renamed by D-74) `[PENDING CLIENT: D-01]` |
-| Spec version | v1.10.0 (16/11/2026: D-100 proposed — the sub-app is opened again from the signed-in TCI account instead of S-043; §10 Q24) — v1.9.0 (07/11/2026: v1.0.0 app — Session 11 EARS lines (§5.3), Q20, Q22 and DM-19 answered, differences §7.3) — v1.8.0 (14/10/2026: PRD alignment — D-71 date of birth, sex and female-only entry; D-72 first visit date; D-74 onboarding guide S-104, FR-028) — v1.7.1 (30/09/2026: data-model review decisions applied — DM-01, DM-02, DM-08, DM-11, DM-31, DM-32, DM-41, DM-42; review 29/09/2026: ACC-01 – ACC-04, X-05, X-07 / DM-25 data types) |
-| Author (team member) | Chi (drafted 16/09/2026) — diagrams checked node by node by Trung, 17/09/2026 (verifier ≠ converter) |
-| Date | 16/11/2026 |
+| Spec version | v1.10.1 (25/11/2026: bilingual interface preference on S-103; D-110 proposed) — v1.10.0 (16/11/2026: D-100 proposed — the sub-app is opened again from the signed-in TCI account instead of S-043; §10 Q24) — v1.9.0 (07/11/2026: v1.0.0 app — Session 11 EARS lines (§5.3), Q20, Q22 and DM-19 answered, differences §7.3) — v1.8.0 (14/10/2026: PRD alignment — D-71 date of birth, sex and female-only entry; D-72 first visit date; D-74 onboarding guide S-104, FR-028) — v1.7.1 (30/09/2026: data-model review decisions applied — DM-01, DM-02, DM-08, DM-11, DM-31, DM-32, DM-41, DM-42; review 29/09/2026: ACC-01 – ACC-04, X-05, X-07 / DM-25 data types) |
+| Author (team member) | Chi (drafted 16/09/2026); proposed v1.10.1 by Hải Anh, 25/11/2026 — diagrams checked node by node by Trung, 17/09/2026 (verifier ≠ converter) |
+| Date | 25/11/2026 |
 | Status | Draft |
 | Approved by (Client role) | *pending* |
 | DBIZ2 source | Function List rows `F-016`–`F-018`, `F-022`–`F-023`, `F-026`–`F-044` (24 rows); Screens `S-001`–`S-011`, `S-046`, `S-083`, `S-103` |
@@ -195,6 +195,7 @@ sequenceDiagram
 | FR-026 | — (new) | The system MUST mark a notification as read when opened, and mark all as read on "Mark all as read". | Mom / System | Must (D-48, D-56) |
 | FR-027 | — (new) | The system MUST save the mother's notification settings (S-010) immediately when a toggle changes, and revert the toggle on error. | Mom / System | Must (D-48, D-56); the "Appointment reminders" switch is Could (D-77) |
 | FR-028 | — (new) | The system MUST show the onboarding guide (S-104) once, after the mother's first agreement on S-001 and before pregnancy setup, let her move through it or skip it, and not show it again afterwards. | Mom / App | Must (D-74) |
+| FR-029 | — (new) | The system SHOULD let the mother switch the interface between Vietnamese and English from S-103 and apply the saved browser preference to every mother-side screen. Vietnamese remains the default when no supported preference is stored. User-authored and clinical free text is displayed as written, not machine-translated (D-110 proposed; extends D-79). | Mom / App | Should (D-110 proposed) |
 
 *FR-028: no DBIZ2 FR describes an onboarding guide; it comes from the PRD (§2, M1 — D-74). Whether the guide was seen is kept on the device only (no column) `[NEEDS CLARIFICATION: §10 Q20]`.*
 
@@ -232,6 +233,7 @@ sequenceDiagram
 | FR-026 | Notification ID or "all" | UUID / EVENT | Yes | Read status updated | CONFIRMATION | — |
 | FR-028 | First agreement done (FR-011); "Next" / "Skip" | EVENT; EVENT | Yes | *(UI navigation target: S-007/S-046 or S-008)* | — | Shown once (D-74); pages and text `[NEEDS CLARIFICATION: §10 Q20]` |
 | FR-027 | Preference key; Enabled | ENUM (Report responses / New visit results / Appointment reminders / Doctor's-instruction reminders); BOOLEAN | Yes | Preference saved | CONFIRMATION | "Report responses" locked always on — team proposal `[NEEDS CLARIFICATION]` |
+| FR-029 | Language selection | ENUM (vi / en) | Yes | Browser language preference; localized mother-side page | First-party cookie; HTML language tag | Allow only vi / en; default vi; no database row; applies across mother-side screens. User-authored and clinical free text remains unchanged (D-110 proposed) |
 
 ### 5.2 Business rules
 

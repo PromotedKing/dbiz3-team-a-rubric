@@ -1,4 +1,4 @@
-<!-- DBIZ3-SNAPSHOT source=specs/spec-ACC.md sha256=5784084a717bc6430449008864f13e54a77b2dd0c2ecea734d4fa4e590703da8 taken=2026-11-07T13:22Z -->
+<!-- DBIZ3-SNAPSHOT source=specs/spec-ACC.md sha256=4435170a66563ff9a399b37dcefe6d64666fc1d505b7240c57dfa0f701a5952f taken=2026-11-25T15:47Z -->
 <!-- Read-only copy for Spec Kit. Do not edit here. Edit specs/spec-ACC.md, then run:
      uv run tools/start_feature.py --refresh -->
 
@@ -8,9 +8,9 @@
 |---|---|
 | Module ID | `ACC` |
 | Module name | Onboarding & Session (sub-app within the TCI app; formerly "Onboarding & Pregnancy Profile", renamed by D-74) `[PENDING CLIENT: D-01]` |
-| Spec version | v1.9.0 (07/11/2026: v1.0.0 app — Session 11 EARS lines (§5.3), Q20, Q22 and DM-19 answered, differences §7.3) — v1.8.0 (14/10/2026: PRD alignment — D-71 date of birth, sex and female-only entry; D-72 first visit date; D-74 onboarding guide S-104, FR-028) — v1.7.1 (30/09/2026: data-model review decisions applied — DM-01, DM-02, DM-08, DM-11, DM-31, DM-32, DM-41, DM-42; review 29/09/2026: ACC-01 – ACC-04, X-05, X-07 / DM-25 data types) |
-| Author (team member) | Chi (drafted 16/09/2026) — diagrams checked node by node by Trung, 17/09/2026 (verifier ≠ converter) |
-| Date | 07/11/2026 |
+| Spec version | v1.10.1 (25/11/2026: bilingual interface preference on S-103; D-110 proposed) — v1.10.0 (16/11/2026: D-100 proposed — the sub-app is opened again from the signed-in TCI account instead of S-043; §10 Q24) — v1.9.0 (07/11/2026: v1.0.0 app — Session 11 EARS lines (§5.3), Q20, Q22 and DM-19 answered, differences §7.3) — v1.8.0 (14/10/2026: PRD alignment — D-71 date of birth, sex and female-only entry; D-72 first visit date; D-74 onboarding guide S-104, FR-028) — v1.7.1 (30/09/2026: data-model review decisions applied — DM-01, DM-02, DM-08, DM-11, DM-31, DM-32, DM-41, DM-42; review 29/09/2026: ACC-01 – ACC-04, X-05, X-07 / DM-25 data types) |
+| Author (team member) | Chi (drafted 16/09/2026); proposed v1.10.1 by Hải Anh, 25/11/2026 — diagrams checked node by node by Trung, 17/09/2026 (verifier ≠ converter) |
+| Date | 25/11/2026 |
 | Status | Draft |
 | Approved by (Client role) | *pending* |
 | DBIZ2 source | Function List rows `F-016`–`F-018`, `F-022`–`F-023`, `F-026`–`F-044` (24 rows); Screens `S-001`–`S-011`, `S-046`, `S-083`, `S-103` |
@@ -199,6 +199,7 @@ sequenceDiagram
 | FR-026 | — (new) | The system MUST mark a notification as read when opened, and mark all as read on "Mark all as read". | Mom / System | Must (D-48, D-56) |
 | FR-027 | — (new) | The system MUST save the mother's notification settings (S-010) immediately when a toggle changes, and revert the toggle on error. | Mom / System | Must (D-48, D-56); the "Appointment reminders" switch is Could (D-77) |
 | FR-028 | — (new) | The system MUST show the onboarding guide (S-104) once, after the mother's first agreement on S-001 and before pregnancy setup, let her move through it or skip it, and not show it again afterwards. | Mom / App | Must (D-74) |
+| FR-029 | — (new) | The system SHOULD let the mother switch the interface between Vietnamese and English from S-103 and apply the saved browser preference to every mother-side screen. Vietnamese remains the default when no supported preference is stored. User-authored and clinical free text is displayed as written, not machine-translated (D-110 proposed; extends D-79). | Mom / App | Should (D-110 proposed) |
 
 *FR-028: no DBIZ2 FR describes an onboarding guide; it comes from the PRD (§2, M1 — D-74). Whether the guide was seen is kept on the device only (no column) `[NEEDS CLARIFICATION: §10 Q20]`.*
 
@@ -222,7 +223,7 @@ sequenceDiagram
 | FR-012 | Registration Data |OBJECT (name/phone/password fields)| Yes | New User ID | UUID | **Won't (D-01)** |
 | FR-013 | Verify Success Signal | EVENT (no payload) | Yes | Account Status='Active' | ENUM | **Won't (D-01)** |
 | FR-014 | Username; Password |VARCHAR(255); VARCHAR(255, hashed)| Yes | Auth Token / Error |VARCHAR (session token) or error message (STRING)| **Won't (D-01)** |
-| FR-015 | TCI identity token; User ID; Role; TCI sex | `[NEEDS CLARIFICATION: TCI token format]`; UUID; ENUM (Mother — the sub-app has no Nurse / Doctor session); ENUM | Yes | Session Cookie/Token (sub-app session) |VARCHAR(255) (session token string)| Create the sub-app session from the TCI identity (D-01); refused for a non-female account (BR-007). Nurse / Doctor sign in on the clinical web (`spec-CLI.md` §10 Q11) |
+| FR-015 | TCI identity token; User ID; Role; TCI sex | `[NEEDS CLARIFICATION: TCI token format]`; UUID; ENUM (Mother — the sub-app has no Nurse / Doctor session); ENUM | Yes | Session Cookie/Token (sub-app session) |VARCHAR(255) (session token string)| Create the sub-app session from the TCI identity (D-01); refused for a non-female account (BR-007). Nurse / Doctor sign in on the clinical web (`spec-CLI.md` §10 Q11); *(D-100, proposed:)* when the sub-app session is no longer valid but the simulated TCI app is still signed in to the same mother, who has already agreed, the TCI app opens the sub-app again (a new session) instead of S-043 — a page asked with GET opens; a form sent with POST is not replayed and the mother returns to the page she was on (§10 Q19, Q24) |
 | FR-016 | User Role |ENUM (Mother)| Yes | Specific Dashboard Data |OBJECT (Mother dashboard payload)| Load personalized dashboard (S-008). Clinical web dashboard: `spec-CLI.md` FR-001 |
 | FR-017 | User ID | UUID | Yes | User Profile Object |OBJECT (profile fields: name, phone, role, EDD, etc.)| Retrieve basic profile data; used to decide between S-007/S-046 and S-008 (whether an EDD exists) |
 | FR-018 | User ID; Extra Params |UUID; OBJECT (additional query parameters)| User ID Yes / Extra Params No | Extended Profile Data |OBJECT (extended profile fields)| Retrieve extended profile data |
@@ -236,6 +237,7 @@ sequenceDiagram
 | FR-026 | Notification ID or "all" | UUID / EVENT | Yes | Read status updated | CONFIRMATION | — |
 | FR-028 | First agreement done (FR-011); "Next" / "Skip" | EVENT; EVENT | Yes | *(UI navigation target: S-007/S-046 or S-008)* | — | Shown once (D-74); pages and text `[NEEDS CLARIFICATION: §10 Q20]` |
 | FR-027 | Preference key; Enabled | ENUM (Report responses / New visit results / Appointment reminders / Doctor's-instruction reminders); BOOLEAN | Yes | Preference saved | CONFIRMATION | "Report responses" locked always on — team proposal `[NEEDS CLARIFICATION]` |
+| FR-029 | Language selection | ENUM (vi / en) | Yes | Browser language preference; localized mother-side page | First-party cookie; HTML language tag | Allow only vi / en; default vi; no database row; applies across mother-side screens. User-authored and clinical free text remains unchanged (D-110 proposed) |
 
 ### 5.2 Business rules
 
@@ -354,6 +356,7 @@ S-104 Onboarding guide (D-74) and the non-female notice state of S-001 (BR-007) 
 | 20 | [NEEDS CLARIFICATION: the onboarding guide S-104 (D-74): number of pages, their text and images; is "guide seen" kept only on the device or stored?] | No | UX/UI / Product-PM | Resolved 07/11/2026 (v1.0.0 app, Màn 13): 3 pages, text proposed in `docs/ui-label-reference.md`; "guide seen" is not stored (the guide follows the first agreement only) |
 | 21 | [NEEDS CLARIFICATION: for a non-female TCI account (BR-007): the notice wording, and whether the TCI app hides the tile so that the notice is never reached? How the TCI app passes the sex is part of Q9.] | No | UX/UI / Client | Open |
 | 22 | [NEEDS CLARIFICATION: (a) the default values of the Notification Preference row created by FR-011 (DM-41 says "default values" without listing them); the build (`specs/005-acc-onboarding/research.md` R3) uses the seed's DM-41 row: report responses on, new visit results on, appointment reminders on, Doctor's-instruction reminders off. (b) The greeting on S-008 uses the given name (last word of the full name, as drawn "Hello, Lan!") — confirm. (c) The session lifetime (part of Q9) is 12 hours in the build, as in the ordinary seed sessions.] | No | Team / UX/UI | Resolved 07/11/2026 (review of the v1.0.0 app, Chi): (a) defaults as built — visit results on, appointment reminders on, instruction reminders off; (b) greeting by given name "Mẹ Mai"; (c) 12-hour session for the demo, the real one waits for Q9 |
+| 24 | [NEEDS CLARIFICATION: when the sub-app session ends while the TCI app is still signed in, should the TCI app open the sub-app again by itself, or must the mother see S-043 and reopen it? On the hosted demo the session was lost at every restart (free plan: the database file is not kept), so the mother went through consent and setup again.] | No | Client / Systems Analyst (with Q9) | Decided 16/11/2026 by Sang for the demo, D-100 proposed, **ACC owner (Chi) to review**: opened again by itself; S-043 stays for any other case (no TCI account, another mother, no consent yet) |
 | DM-01 | [NEEDS CLARIFICATION: is "Patient" in HLT, ALR, TML, BOT, APT and CLI the mother's USER_ACCOUNT?] | No | ACC (data model) | Resolved 29/09/2026 (data-model review, S1 — Tâm): every "Patient" reference is the mother's USER_ACCOUNT |
 | DM-02 | [NEEDS CLARIFICATION: is clinical staff a USER_ACCOUNT with a role, or a separate STAFF table? USER_ACCOUNT.`role` still lists Nurse / Doctor although §6 says "always Mother in the sub-app"] | Yes (resolved) | ACC / CLI (data model) | Resolved 29/09/2026 (data-model review, S1 / S4 — Tâm, Trung): separate STAFF table for Nurse / Doctor; USER_ACCOUNT holds mothers only and `role` = Mother (ACC §6 updated) |
 | DM-08 | [NEEDS CLARIFICATION: which FR creates / updates USER_ACCOUNT from the TCI identity when the mother first agrees (S-001 state 2)? ACC FR-011 records consent and FR-015 only reads the User ID] | Yes (resolved) | ACC (data model) | Resolved 29/09/2026 (data-model review, S2 — Tâm): ACC FR-011 also creates USER_ACCOUNT, together with the consent record (ACC §5 FR-011 updated) |
