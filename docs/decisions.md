@@ -17,7 +17,7 @@ The decision log (D-01 – D-78), the status of every decision, the module scope
 | **Pending Client** | D-01 (sub-app model), D-02 (remove Tips), D-03 (Messages to Baby — Must item in the latest MVP Scope, pending Client approval, D-65) | **Not** as requirements approved by the Client |
 | **Pending SME** | D-15 (blood glucose and urine protein thresholds), D-16 (valid input ranges), D-47 (chatbot risk keywords and danger phrases), D-73 (alarm symptom list), the trimester boundaries of D-75 | "Provisional values for the demo"; **not** as approved by a doctor |
 | **Open (team)** | D-35 (depends on D-03); hiding "No symptoms" in symptom-report mode (part of D-45); "high-priority" case in the PRD M3 row (`spec-ALR.md` Q22) | — |
-| **Proposed (to confirm)** | D-70 (repository layout for Session 7; physical model draft on SQLite) | "Draft, to be confirmed by the team" |
+| **Proposed (to confirm)** | D-70 (repository layout for Session 7; physical model draft on SQLite), D-110 (bilingual interface preference) | "Draft, to be confirmed by the team" |
 
 ## Open items
 

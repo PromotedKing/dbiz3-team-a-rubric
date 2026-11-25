@@ -14,7 +14,7 @@
 
 ## 1. Purpose
 
-Web home page for doctors: one table with the cases a doctor is allowed to see (BR-010), opened on the filter "Escalated to doctor", showing for each case who the mother's responsible doctor is and whether he is Available or Away, so that a doctor on duty knows whose mothers he is covering. The doctor receives escalated cases here and opens them on `S-064D`.
+Web home page for doctors: one table with the cases a doctor is allowed to see (BR-010), opened on the filter "Escalated to doctor", showing for each case who the mother's responsible doctor is and whether he is Available or Away, so that a doctor on duty knows whose mothers he is covering. The doctor receives escalated cases here and opens them on `S-064D`. The shared clinical header includes a language button for Vietnamese / English (FR-028, D-110 proposed).
 
 **Shown when:** a doctor signs in on the web (`S-060`, not drawn) or clicks "Home" in the sidebar.
 
@@ -47,6 +47,7 @@ Rows marked "as `S-061` #n" are the same shared block as in the Nurse screen.
 | 15 | "Status" column | Label | Case — status (D-18) | — | — |
 | 16 | "View report ›" link on each row | Link | opens the case | Yes | — |
 | 17 | Empty state "No cases to handle." | Empty state | when the filter has no cases | — | — |
+| 18 | Language button in the shared header | Button | Browser preference; switches the clinical web between Vietnamese and English (D-110 proposed) | Yes | target language named accessibly; Vietnamese default |
 
 ## 4. States
 
@@ -70,6 +71,7 @@ Rows marked "as `S-061` #n" are the same shared block as in the Nurse screen.
 | 4 | "Notifications" | click | opens the list of the cases escalated to this doctor, with the escalating nurse and the time; the ones he has not answered yet first (D-109, proposed) | `S-059` |
 | 5 | Sidebar "Patients" / "Settings" | click | the Patients list shows his own mothers and, while on duty, the mothers of an Away doctor (BR-010) | `S-062` / `[NEEDS CLARIFICATION: no ID yet]` |
 | 6 | Role label ▾ | click | `[NEEDS CLARIFICATION: account menu not drawn]` | — |
+| 7 | Language button | click | saves the browser preference and renders this screen in the selected language | stays |
 
 ## 6. Screen-level rules
 
@@ -91,6 +93,7 @@ Rows marked "as `S-061` #n" are the same shared block as in the Nurse screen.
 | FR-006 | "View report ›" opens `S-064D` |
 | FR-027 | Responsible doctor and availability in the table |
 | FR-009 (`spec-ALR.md`) | "Notifications" badge: cases escalated to this doctor |
+| FR-028 (`spec-CLI.md`) | Shared clinical-web language preference |
 
 ## 8. Responsive and accessibility notes
 

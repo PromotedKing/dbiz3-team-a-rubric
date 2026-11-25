@@ -6,6 +6,7 @@ wording is changed there and nowhere else. A label missing from the table is sho
 recorded in MISSING (the tests fail on it).
 """
 import re
+from contextvars import ContextVar
 from datetime import datetime
 from pathlib import Path
 
@@ -24,6 +25,21 @@ SYMPTOM_LABELS = {
 }
 _conn = None
 SHOWCASE = False     # mb360.server: phone frame with the side panel on a desktop browser
+LANGUAGE_COOKIE = "mb360_language"
+LANGUAGES = {"en", "vi"}
+_language = ContextVar("mb360_language", default="vi")
+
+
+def current_language() -> str:
+    return _language.get()
+
+
+def use_language(value: str | None):
+    return _language.set(value if value in LANGUAGES else "vi")
+
+
+def language_name() -> str:
+    return current_language()
 
 
 def use_connection(conn) -> None:
@@ -84,10 +100,20 @@ LABELS, PATTERNS, CONFLICTS = load()
 
 
 def t(text, **fields) -> str:
-    """Vietnamese text of an English label; t("Week {n}", n=28) fills the fields."""
+    """Render an English source label in the selected language."""
     if text is None or text == "":
         return ""
     s = str(text)
+    if current_language() == "en":
+        if s in LABELS:
+            return s.format(**fields) if fields else s
+        if fields:
+            MISSING.add(s)
+            return s.format(**fields)
+        if any(rx.match(s) for rx, _ in PATTERNS):
+            return s
+        MISSING.add(s)
+        return s
     if fields:
         if s not in LABELS:
             MISSING.add(s)
@@ -112,6 +138,8 @@ def t_known(text: str | None) -> str:
     Values inside a {field} row are translated too; anything else is shown as stored and is not a missing label."""
     if not text:
         return ""
+    if current_language() == "en":
+        return text
     if text in LABELS:
         return LABELS[text]
     for rx, vi in PATTERNS:
@@ -154,5 +182,6 @@ def show_time(text: str | None) -> str:
 def install(templates) -> None:
     """Give a Jinja2Templates instance the label lookup, the shared formats and the shell helpers."""
     env = templates.env
-    env.globals.update(_=t, TABS=TABS, initials=initials, unread=unread, showcase=lambda: SHOWCASE, chatbot_engine=_chatbot_engine)
+    env.globals.update(_=t, TABS=TABS, initials=initials, unread=unread, showcase=lambda: SHOWCASE,
+                       chatbot_engine=_chatbot_engine, language=language_name)
     env.filters.update(symptom_label=lambda s: SYMPTOM_LABELS.get(s, s), t=t, t_list=t_list, t_known=t_known, t_parts=t_parts, dmy=dmy, show_date=dmy, show_time=show_time)

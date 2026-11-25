@@ -262,9 +262,12 @@ dialog.sheet::backdrop { background: rgba(0, 0, 0, 0.4); }
   position: sticky; top: 0; z-index: 10; height: 60px; display: flex; align-items: center; gap: 12px; padding: 0 24px;
   background: var(--color-surface); border-bottom: 1px solid var(--color-border);
 }
-.staff-top .tci-name { flex: 1; }
+.staff-top .tci-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .staff-top .who { display: flex; align-items: center; gap: 10px; font-size: 13px; }
 .staff-top .avatar { width: 36px; height: 36px; font-size: 13px; }
+.staff-top .language-switch { margin: 0; flex: none; }
+.staff-top .language-switch-button { min-height: 44px; padding: 0 10px; border: 1px solid var(--color-primary); border-radius: 8px; background: transparent; color: var(--color-primary); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.staff-top .language-switch-button:hover { background: var(--color-primary-soft); }
 .badge { display: inline-flex; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; align-items: center;
   justify-content: center; background: var(--color-accent); color: #fff; font-size: 12px; font-weight: 700; }
 .staff main { max-width: 1160px; margin: 0 auto; padding: 20px 24px 40px; }

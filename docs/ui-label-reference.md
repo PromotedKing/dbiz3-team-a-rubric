@@ -1,6 +1,6 @@
 # UI conventions and label reference: Mother & Baby 360
 
-Shared UI conventions of the wireframes and the mapping from the English labels used in every document to the Vietnamese text drawn on the wireframes. This is the only file with Vietnamese UI text; the app reads its on-screen text from the tables below (`app/mb360/ui.py`, D-79).
+Shared UI conventions of the wireframes and the mapping from English source labels to the Vietnamese text drawn on the wireframes. The app uses these translations when Vietnamese is selected; English uses the source labels (`app/mb360/ui.py`, D-79, proposed D-110). User-authored and clinical free text remains in the language in which it was written.
 
 ## UI conventions
 
@@ -183,7 +183,7 @@ Valid ranges per metric are not set yet (**D-16, Pending SME**).
 
 ## UI label reference
 
-The wireframe images show on-screen text in Vietnamese. This table maps the English labels used in every document to the text drawn on the wireframes. It is the only place in the package with Vietnamese text.
+The wireframe images show on-screen text in Vietnamese. This table maps English source labels to the Vietnamese text used when Vietnamese is selected; English mode displays the source labels. Free text remains as authored (D-79; bilingual preference proposed by D-110).
 
 | Group | English (used in documents) | On-screen text (wireframe) |
 |---|---|---|
@@ -919,6 +919,11 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | Nurse / doctor screens (D-103 – D-105) | Amber: waiting for the nurse | Vàng: đang chờ y tá xử lý |
 | Nurse / doctor screens (D-103 – D-105) | Blue: waiting for the doctor | Xanh dương: chờ bác sĩ |
 | Nurse / doctor screens (D-103 – D-105) | Green: done | Xanh lá: đã xong |
+| Language settings (proposed D-110) | Language | Ngôn ngữ |
+| Language settings (proposed D-110) | Display language | Ngôn ngữ hiển thị |
+| Language settings (proposed D-110) | English | Tiếng Anh |
+| Language settings (proposed D-110) | Vietnamese | Tiếng Việt |
+| Language settings (proposed D-110) | Switch language to {language} | Chuyển ngôn ngữ sang {language} |
 
 
 ## Proposed S-106 labels

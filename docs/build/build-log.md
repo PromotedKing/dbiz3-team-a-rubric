@@ -1,5 +1,13 @@
 # Build Log
 
+## 25/11/2026: proposed Vietnamese / English language preference (Hải Anh)
+
+- **Decision / scope**: proposed D-110 extends D-79 with a browser language preference for the mother's app and the shared clinical web. Vietnamese remains the default. User-authored and clinical free text stays as written; no automatic translation of patient or staff content.
+- **Mother app**: add the language setting to Profile (S-103). **Clinical web**: add a compact language button in the shared header for nurses and doctors. A first-party cookie carries the preference across pages; the HTML `lang` attribute follows it. No account, schema or seed changes.
+- **Source chain**: proposed D-110 → ACC FR-029 / CLI FR-028 → S-103, S-061, S-061D and screen list → `docs/ui-label-reference.md` → shared locale handling, Profile and clinical header templates, and theme CSS.
+- **Spec Kit**: refreshed `specs/009-acc-profile/spec.md` and `specs/002-cli-core/spec.md` through `tools/start_feature.py`; each snapshot check passed. Restored active feature `specs/012-apt-appointments-screen`; its check passed. The script notes existing plans and tasks for ACC / CLI were written for their prior specs and need owner review before further Spec Kit planning.
+- **Validation**: no test suite run in this task. No real-user text is machine translated.
+
 ## 24/11/2026: two-column case page for the nurse and the doctor (Ánh and Chi, with Claude)
 
 - **Scope**: look of `S-064` / `S-064D` only (D-103, one page for both roles). The case and what to do with it are on the left (report, "Mark as viewed" / "Escalate to doctor" / "Close case", guidance, the doctor's instruction form); the mother's context is on the right (latest visit, doctor's instructions, medical history, metric history, visit history). Header: mother's name, record code, week, due date, responsible doctor. A case above threshold or with an alarm symptom gets the existing alert colour on the report card; a mother's other open cases are counted with a link (new label "Other open cases of this mother: {n}"). The case board card no longer breaks a tag or a name in the middle (CSS only).

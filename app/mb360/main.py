@@ -22,6 +22,15 @@ ui.install(TEMPLATES)
 def create_app(conn: sqlite3.Connection) -> FastAPI:
     appointment_demo.install(conn, clock.now())
     app = FastAPI(title="Mother & Baby 360")
+
+    @app.middleware("http")
+    async def select_language(request: Request, call_next):
+        token = ui.use_language(request.cookies.get(ui.LANGUAGE_COOKIE, "vi"))
+        try:
+            return await call_next(request)
+        finally:
+            ui._language.reset(token)
+
     errors.install(app, TEMPLATES)                  # no raw JSON / plain-text error page (15/11/2026)
     app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")   # TCI theme (D-79, D-80)
     ui.use_connection(conn)
@@ -54,6 +63,20 @@ def create_app(conn: sqlite3.Connection) -> FastAPI:
     @app.get("/")
     def start():
         return RedirectResponse("/tci", status_code=303)
+
+    @app.post("/language")
+    async def change_language(request: Request):
+        form = await request.form()
+        language = form.get("language")
+        if language not in ui.LANGUAGES:
+            raise HTTPException(422, "Unsupported language")
+        return_to = form.get("return_to") or "/"
+        if not return_to.startswith("/") or return_to.startswith("//") or "\\" in return_to or any(ord(c) < 32 for c in return_to):
+            return_to = "/"
+        response = RedirectResponse(return_to, status_code=303)
+        response.set_cookie(ui.LANGUAGE_COOKIE, language, max_age=31536000, path="/", httponly=True,
+                            secure=request.url.scheme == "https", samesite="lax")
+        return response
 
     @app.get("/m/{user_id}/instructions", response_class=HTMLResponse)
     def doctor_instructions(request: Request, user_id: str, submitted: int = 0):
