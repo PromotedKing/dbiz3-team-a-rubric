@@ -304,7 +304,16 @@
     ]
   },
   "small_talk": {
-    "status": "PROVISIONAL — D-95 proposed (16/11/2026). Only when nothing else in the question is recognised: bot/classify.py.",
+    "status": "PROVISIONAL — D-95 proposed (16/11/2026). Only when nothing else in the question is recognised: bot/classify.py. \"help_commands\" (the whole message), \"help_about_bot\" (even with a pregnancy word) and \"help\": D-111 proposed (26/11/2026).",
+    "help_commands": [
+      "/help", "help", "/trogiup", "trợ giúp", "hướng dẫn", "menu", "?"
+    ],
+    "help_about_bot": [
+      "bạn giúp được gì", "bạn có thể giúp gì", "bạn làm được gì", "bạn có thể làm gì", "chatbot giúp được gì", "chatbot có thể giúp gì", "chatbot làm được gì", "chatbot có thể làm gì", "what can you do", "what can you help", "how can you help", "what can the chatbot do"
+    ],
+    "help": [
+      "hỏi gì", "hỏi được gì", "hỏi những gì", "hỏi cái gì", "nên hỏi gì", "có thể hỏi", "làm được gì", "làm được những gì", "giúp được gì", "giúp được những gì", "giúp gì được", "làm gì ở đây", "làm gì được", "có thể làm gì", "dùng thế nào", "dùng như thế nào", "sử dụng thế nào", "sử dụng như thế nào", "cách dùng", "cách sử dụng", "hướng dẫn sử dụng", "hướng dẫn dùng", "tính năng", "what can you do", "what can i ask", "what can i do here", "what should i ask", "how do i use", "how to use", "how does this work", "help me use"
+    ],
     "greeting": [
       "chào", "xin chào", "chào bạn", "chào em", "alo", "hello", "hi", "hey", "good morning"
     ],
@@ -312,7 +321,7 @@
       "cảm ơn", "cám ơn", "cảm ơn bạn", "thank*", "thanks"
     ],
     "identity": [
-      "bạn là ai", "bạn là gì", "bạn làm được gì", "bạn giúp được gì", "who are you", "what can you do"
+      "bạn là ai", "bạn là gì", "who are you"
     ],
     "bye": [
       "tạm biệt", "bye", "goodbye", "see you"

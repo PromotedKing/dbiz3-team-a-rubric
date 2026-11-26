@@ -126,8 +126,18 @@ def danger_topic(text: str) -> bool:
     return any(danger_hits(text, k["danger_phrases"], k.get("negation")))
 
 
+def help_command(text: str, k: dict | None = None) -> bool:
+    """D-111 (proposed): the whole message is a request for the guide ("/help", "help?", "trợ giúp", "?")."""
+    commands = ((k or _lists()).get("small_talk") or {}).get("help_commands", [])
+    msg = re.sub(r"\s+", " ", (text or "").strip().lower()).rstrip(".!")
+    msg = msg if msg == "?" else msg.rstrip("?").strip()
+    return any(msg in (c.lower(), plain(c)) for c in commands)
+
+
 def classify(text: str) -> dict:
     k = _lists()
+    if help_command(text, k):                        # D-111: "/help" and the like, before anything else
+        return {"category": "small_talk", "danger": False, "reply": "help"}
     affirmed, denied = danger_hits(text, k["danger_phrases"], k.get("negation"))
     general = (affirmed or denied) and general_framing(text, k)
     if affirmed and not general:
@@ -145,9 +155,11 @@ def classify(text: str) -> dict:
         return {"category": "lookup", "danger": False, "lookup": found}
     if has_any(text, k.get("hospital_info", [])):    # prices, packages, address, hours: not in the app, never guessed (D-95)
         return {"category": "hospital_info", "danger": False}
+    if has_any(text, k.get("small_talk", {}).get("help_about_bot", [])):   # "bạn giúp được gì cho mẹ bầu?" (D-111)
+        return {"category": "small_talk", "danger": False, "reply": "help"}
     if not (denied or general) and not has_any(text, k["pregnancy_topics"]):    # a named danger sign is a pregnancy topic
         talk = k.get("small_talk", {})
-        for reply in ("identity", "thanks", "bye", "greeting"):   # only when nothing else is recognised (D-95)
+        for reply in ("help", "identity", "thanks", "bye", "greeting"):   # only when nothing else is recognised (D-95, D-111)
             if has_any(text, talk.get(reply, [])):
                 return {"category": "small_talk", "danger": False, "reply": reply}
         return {"category": "out_of_scope", "danger": False}

@@ -1217,3 +1217,10 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 
 - **S-008**: aligned the date and countdown on their numeric baseline and rendered the decorative facets as inline SVG.
 - **Chain**: S-008 screen spec → home template and TCI stylesheet.
+
+## 26/11/2026: chatbot help guide, D-111 proposed (Sang, branch `sang/bot-help-guide`)
+
+- **User request**: the chatbot should answer "/help" or "what can I do here?" with what it can do and what the mother can ask, in more detail, so the chatbot is easier to use.
+- **Change**: `classify.help_command` (the whole message is "/help", "help", "?", "trợ giúp" …) runs first; `small_talk.help_about_bot` ("bạn giúp được gì cho mẹ bầu?") is checked after the nurse, lookup and hospital checks; `small_talk.help` is checked first among the small-talk fallbacks. "bạn làm được gì" / "what can you do" move from identity to help. The fixed reply `chat.HELP_TEXT` (339 characters, stored like other small talk, no LLM, no AI_RESPONSE_LOG); `chat.HELP_GUIDE` drives the S-034 guide: 3 groups, 9 tappable example questions, what the chatbot does not do, the hotline. S-031 gets a caption pointing to /help. A help question inside a conversation is not read as a follow-up (D-95).
+- **Chain**: `docs/decisions.md` D-111; `specs/spec-BOT.md` v1.17.0 FR-010; `screens/screen-spec-S-034.md` §4 (Help guide state); `screens/screen-spec-S-031.md` §4 Default; 18 labels in `docs/ui-label-reference.md`; `static/tci.css` (`.help-guide`). The snapshot `specs/008-bot-chat/spec.md` already drifted from spec-BOT before this change; not refreshed here.
+- **Tests**: `tests/unit/test_bot_help.py` (30): help questions in Vietnamese, without accents and in English; a danger sign, her own health or a real question still wins; other small talk unchanged; every example chip (English and Vietnamese) answered as its group says; no LLM call; the guide on the page. Full suite: 883 passed, 3 xfailed, 1 failure that is already on `main` (`test_acc_profile_pages.py::test_profile_page`, the language form from #61).

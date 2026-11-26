@@ -574,6 +574,24 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | BOT chat (D-95) | Goodbye, Mom! Take care of yourself and the baby. | Tạm biệt mẹ! Mẹ giữ gìn sức khỏe cho mình và bé nhé. |
 | BOT chat (D-95) | Could you ask the whole question again, Mom? For example: “What was my last blood pressure?” | Mẹ hỏi lại đầy đủ giúp mình nhé? Ví dụ: “Huyết áp lần trước của em là bao nhiêu?” |
 | BOT chat (D-95) | For prices, packages, insurance, addresses and opening hours of Thu Cuc Hospital, please see the TCI app or call {hotline}. | Giá khám, gói dịch vụ, bảo hiểm, địa chỉ và giờ làm việc của Bệnh viện Thu Cúc: mẹ xem trong app TCI hoặc gọi {hotline} nhé. |
+| BOT help guide (D-111, proposed) | I can help in 3 ways: 1) answer general questions about pregnancy, nutrition, exercise, sleep and postpartum care; 2) read your data in this app: readings, visits, appointments, gestational week, diary and messages from your care team; 3) send a question about your own health to a nurse. I do not diagnose, prescribe or book appointments. | Mình giúp được mẹ 3 việc: 1) trả lời câu hỏi chung về thai kỳ, dinh dưỡng, vận động, giấc ngủ và chăm sóc sau sinh; 2) đọc dữ liệu của mẹ trong app: chỉ số, lần khám, lịch hẹn, tuần thai, nhật ký và tin nhắn của bác sĩ, y tá; 3) gửi câu hỏi về sức khỏe của chính mẹ cho y tá. Mình không chẩn đoán, không kê thuốc và không đặt lịch khám. |
+| BOT help guide (D-111, proposed) | Here is what I can help with, Mom: | Mẹ có thể hỏi mình những việc sau: |
+| BOT help guide (D-111, proposed) | Pregnancy questions | Hỏi đáp về thai kỳ |
+| BOT help guide (D-111, proposed) | General knowledge on pregnancy, nutrition, exercise, sleep, breastfeeding and postpartum care. | Kiến thức chung về thai kỳ, dinh dưỡng, vận động, giấc ngủ, cho con bú và chăm sóc sau sinh. |
+| BOT help guide (D-111, proposed) | What should I eat to get enough iron during pregnancy? | Bà bầu nên ăn gì để đủ sắt? |
+| BOT help guide (D-111, proposed) | Your data in this app | Dữ liệu của mẹ trong app |
+| BOT help guide (D-111, proposed) | I repeat what the app holds and do not assess it: readings, visits, appointments, gestational week, diary and messages from your doctor and nurse. | Mình nhắc lại đúng dữ liệu đang có trong app và không đánh giá: chỉ số, lần khám, lịch hẹn, tuần thai, nhật ký và tin nhắn của bác sĩ, y tá. |
+| BOT help guide (D-111, proposed) | What was my last blood pressure? | Huyết áp lần gần nhất của tôi là bao nhiêu? |
+| BOT help guide (D-111, proposed) | How has my weight changed this week? | Cân nặng của tôi tuần này thay đổi thế nào? |
+| BOT help guide (D-111, proposed) | When is my next appointment? | Lịch khám tới của tôi là khi nào? |
+| BOT help guide (D-111, proposed) | What is my due date? | Ngày dự sinh của tôi là khi nào? |
+| BOT help guide (D-111, proposed) | What were the results of my last visit? | Kết quả lần khám gần nhất của tôi thế nào? |
+| BOT help guide (D-111, proposed) | What instructions did my doctor give me? | Bác sĩ dặn tôi theo dõi gì? |
+| BOT help guide (D-111, proposed) | Ask a nurse | Hỏi y tá |
+| BOT help guide (D-111, proposed) | When you ask about your own health or a symptom, I do not answer it myself: I offer to send your question to a nurse. | Khi mẹ hỏi về sức khỏe của chính mình hoặc một triệu chứng, mình không tự trả lời mà đề nghị gửi câu hỏi cho y tá. |
+| BOT help guide (D-111, proposed) | I do not diagnose, prescribe medicine or book appointments; to book, use the TCI app. | Mình không chẩn đoán, không kê thuốc và không đặt lịch khám; mẹ đặt lịch trong app TCI nhé. |
+| BOT help guide (D-111, proposed) | Tap a question to ask it, or type /help to see this guide again. | Chạm vào một câu hỏi để hỏi ngay, hoặc gõ /help để xem lại hướng dẫn này. |
+| BOT help guide (D-111, proposed) | Type /help or ask “What can you do?” to see what you can ask. | Gõ /help hoặc hỏi “Bạn giúp được gì?” để xem mẹ có thể hỏi những gì. |
 | CLI screens (D-79) | Nurse: {name} | Y tá: {name} |
 | CLI screens (D-79) | change | đổi |
 | CLI screens (D-79) | Choose a staff member (demo) | Chọn nhân viên y tế (demo) |
