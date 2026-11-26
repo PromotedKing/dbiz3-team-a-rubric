@@ -645,6 +645,8 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | UI package (D-80) | days to go | ngày nữa |
 | UI package (D-80) | Week {n} + {d} days | Tuần {n} + {d} ngày |
 | UI package (D-80) | Report metric / symptom | Báo cáo chỉ số / triệu chứng |
+| S-008 first-visit hint | You can submit a metric or report a symptom here. | Mẹ có thể gửi chỉ số hoặc báo triệu chứng tại đây |
+| S-008 first-visit hint | Got it | Đã hiểu |
 | UI package (D-80) | You have {n} new notices | Mẹ có {n} thông báo mới |
 | UI package (D-80) | My metrics | Chỉ số của mẹ |
 | UI package (D-80) | No diary entry today yet | Hôm nay chưa có nhật ký |

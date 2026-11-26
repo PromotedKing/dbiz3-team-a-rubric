@@ -1231,3 +1231,11 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Change**: `bot/routes.py` SUGGESTED gets a first entry "What can the chatbot do?" ("Chatbot giúp được gì?", classified as help); `chat.html` outlines it in green (`.chip-help`).
 - **Chain**: D-111 text; `specs/spec-BOT.md` v1.17.1 (S-031 suggested questions row); `screens/screen-spec-S-031.md` v1.0.0 note; 1 label. S-031 owners (Ánh, Chi) to review: it adds one chip to the D-81 set.
 - **Tests**: `test_bot_help.py::test_help_chip_opens_the_guide`; `test_bot_pages.py::test_welcome_screen` lists the new chip.
+
+## 26/11/2026: first-visit report hint on Home (Tâm, branch `tam/home-report-tooltip`)
+
+- **Change**: S-008 points to the existing report action on the first Home visit. “Got it” hides the hint, saves dismissal per mother in the browser or WebView, and moves focus to the report action.
+- **Layout review**: reduced the hint height by placing the 44 px dismissal control beside the copy. Matched the width of the report button and adjacent cards. Adjusted spacing and type to fit the Vietnamese copy on one line at the demo width. Used a green fill that stands out against the page background, with a smaller pointer in the same color.
+- **Chain**: `screens/screen-spec-S-008.md` and `docs/ui-label-reference.md` → `app/mb360/templates/home.html` and `app/mb360/static/tci.css`.
+- **Verification**: JavaScript checks covered first visit, dismissal, keyboard focus, reload, account separation, and blocked storage. Pytest reported 884 passed, 3 xfailed, and 1 failure in `test_profile_page`, reproduced on the base commit.
+- **Spacing**: balanced the horizontal insets and separated the hint copy from its dismissal control. Removed vertical padding so the hint is 44 px tall at the demo width, matching the minimum tap target.
