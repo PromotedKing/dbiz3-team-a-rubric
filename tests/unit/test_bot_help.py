@@ -83,3 +83,15 @@ def test_help_guide_on_the_chat_page(client, user_id):
     assert ui.t("If you have any emergency signs, call {hotline}.", hotline=chat.HOTLINE) in guide
     assert ui.t("For reference only; does not replace your doctor's advice.") not in page   # not an AI answer
     assert not re.search(r"Cảnh báo", page)
+
+
+def test_help_chip_opens_the_guide(client, user_id):
+    """D-111: the first suggestion chip, under the welcome and under every conversation (the tab opens the latest one)."""
+    from mb360.bot import routes
+    assert routes.SUGGESTED[0] == "What can the chatbot do?"
+    for shown in (routes.SUGGESTED[0], ui.t(routes.SUGGESTED[0])):
+        assert classify.classify(shown) == HELP
+    uid = user_id("tci-000123")
+    r = client.post(f"/m/{uid}/chat", data={"text": "Bà bầu nên ăn gì?"})
+    page = html.unescape(client.get(r.headers["location"]).text)
+    assert f'data-suggest="{ui.t("What can the chatbot do?")}"' in page

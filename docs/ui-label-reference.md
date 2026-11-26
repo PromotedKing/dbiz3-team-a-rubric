@@ -588,6 +588,7 @@ Text the screens need that the wireframes do not show (form labels, messages, de
 | BOT help guide (D-111, proposed) | What were the results of my last visit? | Kết quả lần khám gần nhất của tôi thế nào? |
 | BOT help guide (D-111, proposed) | What instructions did my doctor give me? | Bác sĩ dặn tôi theo dõi gì? |
 | BOT help guide (D-111, proposed) | Ask a nurse | Hỏi y tá |
+| BOT help guide (D-111, proposed) | What can the chatbot do? | Chatbot giúp được gì? |
 | BOT help guide (D-111, proposed) | When you ask about your own health or a symptom, I do not answer it myself: I offer to send your question to a nurse. | Khi mẹ hỏi về sức khỏe của chính mình hoặc một triệu chứng, mình không tự trả lời mà đề nghị gửi câu hỏi cho y tá. |
 | BOT help guide (D-111, proposed) | I do not diagnose, prescribe medicine or book appointments; to book, use the TCI app. | Mình không chẩn đoán, không kê thuốc và không đặt lịch khám; mẹ đặt lịch trong app TCI nhé. |
 | BOT help guide (D-111, proposed) | Tap a question to ask it, or type /help to see this guide again. | Chạm vào một câu hỏi để hỏi ngay, hoặc gõ /help để xem lại hướng dẫn này. |
