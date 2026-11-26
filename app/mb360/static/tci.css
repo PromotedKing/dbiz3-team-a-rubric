@@ -11,6 +11,49 @@ button,input,select,textarea{font-family:inherit}
 p,h1,h2,h3{margin:0}
 a{color:var(--p);text-decoration:none}
 
+.report-hint{
+  --hint-bg:#d7eddf;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  width:100%;
+  padding:0 8px;
+  border-radius:10px;
+  background:var(--hint-bg);
+  color:var(--t1);
+}
+.report-hint[hidden]{display:none}
+.report-hint .t-body{
+  font-size:12px;
+  line-height:18px;
+}
+.report-hint::after{
+  content:"";
+  position:absolute;
+  top:100%;
+  left:24px;
+  border:6px solid transparent;
+  border-top-color:var(--hint-bg);
+  pointer-events:none;
+}
+.report-hint-dismiss{
+  display:block;
+  flex:none;
+  min-width:44px;
+  min-height:44px;
+  padding:0;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:#006535;
+  font-size:13px;
+  font-weight:700;
+  white-space:nowrap;
+  cursor:pointer;
+}
+
 /* Màn & khung */
 .scr{width:390px;height:844px;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);position:relative;font-size:15px;line-height:20px}
 .scr.w{background:var(--sf)}

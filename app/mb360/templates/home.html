@@ -62,9 +62,39 @@
 </section>
 {% endif %}
 
+<div class="report-hint" data-report-hint="{{ user.user_id }}" hidden>
+  <p id="report-hint-text" class="t-body">{{ _("You can submit a metric or report a symptom here.") }}</p>
+  <button type="button" class="report-hint-dismiss" aria-describedby="report-hint-text">{{ _("Got it") }}</button>
+</div>
 <a href="/m/{{ user.user_id }}/report?metric={{ (flags[0] if flags else 'Symptom') | urlencode }}" class="btn full cta" data-report-cta>
   {{ icon.pulse(24) }}<span style="flex:1;text-align:left">{{ _("Report metric / symptom") }}</span>{{ icon.chevw() }}
 </a>
+<script>
+  (() => {
+    const hint = document.querySelector("[data-report-hint]");
+    const report = document.querySelector("[data-report-cta]");
+    const storageKey = "mb360.reportHintDismissed:" + hint.dataset.reportHint;
+
+    try {
+      if (localStorage.getItem(storageKey) === "1") return;
+    } catch {
+      // The hint is still usable when the WebView blocks storage.
+    }
+
+    hint.hidden = false;
+    report.setAttribute("aria-describedby", "report-hint-text");
+    hint.querySelector("button").addEventListener("click", () => {
+      try {
+        localStorage.setItem(storageKey, "1");
+      } catch {
+        // Dismiss the visible hint even if storage is unavailable.
+      }
+      hint.hidden = true;
+      report.removeAttribute("aria-describedby");
+      report.focus();
+    });
+  })();
+</script>
 
 {% if latest_notice %}
 <a href="/m/{{ user.user_id }}/notices{% if unread_count == 1 %}/{{ latest_notice[0].notification_id }}{% endif %}" class="card" style="display:flex;gap:12px;align-items:center;padding:14px 16px">
