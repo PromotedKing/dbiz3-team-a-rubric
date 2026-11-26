@@ -9,7 +9,8 @@
 <div class="infobar">{{ _("The chatbot provides general reference information only and does not replace your doctor's advice.") }}</div>
 <div class="body" style="gap:12px" data-chat>
   {% if not conversation_id %}
-    <p class="bot"><span class="b">{{ _("Hello, Mom!") }}</span> {{ _("I can answer general questions about pregnancy and baby care.") }}</p>
+    <p class="bot"><span class="b">{{ _("Hello, Mom!") }}</span> {{ _("I can answer general questions about pregnancy and baby care.") }}
+      <span class="t-cap" style="display:block;margin-top:6px" data-help-hint>{{ _("Type /help or ask “What can you do?” to see what you can ask.") }}</span></p>
   {% else %}
     {% for b in bubbles %}
       {% if b.kind == "question" %}
@@ -21,6 +22,20 @@
         <div class="bot" data-lookup><p style="white-space:pre-line">{{ b.m.text }}</p>
           <p class="t-cap" style="margin-top:6px">{{ _("The chatbot only repeats your data from the app and does not assess it. If you are worried, ask a nurse.") }}</p>
           {% if b.link %}<a class="lnk" style="display:inline-block;margin-top:4px" href="{{ b.link }}">{{ _("View in the app") }} ›</a>{% endif %}</div>
+      {% elif b.kind == "help" %}
+        <div class="bot help-guide" data-help>
+          <p class="b">{{ _("Here is what I can help with, Mom:") }}</p>
+          {% for title, what, examples in help_guide %}
+          <div class="help-group">
+            <p class="b">{{ loop.index }}. {{ _(title) }}</p>
+            <p class="t-cap">{{ _(what) }}</p>
+            {% if examples %}<div class="chips">{% for q in examples %}<button type="button" class="chip" data-suggest="{{ q | t }}">{{ q | t }}</button>{% endfor %}</div>{% endif %}
+          </div>
+          {% endfor %}
+          <p class="t-cap">{{ _("I do not diagnose, prescribe medicine or book appointments; to book, use the TCI app.") }}</p>
+          <p class="t-cap" data-hotline>{{ _("If you have any emergency signs, call {hotline}.", hotline=hotline) }}</p>
+          <p class="t-cap">{{ _("Tap a question to ask it, or type /help to see this guide again.") }}</p>
+        </div>
       {% elif b.kind == "decline" %}
         <p class="bot">{{ b.m.text | t_known }}</p>
       {% else %}

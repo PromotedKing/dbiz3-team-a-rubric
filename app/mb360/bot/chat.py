@@ -28,7 +28,24 @@ SMALL_TALK = {          # D-95 (proposed): fixed replies, shown through the labe
                  "data in this app; I do not diagnose and do not replace your doctor."),
     "bye": "Goodbye, Mom! Take care of yourself and the baby.",
     "unclear": "Could you ask the whole question again, Mom? For example: “What was my last blood pressure?”",
+    # D-111 (proposed): "/help", "what can I ask?" — the stored text; S-034 shows it as a guide with tappable examples (HELP_GUIDE)
+    "help": ("I can help in 3 ways: 1) answer general questions about pregnancy, nutrition, exercise, sleep and postpartum care; "
+             "2) read your data in this app: readings, visits, appointments, gestational week, diary and messages from your care team; "
+             "3) send a question about your own health to a nurse. I do not diagnose, prescribe or book appointments."),
 }
+HELP_TEXT = SMALL_TALK["help"]
+# D-111: the guide under the help reply on S-034 — (heading, what it covers, example questions the mother can tap).
+# Every example is classified as its group says (tests/unit/test_bot_help.py); none of them opens a nurse case.
+HELP_GUIDE = (
+    ("Pregnancy questions", "General knowledge on pregnancy, nutrition, exercise, sleep, breastfeeding and postpartum care.",
+     ("What should I eat to get enough iron during pregnancy?", "Should I exercise?", "Trouble sleeping during pregnancy")),
+    ("Your data in this app", "I repeat what the app holds and do not assess it: readings, visits, appointments, gestational week, "
+     "diary and messages from your doctor and nurse.",
+     ("What was my last blood pressure?", "How has my weight changed this week?", "When is my next appointment?",
+      "What is my due date?", "What were the results of my last visit?", "What instructions did my doctor give me?")),
+    ("Ask a nurse", "When you ask about your own health or a symptom, I do not answer it myself: I offer to send your question to a nurse.",
+     ()),
+)
 HOSPITAL_TEXT = ("For prices, packages, insurance, addresses and opening hours of Thu Cuc Hospital, please see the TCI app "
                  "or call {hotline}.")   # D-95: no hospital data in the app yet, so never guessed by the LLM
 REPEAT_MINUTES = 5   # D-90 (proposed): the same question again within this time is the same request (e.g. a second tab)
@@ -134,7 +151,7 @@ def prepare(conn: sqlite3.Connection, user_id: str, conversation_id: str | None,
     if earlier:
         raise AlreadyAsked(earlier)
     kind = classify.classify(text)
-    if conversation_id and kind["category"] in ("general", "out_of_scope", "small_talk"):     # D-95: read with the previous question
+    if conversation_id and kind["category"] in ("general", "out_of_scope", "small_talk") and kind.get("reply") != "help":   # D-95
         prev = conn.execute("""SELECT parsed_intent FROM CHAT_MESSAGE WHERE conversation_id = ? AND sender = 'Mother'
                                ORDER BY sent_at DESC, rowid DESC LIMIT 1""", (conversation_id,)).fetchone()
         kind = classify.follow_up(text, json.loads(prev[0]) if prev and prev[0] else None) or kind

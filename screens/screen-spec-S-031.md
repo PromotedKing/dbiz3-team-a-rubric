@@ -45,7 +45,7 @@
 
 | State | What the user sees | Trigger |
 |---|---|---|
-| Default | Greeting, disclaimer, 4 suggested questions, empty input field | Opening the Chatbot tab |
+| Default | Greeting, disclaimer, 4 suggested questions, empty input field; *(D-111, proposed)* a caption under the greeting: "Type /help or ask “What can you do?” to see what you can ask." | Opening the Chatbot tab |
 | Empty (no data) | Not applicable | — |
 | Loading | No separate loading state on this screen | — |
 | Error | An error when sending a question is shown on the conversation screen | The chatbot service does not respond |

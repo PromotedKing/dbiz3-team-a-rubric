@@ -17,7 +17,7 @@ The decision log (D-01 – D-78), the status of every decision, the module scope
 | **Pending Client** | D-01 (sub-app model), D-02 (remove Tips), D-03 (Messages to Baby — Must item in the latest MVP Scope, pending Client approval, D-65) | **Not** as requirements approved by the Client |
 | **Pending SME** | D-15 (blood glucose and urine protein thresholds), D-16 (valid input ranges), D-47 (chatbot risk keywords and danger phrases), D-73 (alarm symptom list), the trimester boundaries of D-75 | "Provisional values for the demo"; **not** as approved by a doctor |
 | **Open (team)** | D-35 (depends on D-03); hiding "No symptoms" in symptom-report mode (part of D-45); "high-priority" case in the PRD M3 row (`spec-ALR.md` Q22) | — |
-| **Proposed (to confirm)** | D-70 (repository layout for Session 7; physical model draft on SQLite), D-110 (bilingual interface preference) | "Draft, to be confirmed by the team" |
+| **Proposed (to confirm)** | D-70 (repository layout for Session 7; physical model draft on SQLite), D-110 (bilingual interface preference), D-111 (chatbot help guide) | "Draft, to be confirmed by the team" |
 
 ## Open items
 
@@ -257,6 +257,12 @@ The PRD in `docs/prd.md` was refined on 14/10/2026 (product context, M1 – M5, 
 | ID | Decision | Status | Affected artifacts |
 |---|---|---|---|
 | D-101 | **The chatbot's danger flag is stored, and everyday illnesses and medicine decisions go to the nurse (proposed by Sang after a tester's feedback, 17/11/2026).** (1) The danger flag was stored nowhere: S-034 classified the text again each time it was shown, and the clinical web did not know which Chatbot case was dangerous — so BR-012 of PR #43 (a nurse may not close it) could not be applied, and changing the keyword lists (D-91, D-92) changed old messages. It is now stored when the question is classified, in `CHAT_MESSAGE.parsed_intent` ("danger": true / false; a JSON column, no schema change), read by the Chatbot case through `chat_message_id` and shown on S-061, S-064 and the board as "Signs that need medical attention" (the case also counts as needing attention). This answers PR #43 §10 Q24; the close / escalate rule itself waits for that spec. (2) "Sổ mũi phải làm sao?", "Tiêu chảy phải làm sao", "Em uống paracetamol được không?" were declined as out of scope, and "Em có nên uống thêm canxi không?" reached the LLM: everyday illnesses are symptom words, and a medicine, vitamin or supplement with a decision about taking it is "needs a nurse" (BR-002; in line with PR #43 D-99 for the nurse); knowledge questions about them stay general. No medicine guidance template exists (MVP, PR #43 D-99). | Proposed — BOT owner (Sang); CLI owner (Trung) and screen owners (Ánh, Chi): the tag on S-061 / S-064; SME: the word lists | spec-BOT §5.1 FR-006, FR-011, §6 Chat Message; S-061, S-064 (tag); `app/mb360/cli/queue.py`, `dashboard.py`, `case_detail.py` |
+
+### Chatbot help guide (26/11/2026)
+
+| ID | Decision | Status | Affected artifacts |
+|---|---|---|---|
+| D-111 | **"/help" and "what can I ask?" get a guide to the chatbot (requested by Sang, BOT owner, 26/11/2026).** Mothers did not know what they could ask: "Bạn làm được gì?" got the identity line, "Mình có thể hỏi những gì?" was declined as out of scope. Now "/help", "help", "?", "trợ giúp", "hướng dẫn" or "menu" as the whole message, a question about what the chatbot can do, or a usage question ("cách dùng", "hỏi được gì") gets a fixed reply, never the LLM: (1) general pregnancy questions, (2) her data in the app (FR-012, repeated, not assessed), (3) her own health → the nurse offer (BR-002); what it does not do (diagnose, prescribe, book) and the hotline. S-034 shows it as a guide with tappable example questions; each is tested to be answered as its group says, none opens the nurse offer. S-031 gets one caption pointing to /help. A danger sign, her own health or a data question in the same message is handled first. Word lists provisional (`keywords.json` → `small_talk`). | Proposed — **S-031 / S-034 owners (Ánh, Chi) to review the caption and the guide** | spec-BOT v1.17.0 FR-010; S-031 §4; S-034 §4; `bot/chat.py`, `bot/classify.py`, `bot/keywords.json`, `templates/chat.html`; labels |
 
 ### Nurse's default case filter (17/11/2026)
 

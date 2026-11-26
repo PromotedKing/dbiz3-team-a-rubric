@@ -65,6 +65,7 @@ Note: the "[S-033] … [Connect to nurse] … [No, thanks] … [Error] …" boxe
 | Nurse hand-off offered | bubble #10 + "Connect to nurse" / "No, thanks" + hotline number | a personal health question or one matching a risk keyword (BR-002, D-47) |
 | Danger phrase (not drawn) | notice #10a above bubble #10; no general advice | the question matches a danger phrase (`spec-BOT.md` FR-011, D-76) |
 | Out of scope (not drawn) | decline bubble #10b; no buttons, no case | the question is outside pregnancy, prenatal care, nutrition and postpartum wellness (`spec-BOT.md` FR-010) |
+| Help guide (not drawn) *(D-111, proposed)* | bubble "Here is what I can help with, Mom:" with 3 groups — pregnancy questions, your data in this app, ask a nurse — each with one line on what it covers and tappable example questions (sent like the `S-031` suggestions); then what the chatbot does not do, the hotline, and "type /help to see this guide again". No AI disclaimer (not an AI answer), no buttons, no case | the mother types "/help", "help", "?", "trợ giúp" or asks what the chatbot can do (`spec-BOT.md` FR-010) |
 | Connected to nurse | "Sent to a nurse" bubble (per the annotation); the mother follows the case on `S-029` "My reports" → `S-026` (chatbot case variant) | the mother taps "Connect to nurse" |
 | Hand-off declined | no case is created; the hotline number 1900 xxxx is shown | the mother taps "No, thanks" |
 | Empty (no data) | not applicable — the screen only opens after the first question | — |

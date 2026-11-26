@@ -38,6 +38,8 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
             else:
                 kind = {"needs_nurse": "handoff", "out_of_scope": "decline", "lookup": "lookup", "small_talk": "decline",
                         "hospital_info": "decline"}.get(last_q["intent"] if last_q else None, "answer")
+                if kind == "decline" and m["text"] == chat.HELP_TEXT:
+                    kind = "help"                                          # D-111: the guide with tappable examples
                 out.append({"kind": kind, "m": m, "q": last_q["row"] if last_q else None, "danger": last_q["danger"] if last_q else False,
                             "link": lookup.link(user_id, last_q["parsed"]) if kind == "lookup" else None,
                             "danger_topic": kind == "answer" and last_q is not None and classify.danger_topic(last_q["row"]["text"])})
@@ -46,7 +48,7 @@ def register(app: FastAPI, conn: sqlite3.Connection) -> None:
     def page(request: Request, user, conversation_id: str | None, status: int = 200, error: str | None = None, text: str = ""):
         return TEMPLATES.TemplateResponse(request, "chat.html", {
             "user": user, "conversation_id": conversation_id, "bubbles": bubbles(conversation_id, user["user_id"]) if conversation_id else [],
-            "suggested": SUGGESTED, "hotline": HOTLINE, "error": error, "text": text}, status_code=status)
+            "suggested": SUGGESTED, "hotline": HOTLINE, "help_guide": chat.HELP_GUIDE, "error": error, "text": text}, status_code=status)
 
     async def handle_ask(request: Request, user_id: str, conversation_id: str | None):
         user = mother(user_id)
