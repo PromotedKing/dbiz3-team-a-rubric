@@ -10,7 +10,7 @@
 | Mockup image | `img/S-031.png` |
 | Status | Draft |
 
-> **v1.0.0 app (07/11/2026, D-80 – D-85):** Opens the latest conversation (BOT Q14); suggestions "Mất ngủ khi mang thai", "Có nên tập thể dục?", "Chuột rút chân".
+> **v1.0.0 app (07/11/2026, D-80 – D-85):** Opens the latest conversation (BOT Q14); suggestions "Mất ngủ khi mang thai", "Có nên tập thể dục?", "Chuột rút chân". *(D-111, proposed, 26/11/2026:)* a first chip "Chatbot giúp được gì?" (outlined in green) sends that question and opens the help guide on `S-034`.
 
 ## 1. Purpose
 

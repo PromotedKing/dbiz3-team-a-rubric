@@ -478,3 +478,4 @@ select.inp.history-select{appearance:none;-webkit-appearance:none;padding-right:
 .help-guide{display:flex;flex-direction:column;gap:10px;max-width:92%}
 .help-guide .help-group{display:flex;flex-direction:column;gap:6px;padding-top:10px;border-top:1px solid var(--bd)}
 .help-guide .chips .chip{text-align:left}
+.chip.chip-help{border-color:var(--p);color:var(--p);font-weight:700}

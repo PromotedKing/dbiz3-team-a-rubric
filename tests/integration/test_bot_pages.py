@@ -31,7 +31,7 @@ def test_welcome_screen(client, user_id):
     page = client.get(f"/m/{user_id('tci-000133')}/chat").text
     for t in map(vi, ("Health chatbot", "Hello, Mom!", "I can answer general questions about pregnancy and baby care.",
                       "The chatbot provides general reference information only and does not replace your doctor's advice.",
-                      "Trouble sleeping during pregnancy", "Should I exercise?", "Leg cramps", "Type your question…", "Send")):
+                      "What can the chatbot do?", "Trouble sleeping during pregnancy", "Should I exercise?", "Leg cramps", "Type your question…", "Send")):
         assert t in page, t
     assert "alert" not in text(page).lower()
 

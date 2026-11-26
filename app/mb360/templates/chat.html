@@ -73,7 +73,7 @@
 </div>
 <div class="composer-wrap">
   <div class="scroll-x">
-    {% for q in suggested %}<button type="button" class="chip" data-suggest="{{ q | t }}">{{ q | t }}</button>{% endfor %}
+    {% for q in suggested %}<button type="button" class="chip{% if loop.first %} chip-help{% endif %}" data-suggest="{{ q | t }}">{{ q | t }}</button>{% endfor %}
   </div>
   <form class="composer" method="post" data-composer action="/m/{{ user.user_id }}/chat{% if conversation_id %}/{{ conversation_id }}{% endif %}">
     <label for="ask" class="sr">{{ _("Type your question…") }}</label>

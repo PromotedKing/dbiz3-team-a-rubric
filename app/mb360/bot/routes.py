@@ -14,7 +14,8 @@ from . import chat, classify, llm, lookup
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
 ui.install(TEMPLATES)
-SUGGESTED = ("Trouble sleeping during pregnancy", "Should I exercise?", "Leg cramps")   # Màn 11
+SUGGESTED = ("What can the chatbot do?",                                               # D-111 (proposed): opens the help guide
+             "Trouble sleeping during pregnancy", "Should I exercise?", "Leg cramps")   # Màn 11
 LOG = logging.getLogger("mb360.bot")
 HOTLINE = chat.HOTLINE   # placeholder (BOT §10 Q8)
 
