@@ -271,7 +271,7 @@ def staff_reply(conn, user_id, now, _):
     if resp is None:
         return [ui.t("No nurse or doctor has replied to you yet.")]
     parts = notices.parse_response(notices._response_text(resp))
-    lines = [ui.t("Latest reply from {role} {name} ({date}):", role=ui.t(resp["responder_role"]).lower(), name=resp["full_name"],
+    lines = [ui.t("Latest reply from {role} {name} ({date}):", role=ui.t(resp["responder_role"]).lower(), name=ui.display_name(resp["full_name"]),
                   date=ui.show_time(resp["sent_at"]))]
     if parts["comment"]:
         lines.append("“" + _quote(parts["comment"], 200) + "”")

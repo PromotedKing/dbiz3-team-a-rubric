@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime
 
 from . import thresholds
+from .. import ui
 
 DB_TIME = "%Y-%m-%d %H:%M"
 SYMPTOM_LABELS = {
@@ -46,7 +47,7 @@ def notify(conn: sqlite3.Connection, case_id: str, event: str, now: datetime, st
         subtitle = s["detail"]
     elif event == "response":
         staff = conn.execute("SELECT full_name, role FROM STAFF WHERE staff_id = ?", (staff_id,)).fetchone()
-        title = f"{staff['role']} {staff['full_name']} responded to your {s['what']}"
+        title = f"{staff['role']} {ui.display_name(staff['full_name'])} responded to your {s['what']}"
         subtitle = f"{ref} · {case['status']}" if ref else case["status"]
     elif event in STATUS_EVENTS:
         title = f"Your {s['what']} is {event}"

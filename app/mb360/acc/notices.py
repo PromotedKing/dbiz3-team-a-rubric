@@ -3,7 +3,7 @@ import re
 import sqlite3
 from datetime import datetime
 
-from .. import tci_feed
+from .. import tci_feed, ui
 from ..alr import thresholds
 
 TYPES = ("Report", "Visit result", "Appointment", "Instruction reminder")
@@ -126,7 +126,7 @@ def card(conn: sqlite3.Connection, n: sqlite3.Row) -> dict:
     else:
         tag = (about["status"] or "Report", "inf")
     return {"n": n, "tag": tag, "preview": parsed["comment"] or n["subtitle"], "translate_preview": not parsed["comment"],
-            "doctor": resp["full_name"] if resp else None, "role": resp["responder_role"] if resp else None}
+            "doctor": ui.display_name(resp["full_name"]) if resp else None, "role": resp["responder_role"] if resp else None}
 
 
 def cards_for(conn: sqlite3.Connection, user_id: str, type_: str | None = None, *, unread_only: bool = False) -> list[dict]:
