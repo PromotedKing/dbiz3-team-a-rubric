@@ -10,8 +10,8 @@
     <span class="tag {{ d.card.tag[1] }}" style="align-self:flex-start">{{ d.card.tag[0] | t }}</span>
     <h2 class="t-title">{{ d.n.title | t_known }}</h2>
     <div class="notice-author">
-      <div class="avatar">{{ initials(d.resp.full_name) }}</div>
-      <div class="notice-author-text"><p class="t-body b">{{ _("Dr. {name}", name=d.resp.full_name) if d.resp.responder_role == "Doctor" else _("Nurse {name}", name=d.resp.full_name) }}</p><p class="t-cap">{{ _("Sent") }} {{ d.resp.sent_at | show_time }}</p></div>
+      <div class="avatar">{{ initials(d.resp.full_name | display_name) }}</div>
+      <div class="notice-author-text"><p class="t-body b">{{ _("Dr. {name}", name=d.resp.full_name | display_name) if d.resp.responder_role == "Doctor" else _("Nurse {name}", name=d.resp.full_name | display_name) }}</p><p class="t-cap">{{ _("Sent") }} {{ d.resp.sent_at | show_time }}</p></div>
     </div>
   </div>
   {% if d.about.record or d.about.symptoms or d.about.question %}

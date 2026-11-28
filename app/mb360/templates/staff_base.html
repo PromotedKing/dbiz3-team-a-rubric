@@ -15,8 +15,8 @@
     <span class="who">
       {#- S-059 bell: the doctor keeps it — cases escalated to him (S-061D #4, D-109); the nurse has none (D-105) -#}
       {% if badge is not none and me.role == "Doctor" %}<a class="bell{% if nav | default('') == 'notifications' %} on{% endif %}" href="/staff/{{ me.staff_id }}/notifications" title="{{ _('Notifications') }}" aria-label="{{ _('Notifications') }}">{{ icon.bell() }} <span class="badge{% if not badge %} zero{% endif %}">{{ badge }}</span></a>{% endif %}
-      <span class="avatar">{{ initials(me.full_name) }}</span>
-      <span>{{ _("Nurse: {name}", name=me.full_name) if me.role == "Nurse" else _("Dr. {name}", name=me.full_name) }}<br>
+      <span class="avatar">{{ initials(me.full_name | display_name) }}</span>
+      <span>{{ _("Nurse: {name}", name=me.full_name | display_name) if me.role == "Nurse" else _("Dr. {name}", name=me.full_name | display_name) }}<br>
         <a href="/staff" class="caption">{{ _("change") }}</a></span>
     </span>
     {% endif %}

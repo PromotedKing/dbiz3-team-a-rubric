@@ -1239,3 +1239,9 @@ From the note and the two reference pictures in the v1.0.0 review: `cli/dashboar
 - **Chain**: `screens/screen-spec-S-008.md` and `docs/ui-label-reference.md` → `app/mb360/templates/home.html` and `app/mb360/static/tci.css`.
 - **Verification**: JavaScript checks covered first visit, dismissal, keyboard focus, reload, account separation, and blocked storage. Pytest reported 884 passed, 3 xfailed, and 1 failure in `test_profile_page`, reproduced on the base commit.
 - **Spacing**: balanced the horizontal insets and separated the hint copy from its dismissal control. Removed vertical padding so the hint is 44 px tall at the demo width, matching the minimum tap target.
+
+## 28/11/2026: hide sample padding in staff names (branch `anh-va-chi/fix-staff-display-name`)
+
+- **User request**: the S06 nurse name showed its "sample text" padding on the report status page (S-026) and in the clinical web header.
+- **Change**: `ui.display_name` trims the padding at display time, used wherever the nurse name is shown. Seed, schema and CSV files unchanged.
+- **Tests**: `tests/integration/test_display_name_s06.py`. `test_profile_page` already fails on `main` (language form from #61).

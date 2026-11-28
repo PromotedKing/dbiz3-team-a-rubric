@@ -95,7 +95,7 @@
 <section class="card">
   {% if responses %}
   <h2>{{ _("Responses sent") }}</h2>
-  {% for r in responses %}<p><span class="caption">{{ r.sent_at | show_time }} · {{ r.responder_role | t }} {{ r.full_name }}</span><br>{{ r.template_text or "" }} {{ r.custom_text or "" }}</p>{% endfor %}
+  {% for r in responses %}<p><span class="caption">{{ r.sent_at | show_time }} · {{ r.responder_role | t }} {{ r.full_name | display_name }}</span><br>{{ r.template_text or "" }} {{ r.custom_text or "" }}</p>{% endfor %}
   {% endif %}
 
   {% if "guidance" in can %}

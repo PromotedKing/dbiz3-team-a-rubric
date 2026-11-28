@@ -2,6 +2,8 @@
 import sqlite3
 from datetime import datetime
 
+from .. import ui
+
 STEPS = ("Not viewed", "Viewed", "Escalated to doctor", "Resolved")
 
 
@@ -12,7 +14,8 @@ def _show(t: str) -> str:
 def _actor(role: str | None, name: str | None) -> str | None:
     if not name:
         return None
-    return f"Dr. {name}" if role == "Doctor" else f"{role} {name}"
+    n = ui.display_name(name)
+    return f"Dr. {n}" if role == "Doctor" else f"{role} {n}"
 
 
 def progress(conn: sqlite3.Connection, case_id: str) -> list[dict]:

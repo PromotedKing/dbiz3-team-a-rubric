@@ -13,6 +13,7 @@ import sqlite3
 from datetime import datetime
 
 from ..alr import thresholds
+from .. import ui
 from . import dashboard, queue
 
 NOT_VIEWED, ESCALATED = "Not viewed", "Escalated to doctor"
@@ -33,7 +34,7 @@ def escalation(conn: sqlite3.Connection, case_id: str) -> dict | None:
            WHERE h.case_id = ? AND h.status = ?""",
         (case_id, ESCALATED),
     ).fetchone()
-    return {"at": row["changed_at"], "role": row["role"], "by": row["full_name"]} if row else None
+    return {"at": row["changed_at"], "role": row["role"], "by": ui.display_name(row["full_name"])} if row else None
 
 
 def lines(conn: sqlite3.Connection, staff_id: str, role: str, now: datetime) -> list[dict]:
